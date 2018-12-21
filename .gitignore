@@ -1,0 +1,14 @@
+# Logs 
+npm-debug.log*
+
+# Dependencies 
+node_modules
+
+# npm cache 
+.npm 
+
+# development environment files
+.env
+
+# vim
+*.swp
