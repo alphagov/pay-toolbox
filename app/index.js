@@ -11,5 +11,3 @@ const logHTTPServerStarted = function logHTTPServerStarted () {
 }
 
 http.createServer(app).listen(config.server.port, logHTTPServerStarted)
-
-console.log('app stub')

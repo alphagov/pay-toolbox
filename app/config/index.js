@@ -3,4 +3,5 @@ const logger = require('./logger')
 const common = require('./common')
 const templateRenderer = require('./template-renderer')
 
-module.exports = Object.assign({}, server, logger, common, templateRenderer)
+// module.exports = { server, common }
+module.exports = Object.assign({}, server, common, logger, templateRenderer)

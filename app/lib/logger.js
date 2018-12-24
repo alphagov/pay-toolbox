@@ -22,6 +22,7 @@ if (config.common.production) {
 
 // coloursise and timestamp developer logs as these will probably be viewed
 // in a simple console (vs. in an already timestamped web viewer)
+// - add format.splat() to allow util.format options %j, %s, %d etc.
 if (!config.common.production) {
   const developmentTransport = new transports.Console({
     level: 'debug',
