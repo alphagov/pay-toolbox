@@ -7,7 +7,7 @@ const config = require('./config')
 // const serverInitEntry = function serverInitEntry () { }
 
 const logHTTPServerStarted = function logHTTPServerStarted () {
-  logger.info(`Toolbox HTTP server listening on port ${config.server.port}`)
+  logger.info(`Toolbox HTTP server listening on port ${config.server.PORT}`)
 }
 
-http.createServer(app).listen(config.server.port, logHTTPServerStarted)
+http.createServer(app).listen(config.server.PORT, logHTTPServerStarted)

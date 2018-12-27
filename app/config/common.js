@@ -11,10 +11,20 @@
 // startup
 
 // temporarily transform NODE_ENV env variable into a boolean flag
-const config = {
-  common: {
-    production: process.env.NODE_ENV === 'production'
-  }
+const Joi = require('joi')
+
+const expectedCommonEnvironmentValues = {
+  NODE_ENV: Joi.string().valid(['development', 'production', 'test']).required()
 }
-// module.exports = Object.assign({}, common)
-module.exports = config
+
+const { error, value: validatedCommonEnvironmentValues } =
+  Joi.validate(process.env, expectedCommonEnvironmentValues, { allowUnknown: true, stripUnknown: true })
+
+if (error) {
+  throw new Error(`Invalid common environment variables set ${error.message}`)
+}
+
+// custom mapping for commonly referenced NODE_ENV production check
+validatedCommonEnvironmentValues.production = process.env.NODE_ENV === 'production'
+
+module.exports = { common: validatedCommonEnvironmentValues }

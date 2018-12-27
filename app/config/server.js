@@ -1,9 +1,14 @@
+const Joi = require('joi')
 
-// @FIXME(sfount) use library like `joi` to parse process.env
-const config = {
-  server: {
-    port: 3030
-  }
+const expectedServerEnvironmentValues = {
+  PORT: Joi.number().integer().required()
 }
 
-module.exports = config
+const { error, value: validatedServerEnvironmentValues } =
+  Joi.validate(process.env, expectedServerEnvironmentValues, { allowUnknown: true, stripUnknown: true })
+
+if (error) {
+  throw new Error(`Invalid server environment variables set ${error.message}`)
+}
+
+module.exports = { server: validatedServerEnvironmentValues }

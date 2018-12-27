@@ -20,19 +20,22 @@ const logger = require('./logger')
 // `secured` will be rejected without these headers.
 // @TODO(sfount) header checks
 const secured = function secured (req, res, next) {
-  console.log(req.headers)
   // @TODO(sfount) experiment with actual headers passed - validation should
   // happen both at the reverse proxy and with this server (using shared
   // .env secrets)
   const identityHeader = 'X-OAuth-Header-Secret'
   const oAuthProxyIdentityHeader = req.get(identityHeader)
 
-  if (validateHeaderWithSecrets(oAuthProxiyIdentitiyHeader)) {
-    next()
-  }
+  // @TODO(sfount)
+  // if (validateHeaderWithSecrets(oAuthProxiyIdentitiyHeader)) {
+    // next()
+  // }
 
+  // @TODO(sfount)
   // header is invalid
-  res.status(403).send()
+  // res.status(403).send()
+
+  next()
 }
 
 module.exports = { secured }
