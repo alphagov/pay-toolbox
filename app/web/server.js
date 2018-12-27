@@ -4,6 +4,8 @@
  * - this should potentially move from modules into web or config or something
  *   that represents it's group
  */
+const path = require('path')
+
 const express = require('express')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
@@ -23,6 +25,10 @@ const logger = require('./../lib/logger')
 
 const router = require('./router')
 
+// @FIXME(sfount) errors should be thrown and this should be properly handled
+// if there is no manifest etc.
+const staticResourceManifest = require('./../public/manifest')
+
 const app = express()
 
 /**
@@ -33,6 +39,16 @@ const app = express()
 // allow parsing JSON
 app.use(bodyParser.json({ strict: true, limit: '15kb' }))
 
+/**
+ * Static files @TODO(sfount) move to seperate file
+ * - we could even consider offloading this onto the reverse auth proxy
+ */
+
+// @TODO(sfount) cache fonts and versioned CSS assets on the client for up to a
+// year - this will drastically reduce the number of requests to the server
+const temporaryCachingMechanism = { maxage: '1y' }
+app.use('/public', express.static(path.join(config.common.TOOLBOX_FILE_ROOT, 'app/public'), temporaryCachingMechanism))
+app.use('/assets/fonts', express.static(path.join(config.common.TOOLBOX_FILE_ROOT, 'node_modules/govuk-frontend/assets/fonts'), temporaryCachingMechanism))
 /**
  * Sessions @TODO(sfount) move to seperate file
  * - note sessions may not have to be handled by this application at all
@@ -69,7 +85,17 @@ if (!config.common.production) {
   templateRendererConfig.watch = true
 }
 
-nunjucks.configure('app/web/components', templateRendererConfig)
+// include both templates from this repository and from govuk frontend
+const templatePathRoots = [
+  path.join(config.common.TOOLBOX_FILE_ROOT, 'node_modules/govuk-frontend'),
+  'app/web/components'
+]
+
+// nunjucks.configure(templatePathRoots, templateRendererConfig)
+const templaterEnvironment = nunjucks.configure(templatePathRoots, templateRendererConfig)
+
+// make static manifest details available to all templates
+templaterEnvironment.addGlobal('manifest', staticResourceManifest)
 
 /**
  * Routing @TODO(sfount) consider if this should be a seperate file

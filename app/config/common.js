@@ -14,6 +14,7 @@
 const Joi = require('joi')
 
 const expectedCommonEnvironmentValues = {
+  TOOLBOX_FILE_ROOT: Joi.string().required(),
   NODE_ENV: Joi.string().valid(['development', 'production', 'test']).required()
 }
 

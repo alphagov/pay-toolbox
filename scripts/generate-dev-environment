@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# remove existing environment files
+rm -f .env 
+touch .env
+
+# @TODO(sfount) this should be done much better if it's actually used
+echo "PORT=3030" >> .env
+echo "NODE_ENV=development" >> .env 
+echo "TOOLBOX_FILE_ROOT=$PWD" >> .env

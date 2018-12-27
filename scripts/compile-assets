@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# @TODO(sfount) move to simple Javascript scripts that
+# 1. build sass 
+# 2. generate unique hash uuid 
+# 3. generate a manifesto.json
+
+# Ensure structure for writing file exists
+mkdir -p app/public
+
+# Cleanup previous builds for SASS 
+rm -f app/public/payuk-toolbox*
+
+# Build CSS from SASS root document
+APPLICATION_SASS="app/assets/payuk-toolbox.scss"
+BUILD_FOLDER="app/public"
+BUILD_TARGET="payuk-toolbox"
+
+MANIFEST_TARGET="app/public/manifest.json"
+
+TEMP_FILE="$BUILD_FOLDER/$BUILD_TARGET.tmp"
+node-sass --output-style compressed $APPLICATION_SASS > $TEMP_FILE
+
+# Version file based on file hash
+HASH=$(md5 -q $TEMP_FILE)
+OUT_FILE="$BUILD_FOLDER/$BUILD_TARGET-$HASH.css"
+
+mv $TEMP_FILE $OUT_FILE
+echo "Application styles compiled ($OUT_FILE)"
+
+# Write a manifest to be used by templating libraries pointing to this resource
+echo "{ \"payuk-toolbox.css\": \"public/$BUILD_TARGET-$HASH.css\" }" > $MANIFEST_TARGET
+echo "Asset manifest written ($MANIFEST_TARGET)"

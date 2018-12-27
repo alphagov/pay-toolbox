@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Pay Toolbox (Revised)</title>
+
+  <!-- @TODO(sfount) potentially move this to includes:style.njk -->
+  <link rel="stylesheet" href="{{ manifest['payuk-toolbox.css'] }}">
+</html>
+<body class="govuk-template__body js-enabled">
+
+  <!-- taken from legacy design - this could potentially be split for /v1 /v2 -->
+  <div class="govuk-width-container">
+
+    <div class="govuk-main-wrapper">
+
+      <!-- @TODO(sfount) move to header njk -->
+      <div class="govuk-grid-row">
+        <h2 class="govuk-heading-l">Pay Toolbox (Revised)</h2>
+      </div>
+
+      <div class="govuk-grid-row">
+        {% block main %}
+        {% endblock %}
+      </div>
+    </div>
+
+    <!-- div class="govuk-phase-banner">
+      <div class="govuk-phase-banner__content">
+        <strong class="govuk-tag govuk-phase-banner__content__tag">COOL</strong>
+        <span class="govuk-phase-banner__text">This is the banner text, contribute to this etc.</span>
+      </div>
+    </div -->
+  </div>
+</body>
+</html>

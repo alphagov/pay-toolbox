@@ -1,3 +1,6 @@
+# Compiled assets 
+app/public 
+
 # Logs 
 npm-debug.log*
 
