@@ -8,3 +8,11 @@ touch .env
 echo "PORT=3030" >> .env
 echo "NODE_ENV=development" >> .env 
 echo "TOOLBOX_FILE_ROOT=$PWD" >> .env
+
+# URLs line up with local tunnel mappings found in pay cli
+# note development build environments will probably not be HTTPS
+echo "ADMINUSERS_URL=http://localhost:9001" >> .env
+echo "CONNECTOR_URL=http://localhost:9003" >>.env 
+echo "DIRECT_DEBIT_CONNECTOR_URL=http://localhost:9004" >>.env
+echo "PRODUCTS_URL=http://localhost:9005" >>.env
+echo "PUBLIC_AUTH_URL=http://localhost:9006" >>.env

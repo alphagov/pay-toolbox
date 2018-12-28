@@ -1,3 +1,4 @@
+{% from "components/phase-banner/macro.njk" import govukPhaseBanner %}
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
 <head>
@@ -13,12 +14,28 @@
 
   <!-- taken from legacy design - this could potentially be split for /v1 /v2 -->
   <div class="govuk-width-container">
+    <div class="govuk-grid-row">
+      <h2 class="govuk-heading-m">Pay Toolbox (Revised)</h2>
 
-    <div class="govuk-main-wrapper">
+      <!--div class="govuk-form-group">
+        <label class="govuk-label">
 
+        </label>
+      </div-->
+    </div>
+  </div>
+  <div class="govuk-width-container">
+
+    <div class="govuk-main-wrapper govuk-!-padding-top-0">
       <!-- @TODO(sfount) move to header njk -->
+
       <div class="govuk-grid-row">
-        <h2 class="govuk-heading-l">Pay Toolbox (Revised)</h2>
+        {{
+          govukPhaseBanner({
+            tag: { text: 'alpha' },
+            html: 'This tool is in active development. It should not be used in production.'
+          })
+        }}
       </div>
 
       <div class="govuk-grid-row">
