@@ -39,8 +39,28 @@
       </div>
 
       <div class="govuk-grid-row">
-        {% block main %}
-        {% endblock %}
+
+        <!-- @TODO(sfount) temporary application structure pending design -->
+        <!-- @FIXME(sfount) revise - application navigation -->
+        <!-- @TODO(sfount) consider performance with side nav - it could be prebaked -->
+        <!-- @FIXME(sfount) > 100 ms performance concerns - could just be laptop battery -->
+        <div class="govuk-grid-column-one-quarter">
+          <h4 class="app-subnav__header">Statistics</h4>
+          <ul class="app-subnav__section">
+            <li class="app-subnav__section-item">
+              <a class="app-subnav__link govuk-link">Overview</a>
+            </li>
+            <li class="app-subnav__section-item">
+              <a class="app-subnav__link govuk-link">By Service</a>
+            </li>
+
+          </ul>
+        </div>
+
+        <div class="govuk-grid-column-three-quarters">
+          {% block main %}
+          {% endblock %}
+        </div>
       </div>
     </div>
 

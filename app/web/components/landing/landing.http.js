@@ -19,10 +19,10 @@ const root = async function root (req, res, next) {
   // up to be handled at HTTP level - HTTP can choose to pass errors on to
   // middleware or handle them internally
   try {
-  const serviceStatuses = await landing.serviceStatus()
+    const serviceStatuses = await landing.serviceStatus()
 
-  console.log('got service status', serviceStatuses)
-  res.render('landing/landing', { serviceStatuses })
+    console.log('got service status', serviceStatuses)
+    res.render('landing/landing', { serviceStatuses })
   } catch (error) {
     console.log('top level HTTP error handling caught error')
     logger.error(error)

@@ -1,1 +1,10 @@
+/*  @TODO(sfount) only import the exact scss from frontend that is required */
+/* goal is to reduce the CSS file size */
 @import "node_modules/govuk-frontend/all"; 
+
+
+/* @TODO(sfount) move this to relevent scss file - try and use standard frontend styles */ 
+.app-subnav__header { 
+  margin: 0;
+  color: $govuk-secondary-text-colour;
+}
