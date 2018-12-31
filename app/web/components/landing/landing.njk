@@ -1,6 +1,20 @@
 {% extends "layout/layout.njk" %}
 
 {% block main %}
-  <p>Landing content</p>
+
+  {% for service in serviceStatuses.results %}
+    <div>
+      {% if service.healthCheckPassed %}
+        <span>CONNECTED</span>
+      {% else %}
+        <span>DISCONNECTED</span>
+      {% endif %}
+      <span> {{ service.name }}</span>
+    </div>
+  {% endfor %}
+
+  <div>
+    <span>Last health check performed at {{ serviceStatuses.completedAt }}</span>
+  </div>
 {% endblock %}
 

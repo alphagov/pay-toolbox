@@ -9,12 +9,12 @@
 const axios = require('axios')
 const url = require('url')
 
-const services = require('./services')
+const serviceStore = require('./services.store')
 
 // create a generic client that can be used for all queries, specialised
 // clients that include security headers could also be modelled
 const request = async function request (baseUrl, path) {
-  const target = url.join(baseUrl, path)
+  const target = url.resolve(baseUrl, path)
   /*
   const reponse = await axios.get(target)
   if (repsonse.status !== 200) {
@@ -31,7 +31,7 @@ const request = async function request (baseUrl, path) {
 
 // make a request on behalf of a service
 const service = async function service (serviceKey, path) {
-  const service = services.lookup(serviceKey)
+  const service = serviceStore.lookup(serviceKey)
 
   if (!service) {
     throw new Error(`Unrecognised service key provided: ${serviceKey}`)

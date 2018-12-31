@@ -8,9 +8,12 @@
 
 // note: services helper library doing health checks may be a good abstraction
 // here
-const services = require('./../../lib/services')
+const services = require('./../../../lib/services')
+console.log('got lib services', services)
 
 // fetches the results of all connected services health checks
-const landing = async function lannding () {
+const serviceStatus = async function lannding () {
   return services.healthCheck()
 }
+
+module.exports = { serviceStatus }
