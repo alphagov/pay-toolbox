@@ -34,7 +34,7 @@ const app = express()
 /**
  * Body Parsing @TODO(sfount) move to seperate file
  */
-// app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }))
 
 // allow parsing JSON
 app.use(bodyParser.json({ strict: true, limit: '15kb' }))

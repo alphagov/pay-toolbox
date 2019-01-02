@@ -15,8 +15,9 @@ const serviceStore = require('./services.store')
 
 // create a generic client that can be used for all queries, specialised
 // clients that include security headers could also be modelled
-const request = async function request (baseUrl, path) {
+const request = async function request (baseUrl, path, params) {
   const target = url.resolve(baseUrl, path)
+  const options = {}
   /*
   const reponse = await axios.get(target)
   if (repsonse.status !== 200) {
@@ -24,7 +25,11 @@ const request = async function request (baseUrl, path) {
   }
   return response.data
   */
-  return axios.get(target)
+
+  if (params) {
+    options.params = params
+  }
+  return axios.get(target, options)
 }
 
 // @TODO(sfount) return an object that applies the correct service baseUrl
@@ -32,7 +37,7 @@ const request = async function request (baseUrl, path) {
 // for example const payapi = require('pay-request'); payapi.service(serviceKey).request...
 
 // make a request on behalf of a service
-const service = async function service (serviceKey, path) {
+const service = async function service (serviceKey, path, params) {
   // @FIXME(sfount) payapi should expose clients without string, i.e payapi.ADMIN_USERS.get
   const service = serviceStore.lookup(serviceKey)
 
@@ -40,7 +45,7 @@ const service = async function service (serviceKey, path) {
     throw new Error(`Unrecognised service key provided: ${serviceKey}`)
   }
 
-  const response = await request(service.target, path)
+  const response = await request(service.target, path, params)
   return response.data
 }
 

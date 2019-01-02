@@ -1,8 +1,8 @@
-const logger = require('./../../../lib/logger')
+// const logger = require('./../../../lib/logger')
 const payapi = require('./../../../lib/pay-request')
 
 // @FIXME(sfount) move to utility - see if there is a way of doing this in general on pay Node repos
-const toCurrencyString = function toCurrencyString(amount) {
+const toCurrencyString = function toCurrencyString (amount) {
   return `£${amount.toFixed(2)}`
 }
 
@@ -10,7 +10,7 @@ const toCurrencyString = function toCurrencyString(amount) {
 
 // @FIXME(sfount) this feels like confusing implementation logic and templating
 // currently done like this to simply use the govuk front end macros
-const formatOverviewStatsAsRows = function formatStatsAsRows(stats) {
+const formatOverviewStatsAsRows = function formatStatsAsRows (stats) {
   // @FIXME(sfount) replace these templates with a more robust library for currencies
   return [
     [ { text: 'Total Payments' }, { text: stats.total_volume } ],
@@ -56,4 +56,68 @@ const overview = async function overview (req, res, next) {
   }
 }
 
-module.exports = { overview }
+const isValidDate = function isValidDate (date) {
+  return date instanceof Date && !isNaN(date)
+}
+
+// @TODO(sfount) there is duplication here with overview
+const dateFilter = async function dateFilter (req, res, next) {
+  try {
+    // @TODO(sfount) this is enough logic to move it out of the HTTP response method
+    const API = 'CONNECTOR'
+    const statsPath = '/v1/api/reports/performance-report'
+
+    // @FIXME(sfount) clean this up - list expected params - require them, throw appropriate error if not (potentially use Joi library)
+    const dateFilter = new Date(req.body['filter-year'], req.body['filter-month'] - 1, req.body['filter-day'])
+
+    console.log('dateFilter', dateFilter)
+    if (!isValidDate(dateFilter)) {
+      throw new Error(`Invalid date paresed from POST body`)
+    }
+
+    const response = await payapi.service(API, statsPath, { date: JSON.stringify(dateFilter) })
+
+    res.render('statistics/overview', { dateFilter, stats: formatOverviewStatsAsRows(response) })
+  } catch (error) {
+    if (error.code === 'ECONNRESET') { }
+    if (error.response && error.response.status === 500) { }
+    next(error)
+  }
+}
+
+// @FIXME(sfount) this is completely duplicated from `dateFilter`
+const compareFilter = async function compareFilter (req, res, next) {
+  try {
+    const API = 'CONNECTOR'
+    const statsPath = '/v1/api/reports/performance-report'
+
+    const firstDateFilter = new Date(req.body['filter-first-year'], req.body['filter-first-month'] - 1, req.body['filter-first-day'])
+    const secondDateFilter = new Date(req.body['filter-second-year'], req.body['filter-second-month'] - 1, req.body['filter-second-day'])
+
+    if (!isValidDate(firstDateFilter) || !isValidDate(secondDateFilter)) {
+      throw new Error('Invalid date parsed from POST body')
+    }
+
+    const firstRequest = payapi.service(API, statsPath, { date: JSON.stringify(firstDateFilter) })
+    const secondRequest = payapi.service(API, statsPath, { date: JSON.stringify(secondDateFilter) })
+    const response = await Promise.all([firstRequest, secondRequest])
+
+    // the order of these probably isn't guaranteed @FIXME(sfount)
+    // @FIXME(sfount) this is not good code
+    res.render('statistics/comparison', { firstDateFilter, secondDateFilter, firstDateStats: formatOverviewStatsAsRows(response[0]), secondDateStats: formatOverviewStatsAsRows(response[1]) })
+  } catch (error) {
+    if (error.code === 'ECONNRESET') { }
+    if (error.response && error.response.status === 500) { }
+    next(error)
+  }
+}
+
+const dateFilterRequest = async function dateFilterRequest (req, res, next) {
+  res.render('statistics/filter_date')
+}
+
+const compareFilterRequest = async function dateCompareRequest (req, res, next) {
+  res.render('statistics/filter_comparison')
+}
+
+module.exports = { overview, dateFilter, dateFilterRequest, compareFilter, compareFilterRequest }

@@ -1,0 +1,33 @@
+{% from "components/date-input/macro.njk" import govukDateInput %}
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  <h1>Compare Connector Statistics by Date</h1>
+  
+  <form method="post" action="/statistics/compare/date">
+    {{ govukDateInput({
+        id: "filter-first",
+        namePrefix: "filter-first",
+        fieldset: { 
+          legend: { 
+            text: "First Day",
+            isPageHeading: false
+          }
+        }
+      })
+    }} 
+    {{ govukDateInput({
+        id: "filter-second",
+        namePrefix: "filter-second",
+        fieldset: { 
+          legend: { 
+            text: "Second Day",
+            isPageHeading: false
+          }
+        }
+      })
+    }} 
+    <button type="submit">Submit</button>
+  </form>
+
+{% endblock %}

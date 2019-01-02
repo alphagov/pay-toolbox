@@ -23,4 +23,12 @@ router.get('/', auth.secured, landing.root)
 // @TODO(sfount) consider splitting up routes into seperate routers
 router.get('/statistics', auth.secured, statistics.overview)
 
+// @deprecated (to be combined into single route/ page)
+router.get('/statistics/filter/date', auth.secured, statistics.dateFilterRequest)
+router.post('/statistics/filter/date', auth.secured, statistics.dateFilter)
+
+// @deprecated (to be combined into single route/ page)
+router.get('/statistics/compare/date', auth.secured, statistics.compareFilterRequest)
+router.post('/statistics/compare/date', auth.secured, statistics.compareFilter)
+
 module.exports = router

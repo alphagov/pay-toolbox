@@ -1,0 +1,22 @@
+{% from "components/date-input/macro.njk" import govukDateInput %}
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  <h1>Filter Connector Statistics by Date</h1>
+  
+  <form method="post" action="/statistics/filter/date">
+    {{ govukDateInput({
+        id: "filter",
+        namePrefix: "filter",
+        fieldset: { 
+          legend: { 
+            text: "Date to Filter",
+            isPageHeading: false
+          }
+        }
+      })
+    }}  
+    <button type="submit">Submit</button>
+  </form>
+
+{% endblock %}

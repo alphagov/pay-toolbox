@@ -2,12 +2,12 @@
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1>Statistics Overview</h1>
+  <h1>Connector Statistics Overview</h1>
   
   {{ govukTable({
-    caption: "Statistics from Connector",
-    firstCellIsHeader: true,
-    rows: stats
+      caption: dateFilter or "All Time",
+      firstCellIsHeader: true,
+      rows: stats
     })
   }}
 {% endblock %}

@@ -1,0 +1,21 @@
+<!-- @TODO(sfount) move this as an optionally templated piece in overview -->
+{% from "components/table/macro.njk" import govukTable %}
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  <h1>Connector Statistics Date Comparison</h1>
+  
+  {{ govukTable({
+      caption: firstDateFilter,
+      firstCellIsHeader: true,
+      rows: firstDateStats
+    })
+  }}
+  {{ govukTable({
+      caption: secondDateFilter,
+      firstCellIsHeader: true,
+      rows: secondDateStats
+    })
+  }}
+
+{% endblock %}
