@@ -1,0 +1,82 @@
+<!-- @TODO(sfount) local Javascript should be compiled/ built to do verification for forms -->
+<!-- - this might even be easiest with preact although basic validation to start -->
+{% from "components/input/macro.njk" import govukInput %}
+{% from "components/radios/macro.njk" import govukRadios %}
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  <h1>Create New Gateway Account</h1>
+
+  <form>
+
+    {{ govukRadios({
+      classes: "govuk-radios--inline",
+      idPrefix: "live",
+      name: "live",
+      fieldset: { 
+        legend: { 
+          text: "Live Status",
+          isPageHeading: false
+        }
+      }, 
+      items: [
+        { value: "live", text: "Live" },
+        { value: "not-live", text: "Not Live" }
+      ]
+    })
+    }}
+
+    <!-- @TODO(sfount) override govuk radios style to make them fit on a single page -->
+    {{ govukRadios({
+      classes: "govuk-radios--inline",
+      idPrefix: "paymentMethod",
+      name: "paymentMethod",
+      fieldset: { 
+        legend: { 
+          text: "Payment Method",
+          isPageHeading: false
+        }
+      }, 
+      items: [
+        { value: "card", text: "Card" },
+        { value: "direct-debit", text: "Direct Debit" }
+      ]
+    })
+    }}
+
+    {{ govukRadios({
+      classes: "govuk-radios--inline",
+      idPrefix: "provider",
+      name: "provider",
+      fieldset: { 
+        legend: { 
+          text: "Provider",
+          isPageHeading: false
+        }
+      }, 
+      items: [
+        { divider: "Card" },
+        { value: "card-sandbox", text: "Sandbox" },
+        { value: "worldpay", text: "Worldpay" },
+        { value: "smartpay", text: "Smartpay" },
+        { value: "epdq", text: "Epdq" },
+        { divider: "Direct Debit" },
+        { value: "direct-debit-sandbox", text: "Sandbox" },
+        { value: "gocardless", text: "Gocardless" }
+      ]
+    })
+    }}
+
+    {{ govukInput({
+      id: "name",
+      name: "name",
+      label: { text: "Service Name" }
+      })
+    }}
+
+
+  
+  </form>
+        
+  
+{% endblock %}

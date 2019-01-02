@@ -8,6 +8,7 @@ const auth = require('./../lib/auth')
 // Component imports
 const landing = require('./components/landing/landing.http')
 const statistics = require('./components/statistics/statistics.http')
+const gatewayAccounts = require('./components/gateway_accounts/gateway_accounts.http.js')
 
 // @TODO(sfount) remove comment - router can now have its own middleware
 // specified seperately from the application - the overall application
@@ -30,5 +31,10 @@ router.post('/statistics/filter/date', auth.secured, statistics.dateFilter)
 // @deprecated (to be combined into single route/ page)
 router.get('/statistics/compare/date', auth.secured, statistics.compareFilterRequest)
 router.post('/statistics/compare/date', auth.secured, statistics.compareFilter)
+
+router.get('/statistics/services', auth.secured, statistics.byServices)
+
+router.get('/gateway_accounts', auth.secured, gatewayAccounts.overview)
+router.get('/gateway_accounts/create', auth.secured, gatewayAccounts.create)
 
 module.exports = router

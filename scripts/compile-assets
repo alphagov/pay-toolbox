@@ -29,5 +29,5 @@ mv $TEMP_FILE $OUT_FILE
 echo "Application styles compiled ($OUT_FILE)"
 
 # Write a manifest to be used by templating libraries pointing to this resource
-echo "{ \"payuk-toolbox.css\": \"public/$BUILD_TARGET-$HASH.css\" }" > $MANIFEST_TARGET
+echo "{ \"payuk-toolbox.css\": \"/public/$BUILD_TARGET-$HASH.css\" }" > $MANIFEST_TARGET
 echo "Asset manifest written ($MANIFEST_TARGET)"

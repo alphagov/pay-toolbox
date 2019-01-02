@@ -1,0 +1,21 @@
+{% from "components/table/macro.njk" import govukTable %}
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  <h1>Statistics By Service</h1>
+  
+  {{ govukTable({
+      caption: "Connector gateway account report by service",
+      firstCellIsHeader: false,
+      head: [
+        { text: "Service" },
+        { text: "Total Volume" },
+        { text: "Total Amount" },
+        { text: "Avg. Amount" },
+        { text: "Min Amount" },
+        { text: "Max Amount" }
+      ],
+      rows: stats
+    })
+  }}
+{% endblock %}
