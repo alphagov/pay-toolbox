@@ -9,6 +9,8 @@
 const axios = require('axios')
 const url = require('url')
 
+const config = require('./../config')
+const logger = require('./logger')
 const serviceStore = require('./services.store')
 
 // create a generic client that can be used for all queries, specialised
@@ -31,13 +33,23 @@ const request = async function request (baseUrl, path) {
 
 // make a request on behalf of a service
 const service = async function service (serviceKey, path) {
+  // @FIXME(sfount) payapi should expose clients without string, i.e payapi.ADMIN_USERS.get
   const service = serviceStore.lookup(serviceKey)
 
   if (!service) {
     throw new Error(`Unrecognised service key provided: ${serviceKey}`)
   }
 
-  return request(service.target, path)
+  const response = await request(service.target, path)
+  return response.data
+}
+
+// allow REST client debugging
+if (!config.common.production) {
+  axios.interceptors.request.use((request) => {
+    logger.debug(`[Pay Request] "${request.method}" request for ${request.url}`)
+    return request
+  })
 }
 
 module.exports = { request, service }

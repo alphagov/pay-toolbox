@@ -8,20 +8,24 @@
   <title>Pay Toolbox (Revised)</title>
 
   <!-- @TODO(sfount) potentially move this to includes:style.njk -->
-  <link rel="stylesheet" href="{{ manifest['payuk-toolbox.css'] }}">
+  <!-- link rel="stylesheet" href="{{ manifest['payuk-toolbox.css'] }}" -->
 </html>
 <body class="govuk-template__body js-enabled">
+
+<!-- @TODO(sfount) use header style from docs like pages (thinner black bar 
+  and full blue bar underneath - search bar on the right -->
+  <!-- as found on https://design-system.service.gov.uk/ -->
+
+  <!-- header class="govuk-header">
+    <div class="govuk-header__container govuk-width-container">
+      <span style="font-size: 1.5rem; line-height: 1.25">Pay Toolbox (Revised)</span>
+    </div>
+  </header -->
 
   <!-- taken from legacy design - this could potentially be split for /v1 /v2 -->
   <div class="govuk-width-container">
     <div class="govuk-grid-row">
       <h2 class="govuk-heading-m">Pay Toolbox (Revised)</h2>
-
-      <!--div class="govuk-form-group">
-        <label class="govuk-label">
-
-        </label>
-      </div-->
     </div>
   </div>
   <div class="govuk-width-container">
@@ -44,16 +48,34 @@
         <!-- @FIXME(sfount) revise - application navigation -->
         <!-- @TODO(sfount) consider performance with side nav - it could be prebaked -->
         <!-- @FIXME(sfount) > 100 ms performance concerns - could just be laptop battery -->
+        <!-- note a lot of these performance issues are from receiving error codes from non-connected services -->
+
         <div class="govuk-grid-column-one-quarter">
           <h4 class="app-subnav__header">Statistics</h4>
+          <!-- @TODO(sfount) move links etc. into small templates/ macros - make use of govuk front end utilites as much as possible -->
           <ul class="app-subnav__section">
             <li class="app-subnav__section-item">
-              <a class="app-subnav__link govuk-link">Overview</a>
+              <a class="app-subnav__link govuk-link" href="/statistics">Overview</a>
             </li>
             <li class="app-subnav__section-item">
-              <a class="app-subnav__link govuk-link">By Service</a>
+              <a class="app-subnav__link govuk-link" href="/statistics/filter/date">Filter By Date (deprecated)</a>
             </li>
+            <li class="app-subnav__section-item">
+              <a class="app-subnav__link govuk-link" href="/statistics/compare/date">Compare By Date (deprecated)</a>
+            </li>
+            <li class="app-subnav__section-item">
+              <a class="app-subnav__link govuk-link" href="/statistics/services">Services</a>
+            </li>
+          </ul>
 
+          <h4 class="app-subnav__header">Gateway Accounts</h4>
+          <ul class="app-subnav__section">
+            <li class="app-subnav__section-item">
+              <a class="app-subnav__link govuk-link" href="/gateway_accounts">Overview</a>
+            </li>
+            <li class="app-subnav__section-item">
+              <a class="app-subnav__link govuk-link" href="/gateway_accounts/create">Create New Account</a>
+            </li>
           </ul>
         </div>
 
@@ -71,5 +93,18 @@
       </div>
     </div -->
   </div>
+  <footer class="govuk-footer">
+    <div class="govuk-width-container">
+      <div class="govuk-footer__meta">
+        
+        <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+          <span class="govuk-footer__licsense-description">
+          <!-- span -->
+            To contribute or request features please follow this link.
+          </span>
+        </div>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

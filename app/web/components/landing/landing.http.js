@@ -19,13 +19,15 @@ const root = async function root (req, res, next) {
   // up to be handled at HTTP level - HTTP can choose to pass errors on to
   // middleware or handle them internally
   try {
+    // @TODO(sfount) if REDIS is implemented (cross thread safe caching) store this
+    // for minutes to not require blocking operation on multiple reloads
     const serviceStatuses = await landing.serviceStatus()
-
-    console.log('got service status', serviceStatuses)
     res.render('landing/landing', { serviceStatuses })
   } catch (error) {
-    console.log('top level HTTP error handling caught error')
-    logger.error(error)
+    // This will also be logged by the top level error handler
+    // @FIXME(sfount) print full stack track not just message
+    // @TODO(sfount) see https://github.com/winstonjs/winston/issues/1338 for printing full stack trace
+    logger.error(error.message)
     // this route isn't expecting any error behaviours - this is likely a 500
     // pass error on to be handled by final server error handler
     next(error)

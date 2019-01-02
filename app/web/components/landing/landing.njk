@@ -1,7 +1,7 @@
 {% extends "layout/layout.njk" %}
 
 {% block main %}
-
+  <h1>Services Health Check</h1>
   {% for service in serviceStatuses.results %}
     <div>
       {% if service.healthCheckPassed %}

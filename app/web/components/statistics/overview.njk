@@ -1,0 +1,13 @@
+{% from "components/table/macro.njk" import govukTable %}
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  <h1>Statistics Overview</h1>
+  
+  {{ govukTable({
+    caption: "Statistics from Connector",
+    firstCellIsHeader: true,
+    rows: stats
+    })
+  }}
+{% endblock %}

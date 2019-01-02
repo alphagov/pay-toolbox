@@ -9,9 +9,10 @@
 // note: services helper library doing health checks may be a good abstraction
 // here
 const services = require('./../../../lib/services')
-console.log('got lib services', services)
 
 // fetches the results of all connected services health checks
+// @TODO(sfount) small methods that coudl be inlined probably should be to reduce spider code
+// - could be moved into HTTP handler with so little functionality
 const serviceStatus = async function lannding () {
   return services.healthCheck()
 }

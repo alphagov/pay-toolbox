@@ -7,6 +7,7 @@ const auth = require('./../lib/auth')
 
 // Component imports
 const landing = require('./components/landing/landing.http')
+const statistics = require('./components/statistics/statistics.http')
 
 // @TODO(sfount) remove comment - router can now have its own middleware
 // specified seperately from the application - the overall application
@@ -18,5 +19,8 @@ const router = express.Router()
 // routes are auth.secured or should this be put in a middleware that is more
 // 'magic'
 router.get('/', auth.secured, landing.root)
+
+// @TODO(sfount) consider splitting up routes into seperate routers
+router.get('/statistics', auth.secured, statistics.overview)
 
 module.exports = router
