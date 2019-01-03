@@ -49,6 +49,18 @@ const service = async function service (serviceKey, path, params) {
   return response.data
 }
 
+// @FIXME(sfount) @TODO(sfount)temporary implementation - remove this
+const servicePost = async function servicePost (serviceKey, path, body) {
+  const service = serviceStore.lookup(serviceKey)
+
+  if (!service) {
+    throw new Error(`Unrecognised service key provided: ${serviceKey}`)
+  }
+
+  const response = await axios.post(url.resolve(service.target, path), body)
+  return response.data
+}
+
 // allow REST client debugging
 if (!config.common.production) {
   axios.interceptors.request.use((request) => {
@@ -57,4 +69,4 @@ if (!config.common.production) {
   })
 }
 
-module.exports = { request, service }
+module.exports = { request, service, servicePost }

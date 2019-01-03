@@ -1,0 +1,44 @@
+{% from "components/table/macro.njk" import govukTable %}
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  <h1>Confirm New Gateway Account Details</h1>
+
+  {{ govukTable({
+    caption: "Account Details",
+    firstCellIsHeader: true,
+    rows: [
+    [ { text: 'Payment Method' }, { text: proposedAccountDetails.paymentMethod } ],
+    [ { text: 'Account Type' }, { text: proposedAccountDetails.provider } ],
+    [ { text: 'Service Name' }, { text: proposedAccountDetails.name } ],
+    [ { text: 'Description' }, { text: proposedAccountDetails.generatedDescription or proposedAccountDetails.description } ],
+    [ { text: 'Google Analytics ID' }, { text: proposedAccountDetails.analytics_id } ],
+    [ { text: 'Is Live' }, { text: proposedAccountDetails.live } ],
+    [ { text: 'Credentials' }, { text: proposedAccountDetails.credentials } ]
+    ]
+  })
+  }}
+
+
+  
+  <form method="post" action="/gateway_accounts/create">
+    <!-- @TODO(sfount) Improve: Maintain values over confirmation -->
+    <input type="hidden" name="paymentMethod" value="{{ proposedAccountDetails.paymentMethod }}"> 
+    <input type="hidden" name="provider" value="{{ proposedAccountDetails.provider }}"> 
+    <input type="hidden" name="name" value="{{ proposedAccountDetails.name }}"> 
+    <input type="hidden" name="description" value="{{ proposedAccountDetails.description }}"> 
+
+    <!-- Not acitvely used - but cached if an error case is hit -->
+    <input type="hidden" name="department" value="{{ proposedAccountDetails.department }}"> 
+    <input type="hidden" name="serviceReference" value="{{ proposedAccountDetails.serviceReference }}"> 
+
+    <input type="hidden" name="generatedDescription" value="{{ proposedAccountDetails.generatedDescription }}"> 
+    <input type="hidden" name="generatedAnalyticsId" value="{{ proposedAccountDetails.generatedAnalyticsId }}"> 
+
+    <input type="hidden" name="live" value="{{ proposedAccountDetails.live }}"> 
+    <input type="hidden" name="credentials" value="{{ proposedAccountDetails.credentials }}"> 
+
+    <button type="submit">Submit</button>
+  </form>
+
+{% endblock %}

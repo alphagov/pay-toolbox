@@ -2,6 +2,12 @@
 
 {% block main %}
   <h1>Gateway Accounts</h1>
+
+  {% for message in messages %}
+    <div>
+      <p>{{ message }}</p>
+    </div>
+  {% endfor %}
   
   <!-- @FIXME(sfount) there must be a better way to do the headings etc. -->
   <!-- manual table used because macro is too simplistic -->

@@ -1,11 +1,13 @@
 const payapi = require('./../../../lib/pay-request')
 
+// @TODO(sfount) lots of tests ensuring the behaviour of creating account client + server validation
+
 // @FIXME(sfount) - WHAT IF:
 // - API rejects request
 const overview = async function overview (req, res, next) {
   try {
     const response = await payapi.service('CONNECTOR', '/v1/api/accounts')
-    res.render('gateway_accounts/overview', { accounts: response.accounts })
+    res.render('gateway_accounts/overview', { accounts: response.accounts, messages: req.flash('info') })
   } catch (error) {
     next(error)
   }
@@ -25,8 +27,8 @@ const create = async function create (req, res, next) {
 // @TODO(sfount) this should be moved to gateway account specific model
 const addDefaults = function addDefaults (details) {
   if (details.live === 'live') {
-    details.description = `${details.department} ${details.serviceReference} ${details.provider && details.provider.toUpperCase()}`
-    details.analytics_id = `${details.department}-${details.serviceReference}`
+    details.generatedDescription = `${details.department} ${details.serviceReference} ${details.provider && details.provider.toUpperCase()}`
+    details.generatedAnalyticsId = `${details.department}-${details.serviceReference}`
   }
   return Object.assign({}, details)
 }
@@ -39,6 +41,7 @@ const confirm = async function confirm (req, res, next) {
       throw new Error('Missing basic details (live status, payment method or payment provider)')
     }
     // ensure certain fields are provided if the user has requested a live account
+    // @TODO(sfount) look at using Joi library to do this
     // @TODO(sfount) should the "service" be the service ID? the service name?
     // @TODO(sfount) looks like the it's the service name according to other source
     // @TODO(sfount) small utility method to require properties on object to exist
@@ -49,10 +52,11 @@ const confirm = async function confirm (req, res, next) {
       // throwing these errors
       // @TODO(sfount) model class could convert 'live' 'not-live' text to Boolean
 
-      if (proposedAccountDetails.paymentMethod === 'sandbox' || proposedAccountDetails.paymentMethod === 'direct-debit-sandbox') {
-        throw new Error('Payment method cannot be Sanbox for live accounts')
+      if (proposedAccountDetails.provider === 'card-sandbox' || proposedAccountDetails.provider === 'direct-debit-sandbox') {
+        throw new Error('Payment method cannot be Sandbox for live accounts')
       }
 
+      // @TODO(sfount) this validation should be done whether it is live or not
       if (proposedAccountDetails.paymentMethod === 'card') {
         const validCardTypes = ['card-sandbox', 'worldpay', 'smartpay', 'epdq', 'stripe']
 
@@ -66,14 +70,17 @@ const confirm = async function confirm (req, res, next) {
           throw new Error(`Invalid Direct Debit method payment provider ${proposedAccountDetails.provider}`)
         }
       }
+
+      if (!proposedAccountDetails.department || !proposedAccountDetails.serviceReference) {
+        throw new Error('Department and department service must be set for live accounts')
+      }
     }
 
     if (!proposedAccountDetails.description || !proposedAccountDetails.name) {
       throw new Error('Description and service name are required for all accounts')
     }
 
-
-    throw new Error('Route isn\'t configured yet.')
+    res.render('gateway_accounts/confirm', { proposedAccountDetails })
   } catch (error) {
     // @FIXME(sfount) without careful tests this could end up exploding the cookie sent to the client
     req.session.recovered = proposedAccountDetails
@@ -83,9 +90,39 @@ const confirm = async function confirm (req, res, next) {
   }
 }
 
+const writeAccount = async function writeAccount (req, res, next) {
+  const account = req.body
+  try {
+    // @FIXME(sfount) re-validate and model account details
 
-const writeAccount = function writeAccount (req, res, next) {
+    // curate payload
+    // @TODO(sfount) this should be done in the model code
+    const payload = {
+      payment_provider: account.provider,
+      description: account.generatedDescription || account.description,
+      type: account.live === 'live' ? 'live' : 'test',
+      service_name: account.name
+    }
 
+    // @FIXME(sfount) all of this needs to be carefully tested
+    if (account.provider === 'stripe' && account.credentials) {
+      payload.credentials = account.credentials
+    }
+
+    if (account.generatedAnalyticsId) {
+      payload.analytics_id = account.generatedAnalyticsId
+    }
+
+    // @FIXME(sfount) very temporary usage of this - payapi should ideally return the REST client itself so that payapi.connector.get('relative/api/piece')
+    const response = await payapi.servicePost('CONNECTOR', '/v1/api/accounts', payload)
+
+    req.flash('info', `Gateway account ${response.gateway_account_id} generated`)
+    res.redirect('/gateway_accounts')
+  } catch (error) {
+    req.session.recovered = account
+    req.flash('error', error.message)
+    res.redirect('/gateway_accounts/create')
+  }
 }
 
 module.exports = { overview, create, confirm, writeAccount }
