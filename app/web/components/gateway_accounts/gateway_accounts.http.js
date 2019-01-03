@@ -1,3 +1,4 @@
+const logger = require('./../../../lib/logger')
 const payapi = require('./../../../lib/pay-request')
 
 // @TODO(sfount) lots of tests ensuring the behaviour of creating account client + server validation
@@ -125,4 +126,54 @@ const writeAccount = async function writeAccount (req, res, next) {
   }
 }
 
-module.exports = { overview, create, confirm, writeAccount }
+const detail = async function detail (req, res, next) {
+  const id = req.params.id
+
+  try {
+    let services = {}
+    const accountDetails = await payapi.service('CONNECTOR', `/v1/api/accounts/${id}`)
+
+    // special case for no services
+    try {
+      services = await payapi.service('ADMINUSERS', `/v1/api/services?gatewayAccountId=${id}`)
+    } catch (error) {
+      // 404 no service found for this gateway account returned from admin users
+      logger.info(`Admin users returned ${error.message} for gateway account [${id}]`)
+    }
+
+    res.render('gateway_accounts/detail', { accountDetails, services })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const apiKeys = async function apiKeys (req, res, next) {
+  const id = req.params.id
+
+  try {
+    const response = await payapi.service('PUBLICAUTH', `/v1/frontend/auth/${id}`)
+    const tokens = response.tokens
+
+    res.render('gateway_accounts/api_keys', { tokens, gatewayAccountId: id, messages: req.flash('info') })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const deleteApiKey = async function deleteApiKey (req, res, next) {
+  const accountId = req.params.accountId
+  const tokenId = req.params.tokenId
+
+  console.log('using tokenid', tokenId)
+
+  try {
+    const response = await payapi.serviceDelete('PUBLICAUTH', `/v1/frontend/auth/${accountId}`, { token_link: tokenId })
+
+    req.flash('info', `Token ${tokenId} successfully deleted`)
+    res.redirect(`/gateway_accounts/${accountId}/api_keys`)
+  } catch (error) {
+    next(error)
+  }
+}
+
+module.exports = { overview, create, confirm, writeAccount, detail, apiKeys, deleteApiKey }

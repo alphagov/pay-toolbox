@@ -36,6 +36,10 @@ router.get('/statistics/services', auth.secured, statistics.byServices)
 
 router.get('/gateway_accounts', auth.secured, gatewayAccounts.overview)
 router.get('/gateway_accounts/create', auth.secured, gatewayAccounts.create)
+router.get('/gateway_accounts/:id', auth.secured, gatewayAccounts.detail)
+
+router.get('/gateway_accounts/:id/api_keys', auth.secured, gatewayAccounts.apiKeys)
+router.get('/gateway_accounts/:accountId/api_keys/:tokenId/delete', auth.secured, gatewayAccounts.deleteApiKey)
 
 router.post('/gateway_accounts/create', auth.secured, gatewayAccounts.writeAccount)
 router.post('/gateway_accounts/create/confirm', auth.secured, gatewayAccounts.confirm)

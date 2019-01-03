@@ -1,0 +1,40 @@
+{% from "components/table/macro.njk" import govukTable %}
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  
+  <h1>Gateway Account | API Keys</h1>
+
+  {% for message in messages %}
+    <div><p>{{ message }}</p></div>
+  {% endfor %}
+  
+  <!-- @TODO(sfount) could provide a link back to the gateway account here -->
+
+  {% for token in tokens %}
+    {{ govukTable({
+    caption: "API Key",
+    firstCellIsHeader: true,
+    rows: [
+      [ { text: "Token" }, { text: token.token_link } ],
+      [ { text: "Issued Date" }, { text: token.last_used } ],
+      [ { text: "Description" }, { text: token.description } ],
+      [ { text: "Token Type" }, { text: token.token_type } ],
+      [ { text: "Created By" }, { text: token.created_by } ]
+    ]
+    })
+    }}
+
+    <div>
+      <h4>Actions</h4>
+      <form method="get" action="/gateway_accounts/{{ gatewayAccountId }}/api_keys/{{ token.token_link }}/delete">
+        <button type="submit">Delete API Key</button>
+      </form>
+    </div>
+  {% endfor %}
+
+
+  <div>
+    <pre><code>{{ tokens | dump | safe }}</code></pre>
+  </div>
+{% endblock %}

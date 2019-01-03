@@ -1,0 +1,32 @@
+{% from "components/table/macro.njk" import govukTable %}
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  
+  <h1>Gateway Account Details</h1>
+
+  <!-- actions -->
+  <div>
+    <a href="/gateway_accounts/{{ accountDetails.gateway_account_id }}/api_keys">API Keys</a>
+    <!-- button>Payment Links</button -->
+  </div>
+
+  {{ govukTable({
+    caption: "Account Details",
+    firstCellIsHeader: true,
+    rows: [
+    [ { text: 'Gateway Account ID' }, { text: accountDetails.gateway_account_id } ],
+    [ { text: 'Type' }, { text: accountDetails.type.toUpperCase() } ],
+    [ { text: 'Description' }, { text: accountDetails.description } ],
+    [ { text: 'Provider' }, { text: accountDetails.payment_provider } ],
+    [ { text: 'Service' }, { text: accountDetails.service_name } ],
+    [ { text: 'Analytics' }, { text: accountDetails.analytics_id } ]
+    ]
+  })
+  }}
+
+  <div>
+    <pre><code>{{ accountDetails | dump | safe }}</code></pre>
+    <pre><code>{{ services | dump | safe }}</code></pre>
+  </div>
+{% endblock %}

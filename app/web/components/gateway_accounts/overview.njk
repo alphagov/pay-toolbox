@@ -25,7 +25,7 @@
     <tbody class="govuk-table__body">
       {% for account in accounts %}
       <tr class="govuk-table__row">
-        <td class="govuk-table__cell">{{ account.gateway_account_id }}</td>
+        <td class="govuk-table__cell"><a href="/gateway_accounts/{{ account.gateway_account_id }}">{{ account.gateway_account_id }}</a></td>
         <td class="govuk-table__cell">{{ account.type }}</td> 
         <td class="govuk-table__cell">{{ account.payment_provider }}</td> 
         <td class="govuk-table__cell">{{ account.service_name }}</td> 

@@ -61,6 +61,18 @@ const servicePost = async function servicePost (serviceKey, path, body) {
   return response.data
 }
 
+// @FIXME(sfount) remove this remove this remove this
+const serviceDelete = async function serviceDelete(serviceKey, path, body) {
+  const service = serviceStore.lookup(serviceKey)
+
+  if (!service) {
+    throw new Error(`Unrecognised service key provided: ${serviceKey}`)
+  }
+
+  const response = await axios.delete(url.resolve(service.target, path), { data: body })
+  return response.data
+}
+
 // allow REST client debugging
 if (!config.common.production) {
   axios.interceptors.request.use((request) => {
@@ -69,4 +81,4 @@ if (!config.common.production) {
   })
 }
 
-module.exports = { request, service, servicePost }
+module.exports = { request, service, servicePost, serviceDelete }
