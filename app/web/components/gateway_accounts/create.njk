@@ -1,5 +1,7 @@
 <!-- @TODO(sfount) local Javascript should be compiled/ built to do verification for forms -->
 <!-- - this might even be easiest with preact although basic validation to start -->
+<!-- @TODO(sfount) visual indication of required - visual indiciation of required w/ live accounts -->
+<!-- @TODO(sfount) lots of ui/ pact tests for complete account creation process -->
 {% from "components/input/macro.njk" import govukInput %}
 {% from "components/radios/macro.njk" import govukRadios %}
 {% extends "layout/layout.njk" %} 
@@ -7,8 +9,13 @@
 {% block main %}
   <h1>Create New Gateway Account</h1>
 
-  <form>
+  {% for message in messages %}
+    <div>{{ message }}</div>
+  {% endfor %}
 
+  <form method="post" action="/gateway_accounts/create/confirm">
+    <!-- @TODO(sfount) consider using standard markup vs. macros --> 
+    <!-- @TODO(sfount) repopulating values in this method is very manual -->
     {{ govukRadios({
       classes: "govuk-radios--inline",
       idPrefix: "live",
@@ -20,8 +27,8 @@
         }
       }, 
       items: [
-        { value: "live", text: "Live" },
-        { value: "not-live", text: "Not Live" }
+        { value: "live", text: "Live", checked: recovered.live === "live" },
+        { value: "not-live", text: "Not Live", checked: recovered.live === "not-live" }
       ]
     })
     }}
@@ -38,8 +45,8 @@
         }
       }, 
       items: [
-        { value: "card", text: "Card" },
-        { value: "direct-debit", text: "Direct Debit" }
+        { value: "card", text: "Card", checked: recovered.paymentMethod === "card"  },
+        { value: "direct-debit", text: "Direct Debit", checked: recovered.paymentMethod === "direct-debit" }
       ]
     })
     }}
@@ -56,13 +63,13 @@
       }, 
       items: [
         { divider: "Card" },
-        { value: "card-sandbox", text: "Sandbox" },
-        { value: "worldpay", text: "Worldpay" },
-        { value: "smartpay", text: "Smartpay" },
-        { value: "epdq", text: "Epdq" },
+        { value: "card-sandbox", text: "Sandbox", checked: recovered.provider === "card-sandbox" },
+        { value: "worldpay", text: "Worldpay", checked: recovered.provider === "worldpay" },
+        { value: "smartpay", text: "Smartpay", checked: recovered.provider === "smartpay" },
+        { value: "epdq", text: "Epdq", checked: recovered.provider === "epdq" },
         { divider: "Direct Debit" },
-        { value: "direct-debit-sandbox", text: "Sandbox" },
-        { value: "gocardless", text: "Gocardless" }
+        { value: "direct-debit-sandbox", text: "Sandbox", checked: recovered.provider === "direct-debit-sandbox" },
+        { value: "gocardless", text: "Gocardless", checked: recovered.provider === "gocardless" }
       ]
     })
     }}
@@ -70,13 +77,44 @@
     {{ govukInput({
       id: "name",
       name: "name",
+      value: recovered.name,
       label: { text: "Service Name" }
       })
     }}
+    
+    {{ govukInput({
+      id: "department",
+      name: "department",
+      value: recovered.department,
+      label: { text: "Department" }
+      })
+    }}
+    
+    {{ govukInput({
+      id: "serviceReference",
+      name: "serviceReference",
+      value: recovered.serviceReference,
+      label: { text: "Service? (Reference?)" }
+      })
+    }}
+    
+    {{ govukInput({
+      id: "description",
+      name: "description",
+      value: recovered.description,
+      label: { text: "Description" }
+      })
+    }}
+    
+    {{ govukInput({
+      id: "credentials",
+      name: "credentials",
+      value: recovered.credentials,
+      label: { text: "Credentials" }
+      })
+    }}
 
+    <button type="submit">Submit</button>
 
-  
   </form>
-        
-  
 {% endblock %}

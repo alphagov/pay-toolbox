@@ -37,4 +37,7 @@ router.get('/statistics/services', auth.secured, statistics.byServices)
 router.get('/gateway_accounts', auth.secured, gatewayAccounts.overview)
 router.get('/gateway_accounts/create', auth.secured, gatewayAccounts.create)
 
+router.post('/gateway_accounts/create', auth.secured, gatewayAccounts.writeAccount)
+router.post('/gateway_accounts/create/confirm', auth.secured, gatewayAccounts.confirm)
+
 module.exports = router

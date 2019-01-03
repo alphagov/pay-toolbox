@@ -4,11 +4,16 @@
  * - this should potentially move from modules into web or config or something
  *   that represents it's group
  */
+
+// @TODO(sfount) @FIXME(sfount) decide between client-session and cookie-session libraries
+// - remove the one that isn't used
 const path = require('path')
 
 const express = require('express')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
+const flash = require('connect-flash')
+const cookieSession = require('cookie-session')
 
 // @TODO(sfount) cookie-parser may be required
 // https://github.com/expressjs/cookie-parser
@@ -40,6 +45,11 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json({ strict: true, limit: '15kb' }))
 
 /**
+ * Flash messages - this can be removed if error reporting is moved to its own page
+ */
+app.use(flash())
+
+/**
  * Static files @TODO(sfount) move to seperate file
  * - we could even consider offloading this onto the reverse auth proxy
  */
@@ -65,6 +75,21 @@ app.use('/assets/fonts', express.static(path.join(config.common.TOOLBOX_FILE_ROO
 //   }
 // }
 // app.use(cookieSession(sessionConfig))
+
+// @TODO(sfount) note cookie sessions currently used to track progress through create/confirm/error pages
+// these should be evaluated when it comes to the reverse proxy process, secure auth headers could be used for this
+// @TODO(sfount) perforamnce implications of cookie parsing and serving should be considered
+// app.use(cookieSession({
+//   cookieName: 'pay-toolbox-revised-cookies',
+//   secret: 'secret-cryptographically-secure',
+//   duration: '24h',
+//   activeDuration: '5m'
+// }))
+app.use(cookieSession({
+  name: 'pay-toolbox-revised-cookies',
+  keys: ['secret-cryptographically-secure'],
+  maxAge: '24h'
+}))
 
 /**
  * HTTP Logging @TODO(sfount) move to seperate file
