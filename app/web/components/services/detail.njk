@@ -5,6 +5,10 @@
   
   <h1>Service Details</h1>
 
+  {% for message in messages %}
+    <div><p>{{message}}</p>
+  {% endfor %}
+
   <!-- actions -->
   <div>
     <!-- a href="/gateway_accounts/{{ accountDetails.gateway_account_id }}/api_keys">API Keys</a -->
@@ -19,15 +23,15 @@
     [ { text: 'External ID' }, { text: service.external_id } ],
     [ { text: 'Name' }, { text: service.name } ],
     [ { text: 'Gateway Accounts' }, { text: service.gateway_account_ids } ],
-    [ { text: 'Service Users' }, { text: users } ]
+    [ { text: 'Service Users' }, { text: users | dump | safe } ]
     ]
   })
   }}
 
   <div>
     <h4>Actions</h4>
-    <a>Edit Custom Branding</a>
-    <a>Link Gateway Accounts</a>
+    <a href="/services/{{ serviceId }}/branding">Edit Custom Branding</a>
+    <a href="/services/{{ serviceId }}/link_accounts">Link Gateway Accounts</a>
   </div>
 
   <div>

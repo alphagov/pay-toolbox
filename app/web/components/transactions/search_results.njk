@@ -1,0 +1,35 @@
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  <h1>Transaction Search Results</h1>
+
+  <table class="govuk-table">
+    <caption class="govuk-table__caption">Results</caption>
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Type</th>
+        <th class="govuk-table__header" scope="col">State</th>
+        <th class="govuk-table__header" scope="col">Finished</th>
+        <th class="govuk-table__header" scope="col">Amount</th>
+        <th class="govuk-table__header" scope="col">Updated</th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      {% for event in events %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">{{ event.type }}</td>
+        <td class="govuk-table__cell">{{ event.state.status }}</td> 
+        <td class="govuk-table__cell">{{ event.state.finished }}</td> 
+        <td class="govuk-table__cell">{{ event.amount }}</td> 
+        <td class="govuk-table__cell">{{ event.updated }}</td> 
+      </tr>
+      {% else %}
+      <!-- @TODO(sfount) test this -->
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell" colspan="4">No events found for this transaction search</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

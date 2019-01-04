@@ -1,0 +1,50 @@
+{% from "components/input/macro.njk" import govukInput %}
+{% from "components/radios/macro.njk" import govukRadios %}
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  <h1>Search Transactions</h1>
+  
+  {% for message in messages %}
+    <div><p>{{ message }}</p></div>
+  {% endfor %}
+
+  <form method="POST" action="/transactions/search">
+    {{ govukInput({ 
+      id: "account_id",
+      name: "account_id",
+      value: recovered.account_id,
+      label: { text: "Gateway Account ID" }
+      })
+      }}
+
+  {{ govukRadios({
+      classes: "govuk-radios--inline",
+      idPrefix: "search_by",
+      name: "search_by",
+      fieldset: { 
+        legend: { 
+          text: "Search By",
+          isPageHeading: false
+        }
+        },
+      hint: { text: "Search for transactions by Charge ID, or by the reference set by the service when creating the payment" },
+      items: [
+        { value: "chargeId", text: "Charge ID", checked: recovered.search_by === "chargeId" },
+        { value: "reference", text: "Reference", checked: recovered.search_by === "reference" }
+      ]
+    })
+    }}
+    
+    {{ govukInput({ 
+      id: "search_string",
+      name: "search_string",
+      value: recovered.search_string,
+      label: { text: "Search String" }
+      })
+      }}
+
+      
+      <button type="submit">Submit</button>
+  </form>
+{% endblock %}

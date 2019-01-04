@@ -50,14 +50,16 @@ const service = async function service (serviceKey, path, params) {
 }
 
 // @FIXME(sfount) @TODO(sfount)temporary implementation - remove this
-const servicePost = async function servicePost (serviceKey, path, body) {
+const servicePost = async function servicePost (serviceKey, path, body, usePatch=false) {
   const service = serviceStore.lookup(serviceKey)
 
   if (!service) {
     throw new Error(`Unrecognised service key provided: ${serviceKey}`)
   }
 
-  const response = await axios.post(url.resolve(service.target, path), body)
+  // @TODO(sfount) fix everything!
+  const method = usePatch ? axios.patch : axios.post
+  const response = await method(url.resolve(service.target, path), body)
   return response.data
 }
 

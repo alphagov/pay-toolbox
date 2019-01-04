@@ -1,0 +1,21 @@
+{% from "components/input/macro.njk" import govukInput %}
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  <h1>Link Gateway Accounts</h1>
+
+  <!-- @TODO(sfount) provide uniform context for all editing/ detail pages showing which entity is being dealt with -->
+  <p>Note this is for service {{ serviceId }}</p>
+  
+  <form method="POST" action="/services/{{ serviceId }}/link_accounts">
+    {{ govukInput({ 
+      id: "account_id",
+      name: "account_id",
+      label: { text: "Gateway account ID to add" }
+      })
+      }}
+      
+      <button type="submit">Submit</button>
+  </form>
+
+{% endblock %}
