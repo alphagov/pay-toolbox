@@ -15,6 +15,11 @@ const cookieParser = require('cookie-parser')
 
 const logger = require('./logger')
 
+// @TODO(sfount) make sure to log when new authentication or non-active sessions have gained access
+// - auditing this software will be essential
+// - log (all logs) should show the users hash who had permission to perform actions - at least a way to look the user up
+// @FIXME(sfount) @TODO(sfount) see previous TODO
+
 // Simple middleware method to ensure that all `req` objects passed in have
 // sufficient access headers to access secured routes. Any route that specifies
 // `secured` will be rejected without these headers.

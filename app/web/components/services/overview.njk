@@ -1,0 +1,38 @@
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  <h1>Services</h1>
+
+  <!-- @FIXME(sfount) there must be a better way to do the headings etc. -->
+  <!-- manual table used because macro is too simplistic -->
+  <table class="govuk-table">
+    <caption class="govuk-table__caption">All Services</caption>
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Service Name</th>
+        <th class="govuk-table__header" scope="col">Go Live Status</th>
+        <!-- th class="govuk-table__header" scope="col">Type</th>
+        <th class="govuk-table__header" scope="col">Provider</th>
+        <th class="govuk-table__header" scope="col">Service</th>
+        <th class="govuk-table__header" scope="col">Actions</th -->
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      {% for service in services %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell"><a href="/services/{{ service.external_id }}">{{ service.name }}</a></td>
+        <td class="govuk-table__cell">{{ service.current_go_live_stage }}</td>
+        <!-- td class="govuk-table__cell">{{ account.type }}</td> 
+        <td class="govuk-table__cell">{{ account.payment_provider }}</td> 
+        <td class="govuk-table__cell">{{ account.service_name }}</td> 
+        <td class="govuk-table__cell"><a href="/transactions/{{ account.gateway_account_id }}">Transactions</a></td --> 
+      </tr>
+      {% else %}
+      <!-- @TODO(sfount) test this -->
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell" colspan="4">No services returned from connector.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

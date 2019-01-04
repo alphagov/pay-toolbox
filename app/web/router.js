@@ -8,7 +8,8 @@ const auth = require('./../lib/auth')
 // Component imports
 const landing = require('./components/landing/landing.http')
 const statistics = require('./components/statistics/statistics.http')
-const gatewayAccounts = require('./components/gateway_accounts/gateway_accounts.http.js')
+const gatewayAccounts = require('./components/gateway_accounts/gateway_accounts.http')
+const services = require('./components/services/services.http')
 
 // @TODO(sfount) remove comment - router can now have its own middleware
 // specified seperately from the application - the overall application
@@ -43,5 +44,8 @@ router.get('/gateway_accounts/:accountId/api_keys/:tokenId/delete', auth.secured
 
 router.post('/gateway_accounts/create', auth.secured, gatewayAccounts.writeAccount)
 router.post('/gateway_accounts/create/confirm', auth.secured, gatewayAccounts.confirm)
+
+router.get('/services', auth.secured, services.overview)
+router.get('/services/:id', auth.secured, services.detail)
 
 module.exports = router
