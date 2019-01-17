@@ -12,6 +12,12 @@ const overview = async function overview (req, res, next) {
     console.log('got services', services)
     res.render('services/overview', { services })
   } catch (error) {
+    // @TODO(sfount) all top level pages should handle services not being available
+    // @TODO(sfount) generic page letting users know that this service cannot be accessed
+    // @TODO(sfount) handled in middleware - ECONNRESET (just renders a different page?)
+    if (error.code === 'ECONNRESET') {
+      res.status(503).send('(503) Admin Users API is unavailable')
+    }
     next(error)
   }
 }

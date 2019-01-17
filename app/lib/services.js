@@ -42,7 +42,7 @@ const healthCheckRequest = async function healthCheckRequest (serviceKey) {
     await payapi.service(serviceKey, verb)
     return true
   } catch (error) {
-    logger.info(`Health check request to ${serviceKey} failed. Threw exception ${error.code}.`)
+    logger.debug(`Health check request to ${serviceKey} failed. Threw exception ${error.code}.`)
     return false
   }
 }

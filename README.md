@@ -1,5 +1,5 @@
 # Pay Toolbox (revised) 
-Internal administrative tools service for the GOV.UK Pay products.
+Internal administrative tools service for GOV.UK Pay products.
 
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
