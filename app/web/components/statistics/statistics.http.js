@@ -4,14 +4,14 @@
 const payapi = require('./../../../lib/pay-request')
 const { Connector } = require('./../../../lib/pay-request')
 
-const { DateFilter } = require('./dateFilter.model')
+const DateFilter = require('./dateFilter.model')
 
 const { wrapAsyncErrorHandlers } = require('./../../../lib/routes')
 
 // @FIXME(sfount) move to utility - see if there is a way of doing this in general on pay Node repos
+// @FIXME(sfount) move to templater macro type file (probably in global config)
 const toCurrencyString = amount => `£${amount.toFixed(2)}`
 
-// @FIXME(sfount) move to templater macro type file (probably in global config)
 
 // @FIXME(sfount) this feels like confusing implementation logic and templating
 // currently done like this to simply use the govuk front end macros
@@ -35,62 +35,25 @@ const isValidDate = function isValidDate (date) {
 
 // @TODO(sfount) there is duplication here with overview
 const dateFilter = async function dateFilter (req, res, next) {
+  const { date } = new DateFilter(req.body)
+  const stats = await Connector.performanceReport({ date })
 
-  // model dates as DateFilter
-  // 1. handle ValidationError
-  // 2.
-  // n. make a statistics exceptions file
-  //
-  const report = await Connector.performanceReport()
-
-  try {
-    // @TODO(sfount) this is enough logic to move it out of the HTTP response method
-    const API = 'CONNECTOR'
-    const statsPath = '/v1/api/reports/performance-report'
-
-    // @FIXME(sfount) clean this up - list expected params - require them, throw appropriate error if not (potentially use Joi library)
-    const dateFilter = new Date(req.body['filter-year'], req.body['filter-month'] - 1, req.body['filter-day'])
-
-    console.log('dateFilter', dateFilter)
-    if (!isValidDate(dateFilter)) {
-      throw new Error(`Invalid date paresed from POST body`)
-    }
-
-    const response = await payapi.service(API, statsPath, { date: JSON.stringify(dateFilter) })
-
-    res.render('statistics/overview', { dateFilter, stats: formatOverviewStatsAsRows(response) })
-  } catch (error) {
-    if (error.code === 'ECONNRESET') { }
-    if (error.response && error.response.status === 500) { }
-    next(error)
-  }
+  // @FIXME(sfount) move this to the template - it shouldn't be in the controller - it is just to do with format
+  res.render('statistics/overview', { date, stats: formatOverviewStatsAsRows(stats) })
 }
 
 // @FIXME(sfount) this is completely duplicated from `dateFilter`
 const compareFilter = async function compareFilter (req, res, next) {
-  try {
-    const API = 'CONNECTOR'
-    const statsPath = '/v1/api/reports/performance-report'
+  const { date, compareDate } = new DateFilter(req.body)
 
-    const firstDateFilter = new Date(req.body['filter-first-year'], req.body['filter-first-month'] - 1, req.body['filter-first-day'])
-    const secondDateFilter = new Date(req.body['filter-second-year'], req.body['filter-second-month'] - 1, req.body['filter-second-day'])
+  // const report = Connector.performanceReport({ date })
+  // const compareReport = Connector.performanceReport({ date: compareDate })
+  const [ stats, compareStats ] = await Promise.all([
+    Connector.performanceReport({ date }),
+    Connector.performanceReport({ date: compareDate })
+  ])
 
-    if (!isValidDate(firstDateFilter) || !isValidDate(secondDateFilter)) {
-      throw new Error('Invalid date parsed from POST body')
-    }
-
-    const firstRequest = payapi.service(API, statsPath, { date: JSON.stringify(firstDateFilter) })
-    const secondRequest = payapi.service(API, statsPath, { date: JSON.stringify(secondDateFilter) })
-    const response = await Promise.all([firstRequest, secondRequest])
-
-    // the order of these probably isn't guaranteed @FIXME(sfount)
-    // @FIXME(sfount) this is not good code
-    res.render('statistics/comparison', { firstDateFilter, secondDateFilter, firstDateStats: formatOverviewStatsAsRows(response[0]), secondDateStats: formatOverviewStatsAsRows(response[1]) })
-  } catch (error) {
-    if (error.code === 'ECONNRESET') { }
-    if (error.response && error.response.status === 500) { }
-    next(error)
-  }
+  res.render('statistics/comparison', { date, compareDate, stats: formatOverviewStatsAsRows(stats), compareStats: formatOverviewStatsAsRows(compareStats) })
 }
 
 const byServices = async function byServices (req, res, next) {

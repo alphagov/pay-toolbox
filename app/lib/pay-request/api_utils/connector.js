@@ -1,8 +1,11 @@
 const connectorMethods = function connectorMethods (instance) {
   const axiosInstance = instance || this
 
-  const performanceReport = function performanceReport () {
-    return axiosInstance.get('/v1/api/reports/performance-report').then(utilExtractData)
+  const performanceReport = function performanceReport (params) {
+    const options = {}
+
+    if (params) options.params = params
+    return axiosInstance.get('/v1/api/reports/performance-report', options).then(utilExtractData)
   }
 
   // extract and standardise this - there should be no need to repeat this over and over

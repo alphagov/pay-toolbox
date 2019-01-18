@@ -42,6 +42,7 @@ const handleRequestErrors = function handleRequestErrors (error, req, res, next)
   if (error.name === ValidationError.name) {
     // @TODO(sfount) this is just a guess -- there could be any number of reasons for validation to fail
     res.status(400).render('common/error', { message: error.message })
+    return
   }
 
   next(error)

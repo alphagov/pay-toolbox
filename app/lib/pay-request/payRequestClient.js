@@ -69,12 +69,11 @@ const payBaseClient = function payBaseClient (service) {
   }, (error) => Promise.reject(error))
 
   instance.interceptors.response.use((response) => {
-    // console.log('r', response.status, response.config.method, response.config.url)
     // first pass at tracking how long requests take
     // @FIXME(sfount) move to method for calculating - potentially swap out Date object requirement
     response.config.metadata.end = new Date()
     response.config.metadata.duration = response.config.metadata.end - response.config.metadata.start
-    logger.debug(`[${service.key}] "${response.request.method}" response from ${response.config.url} (${response.config.metadata.duration}ms)`)
+    logger.debug(`[${service.key}] "${response.request.method}" success from ${response.config.url} (${response.config.metadata.duration}ms)`)
     return response
   }, (error) => {
     const code = error.response && error.response.status || error.code
@@ -82,7 +81,6 @@ const payBaseClient = function payBaseClient (service) {
     error.config.metadata.end = new Date()
     error.config.metadata.duration = error.config.metadata.end - error.config.metadata.start
     logger.debug(`[${service.key}] "${error.config.method}" failed with ${code} from ${error.config.url} (${error.config.metadata.duration}ms)`)
-    // console.log('rfailed', error.code, error.config.method, error.config.url)
     return Promise.reject(new RESTClientError(error, service.key, service.name))
   })
 

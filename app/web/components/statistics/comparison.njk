@@ -6,15 +6,15 @@
   <h1>Connector Statistics Date Comparison</h1>
   
   {{ govukTable({
-      caption: firstDateFilter,
+      caption: date,
       firstCellIsHeader: true,
-      rows: firstDateStats
+      rows: stats
     })
   }}
   {{ govukTable({
-      caption: secondDateFilter,
+      caption: compareDate,
       firstCellIsHeader: true,
-      rows: secondDateStats
+      rows: compareStats
     })
   }}
 

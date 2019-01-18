@@ -15,7 +15,6 @@ class GatewayAccountRequest {
     const { error, value: model } = Joi.validate({ id }, schema)
 
     if (error) {
-      console.log(error)
       throw new ValidationError(`GatewayAccountRequest ${error.details[0].message}`)
     }
     Object.assign(this, model)

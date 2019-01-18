@@ -6,8 +6,8 @@
   
   <form method="post" action="/statistics/compare/date">
     {{ govukDateInput({
-        id: "filter-first",
-        namePrefix: "filter-first",
+        id: "filter",
+        namePrefix: "filter",
         fieldset: { 
           legend: { 
             text: "First Day",
@@ -17,8 +17,8 @@
       })
     }} 
     {{ govukDateInput({
-        id: "filter-second",
-        namePrefix: "filter-second",
+        id: "filter-compare",
+        namePrefix: "filter-compare",
         fieldset: { 
           legend: { 
             text: "Second Day",

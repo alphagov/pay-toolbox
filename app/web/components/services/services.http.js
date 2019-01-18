@@ -30,6 +30,7 @@ const updateBranding = async function updateBranding (req, res, next) {
 
   await AdminUsers.updateServiceBranding(id, req.body.image_url, req.body.css_url)
 
+  logger.info(`Updated service branding for ${id}`)
   req.flash('info', `Service ${id} branding successfully replaced`)
   res.redirect(`/services/${id}`)
 }
