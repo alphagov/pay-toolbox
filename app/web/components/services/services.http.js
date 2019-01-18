@@ -1,124 +1,69 @@
-// @NOTE(sfount) - CSV doesn't seem to work on the current toolbox, it might work
-// in production but I haven't seen this. Exporting entities as CSV/ JSON might
-// be useful for people needing to share details on production accounts
-// the route that would be for services CSV is services/csv
 const logger = require('./../../../lib/logger')
-const payapi = require('./../../../lib/pay-request')
+const { AdminUsers } = require('./../../../lib/pay-request')
+const { wrapAsyncErrorHandlers } = require('./../../../lib/routes')
 
-// @FIXME(sfount) can anything that just passes errors onto next not explicitly create a try block?
+const GatewayAccountRequest = require('./gatewayAccountRequest.model')
+
 const overview = async function overview (req, res, next) {
-  try {
-    const services = await payapi.service('ADMINUSERS', '/v1/api/services/list')
-    console.log('got services', services)
-    res.render('services/overview', { services })
-  } catch (error) {
-    // @TODO(sfount) all top level pages should handle services not being available
-    // @TODO(sfount) generic page letting users know that this service cannot be accessed
-    // @TODO(sfount) handled in middleware - ECONNRESET (just renders a different page?)
-    if (error.code === 'ECONNRESET') {
-      res.status(503).send('(503) Admin Users API is unavailable')
-    }
-    next(error)
-  }
+  const services = await AdminUsers.services()
+  res.render('services/overview', { services })
 }
 
 const detail = async function detail (req, res, next) {
-  const id = req.params.id
+  const serviceId = req.params.id
+  const messages = req.flash('info')
 
-  try {
-    const service = await payapi.service('ADMINUSERS', `/v1/api/services/${id}`)
-    const users = await payapi.service('ADMINUSERS', `/v1/api/services/${id}/users`)
-    res.render('services/detail', { service, users, serviceId: id, messages: req.flash('info') })
-  } catch (error) {
-    next(error)
-  }
+  const service = await AdminUsers.service(serviceId)
+  const users = await AdminUsers.serviceUsers(serviceId)
+  res.render('services/detail', { service, users, serviceId, messages })
 }
 
-// @FIXME(sfount) note this basically duplicates details route
 const branding = async function branding (req, res, next) {
   const serviceId = req.params.id
-  try {
-    const service = await payapi.service('ADMINUSERS', `/v1/api/services/${serviceId}`)
-    res.render('services/branding', { serviceId, service })
-  } catch (error) {
-    next(error)
-  }
+
+  const service = await AdminUsers.service(serviceId)
+  res.render('services/branding', { serviceId, service })
 }
 
 const updateBranding = async function updateBranding (req, res, next) {
   const id = req.params.id
 
-  const payload = {
-    op: 'replace',
-    path: 'custom_branding',
-    value: { image_url: req.body.image_url, css_url: req.body.css_url }
-  }
+  await AdminUsers.updateServiceBranding(id, req.body.image_url, req.body.css_url)
 
-  try {
-    // use patch
-    const response = await payapi.servicePost('ADMINUSERS', `/v1/api/services/${id}`, payload, true)
-    req.flash('info', `Service ${id} branding successfully replaced`)
-    res.redirect(`/services/${id}`)
-  } catch (error) {
-    next(error)
-  }
+  req.flash('info', `Service ${id} branding successfully replaced`)
+  res.redirect(`/services/${id}`)
 }
 
 const linkAccounts = async function linkAccounts (req, res, next) {
   const serviceId = req.params.id
-  res.render('services/link_accounts', { serviceId })
+  const context = { serviceId, messages: req.flash('error') }
+
+  if (req.session.recovered) {
+    context.recovered = Object.assign({}, req.session.recovered)
+    delete req.session.recovered
+  }
+  res.render('services/link_accounts', context)
 }
 
-// @FIXME(sfount) //@TODO(sfount) handle error through req.flash() and recover values - generic 500 is a bad user experience
 const updateLinkAccounts = async function updateLinkAccounts (req, res, next) {
-  const id = req.params.id
-  const newGatewayId = Number(req.body.account_id)
+  const serviceId = req.params.id
 
-  try {
-    // ensure new id is a single integer
-    // this also checks if gate way id is defined
-    if (newGatewayId !== parseInt(newGatewayId, 10)) {
-      throw new Error(`Provided ID is not a valid integer: ${req.body.account_id}`)
-    }
+  const gatewayAccountRequest = new GatewayAccountRequest(req.body.account_id)
+  await AdminUsers.updateServiceGatewayAccount(serviceId, gatewayAccountRequest.id)
 
-    const payload = {
-      op: 'add',
-      path: 'gateway_account_ids',
-      value: [ newGatewayId.toString() ]
-    }
-    const response = await payapi.servicePost('ADMINUSERS', `/v1/api/services/${id}`, payload, true)
-
-    req.flash('info', `Service ${id} added gateway account: ${newGatewayId}`)
-    res.redirect(`/services/${id}`)
-  } catch (error) {
-    if (error.response && error.response.status === 409) {
-      res.status(409).send(`Server responded with 409 conflict reponse - the gateway id ${newGatewayId} is already linked`)
-      return
-    }
-    next(error)
-  }
+  logger.info(`Service ${serviceId} added gateway account ${gatewayAccountRequest.id}`)
+  req.flash('info', `Gateway Account ${gatewayAccountRequest.id} linked`)
+  res.redirect(`/services/${serviceId}`)
 }
 
 const search = async function search (req, res, next) {
-  res.render('services/search', { messages: req.flash('error') })
+  const messages = req.flash('error')
+  res.render('services/search', { messages })
 }
 
-// @TODO(sfount) completely duplicates detail route
 const searchRequest = async function searchRequest (req, res, next) {
-  const id = req.body.id
-  try {
-    const service = await payapi.service('ADMINUSERS', `/v1/api/services/${id}`)
-    res.redirect(`/services/${service.external_id}`)
-  } catch (error) {
-    console.log(error)
-    if (error.response && error.response.status === 404) {
-      req.flash('error', `Service ${id} not found`)
-      res.redirect('/services/search')
-      return
-    }
-
-    next(error)
-  }
+  res.redirect(`/services/${req.body.id}`)
 }
 
-module.exports = { overview, detail, branding, updateBranding, linkAccounts, updateLinkAccounts, search, searchRequest }
+const handlers = { overview, detail, branding, updateBranding, linkAccounts, updateLinkAccounts, search, searchRequest }
+module.exports = wrapAsyncErrorHandlers(handlers)

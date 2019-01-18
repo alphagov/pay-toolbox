@@ -5,5 +5,6 @@ const index = {}
 const serviceStore = require('./../../services.store')
 
 index[serviceStore.ADMINUSERS.key] = require('./adminUsers')
+index[serviceStore.CONNECTOR.key] = require('./connector')
 
 module.exports = index

@@ -14,27 +14,39 @@ const ADMINUSERS = {
   target: config.services.ADMINUSERS_URL
 }
 
+const CONNECTOR = {
+  key: 'CONNECTOR',
+  name: 'Connector',
+  target: config.services.CONNECTOR_URL
+}
+
+const DIRECTDEBITCONNECTOR = {
+  key: 'DIRECTDEBITCONNECTOR',
+  name: 'Direct Debit Connector',
+  target: config.services.DIRECT_DEBIT_CONNECTOR_URL
+}
+
+const PRODUCTS = {
+  key: 'PRODUCTS',
+  name: 'Products',
+  target: config.services.PRODUCTS_URL
+}
+
+const PUBLICAUTH = {
+  key: 'PUBLICAUTH',
+  name: 'Public Auth',
+  target: config.services.PUBLIC_AUTH_URL
+}
+
 // @TODO(sfount) typescript/ flow for type checking
 const services = [
   ADMINUSERS,
-  {
-    key: 'CONNECTOR',
-    name: 'Connector',
-    target: config.services.CONNECTOR_URL
-  }, {
-    key: 'DIRECTDEBITCONNECTOR',
-    name: 'Direct Debit Connector',
-    target: config.services.DIRECT_DEBIT_CONNECTOR_URL
-  }, {
-    key: 'PRODUCTS',
-    name: 'Products',
-    target: config.services.PRODUCTS_URL
-  }, {
-    key: 'PUBLICAUTH',
-    name: 'Public Auth',
-    target: config.services.PUBLIC_AUTH_URL
-  }
+  CONNECTOR,
+  DIRECTDEBITCONNECTOR,
+  PRODUCTS,
+  PUBLICAUTH
 ]
+
 const keyIndex = services.reduce((index, service) => {
   index[service.key] = service
   return index
@@ -53,4 +65,4 @@ const lookup = async function lookup (serviceKey) {
 // with a cleaner abstraction
 const lookupSync = (serviceKey) => keyIndex[serviceKey]
 
-module.exports = { data: services, lookup, lookupSync, ADMINUSERS }
+module.exports = { data: services, lookup, lookupSync, ADMINUSERS, CONNECTOR, DIRECTDEBITCONNECTOR, PRODUCTS, PUBLICAUTH }

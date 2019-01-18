@@ -28,6 +28,9 @@ const nunjucks = require('nunjucks')
 const config = require('./../config')
 const logger = require('./../lib/logger')
 
+// stack wide error handlers
+const errors = require('./errors')
+
 const router = require('./router')
 
 // @FIXME(sfount) errors should be thrown and this should be properly handled
@@ -130,5 +133,8 @@ templaterEnvironment.addGlobal('manifest', staticResourceManifest)
 // / - current revised toolbox
 // /legacy/ - legacy toolbox (views directly translated)
 app.use('/', router)
+
+// @FIXME(sfount) squash these down so one error handler is fired and then it's parsed by everyone that wants it
+app.use(errors.handleRequestErrors)
 
 module.exports = app

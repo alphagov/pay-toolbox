@@ -3,6 +3,10 @@
 
 {% block main %}
   <h1>Link Gateway Accounts</h1>
+  
+  {% for message in messages %}
+    <div><p>{{message}}</p>
+  {% endfor %}
 
   <!-- @TODO(sfount) provide uniform context for all editing/ detail pages showing which entity is being dealt with -->
   <p>Note this is for service {{ serviceId }}</p>
@@ -11,6 +15,7 @@
     {{ govukInput({ 
       id: "account_id",
       name: "account_id",
+      value: recovered.id,
       label: { text: "Gateway account ID to add" }
       })
       }}

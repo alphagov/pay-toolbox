@@ -9,7 +9,7 @@ const auth = require('./../lib/auth')
 const landing = require('./components/landing/landing.http')
 const statistics = require('./components/statistics/statistics.http')
 const gatewayAccounts = require('./components/gateway_accounts/gateway_accounts.http')
-const services = require('./components/services/services.http')
+const services = require('./components/services')
 const transactions = require('./components/transactions/transactions.http')
 
 // @TODO(sfount) remove comment - router can now have its own middleware
@@ -51,13 +51,13 @@ router.get('/services', auth.secured, services.overview)
 router.get('/services/search', auth.secured, services.search)
 router.post('/services/search', auth.secured, services.searchRequest)
 
-router.get('/services/:id', auth.secured, services.detail)
+router.get('/services/:id', auth.secured, services.detail.http, services.detail.exceptions)
 
 router.get('/services/:id/branding', auth.secured, services.branding)
 router.post('/services/:id/branding', auth.secured, services.updateBranding)
 
 router.get('/services/:id/link_accounts', auth.secured, services.linkAccounts)
-router.post('/services/:id/link_accounts', auth.secured, services.updateLinkAccounts)
+router.post('/services/:id/link_accounts', auth.secured, services.updateLinkAccounts.http, services.updateLinkAccounts.exceptions)
 
 router.get('/transactions/search', auth.secured, transactions.search)
 router.post('/transactions/search', auth.secured, transactions.searchTransaction)

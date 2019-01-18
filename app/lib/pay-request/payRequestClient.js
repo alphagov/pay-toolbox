@@ -9,6 +9,8 @@
 const axios = require('axios')
 const url = require('url')
 
+const { RESTClientError } = require('./../../lib/errors')
+
 // @TODO(sfount) config is going to have  to be passed dynamically
 // recomend: single config at the top of the application payreqest.config(config)
 const config = require('./../../config')
@@ -19,11 +21,13 @@ const serviceApiMethodUtils = require('./api_utils')
 
 const PAY_REQUEST_TIMEOUT = 1000
 
+// @FIXME(sfount) note that overriding this method doesn't JSON.parse the data body by default
 const unpackServiceResponse = function unpackServiceReponse (data) {
   // common validations on data - ensure unpacked
   return data
 }
 
+// @FIXME(sfount) note that overrideing this method doesn't ensure POST body is JSON.stringify by default
 const processServiceRequest = function processServiceRequest (data, headers) {
   // can manipulate or process common validations on data being sent
   return data
@@ -40,20 +44,51 @@ const payBaseClient = function payBaseClient (service) {
 
     // @TODO(sfount) configure headers based on each services requirements
     // headers: { 'X-Auth-header': 'secretscontent' }
-    transformResponse: [ unpackServiceResponse ],
+    // transformResponse: [ unpackServiceResponse ],
 
     // @TODO(sfount) common parsing/ validation for requests
-    transformRequest: [ processServiceRequest ]
+    // transformRequest: [ processServiceRequest ]
+
+    // 5MBs content limit - will this catch us out anywhere?
+    maxContentLength: 5 * 1000 * 1000
   })
 
+  instance.metadata = {
+    serviceKey: service.key,
+    serviceName: service.name
+  }
+
   // @TODO(sfount) make sure we understand the difference between interceptors and request transforms
+  // @TODO(sfount) what are the performance implications of this measurement
   instance.interceptors.request.use((request) => {
-    logger.debug(`[${service.key}] "${request.method}" request for ${request.url}`)
+
+    // first pass at tracking how long requests take
+    request.metadata = { start: new Date() }
+    // logger.debug(`[${service.key}] "${request.method}" request for ${request.url}`)
     return request
+  }, (error) => Promise.reject(error))
+
+  instance.interceptors.response.use((response) => {
+    // console.log('r', response.status, response.config.method, response.config.url)
+    // first pass at tracking how long requests take
+    // @FIXME(sfount) move to method for calculating - potentially swap out Date object requirement
+    response.config.metadata.end = new Date()
+    response.config.metadata.duration = response.config.metadata.end - response.config.metadata.start
+    logger.debug(`[${service.key}] "${response.request.method}" response from ${response.config.url} (${response.config.metadata.duration}ms)`)
+    return response
+  }, (error) => {
+    const code = error.response && error.response.status || error.code
+    // wrap the erorr in custom errors (Y) yay
+    error.config.metadata.end = new Date()
+    error.config.metadata.duration = error.config.metadata.end - error.config.metadata.start
+    logger.debug(`[${service.key}] "${error.config.method}" failed with ${code} from ${error.config.url} (${error.config.metadata.duration}ms)`)
+    // console.log('rfailed', error.code, error.config.method, error.config.url)
+    return Promise.reject(new RESTClientError(error, service.key, service.name))
   })
 
   // we have the option to explicitly pass ethe axios instance here
-  const apiUtilityMethods = serviceApiMethodUtils[service.key]() || {}
+  // we should set this up so the nearest context is the Object being assigned
+  const apiUtilityMethods = serviceApiMethodUtils[service.key] && serviceApiMethodUtils[service.key](instance) || {}
 
   // @FIXME(sfount)  for now just hard coding this - it should check to see if the service store definition has helper methods available
   // @FIXME(sfount) this is some roundabout method of making this work
@@ -61,7 +96,29 @@ const payBaseClient = function payBaseClient (service) {
 }
 
 // @FIXME(sfount) only make clients if they are imported anywhere in the code base
+// @TODO(sfount) is there any issue with clients existing for the lifetime of the app? - seems like hanging connections
+// could eventually cause performance issues
 const AdminUsers = payBaseClient(serviceStore.ADMINUSERS)
+const Connector = payBaseClient(serviceStore.CONNECTOR)
+const DirectDebitConnector = payBaseClient(serviceStore.DIRECTDEBITCONNECTOR)
+const Products = payBaseClient(serviceStore.PRODUCTS)
+const PublicAuth = payBaseClient(serviceStore.PUBLICAUTH)
+
+const clients = [ AdminUsers, Connector, DirectDebitConnector, Products, PublicAuth ]
+
+// make a GET request to all supported clients
+// for now supress throwing the error upwards as the calling code probably wants all results
+const broadcast = async function broadcast (path) {
+  return Promise.all(clients.map(async (client) => {
+    const response = { name: client.metadata.serviceName, key: client.metadata.serviceKey }
+    try {
+      const result = await client.get(path)
+      return Object.assign(response, { success: true, result })
+    } catch (error) {
+      return Object.assign(response, { success: false, error })
+    }
+  }))
+}
 
 // create a generic client that can be used for all queries, specialised
 // clients that include security headers could also be modelled
@@ -125,4 +182,4 @@ if (!config.common.production) {
 // module.exports = { request, service, servicePost, serviceDelete }
 
 // @TODO(sfount) export methods that instanciate clients only if they're required (memory++)
-module.exports = { request, service, servicePost, serviceDelete, AdminUsers }
+module.exports = { request, service, servicePost, serviceDelete, broadcast, AdminUsers, Connector }
