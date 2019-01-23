@@ -1,8 +1,8 @@
 const logger = require('./../../../lib/logger')
 const { AdminUsers } = require('./../../../lib/pay-request')
-const { wrapAsyncErrorHandlers } = require('./../../../lib/routes')
-
 const GatewayAccountRequest = require('./gatewayAccountRequest.model')
+
+const { wrapAsyncErrorHandlers } = require('./../../../lib/routes')
 
 const overview = async function overview (req, res, next) {
   const services = await AdminUsers.services()
@@ -20,8 +20,8 @@ const detail = async function detail (req, res, next) {
 
 const branding = async function branding (req, res, next) {
   const serviceId = req.params.id
-
   const service = await AdminUsers.service(serviceId)
+
   res.render('services/branding', { serviceId, service })
 }
 

@@ -25,7 +25,7 @@ node-sass --output-style compressed $APPLICATION_SASS > $TEMP_FILE
 HASH=$(md5 -q $TEMP_FILE)
 OUT_FILE="$BUILD_FOLDER/$BUILD_TARGET-$HASH.css"
 
-mv $TEMP_FILE $OUT_FILE
+mv "$TEMP_FILE" "$OUT_FILE"
 echo "Application styles compiled ($OUT_FILE)"
 
 # Write a manifest to be used by templating libraries pointing to this resource
