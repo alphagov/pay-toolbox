@@ -10,7 +10,7 @@ const landing = require('./components/landing/landing.http')
 const statistics = require('./components/statistics/statistics.http')
 const gatewayAccounts = require('./components/gateway_accounts')
 const services = require('./components/services')
-const transactions = require('./components/transactions/transactions.http')
+const transactions = require('./components/transactions')
 
 // @TODO(sfount) remove comment - router can now have its own middleware
 // specified seperately from the application - the overall application
@@ -60,6 +60,6 @@ router.get('/services/:id/link_accounts', auth.secured, services.linkAccounts)
 router.post('/services/:id/link_accounts', auth.secured, services.updateLinkAccounts.http, services.updateLinkAccounts.exceptions)
 
 router.get('/transactions/search', auth.secured, transactions.search)
-router.post('/transactions/search', auth.secured, transactions.searchTransaction)
+router.post('/transactions/search', auth.secured, transactions.searchTransaction.http, transactions.searchTransaction.exceptions)
 
 module.exports = router

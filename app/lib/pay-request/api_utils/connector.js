@@ -23,10 +23,18 @@ const connectorMethods = function connectorMethods (instance) {
     return axiosInstance.get('/v1/api/reports/gateway-account-performance-report').then(utilExtractData)
   }
 
-  // extract and standardise this - there should be no need to repeat this over and over
+  const searchTransactionsByChargeId = function searchTransactionsByChargeId (accountId, chargeId) {
+    return axiosInstance.get(`/v1/api/accounts/${accountId}/charges/${chargeId}/events`).then(utilExtractData)
+  }
+
+  const searchTransactionsByReference = function searchTransactionsByReference (accountId, reference) {
+    return axiosInstance.get(`/v1/api/accounts/${accountId}/charges?reference=${reference}`).then(utilExtractData)
+  }
+
+  // @TODO(sfount) extract and standardise this - there should be no need to repeat this over and over
   const utilExtractData = response => response.data
 
-  return { performanceReport, gatewayAccountPerformanceReport, account, accounts, createAccount }
+  return { performanceReport, gatewayAccountPerformanceReport, account, accounts, createAccount, searchTransactionsByChargeId, searchTransactionsByReference }
 }
 
 module.exports = connectorMethods
