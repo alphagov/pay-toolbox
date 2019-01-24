@@ -7,7 +7,7 @@
 
   <!-- actions -->
   <div>
-    <a href="/gateway_accounts/{{ accountDetails.gateway_account_id }}/api_keys">API Keys</a>
+    <a href="/gateway_accounts/{{ account.gateway_account_id }}/api_keys">API Keys</a>
     <!-- button>Payment Links</button -->
   </div>
 
@@ -15,18 +15,18 @@
     caption: "Account Details",
     firstCellIsHeader: true,
     rows: [
-    [ { text: 'Gateway Account ID' }, { text: accountDetails.gateway_account_id } ],
-    [ { text: 'Type' }, { text: accountDetails.type.toUpperCase() } ],
-    [ { text: 'Description' }, { text: accountDetails.description } ],
-    [ { text: 'Provider' }, { text: accountDetails.payment_provider } ],
-    [ { text: 'Service' }, { text: accountDetails.service_name } ],
-    [ { text: 'Analytics' }, { text: accountDetails.analytics_id } ]
+    [ { text: 'Gateway Account ID' }, { text: account.gateway_account_id } ],
+    [ { text: 'Type' }, { text: account.type.toUpperCase() } ],
+    [ { text: 'Description' }, { text: account.description } ],
+    [ { text: 'Provider' }, { text: account.payment_provider } ],
+    [ { text: 'Service' }, { text: account.service_name } ],
+    [ { text: 'Analytics' }, { text: account.analytics_id } ]
     ]
   })
   }}
 
   <div>
-    <pre><code>{{ accountDetails | dump | safe }}</code></pre>
+    <pre><code>{{ account | dump | safe }}</code></pre>
     <pre><code>{{ services | dump | safe }}</code></pre>
   </div>
 {% endblock %}

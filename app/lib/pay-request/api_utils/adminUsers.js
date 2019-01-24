@@ -27,6 +27,10 @@ const adminUsersMethods = function adminUsersMethods (instance) {
     return axiosInstance.get(path).then(utilExtractData)
   }
 
+  const gatewayAccountServices = function gatewayAccountServices (id) {
+    return axiosInstance.get(`/v1/api/services?gatewayAccountId=${id}`).then(utilExtractData)
+  }
+
   // example:
   // Connector.Service(id) - details
   // Connector.Service(id).updateBranding(image, css)
@@ -55,7 +59,7 @@ const adminUsersMethods = function adminUsersMethods (instance) {
   // extract and standardise this - there should be no need to repeat this over and over
   const utilExtractData = response => response.data
 
-  return { service, services, serviceUsers, updateServiceBranding, updateServiceGatewayAccount }
+  return { service, services, serviceUsers, updateServiceBranding, updateServiceGatewayAccount, gatewayAccountServices }
 }
 
 module.exports = adminUsersMethods

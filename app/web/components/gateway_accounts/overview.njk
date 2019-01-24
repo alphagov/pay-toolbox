@@ -29,7 +29,8 @@
         <td class="govuk-table__cell">{{ account.type }}</td> 
         <td class="govuk-table__cell">{{ account.payment_provider }}</td> 
         <td class="govuk-table__cell">{{ account.service_name }}</td> 
-        <td class="govuk-table__cell"><a href="/transactions/{{ account.gateway_account_id }}">Transactions</a></td> 
+        <td class="govuk-table__cell">(linkto) transactions/{{ account.gateway_account_id }}</td> 
+        <!-- td class="govuk-table__cell"><a href="/transactions/{{ account.gateway_account_id }}">Transactions</a></td --> 
       </tr>
       {% else %}
       <!-- @TODO(sfount) test this -->

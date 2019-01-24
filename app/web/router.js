@@ -8,7 +8,7 @@ const auth = require('./../lib/auth')
 // Component imports
 const landing = require('./components/landing/landing.http')
 const statistics = require('./components/statistics/statistics.http')
-const gatewayAccounts = require('./components/gateway_accounts/gateway_accounts.http')
+const gatewayAccounts = require('./components/gateway_accounts')
 const services = require('./components/services')
 const transactions = require('./components/transactions/transactions.http')
 
@@ -38,13 +38,13 @@ router.get('/statistics/services', auth.secured, statistics.byServices)
 
 router.get('/gateway_accounts', auth.secured, gatewayAccounts.overview)
 router.get('/gateway_accounts/create', auth.secured, gatewayAccounts.create)
-router.get('/gateway_accounts/:id', auth.secured, gatewayAccounts.detail)
+router.get('/gateway_accounts/:id', auth.secured, gatewayAccounts.detail.http, gatewayAccounts.detail.exceptions)
 
 router.get('/gateway_accounts/:id/api_keys', auth.secured, gatewayAccounts.apiKeys)
 router.get('/gateway_accounts/:accountId/api_keys/:tokenId/delete', auth.secured, gatewayAccounts.deleteApiKey)
 
-router.post('/gateway_accounts/create', auth.secured, gatewayAccounts.writeAccount)
-router.post('/gateway_accounts/create/confirm', auth.secured, gatewayAccounts.confirm)
+router.post('/gateway_accounts/create', auth.secured, gatewayAccounts.writeAccount.http, gatewayAccounts.writeAccount.exceptions)
+router.post('/gateway_accounts/create/confirm', auth.secured, gatewayAccounts.confirm.http, gatewayAccounts.confirm.exceptions)
 
 router.get('/services', auth.secured, services.overview)
 

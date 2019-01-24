@@ -180,4 +180,4 @@ if (!config.common.production) {
 // module.exports = { request, service, servicePost, serviceDelete }
 
 // @TODO(sfount) export methods that instanciate clients only if they're required (memory++)
-module.exports = { request, service, servicePost, serviceDelete, broadcast, AdminUsers, Connector }
+module.exports = { request, service, servicePost, serviceDelete, broadcast, AdminUsers, Connector, PublicAuth, Products, DirectDebitConnector }
