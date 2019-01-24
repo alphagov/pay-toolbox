@@ -136,5 +136,6 @@ app.use('/', router)
 
 // @FIXME(sfount) squash these down so one error handler is fired and then it's parsed by everyone that wants it
 app.use(errors.handleRequestErrors)
+app.use(errors.handleDefault)
 
 module.exports = app
