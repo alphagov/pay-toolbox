@@ -53,10 +53,10 @@ router.post('/services/search', auth.secured, services.searchRequest)
 
 router.get('/services/:id', auth.secured, services.detail.http, services.detail.exceptions)
 
-router.get('/services/:id/branding', auth.secured, services.branding)
+router.get('/services/:id/branding', auth.secured, services.branding, services.detail.exceptions)
 router.post('/services/:id/branding', auth.secured, services.updateBranding)
 
-router.get('/services/:id/link_accounts', auth.secured, services.linkAccounts)
+router.get('/services/:id/link_accounts', auth.secured, services.linkAccounts, services.detail.exceptions)
 router.post('/services/:id/link_accounts', auth.secured, services.updateLinkAccounts.http, services.updateLinkAccounts.exceptions)
 
 router.get('/transactions/search', auth.secured, transactions.search)

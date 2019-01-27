@@ -29,6 +29,7 @@ const writeAccount = async function writeAccount (req, res, next) {
   const account = new GatewayAccount(req.body)
   const response = await Connector.createAccount(account.formatPayload())
 
+  logger.info(`Created new Gateway Account ${response.gateway_account_id} with Connector`)
   req.flash('info', `Gateway account ${response.gateway_account_id} generated`)
   res.redirect('/gateway_accounts')
 }

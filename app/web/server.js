@@ -52,6 +52,9 @@ app.use(bodyParser.json({ strict: true, limit: '15kb' }))
  */
 app.use(flash())
 
+// this is included after flash and body parsing middleware as they alter the call stack (it should ideally be placed just before routes)
+app.use(logger.middleware)
+
 /**
  * Static files @TODO(sfount) move to seperate file
  * - we could even consider offloading this onto the reverse auth proxy
