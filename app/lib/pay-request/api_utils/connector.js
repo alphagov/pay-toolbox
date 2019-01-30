@@ -13,10 +13,13 @@ const connectorMethods = function connectorMethods (instance) {
     return axiosInstance.post('/v1/api/accounts', account).then(utilExtractData)
   }
 
-  const performanceReport = function performanceReport (params) {
-    const options = {}
-    if (params) options.params = params
-    return axiosInstance.get('/v1/api/reports/performance-report', options).then(utilExtractData)
+  const performanceReport = function performanceReport () {
+    return axiosInstance.get('/v1/api/reports/performance-report').then(utilExtractData)
+  }
+
+  const dailyPerformanceReport = function dailyPerformanceReport (date) {
+    const params = { date }
+    return axiosInstance.get('/v1/api/reports/daily-performance-report', { params }).then(utilExtractData)
   }
 
   const gatewayAccountPerformanceReport = function gatewayAccountPerformanceReport () {
@@ -34,7 +37,7 @@ const connectorMethods = function connectorMethods (instance) {
   // @TODO(sfount) extract and standardise this - there should be no need to repeat this over and over
   const utilExtractData = response => response.data
 
-  return { performanceReport, gatewayAccountPerformanceReport, account, accounts, createAccount, searchTransactionsByChargeId, searchTransactionsByReference }
+  return { performanceReport, gatewayAccountPerformanceReport, account, accounts, createAccount, searchTransactionsByChargeId, searchTransactionsByReference, dailyPerformanceReport }
 }
 
 module.exports = connectorMethods

@@ -3,6 +3,10 @@ Internal administrative tools service for GOV.UK Pay products.
 
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+## top level todo tomerge 
+* include generate dev .env as part of post install potentially - for getting people up and running 
+* update readmes and code comments, either address concerns or remove them into a top level 'to consider'
+
 ## (to-be-removed) To remove before initial commit 
 * remove .npmrc - no need to specifiy --save-exact going forward
 * investigate `Got` vs. `axios` REST client libraries, small vs. feature complete?

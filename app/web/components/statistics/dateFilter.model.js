@@ -14,6 +14,10 @@ class DateFilter {
     if (error) {
       throw new ValidationError(`StatisticsDateFilter ${error.details[0].message}`)
     }
+
+    // @TODO(sfount) delegate this to a method
+    model.date = model.date && model.date.toISOString()
+    model.compareDate = model.compareDate && model.compareDate.toISOString()
     Object.assign(this, model)
   }
 

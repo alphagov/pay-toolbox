@@ -1,22 +1,33 @@
 {% from "components/date-input/macro.njk" import govukDateInput %}
+{% from "components/button/macro.njk" import govukButton %}
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1>Filter Connector Statistics by Date</h1>
+  <h1 class="govuk-heading-s">Statistics for a given day</h1>
   
   <form method="post" action="/statistics/filter/date">
     {{ govukDateInput({
         id: "filter",
         namePrefix: "filter",
-        fieldset: { 
+        items: [
+          { name: "day", value: date.getDate(), classes: "govuk-input--width-2" },
+          { name: "month", value: date.getMonth() + 1, classes: "govuk-input--width-2" },
+          { name: "year", value: date.getFullYear(), classes: "govuk-input--width-4" }
+        ]
+      })
+    }}  
+    
+    {{ govukButton({
+        text: "View Statistics"
+      }) }}
+  </form>
+  
+  <!-- 
+      fieldset: { 
           legend: { 
             text: "Date to Filter",
             isPageHeading: false
           }
         }
-      })
-    }}  
-    <button type="submit">Submit</button>
-  </form>
-
+  -->
 {% endblock %}

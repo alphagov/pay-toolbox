@@ -5,6 +5,7 @@
  */
 const logger = require('./logger')
 const { broadcast } = require('./pay-request')
+const { toFormattedDate } = require('./format')
 
 // small utility method for totally healthy services
 // @TODO(sfount) health check is probably a complicated enough piece to warrant a formal model with types
@@ -21,7 +22,7 @@ const totalHealthyServices = function (serviceHealthCheckResults) {
 const healthCheck = async function healthCheck () {
   const results = await broadcast('healthcheck')
   const healthChecks = results.map(({ name, key, success }) => ({ name, key, healthCheckPassed: success }))
-  const healthCheckCompleteTimestamp = new Date()
+  const healthCheckCompleteTimestamp = toFormattedDate(new Date())
   logger.info(`Health check completed ${totalHealthyServices(healthChecks)}/${healthChecks.length} services responded.`)
   return { completedAt: healthCheckCompleteTimestamp, results: healthChecks }
 }

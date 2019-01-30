@@ -6,6 +6,7 @@
  * - should factor in cookies/ secrets required to make connections in production
  * - could encapsulate routes for each service connection behind tested methods
  */
+const https = require('https')
 const axios = require('axios')
 
 const logger = require('./../logger')
@@ -28,7 +29,13 @@ const payBaseClient = function payBaseClient (service) {
     // headers: { 'X-Auth-header': 'secretscontent' }
     // transformResponse: [ unpackServiceResponse ],
     // transformRequest: [ processServiceRequest ]
-    maxContentLength: 5 * 1000 * 1000
+    maxContentLength: 5 * 1000 * 1000,
+
+    // @TODO(sfount) this should only ignore authorized TLS in a non-production
+    // environment
+    httpsAgent: new https.Agent({
+      rejectUnauthorized: false
+    })
   })
 
   instance.metadata = {

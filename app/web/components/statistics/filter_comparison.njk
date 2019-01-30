@@ -1,33 +1,34 @@
 {% from "components/date-input/macro.njk" import govukDateInput %}
+{% from "components/button/macro.njk" import govukButton %}
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1>Compare Connector Statistics by Date</h1>
+  <h1 class="govuk-heading-s">Compare statistics for two days</h1>
   
   <form method="post" action="/statistics/compare/date">
     {{ govukDateInput({
         id: "filter",
         namePrefix: "filter",
-        fieldset: { 
-          legend: { 
-            text: "First Day",
-            isPageHeading: false
-          }
-        }
+        items: [
+          { name: "day", value: date.getDate(), classes: "govuk-input--width-2" },
+          { name: "month", value: date.getMonth() + 1, classes: "govuk-input--width-2" },
+          { name: "year", value: date.getFullYear(), classes: "govuk-input--width-4" }
+        ]
       })
     }} 
     {{ govukDateInput({
         id: "filter-compare",
         namePrefix: "filter-compare",
-        fieldset: { 
-          legend: { 
-            text: "Second Day",
-            isPageHeading: false
-          }
-        }
+        items: [
+          { name: "day", value: comparison.getDate(), classes: "govuk-input--width-2" },
+          { name: "month", value: date.getMonth() + 1, classes: "govuk-input--width-2" },
+          { name: "year", value: date.getFullYear(), classes: "govuk-input--width-4" }
+        ]
       })
     }} 
-    <button type="submit">Submit</button>
+    {{ govukButton({
+        text: "View Statistics"
+      }) }}
   </form>
 
 {% endblock %}

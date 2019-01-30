@@ -28,6 +28,9 @@ const nunjucks = require('nunjucks')
 const config = require('./../config')
 const logger = require('./../lib/logger')
 
+// @FIXME(sfount) move this out of server configuration
+const { toFormattedDate } = require('./../lib/format')
+
 // stack wide error handlers
 const errors = require('./errors')
 
@@ -65,6 +68,8 @@ app.use(logger.middleware)
 const temporaryCachingMechanism = { maxage: '1y' }
 app.use('/public', express.static(path.join(config.common.TOOLBOX_FILE_ROOT, 'app/public'), temporaryCachingMechanism))
 app.use('/assets/fonts', express.static(path.join(config.common.TOOLBOX_FILE_ROOT, 'node_modules/govuk-frontend/assets/fonts'), temporaryCachingMechanism))
+app.use('/assets/svg', express.static(path.join(config.common.TOOLBOX_FILE_ROOT, 'app/assets/svg'), temporaryCachingMechanism))
+
 /**
  * Sessions @TODO(sfount) move to seperate file
  * - note sessions may not have to be handled by this application at all
@@ -127,6 +132,11 @@ const templaterEnvironment = nunjucks.configure(templatePathRoots, templateRende
 
 // make static manifest details available to all templates
 templaterEnvironment.addGlobal('manifest', staticResourceManifest)
+
+templaterEnvironment.addFilter('formatDate', (date) => {
+  console.log('invalid?', date)
+  return toFormattedDate(new Date(date))
+})
 
 /**
  * Routing @TODO(sfount) consider if this should be a seperate file

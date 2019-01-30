@@ -1,20 +1,26 @@
 {% extends "layout/layout.njk" %}
 
 {% block main %}
-  <h1>Services Health Check</h1>
-  {% for service in serviceStatuses.results %}
-    <div>
-      {% if service.healthCheckPassed %}
-        <span>CONNECTED</span>
-      {% else %}
-        <span>DISCONNECTED</span>
-      {% endif %}
-      <span> {{ service.name }}</span>
-    </div>
-  {% endfor %}
+  <h1 class="govuk-heading-s">Services Health Check</h1>
+  
+  <div class="govuk-body">
+    <ul class="govuk-list">
+    {% for service in serviceStatuses.results %}
+      <!-- div -->
+      <li>
+        {% if service.healthCheckPassed %}
+          <span style="color: #006435" class="govuk-!-font-weight-bold">&#9679;</span>
+        {% else %}
+          <span style="color: #b10e1e" class="govuk-!-font-weight-bold">&#9679;</span>
+        {% endif %}
+        <span> {{ service.name }}</span>
+      </li>
+    {% endfor %}
+    </ul>
+  </div>
 
   <div>
-    <span>Last health check performed at {{ serviceStatuses.completedAt }}</span>
+    <p class="govuk-body">Last health check performed on {{ serviceStatuses.completedAt }}</p>
   </div>
 {% endblock %}
 

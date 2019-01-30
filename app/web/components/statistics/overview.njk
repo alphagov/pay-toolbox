@@ -2,10 +2,15 @@
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1>Connector Statistics Overview</h1>
+  <h1 class="govuk-heading-s">Statistics</h1>
   
+  {% if date %} 
+    <h4 class="govuk-heading-s">{{ date | formatDate }}</h4>
+  {% else %}
+    <h4 class="govuk-heading-s">All time</h4>
+  {% endif %}
+
   {{ govukTable({
-      caption: date or "All Time",
       firstCellIsHeader: true,
       rows: stats
     })

@@ -8,7 +8,10 @@
   <title>Pay Toolbox (Revised)</title>
 
   <!-- @TODO(sfount) potentially move this to includes:style.njk -->
-  <!-- link rel="stylesheet" href="{{ manifest['payuk-toolbox.css'] }}" -->
+  <link rel="stylesheet" href="{{ manifest['payuk-toolbox.css'] }}">
+	
+	<!--script defer src="https://use.fontawesome.com/releases/v5.7.0/js/solid.js" integrity="sha384-6FXzJ8R8IC4v/SKPI8oOcRrUkJU8uvFK6YJ4eDY11bJQz4lRw5/wGthflEOX8hjL" crossorigin="anonymous"></script>
+	<script defer src="https://use.fontawesome.com/releases/v5.7.0/js/fontawesome.js" integrity="sha384-av0fZBtv517ppGAYKqqaiTvWEK6WXW7W0N1ocPSPI/wi+h8qlgWck2Hikm5cxH0E" crossorigin="anonymous"></script-->
 </html>
 <body class="govuk-template__body js-enabled">
 
@@ -23,24 +26,55 @@
   </header -->
 
   <!-- taken from legacy design - this could potentially be split for /v1 /v2 -->
-  <div class="govuk-width-container">
-    <div class="govuk-grid-row">
-      <h2 class="govuk-heading-m">Pay Toolbox (Revised)</h2>
+  <!-- div class="govuk-width-container" -->
+    
+		<!--div class="govuk-grid-row"-- >
+     
+ 			<!-- h2 class="govuk-heading-m">Pay Toolbox (Revised)</h2-->
+	
+<header class="govuk-header " role="banner" data-module="header">
+  <div class="govuk-header__container govuk-width-container">
+
+    <!-- div class="govuk-header__logo">
+      <a href="#" class="govuk-header__link govuk-header__link\-\-homepage">
+        <span class="govuk-header__logotype">
+
+          <svg role="presentation" focusable="false" class="govuk-header__logotype-crown" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 132 97" height="32" width="36">
+            <path fill="currentColor" fill-rule="evenodd" d="M25 30.2c3.5 1.5 7.7-.2 9.1-3.7 1.5-3.6-.2-7.8-3.9-9.2-3.6-1.4-7.6.3-9.1 3.9-1.4 3.5.3 7.5 3.9 9zM9 39.5c3.6 1.5 7.8-.2 9.2-3.7 1.5-3.6-.2-7.8-3.9-9.1-3.6-1.5-7.6.2-9.1 3.8-1.4 3.5.3 7.5 3.8 9zM4.4 57.2c3.5 1.5 7.7-.2 9.1-3.8 1.5-3.6-.2-7.7-3.9-9.1-3.5-1.5-7.6.3-9.1 3.8-1.4 3.5.3 7.6 3.9 9.1zm38.3-21.4c3.5 1.5 7.7-.2 9.1-3.8 1.5-3.6-.2-7.7-3.9-9.1-3.6-1.5-7.6.3-9.1 3.8-1.3 3.6.4 7.7 3.9 9.1zm64.4-5.6c-3.6 1.5-7.8-.2-9.1-3.7-1.5-3.6.2-7.8 3.8-9.2 3.6-1.4 7.7.3 9.2 3.9 1.3 3.5-.4 7.5-3.9 9zm15.9 9.3c-3.6 1.5-7.7-.2-9.1-3.7-1.5-3.6.2-7.8 3.7-9.1 3.6-1.5 7.7.2 9.2 3.8 1.5 3.5-.3 7.5-3.8 9zm4.7 17.7c-3.6 1.5-7.8-.2-9.2-3.8-1.5-3.6.2-7.7 3.9-9.1 3.6-1.5 7.7.3 9.2 3.8 1.3 3.5-.4 7.6-3.9 9.1zM89.3 35.8c-3.6 1.5-7.8-.2-9.2-3.8-1.4-3.6.2-7.7 3.9-9.1 3.6-1.5 7.7.3 9.2 3.8 1.4 3.6-.3 7.7-3.9 9.1zM69.7 17.7l8.9 4.7V9.3l-8.9 2.8c-.2-.3-.5-.6-.9-.9L72.4 0H59.6l3.5 11.2c-.3.3-.6.5-.9.9l-8.8-2.8v13.1l8.8-4.7c.3.3.6.7.9.9l-5 15.4v.1c-.2.8-.4 1.6-.4 2.4 0 4.1 3.1 7.5 7 8.1h.2c.3 0 .7.1 1 .1.4 0 .7 0 1-.1h.2c4-.6 7.1-4.1 7.1-8.1 0-.8-.1-1.7-.4-2.4V34l-5.1-15.4c.4-.2.7-.6 1-.9zM66 92.8c16.9 0 32.8 1.1 47.1 3.2 4-16.9 8.9-26.7 14-33.5l-9.6-3.4c1 4.9 1.1 7.2 0 10.2-1.5-1.4-3-4.3-4.2-8.7L108.6 76c2.8-2 5-3.2 7.5-3.3-4.4 9.4-10 11.9-13.6 11.2-4.3-.8-6.3-4.6-5.6-7.9 1-4.7 5.7-5.9 8-.5 4.3-8.7-3-11.4-7.6-8.8 7.1-7.2 7.9-13.5 2.1-21.1-8 6.1-8.1 12.3-4.5 20.8-4.7-5.4-12.1-2.5-9.5 6.2 3.4-5.2 7.9-2 7.2 3.1-.6 4.3-6.4 7.8-13.5 7.2-10.3-.9-10.9-8-11.2-13.8 2.5-.5 7.1 1.8 11 7.3L80.2 60c-4.1 4.4-8 5.3-12.3 5.4 1.4-4.4 8-11.6 8-11.6H55.5s6.4 7.2 7.9 11.6c-4.2-.1-8-1-12.3-5.4l1.4 16.4c3.9-5.5 8.5-7.7 10.9-7.3-.3 5.8-.9 12.8-11.1 13.8-7.2.6-12.9-2.9-13.5-7.2-.7-5 3.8-8.3 7.1-3.1 2.7-8.7-4.6-11.6-9.4-6.2 3.7-8.5 3.6-14.7-4.6-20.8-5.8 7.6-5 13.9 2.2 21.1-4.7-2.6-11.9.1-7.7 8.8 2.3-5.5 7.1-4.2 8.1.5.7 3.3-1.3 7.1-5.7 7.9-3.5.7-9-1.8-13.5-11.2 2.5.1 4.7 1.3 7.5 3.3l-4.7-15.4c-1.2 4.4-2.7 7.2-4.3 8.7-1.1-3-.9-5.3 0-10.2l-9.5 3.4c5 6.9 9.9 16.7 14 33.5 14.8-2.1 30.8-3.2 47.7-3.2z"></path>
+
+            <image src="/assets/images/govuk-logotype-crown.png" class="govuk-header__logotype-crown-fallback-image"></image>
+          </svg>
+          <span class="govuk-header__logotype-text">
+            GOV.UK
+          </span>
+        </span>
+      </a>
+    </div -->
+
+		<div class="govuk-header__content">
+
+      <a href="/" class="govuk-header__link govuk-header__link--service-name">
+      	GOV.UK Pay Toolbox (2.0)
+      </a>
+
     </div>
   </div>
+</header>
+
+
+
+    <!-- /div>
+  </div-->
   <div class="govuk-width-container">
+		{{
+			govukPhaseBanner({
+				tag: { text: 'alpha' },
+				html: 'This tool is in active development. It should not be used in production.'
+			})
+		}}
 
-    <div class="govuk-main-wrapper govuk-!-padding-top-0">
+    <div class="govuk-main-wrapper govuk-!-padding-top-4">
       <!-- @TODO(sfount) move to header njk -->
-
-      <div class="govuk-grid-row">
-        {{
-          govukPhaseBanner({
-            tag: { text: 'alpha' },
-            html: 'This tool is in active development. It should not be used in production.'
-          })
-        }}
-      </div>
 
       <div class="govuk-grid-row">
 
@@ -51,54 +85,47 @@
         <!-- note a lot of these performance issues are from receiving error codes from non-connected services -->
 
         <div class="govuk-grid-column-one-quarter">
-          <ul class="app-subnav__section">
-            <li class="app-subnav__section-item">
-              <a class="app-subnav__link govuk-link" href="/">Landing</a>
-            </li>
-          </ul>
-          <h4 class="app-subnav__header">Statistics</h4>
+          <h4 class="govuk-heading-s app-subnav__header">Statistics</h4>
           <!-- @TODO(sfount) move links etc. into small templates/ macros - make use of govuk front end utilites as much as possible -->
-          <ul class="app-subnav__section">
+          <ul class="govuk-list app-subnav__section">
             <li class="app-subnav__section-item">
-              <a class="app-subnav__link govuk-link" href="/statistics">Overview</a>
+              <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/statistics">Overview</a>
             </li>
             <li class="app-subnav__section-item">
-              <a class="app-subnav__link govuk-link" href="/statistics/filter/date">Filter By Date (deprecated)</a>
+              <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/statistics/filter/date">For a given day</a>
             </li>
             <li class="app-subnav__section-item">
-              <a class="app-subnav__link govuk-link" href="/statistics/compare/date">Compare By Date (deprecated)</a>
+              <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/statistics/compare/date">Compare two days</a>
             </li>
             <li class="app-subnav__section-item">
-              <a class="app-subnav__link govuk-link" href="/statistics/services">Services</a>
+              <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/statistics/services">For a service</a>
             </li>
           </ul>
 
-          <h4 class="app-subnav__header">Gateway Accounts</h4>
-          <ul class="app-subnav__section">
+          <h4 class="govuk-heading-s app-subnav__header">Gateway Accounts</h4>
+          <ul class="govuk-list app-subnav__section">
             <li class="app-subnav__section-item">
-              <a class="app-subnav__link govuk-link" href="/gateway_accounts">Overview</a>
+              <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/gateway_accounts">Overview</a>
             </li>
             <li class="app-subnav__section-item">
-              <a class="app-subnav__link govuk-link" href="/gateway_accounts/create">Create New Account</a>
-            </li>
-          </ul>
-        </div>
-        
-        <h4 class="app-subnav__header">Services</h4>
-          <ul class="app-subnav__section">
-            <li class="app-subnav__section-item">
-              <a class="app-subnav__link govuk-link" href="/services">Overview</a>
-            </li>
-            <li class="app-subnav__section-item">
-              <a class="app-subnav__link govuk-link" href="/services/search">Find a Service</a>
+              <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/gateway_accounts/create">Create New Account</a>
             </li>
           </ul>
-        </div>
         
-        <h4 class="app-subnav__header">Transactions</h4>
-          <ul class="app-subnav__section">
+          <h4 class="govuk-heading-s app-subnav__header">Services</h4>
+          <ul class="govuk-list app-subnav__section">
             <li class="app-subnav__section-item">
-              <a class="app-subnav__link govuk-link" href="/transactions/search">Find a Transaction</a>
+              <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/services">Overview</a>
+            </li>
+            <li class="app-subnav__section-item">
+              <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/services/search">Find a Service</a>
+            </li>
+          </ul>
+        
+          <h4 class="govuk-heading-s app-subnav__header">Transactions</h4>
+          <ul class="govuk-list app-subnav__section">
+            <li class="app-subnav__section-item">
+              <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/transactions/search">Find a Transaction</a>
             </li>
           </ul>
         </div>
@@ -120,12 +147,15 @@
   <footer class="govuk-footer">
     <div class="govuk-width-container">
       <div class="govuk-footer__meta">
-        
         <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
-          <span class="govuk-footer__licsense-description">
-          <!-- span -->
-            To contribute or request features please follow this link.
-          </span>
+          <div class="govuk-footer__meta-custom">
+            <span>To contribute or request features please refer to </span>
+            <a class="govuk-footer__link" href="https://github.com/alphagov/pay-toolbox-revised">alphagov/pay-toolbox-revised</a>
+          </div>
+          <div class="govuk-footer__meta-custom">
+            <!-- span>pay-toolbox-revised(1.0.4)</span -->
+            <!-- span>pay-toolbox-revised(1.0.4) served <code>er32523</code></span -->
+          </div>
         </div>
       </div>
     </div>
