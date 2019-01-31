@@ -7,11 +7,13 @@ const providers = {
   directDebit: [ 'direct-debit-sandbox', 'gocardless' ]
 }
 
+const systemAttributes = [ 'systemLinkedService' ]
+
 const schema = {
   live: Joi.string().required().valid('live', 'not-live').required(),
   paymentMethod: Joi.string().valid('card', 'direct-debit').required(),
   description: Joi.string().required(),
-  name: Joi.string().required(),
+  serviceName: Joi.string().required(),
   provider: Joi.string().required()
     .when('live', {
       is: 'live',
@@ -25,12 +27,7 @@ const schema = {
       is: 'direct-debit',
       then: Joi.string().valid(providers.directDebit)
     }),
-  department: Joi.string().when('live', {
-    is: 'live',
-    then: Joi.string().required()
-  }),
-  credentials: Joi.string(),
-  serviceReference: Joi.string()
+  credentials: Joi.string()
 }
 
 class GatewayAccount {
@@ -38,6 +35,7 @@ class GatewayAccount {
     const { error, value: model } = Joi.validate(body, schema)
     const parsed = this.defaults(model)
 
+    // @TODO(sfount) remove system attributes
     if (error) {
       throw new ValidationError(`GatewayAccount ${error.details[0].message}`)
     }
@@ -45,10 +43,6 @@ class GatewayAccount {
   }
 
   defaults (model) {
-    if (model.live === 'live') {
-      model.generatedDescription = `${model.department} ${model.serviceReference} ${model.provider && model.provider.toUpperCase()}`
-      model.generatedAnalyticsId = `${model.department}-${model.serviceReference}`
-    }
     return model
   }
 

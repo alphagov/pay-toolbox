@@ -1,13 +1,10 @@
 {% from "components/input/macro.njk" import govukInput %}
+{% from "components/button/macro.njk" import govukButton %}
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1>Find a Service</h1>
+  <h1 class="govuk-heading-s">Find a Service</h1>
   
-  {% for message in messages %}
-    <div><p>{{ message }}</p></div>
-  {% endfor %}
-
   <form method="POST" action="/services/search">
     {{ govukInput({ 
       id: "id",
@@ -15,7 +12,10 @@
       label: { text: "External Service ID" }
       })
       }}
-      
-      <button type="submit">Submit</button>
+
+    {{ govukButton({
+      text: "Search"
+      })
+      }}
   </form>
 {% endblock %}

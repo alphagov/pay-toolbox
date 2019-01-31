@@ -1,12 +1,15 @@
 {% from "components/input/macro.njk" import govukInput %}
+{% from "components/button/macro.njk" import govukButton %}
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1>Update Custom Branding</h1>
+  <h1 class="govuk-heading-s">Update custom branding</h1>
 
   <!-- @TODO(sfount) provide uniform context for all editing/ detail pages showing which entity is being dealt with -->
-  <p>Note this is for service {{ service.name }} ({{ serviceId }})</p>
-  
+  <div>
+    <a href="/services/{{ serviceId }}" class="govuk-back-link">Back to service ({{ serviceId }})</a>
+  </div> 
+
   <form method="POST" action="/services/{{ serviceId }}/branding">
     {{ govukInput({ 
       id: "image_url",
@@ -24,7 +27,10 @@
       })
       }}
 
-    <button type="submit">Submit</button>
+    {{ govukButton({
+    text: "Update Branding Links"
+    })
+    }}
   </form>
 
 {% endblock %}

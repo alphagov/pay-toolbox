@@ -3,7 +3,10 @@ const exceptions = require('./gateway_accounts.exceptions')
 
 module.exports = {
   overview: http.overview,
-  create: http.create,
+  create: {
+    http: http.create,
+    exceptions: exceptions.create
+  },
   confirm: {
     http: http.confirm,
     exceptions: exceptions.confirm

@@ -3,9 +3,10 @@
 
 {% block main %}
   <h1 class="govuk-heading-s">Statistics</h1>
-  
+
+  <!-- @FIXME(sfount) this could be a one liner -->
   {% if date %} 
-    <h4 class="govuk-heading-s">{{ date | formatDate }}</h4>
+    <h4 class="govuk-heading-s">{{ date | formatDateLong }}</h4>
   {% else %}
     <h4 class="govuk-heading-s">All time</h4>
   {% endif %}

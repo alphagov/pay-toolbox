@@ -11,11 +11,18 @@ const overview = async function overview (req, res, next) {
 }
 
 const create = async function create (req, res, next) {
+  // @TODO(sfount) if linked service provided, automatically make call to link gateway account and service
+  const linkedService = req.query.service
   const context = { messages: req.flash('error') }
 
   if (req.session.recovered) {
     context.recovered = Object.assign({}, req.session.recovered)
     delete req.session.recovered
+  }
+
+  if (linkedService) {
+    const service = await AdminUsers.service(linkedService)
+    context.service = service
   }
   res.render('gateway_accounts/create', context)
 }

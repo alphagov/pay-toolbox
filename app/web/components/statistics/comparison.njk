@@ -3,16 +3,17 @@
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1>Connector Statistics Date Comparison</h1>
+  <h1 class="govuk-heading-s">Statistics</h1>
   
+  <h4 class="govuk-heading-s">{{ date | formatDateLong }}</h4>
   {{ govukTable({
-      caption: date,
       firstCellIsHeader: true,
       rows: stats
     })
   }}
+  
+  <h4 class="govuk-heading-s">{{ compareDate | formatDateLong }}</h4>
   {{ govukTable({
-      caption: compareDate,
       firstCellIsHeader: true,
       rows: compareStats
     })

@@ -2,10 +2,9 @@
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1>Statistics By Service</h1>
+  <h1 class="govuk-heading-s">Statistics by service</h1>
   
   {{ govukTable({
-      caption: "Connector gateway account report by service",
       firstCellIsHeader: false,
       head: [
         { text: "Service" },

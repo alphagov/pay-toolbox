@@ -13,8 +13,10 @@ const detail = async function detail (req, res, next) {
   const serviceId = req.params.id
   const messages = req.flash('info')
 
-  const service = await AdminUsers.service(serviceId)
-  const users = await AdminUsers.serviceUsers(serviceId)
+  const [service, users] = await Promise.all([
+    AdminUsers.service(serviceId),
+    AdminUsers.serviceUsers(serviceId)
+  ])
   res.render('services/detail', { service, users, serviceId, messages })
 }
 
@@ -58,8 +60,7 @@ const updateLinkAccounts = async function updateLinkAccounts (req, res, next) {
 }
 
 const search = async function search (req, res, next) {
-  const messages = req.flash('error')
-  res.render('services/search', { messages })
+  res.render('services/search')
 }
 
 const searchRequest = async function searchRequest (req, res, next) {

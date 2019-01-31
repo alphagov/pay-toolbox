@@ -29,7 +29,7 @@ const config = require('./../config')
 const logger = require('./../lib/logger')
 
 // @FIXME(sfount) move this out of server configuration
-const { toFormattedDate } = require('./../lib/format')
+const { toFormattedDate, toFormattedDateLong } = require('./../lib/format')
 
 // stack wide error handlers
 const errors = require('./errors')
@@ -134,8 +134,11 @@ const templaterEnvironment = nunjucks.configure(templatePathRoots, templateRende
 templaterEnvironment.addGlobal('manifest', staticResourceManifest)
 
 templaterEnvironment.addFilter('formatDate', (date) => {
-  console.log('invalid?', date)
   return toFormattedDate(new Date(date))
+})
+
+templaterEnvironment.addFilter('formatDateLong', (date) => {
+  return toFormattedDateLong(new Date(date))
 })
 
 /**

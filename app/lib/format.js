@@ -18,8 +18,12 @@ const toFormattedDate = function toFormattedDate (date) {
   return dateFormatter.format(date)
 }
 
+const toFormattedDateLong = function toFormattedDateLong (date) {
+  return date.toDateString()
+}
+
 const toCurrencyString = function toCurrencyString (total) {
   return currencyFormatter.format(total)
 }
 
-module.exports = { toFormattedDate, toCurrencyString }
+module.exports = { toFormattedDate, toCurrencyString, toFormattedDateLong }

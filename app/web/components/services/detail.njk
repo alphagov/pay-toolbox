@@ -1,42 +1,89 @@
-{% from "components/table/macro.njk" import govukTable %}
+{% from "components/button/macro.njk" import govukButton %}
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
   
-  <h1>Service Details</h1>
+  <h1 class="govuk-heading-s">Service Details</h1>
 
   {% for message in messages %}
     <div><p>{{message}}</p>
   {% endfor %}
 
-  <!-- actions -->
+  <!-- manual table used because macro is too simplistic -->
+  <table class="govuk-table">
+    <tbody class="govuk-table__body">
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Service ID</th>
+        <td class="govuk-table__cell">{{service.id}}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">External ID</th>
+        <td class="govuk-table__cell">{{service.external_id}}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Name</th>
+        <td class="govuk-table__cell">{{service.name}}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Gateway Accounts</th>
+        <td class="govuk-table__cell">
+          {% for id in service.gateway_account_ids %}
+            <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ id }}">{{id}}</a>
+          {% endfor %}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
   <div>
-    <!-- a href="/gateway_accounts/{{ accountDetails.gateway_account_id }}/api_keys">API Keys</a -->
-    <!-- button>Payment Links</button -->
+    {{ govukButton({
+      text: "Add New Gateway Account",
+      href: "/gateway_accounts/create?service=" + service.external_id
+      })
+      }}
+
+    {{ govukButton({
+      text: "Edit Custom Branding",
+      href: "/services/" + serviceId + "/branding"
+      })
+      }}
+    {{ govukButton({
+      text: "Link Gateway Accounts",
+      href: "/services/" + serviceId + "/link_accounts"
+      })
+    }}
+
+    <!-- a href="/services/{{ serviceId }}/branding">Edit Custom Branding</a>
+    <a href="/services/{{ serviceId }}/link_accounts">Link Gateway Accounts</a -->
   </div>
 
-  {{ govukTable({
-    caption: "Service Details",
-    firstCellIsHeader: true,
-    rows: [
-    [ { text: 'Service ID' }, { text: service.id } ],
-    [ { text: 'External ID' }, { text: service.external_id } ],
-    [ { text: 'Name' }, { text: service.name } ],
-    [ { text: 'Gateway Accounts' }, { text: service.gateway_account_ids } ],
-    [ { text: 'Service Users' }, { text: 'Not implemented' } ]
-    ]
-  })
-  }}
+  <h1 class="govuk-heading-s">Users</h1>
+  <table class="govuk-table">
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Email</th> 
+        <th class="govuk-table__header" scope="col">Disabled</th> 
+        <th class="govuk-table__header" scope="col">Login Count</th> 
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      {% for user in users %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">{{ user.email }}</td>
+          <td class="govuk-table__cell">{{ user.disabled | string | capitalize }}</td>
+          <td class="govuk-table__cell">{{ user.login_counter }}</td>
+        </tr>
+      {% endfor %}
+    </body>
+  </table>
+
   <!-- [ { text: 'Service Users' }, { text: users | dump | safe } ] -->
 
   <div>
-    <h4>Actions</h4>
-    <a href="/services/{{ serviceId }}/branding">Edit Custom Branding</a>
-    <a href="/services/{{ serviceId }}/link_accounts">Link Gateway Accounts</a>
   </div>
 
   <div>
-    <pre><code>{{ service | dump('\t') | safe }}</code></pre>
-    <pre><code>{{ users | dump('\t') | safe }}</code></pre>
+    <pre><code>{{ service | dump('\t') }}</code></pre>
+    <pre><code>{{ users | dump('\t') }}</code></pre>
   </div>
 {% endblock %}

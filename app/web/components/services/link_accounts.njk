@@ -1,16 +1,23 @@
+{% from "components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "components/input/macro.njk" import govukInput %}
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1>Link Gateway Accounts</h1>
+  <h1 class="govuk-heading-s">Link gateway accounts</h1>
   
-  {% for message in messages %}
-    <div><p>{{message}}</p>
-  {% endfor %}
-
   <!-- @TODO(sfount) provide uniform context for all editing/ detail pages showing which entity is being dealt with -->
-  <p>Note this is for service {{ serviceId }}</p>
-  
+  <div>
+    <a href="/services/{{ serviceId }}" class="govuk-back-link">Back to service ({{ serviceId }})</a>
+  </div> 
+
+  {% for message in messages %}
+    {{ govukErrorSummary({
+      titleText: "There is a problem",
+      errorList: [ { text: message } ]
+      })
+      }}
+  {% endfor %}
+    
   <form method="POST" action="/services/{{ serviceId }}/link_accounts">
     {{ govukInput({ 
       id: "account_id",

@@ -39,7 +39,7 @@ const compareFilter = async function compareFilter (req, res, next) {
   res.render('statistics/comparison', { date, compareDate, stats: formatStatsAsTableRows(stats), compareStats: formatStatsAsTableRows(compareStats) })
 }
 
-// @TODO(sfount) route note complete - combine service details with gateway account performance report
+// @TODO(sfount) route not complete - combine service details with gateway account performance report
 const byServices = async function byServices (req, res, next) {
   const [ services, report ] = await Promise.all([
     AdminUsers.services(),

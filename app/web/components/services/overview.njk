@@ -1,15 +1,16 @@
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1>Services</h1>
+  <h1 class="govuk-heading-s">Services</h1>
 
   <!-- @FIXME(sfount) there must be a better way to do the headings etc. -->
   <!-- manual table used because macro is too simplistic -->
+  <!-- caption class="govuk-table__caption">All Services</caption -->
   <table class="govuk-table">
-    <caption class="govuk-table__caption">All Services</caption>
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">Service Name</th>
+        <th class="govuk-table__header" scope="col">ID</th>
+        <th class="govuk-table__header" scope="col">Name</th>
         <th class="govuk-table__header" scope="col">Go Live Status</th>
         <!-- th class="govuk-table__header" scope="col">Type</th>
         <th class="govuk-table__header" scope="col">Provider</th>
@@ -20,7 +21,8 @@
     <tbody class="govuk-table__body">
       {% for service in services %}
       <tr class="govuk-table__row">
-        <td class="govuk-table__cell"><a href="/services/{{ service.external_id }}">{{ service.name }}</a></td>
+        <td class="govuk-table__cell">{{ service.id }}</td>
+        <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="/services/{{ service.external_id }}">{{ service.name }}</a></td>
         <td class="govuk-table__cell">{{ service.current_go_live_stage }}</td>
         <!-- td class="govuk-table__cell">{{ account.type }}</td> 
         <td class="govuk-table__cell">{{ account.payment_provider }}</td> 
