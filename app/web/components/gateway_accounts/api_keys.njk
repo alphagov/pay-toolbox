@@ -7,7 +7,9 @@
   <h1 class="govuk-heading-s">Manage API keys</h1>
 
   {% for message in messages %}
-    <div><p>{{ message }}</p></div>
+    <div class="govuk-error-summary success-summary" role="alert">
+      <h2 class="govuk-error-summary__title">{{message}}</h2>
+    </div>
   {% endfor %}
 
   <div>

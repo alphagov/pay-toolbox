@@ -1,18 +1,33 @@
 #!/bin/bash
 
+ENV_FILE=.env
 # remove existing environment files
-rm -f .env 
-touch .env
+rm -f "$ENV_FILE" 
+touch "$ENV_FILE"
 
 # @TODO(sfount) this should be done much better if it's actually used
-echo "PORT=3030" >> .env
-echo "NODE_ENV=development" >> .env 
-echo "TOOLBOX_FILE_ROOT=$PWD" >> .env
 
-# URLs line up with local tunnel mappings found in pay cli
-# note development build environments will probably not be HTTPS
-echo "ADMINUSERS_URL=https://localhost:9001" >> .env
-echo "CONNECTOR_URL=https://localhost:9003" >>.env 
-echo "DIRECT_DEBIT_CONNECTOR_URL=https://localhost:9004" >>.env
-echo "PRODUCTS_URL=https://localhost:9005" >>.env
-echo "PUBLIC_AUTH_URL=https://localhost:9006" >>.env
+read -r -d '' URL_TARGET_LOCAL << EOM
+ADMINUSERS_URL=http://localhost:9001
+CONNECTOR_URL=http://localhost:9003
+DIRECT_DEBIT_CONNECTOR_URL=http://localhost:9004
+PRODUCTS_URL=http://localhost:9005
+PUBLIC_AUTH_URL=http://localhost:9006
+EOM
+
+read -r -d '' URL_TARGET_TUNNEL << EOM
+ADMINUSERS_URL=https://localhost:9001
+CONNECTOR_URL=https://localhost:9003
+DIRECT_DEBIT_CONNECTOR_URL=https://localhost:9004
+PRODUCTS_URL=https://localhost:9005
+PUBLIC_AUTH_URL=https://localhost:9006
+EOM
+
+[[ $1 = 'local' ]] && URL_MAP="$URL_TARGET_LOCAL" || URL_MAP="$URL_TARGET_TUNNEL"
+
+cat > "$ENV_FILE" << EOM
+PORT=3030
+NODE_ENV=development
+TOOLBOX_FILE_ROOT=$PWD
+$URL_MAP
+EOM

@@ -28,17 +28,28 @@ const create = async function create (req, res, next) {
 }
 
 const confirm = async function confirm (req, res, next) {
-  const accountDetails = new GatewayAccount(req.body)
-  res.render('gateway_accounts/confirm', { accountDetails })
+  const account = new GatewayAccount(req.body)
+  res.render('gateway_accounts/confirm', { account, request: req.body })
 }
 
 const writeAccount = async function writeAccount (req, res, next) {
+  const jobs = {}
   const account = new GatewayAccount(req.body)
-  const response = await Connector.createAccount(account.formatPayload())
+  const linkedService = req.body.systemLinkedService
 
-  logger.info(`Created new Gateway Account ${response.gateway_account_id} with Connector`)
-  req.flash('info', `Gateway account ${response.gateway_account_id} generated`)
-  res.redirect('/gateway_accounts')
+  jobs.account = await Connector.createAccount(account.formatPayload())
+  logger.info(`Created new Gateway Account ${jobs.account.gateway_account_id}`)
+
+  // connect system linked services to the created account
+  if (linkedService) {
+    jobs.linkService = await AdminUsers.updateServiceGatewayAccount(linkedService, jobs.account.gateway_account_id)
+    logger.info(`Service ${linkedService} linked to new Gateway Account ${jobs.account.gateway_account_id}`)
+
+    jobs.serviceStatus = await AdminUsers.updateServiceGoLiveStatus(linkedService, 'LIVE')
+    logger.info(`Service ${linkedService} 'current_go_live_stage' updated to 'LIVE'`)
+  }
+
+  res.render('gateway_accounts/createSuccess', { account: jobs.account, linkedService })
 }
 
 const detail = async function detail (req, res, next) {

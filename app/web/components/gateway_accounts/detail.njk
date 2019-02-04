@@ -5,6 +5,12 @@
 {% block main %}
   
   <h1 class="govuk-heading-s">Gateway account details</h1>
+  
+  {% if services.external_id %}
+  <div>
+    <a href="/services/{{ services.external_id }}" class="govuk-back-link">Associated service {{services.name}} ({{ services.id }})</a>
+  </div>
+  {% endif %}
 
   <table class="govuk-table">
     <tbody class="govuk-table__body">

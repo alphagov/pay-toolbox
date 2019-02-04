@@ -26,7 +26,7 @@ const updateLinkAccounts = function updateLinkAccounts (error, req, res, next) {
   }
 
   if (error.name === 'RESTClientError' && error.data.response && error.data.response.status === 409) {
-    const message = `Gateway account ${req.body.account_id} is already linked to service ${req.params.id}`
+    const message = `Gateway account ${req.body.account_id} is already linked to a service`
     req.session.recovered = { id: req.body.account_id }
     logger.warn(message)
     req.flash('error', message)

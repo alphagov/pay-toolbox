@@ -22,6 +22,7 @@ const create = function create (error, req, res, next) {
   if (error.name === 'RESTClientError' && error.data.response && error.data.response.status === 404) {
     throw new EntityNotFoundError('Service', req.query.service)
   }
+  next(error)
 }
 
 const writeAccount = function writeAccount (error, req, res, next) {

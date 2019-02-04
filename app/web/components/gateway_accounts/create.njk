@@ -6,6 +6,7 @@
 {% from "components/radios/macro.njk" import govukRadios %}
 {% from "components/button/macro.njk" import govukButton %}
 {% from "components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "components/warning-text/macro.njk" import govukWarningText %}
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
@@ -95,6 +96,10 @@
   
     {% if service %}
       <div class="govuk-form-group">
+        {{ govukWarningText({
+          text: "System link: this Gateway Account will be automatically asigned to this service."
+          })
+        }}
         <label class="govuk-label">Service Name</label>
         <input readonly class="govuk-input" id="serviceName" name="serviceName" type="text" value="{{ service.name }}" autocomplete="off">
         <input hidden id="systemLinkedService" name="systemLinkedService" value="{{ service.external_id }}">
@@ -119,7 +124,7 @@
       <span class="govuk-hint">
         GOV.UK Pay standard: "${Department}-${Service}"
       </span>
-      <input class="govuk-input" id="analytics_id" name="analytics_id" type="text" value="{{ recovered.analytics_id }}" autocomplete="off">
+      <input class="govuk-input" id="analyticsId" name="analyticsId" type="text" value="{{ recovered.analyticsId }}" autocomplete="off">
     </div>
     
     <div class="govuk-form-group">

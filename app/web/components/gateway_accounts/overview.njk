@@ -3,12 +3,6 @@
 {% block main %}
   <h1 class="govuk-heading-s">Gateway Accounts</h1>
 
-  {% for message in messages %}
-    <div>
-      <p>{{ message }}</p>
-    </div>
-  {% endfor %}
-  
   <!-- @FIXME(sfount) there must be a better way to do the headings etc. -->
   <!-- manual table used because macro is too simplistic -->
   <table class="govuk-table">
@@ -36,7 +30,7 @@
       {% else %}
       <!-- @TODO(sfount) test this -->
       <tr class="govuk-table__row">
-        <td class="govuk-table__cell" colspan="4">No gateway accounts returned from connector</td>
+        <td class="govuk-table__cell" colspan="5">No gateway accounts returned from connector</td>
       </tr>
       {% endfor %}
     </tbody>

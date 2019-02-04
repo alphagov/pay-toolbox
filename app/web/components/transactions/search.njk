@@ -1,22 +1,25 @@
 {% from "components/input/macro.njk" import govukInput %}
 {% from "components/radios/macro.njk" import govukRadios %}
+{% from "components/button/macro.njk" import govukButton %}
+{% from "components/error-summary/macro.njk" import govukErrorSummary %}
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1>Search Transactions</h1>
+  <h1 class="govuk-heading-s">Search Transactions</h1>
   
   {% for message in messages %}
-    <div><p>{{ message }}</p></div>
+  {{ govukErrorSummary({
+    titleText: "There is a problem",
+    errorList: [ { text: message } ]
+  })
+  }}
   {% endfor %}
 
   <form method="POST" action="/transactions/search">
-    {{ govukInput({ 
-      id: "account_id",
-      name: "account_id",
-      value: recovered.account_id,
-      label: { text: "Gateway Account ID" }
-      })
-      }}
+      <div class="govuk-form-group">
+        <label class="govuk-label">Gateway Account ID</label>
+        <input class="govuk-input" id="account_id" name="account_id" type="number" value="{{ recovered.account_id }}" autocomplete="off">
+      </div>
 
   {{ govukRadios({
       classes: "govuk-radios--inline",
@@ -30,21 +33,20 @@
         },
       hint: { text: "Search for transactions by Charge ID, or by the reference set by the service when creating the payment" },
       items: [
-        { value: "chargeId", text: "Charge ID", checked: recovered.search_by === "chargeId" },
-        { value: "reference", text: "Reference", checked: recovered.search_by === "reference" }
+        { value: "chargeId", text: "Charge ID", checked: recovered.search_by === "chargeId" or true },
+        { value: "reference", text: "Reference", checked: recovered.search_by and recovered.search_by === "reference" }
       ]
     })
     }}
-    
-    {{ govukInput({ 
-      id: "search_string",
-      name: "search_string",
-      value: recovered.search_string,
-      label: { text: "Search String" }
-      })
+  
+      <div class="govuk-form-group">
+        <label class="govuk-label">Search String</label>
+        <input class="govuk-input" id="search_string" name="search_string" type="text" value="{{ recovered.search_string }}" autocomplete="off">
+      </div>
+   
+      {{ govukButton({
+        text: "Search Transactions"
+        })
       }}
-
-      
-      <button type="submit">Submit</button>
   </form>
 {% endblock %}

@@ -2,42 +2,49 @@ const Joi = require('joi')
 
 const { ValidationError } = require('./../../../lib/errors')
 
-const providers = {
-  card: [ 'card-sandbox', 'worldpay', 'smartpay', 'epdq' ],
-  directDebit: [ 'direct-debit-sandbox', 'gocardless' ]
+const sandbox = {
+  card: 'card-sandbox',
+  directDebit: 'direct-debit-sandbox'
 }
-
-const systemAttributes = [ 'systemLinkedService' ]
+const providers = {
+  card: [ sandbox.card, 'worldpay', 'smartpay', 'epdq' ],
+  directDebit: [ sandbox.directDebit, 'gocardless' ]
+}
 
 const schema = {
   live: Joi.string().required().valid('live', 'not-live').required(),
   paymentMethod: Joi.string().valid('card', 'direct-debit').required(),
   description: Joi.string().required(),
   serviceName: Joi.string().required(),
-  provider: Joi.string().required()
-    .when('live', {
-      is: 'live',
-      then: Joi.string().invalid('card-sandbox', 'direct-debit-sandbox')
-    })
+  provider: Joi
     .when('paymentMethod', {
       is: 'card',
-      then: Joi.string().valid(providers.card)
+      then: Joi.string().required().valid(providers.card)
     })
     .when('paymentMethod', {
       is: 'direct-debit',
-      then: Joi.string().valid(providers.directDebit)
+      then: Joi.string().required().valid(providers.directDebit)
+    })
+    .when('live', {
+      is: 'live',
+      then: Joi.string().required().invalid('card-sandbox', 'direct-debit-sandbox')
     }),
-  credentials: Joi.string()
+  analyticsId: Joi.string().required(),
+  credentials: Joi.string().allow('')
 }
 
 class GatewayAccount {
   constructor (body) {
-    const { error, value: model } = Joi.validate(body, schema)
+    const { error, value: model } = Joi.validate(body, schema, { allowUnknown: true, stripUnknown: true })
     const parsed = this.defaults(model)
 
-    // @TODO(sfount) remove system attributes
     if (error) {
       throw new ValidationError(`GatewayAccount ${error.details[0].message}`)
+    }
+
+    // throw custom error if live account is attempting to use sandbox
+    if (parsed.live === 'live' && [sandbox.card, sandbox.directDebit].includes(parsed.provider)) {
+      throw new ValidationError('GatewayAccount live accounts cannot use Sandbox providers.')
     }
     Object.assign(this, parsed)
   }
@@ -50,16 +57,14 @@ class GatewayAccount {
   formatPayload () {
     const payload = {
       payment_provider: this.provider,
-      description: this.generatedDescription || this.description,
+      description: this.description,
       type: this.live === 'live' ? 'live' : 'test',
-      service_name: this.name
+      service_name: this.serviceName,
+      analytics_id: this.analyticsId
     }
 
     if (this.provider === 'stripe' && this.credentials) {
       payload.credentials = this.credentials
-    }
-    if (this.generatedAnalyticsId) {
-      payload.analytics_id = this.generatedAnalyticsId
     }
     return payload
   }

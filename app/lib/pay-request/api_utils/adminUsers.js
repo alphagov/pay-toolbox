@@ -52,14 +52,23 @@ const adminUsersMethods = function adminUsersMethods (instance) {
       path: 'gateway_account_ids',
       value: [ accountId.toString() ]
     }
+    return axiosInstance.patch(path, payload).then(utilExtractData)
+  }
 
+  const updateServiceGoLiveStatus = function updateServiceGoLiveStatus (id, status) {
+    const path = `v1/api/services/${id}`
+    const payload = {
+      op: 'replace',
+      path: 'current_go_live_stage',
+      value: status
+    }
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
 
   // extract and standardise this - there should be no need to repeat this over and over
   const utilExtractData = response => response.data
 
-  return { service, services, serviceUsers, updateServiceBranding, updateServiceGatewayAccount, gatewayAccountServices }
+  return { service, services, serviceUsers, updateServiceBranding, updateServiceGatewayAccount, gatewayAccountServices, updateServiceGoLiveStatus }
 }
 
 module.exports = adminUsersMethods

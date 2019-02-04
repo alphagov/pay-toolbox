@@ -1,10 +1,15 @@
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1>Transaction Search Results</h1>
+  <h1 class="govuk-heading-s">Transaction Search Results</h1>
+  
+  {% if events.length %}
+  <p class="govuk-body">
+  Found results for charge ID <b><code>{{ chargeId }}</code></b>
+  </p>
+  {% endif %}
 
   <table class="govuk-table">
-    <caption class="govuk-table__caption">Results</caption>
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
         <th class="govuk-table__header" scope="col">Type</th>
@@ -21,15 +26,18 @@
         <td class="govuk-table__cell">{{ event.state.status }}</td> 
         <td class="govuk-table__cell">{{ event.state.finished }}</td> 
         <td class="govuk-table__cell">{{ event.amount }}</td> 
-        <td class="govuk-table__cell">{{ event.updated }}</td> 
+        <td class="govuk-table__cell">{{ event.updated | formatDate }}</td> 
       </tr>
       {% else %}
       <!-- @TODO(sfount) test this -->
       <tr class="govuk-table__row">
-        <td class="govuk-table__cell" colspan="4">No events found for this transaction search</td>
+        <td class="govuk-table__cell" colspan="5">No events found for this transaction search</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 
+  <div>
+    <pre><code>{{ events | dump('\t') }}</code></pre>
+  </div>
 {% endblock %}

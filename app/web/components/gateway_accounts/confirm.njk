@@ -1,20 +1,20 @@
 {% from "components/table/macro.njk" import govukTable %}
+{% from "components/button/macro.njk" import govukButton %}
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1>Confirm New Gateway Account Details</h1>
+  <h1 class="govuk-heading-s">Confirm details for new Gateway Account</h1>
 
   {{ govukTable({
-    caption: "Account Details",
     firstCellIsHeader: true,
     rows: [
-    [ { text: 'Payment Method' }, { text: accountDetails.paymentMethod } ],
-    [ { text: 'Account Type' }, { text: accountDetails.provider } ],
-    [ { text: 'Service Name' }, { text: accountDetails.name } ],
-    [ { text: 'Description' }, { text: accountDetails.generatedDescription or accountDetails.description } ],
-    [ { text: 'Google Analytics ID' }, { text: accountDetails.analytics_id } ],
-    [ { text: 'Is Live' }, { text: accountDetails.live } ],
-    [ { text: 'Credentials' }, { text: accountDetails.credentials } ]
+    [ { text: 'Payment Method' }, { text: request.paymentMethod | capitalize } ],
+    [ { text: 'Account Type' }, { text: request.provider | capitalize } ],
+    [ { text: 'Service Name' }, { text: request.serviceName } ],
+    [ { text: 'Description' }, { text: request.description } ],
+    [ { text: 'Google Analytics ID' }, { text: request.analyticsId } ],
+    [ { text: 'Is Live' }, { text: request.live | capitalize } ],
+    [ { text: 'Credentials' }, { text: request.credentials } ]
     ]
   })
   }}
@@ -23,16 +23,20 @@
   
   <form method="post" action="/gateway_accounts/create">
     <!-- @TODO(sfount) Improve: Maintain values over confirmation -->
-    <input type="hidden" name="paymentMethod" value="{{ accountDetails.paymentMethod }}"> 
-    <input type="hidden" name="provider" value="{{ accountDetails.provider }}"> 
-    <input type="hidden" name="name" value="{{ accountDetails.name }}"> 
-    <input type="hidden" name="description" value="{{ accountDetails.description }}"> 
-    <input type="hidden" name="systemLinkedService" value="{{ accountDetails.systemLinkedService }}"> 
+    <input type="hidden" name="paymentMethod" value="{{ request.paymentMethod }}"> 
+    <input type="hidden" name="provider" value="{{ request.provider }}"> 
+    <input type="hidden" name="serviceName" value="{{ request.serviceName }}"> 
+    <input type="hidden" name="description" value="{{ request.description }}"> 
+    <input type="hidden" name="analyticsId" value="{{ request.analyticsId }}"> 
+    <input type="hidden" name="systemLinkedService" value="{{ request.systemLinkedService }}"> 
 
-    <input type="hidden" name="live" value="{{ accountDetails.live }}"> 
-    <input type="hidden" name="credentials" value="{{ accountDetails.credentials }}"> 
-
-    <button type="submit">Submit</button>
+    <input type="hidden" name="live" value="{{ request.live }}"> 
+    <input type="hidden" name="credentials" value="{{ request.credentials }}"> 
+  
+    {{ govukButton({
+      text: "Create Gateway Account"
+      })
+    }}
   </form>
 
 {% endblock %}

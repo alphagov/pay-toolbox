@@ -25,3 +25,11 @@
 .status-disconnected { 
   background-color: #b10e1e;
 }
+
+.success-summary { 
+  border-color: govuk-colour("green");
+}
+
+.success-summary > .govuk-error-summary__title { 
+  margin-bottom: 0px;
+}
