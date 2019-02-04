@@ -70,6 +70,7 @@ app.use('/public', express.static(path.join(config.common.TOOLBOX_FILE_ROOT, 'ap
 app.use('/assets/fonts', express.static(path.join(config.common.TOOLBOX_FILE_ROOT, 'node_modules/govuk-frontend/assets/fonts'), temporaryCachingMechanism))
 app.use('/assets/svg', express.static(path.join(config.common.TOOLBOX_FILE_ROOT, 'app/assets/svg'), temporaryCachingMechanism))
 
+app.use('/favicon.ico', express.static(path.join(config.common.TOOLBOX_FILE_ROOT, 'node_modules/govuk-frontend/assets/images/', 'favicon.ico')))
 /**
  * Sessions @TODO(sfount) move to seperate file
  * - note sessions may not have to be handled by this application at all

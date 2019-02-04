@@ -17,7 +17,7 @@ const { RESTClientError } = require('./../../lib/errors')
 const serviceStore = require('./../services.store')
 const serviceApiMethodUtils = require('./api_utils')
 
-const PAY_REQUEST_TIMEOUT = 1000
+const PAY_REQUEST_TIMEOUT = 3000
 
 // @TODO(sfount) look into using Class methods
 const payBaseClient = function payBaseClient (service) {

@@ -23,10 +23,27 @@ PRODUCTS_URL=https://localhost:9005
 PUBLIC_AUTH_URL=https://localhost:9006
 EOM
 
-[[ $1 = 'local' ]] && URL_MAP="$URL_TARGET_LOCAL" || URL_MAP="$URL_TARGET_TUNNEL"
+read -r -d '' URL_TARGET_DOCKER_TUNNEL << EOM 
+ADMINUSERS_URL=https://docker.for.mac.localhost:9001
+CONNECTOR_URL=https://docker.for.mac.localhost:9003
+DIRECT_DEBIT_CONNECTOR_URL=https://docker.for.mac.localhost:9004
+PRODUCTS_URL=https://docker.for.mac.localhost:9005
+PUBLIC_AUTH_URL=https://docker.for.mac.localhost:9006
+EOM
+
+# @TODO(sfount) more consice IFs
+# [[ $1 = 'local' ]] && URL_MAP="$URL_TARGET_LOCAL" || URL_MAP="$URL_TARGET_TUNNEL"
+# [[ $1 = 'docker' ]] && URL_MAP="$URL_TARGET_DOCKER_LOCAL"
+if [ "$1" = 'local' ] ; then 
+  URL_MAP="$URL_TARGET_LOCAL"
+elif [ "$1" = 'docker' ] ; then 
+  URL_MAP="$URL_TARGET_DOCKER_TUNNEL"
+else 
+  URL_MAP="$URL_TARGET_TUNNEL"
+fi
 
 cat > "$ENV_FILE" << EOM
-PORT=3030
+PORT=3000
 NODE_ENV=development
 TOOLBOX_FILE_ROOT=$PWD
 $URL_MAP
