@@ -11,6 +11,7 @@ const statistics = require('./components/statistics/statistics.http')
 const gatewayAccounts = require('./components/gateway_accounts')
 const services = require('./components/services')
 const transactions = require('./components/transactions')
+const stripe = require('./components/stripe')
 
 // @TODO(sfount) remove comment - router can now have its own middleware
 // specified seperately from the application - the overall application
@@ -61,5 +62,8 @@ router.post('/services/:id/link_accounts', auth.secured, services.updateLinkAcco
 
 router.get('/transactions/search', auth.secured, transactions.search)
 router.post('/transactions/search', auth.secured, transactions.searchTransaction.http, transactions.searchTransaction.exceptions)
+
+router.get('/stripe/create', auth.secured, stripe.create)
+router.post('/stripe/create', auth.secured, stripe.createAccount.http, stripe.createAccount.exceptions)
 
 module.exports = router

@@ -1,0 +1,21 @@
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+<div class="govuk-panel govuk-panel--confirmation">
+	<h1 class="govuk-panel__title">
+		Stripe account created
+	</h1>
+	<div class="govuk-panel__body">
+		Your account reference
+		<br><strong>{{ response.id }}</strong>
+	</div>
+</div>
+
+<p class="govuk-body">
+  A Stripe Connected Account was created through the Stripe API.
+</p>
+
+<div> 
+  <pre><code>{{ response | dump('\t') }}</code></pre>
+</div>
+{% endblock %}
