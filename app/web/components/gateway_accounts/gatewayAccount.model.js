@@ -7,7 +7,7 @@ const sandbox = {
   directDebit: 'direct-debit-sandbox'
 }
 const providers = {
-  card: [ sandbox.card, 'worldpay', 'smartpay', 'epdq' ],
+  card: [ sandbox.card, 'worldpay', 'smartpay', 'epdq', 'stripe' ],
   directDebit: [ sandbox.directDebit, 'gocardless' ]
 }
 
@@ -31,6 +31,10 @@ const schema = {
     }),
   analyticsId: Joi.string().required(),
   credentials: Joi.string().allow('')
+    .when('provider', {
+      is: 'stripe',
+      then: Joi.string().required()
+    })
 }
 
 class GatewayAccount {
@@ -60,11 +64,14 @@ class GatewayAccount {
       description: this.description,
       type: this.live === 'live' ? 'live' : 'test',
       service_name: this.serviceName,
-      analytics_id: this.analyticsId
+      analytics_id: this.analyticsId,
+      requires_3ds: this.provider === 'stripe' ? 'true' : 'false'
     }
 
     if (this.provider === 'stripe' && this.credentials) {
-      payload.credentials = this.credentials
+      payload.credentials = {
+        stripe_account_id: this.credentials
+      }
     }
     return payload
   }

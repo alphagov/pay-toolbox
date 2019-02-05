@@ -38,8 +38,9 @@ const createAccount = async function createAccount (req, res, next) {
 
   // @FIXME(sfount) handle this in exceptions
   try {
-    console.log('making account with', account.basicObject())
+    logger.info('Requesting new Stripe account from stripe API')
     const response = await stripe.account.create(account.basicObject())
+    logger.info(`Stripe API responded with success, account ${response.id} created.`)
     res.render('stripe/success', { response })
   } catch (error) {
     req.session.recovered = req.body

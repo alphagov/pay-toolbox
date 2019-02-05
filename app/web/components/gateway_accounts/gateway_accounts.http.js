@@ -49,7 +49,8 @@ const writeAccount = async function writeAccount (req, res, next) {
     logger.info(`Service ${linkedService} 'current_go_live_stage' updated to 'LIVE'`)
   }
 
-  res.render('gateway_accounts/createSuccess', { account: jobs.account, linkedService })
+  // note payment_provider is not returned in the object returned from createAccount
+  res.render('gateway_accounts/createSuccess', { account: jobs.account, linkedService, provider: account.provider })
 }
 
 const detail = async function detail (req, res, next) {

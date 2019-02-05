@@ -17,18 +17,24 @@ A {{ account.type | upper }} Gateway Account has been created through Admin User
 
 <h2 class="govuk-heading-m">Actions taken</h2>
 <ol class="govuk-list govuk-list--number">
-	<li>New {{ account.type | capitalize }} {{ account.provider | capitalize }} Gateway Account ({{ account.gateway_account_id }}) record created</li>
-
-	{% if linkedService %}
+	<li>New {{ account.type }} {{ provider | capitalize }} account ({{ account.gateway_account_id }}) record created</li>
+ 
+  <!-- @TODO(sfount) not a scalable pattern -->
+  {% if provider === 'stripe' %}
+  <li>(Stripe account) Set 'requires_3ds' on new account to 'true'</li>
+  {% endif %}
+  
+  {% if linkedService %}
 	<li>(System Link) Service '{{ account.service_name }}' linked to new Gateway Account ({{ account.gateway_account_id }})</li>
 	<li>Service '{{ account.service_name }}' go live status updated to 'LIVE'</li>
 	{% endif %}
 </ol>
-
 
 <h2 class="govuk-heading-m">Relevent resources</h2>
 <ul class="govuk-list">
 	<li><a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ account.gateway_account_id }}">{{ account.type | upper }} Gateway Account ({{ account.gateway_account_id }}) details</a></li>
 	<li><a class="govuk-link govuk-link--no-visited-state" href="/services/{{ linkedService }}">{{ account.service_name }} details</a></li>
 </ul>
+
+<pre><code> {{ account | dump('\t') }}</code></pre>
 {% endblock %}
