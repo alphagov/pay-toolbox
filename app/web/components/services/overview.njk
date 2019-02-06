@@ -19,7 +19,7 @@
       </tr>
     </thead>
     <tbody class="govuk-table__body">
-      {% for service in services %}
+      {% for service in services | sort(true, false, 'id')  %}
       <tr class="govuk-table__row">
         <td class="govuk-table__cell">{{ service.id }}</td>
         <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="/services/{{ service.external_id }}">{{ service.name }}</a></td>

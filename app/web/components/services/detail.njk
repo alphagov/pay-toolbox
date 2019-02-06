@@ -27,6 +27,10 @@
         <td class="govuk-table__cell">{{service.name}}</td>
       </tr>
       <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Go live status</th>
+        <td class="govuk-table__cell">{{service.current_go_live_stage | upper }}</td>
+      </tr>
+      <tr class="govuk-table__row">
         <th class="govuk-table__header" scope="col">Gateway Accounts</th>
         <td class="govuk-table__cell">
           {% for id in service.gateway_account_ids %}
@@ -41,6 +45,12 @@
     {{ govukButton({
       text: "Add New Gateway Account",
       href: "/gateway_accounts/create?service=" + service.external_id
+      })
+      }}
+    
+    {{ govukButton({
+      text: "Add New Stripe Account",
+      href: "/stripe/create?service=" + service.external_id
       })
       }}
 

@@ -117,6 +117,10 @@
       <span class="govuk-hint">
         GOV.UK Pay standard: "${Department} ${Service} ${Provider} ${IsLive}"
       </span>
+      <span class="govuk-hint">
+        Blue Badge standard: "${Service} Blue Badge Admin Stripe LIVE"
+      </span>
+
       <input class="govuk-input" id="description" name="description" type="text" value="{{ recovered.description }}" autocomplete="off">
     </div>
 
@@ -125,9 +129,23 @@
       <span class="govuk-hint">
         GOV.UK Pay standard: "${Department}-${Service}"
       </span>
+      <span class="govuk-hint">
+        Blue Badge standard: "LG-${Service}-BB"
+      </span>
+
       <input class="govuk-input" id="analyticsId" name="analyticsId" type="text" value="{{ recovered.analyticsId }}" autocomplete="off">
     </div>
     
+    {% if linkedCredentials %} 
+    <div class="govuk-form-group">
+      <label class="govuk-label">Stripe Credentials</label>
+      <span class="govuk-hint">
+        This is only required for Stripe accounts
+      </span>
+      <input readonly class="govuk-input" id="credentials" name="credentials" type="text" value="{{ linkedCredentials }}" autocomplete="off">
+      <input hidden id="systemLinkedCredentials" name="systemLinkedCredentials" value="{{ linkedCredentials }}">
+    </div>
+    {% else %}
     <div class="govuk-form-group">
       <label class="govuk-label">Stripe Credentials</label>
       <span class="govuk-hint">
@@ -135,6 +153,7 @@
       </span>
       <input class="govuk-input" id="credentials" name="credentials" type="text" value="{{ recovered.credentials }}" autocomplete="off">
     </div>
+    {% endif %}
     
     {{ govukButton({
       text: "Submit"

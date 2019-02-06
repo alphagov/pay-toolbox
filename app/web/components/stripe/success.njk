@@ -1,3 +1,4 @@
+{% from "components/button/macro.njk" import govukButton %}
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
@@ -14,6 +15,24 @@
 <p class="govuk-body">
   A Stripe Connected Account was created through the Stripe API.
 </p>
+
+{% if systemLinkService %}
+ <div class="govuk-warning-text">
+  <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+  <strong class="govuk-warning-text__text">
+    <span class="govuk-warning-text__assistive">Warning</span>
+    This Stripe account was created for a service, continue to create the GOV.UK Pay Gateway Account
+  </strong>
+ </div> 
+ 
+ {{ govukButton({ 
+      text: "Create Pay Live Gateway Account for " + response.business_name + "(" + service.name + ")", 
+      href: "/gateway_accounts/create?service=" + systemLinkService + "&credentials=" + response.id
+      })
+      }}
+      <br>
+<!-- a href="/gateway_accounts/create?service={{ systemLinkService }}&credentials={{ response.id }}" class="govuk-link govuk-link-\-no-visited-state">Create Gateway Account for {{ service.name }} (stripe creds {{ response.id }})</a -->
+{% endif %}
 
 <div> 
   <pre><code>{{ response | dump('\t') }}</code></pre>

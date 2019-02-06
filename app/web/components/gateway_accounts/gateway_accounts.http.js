@@ -13,7 +13,7 @@ const overview = async function overview (req, res, next) {
 const create = async function create (req, res, next) {
   // @TODO(sfount) if linked service provided, automatically make call to link gateway account and service
   const linkedService = req.query.service
-  const context = { messages: req.flash('error') }
+  const context = { messages: req.flash('error'), linkedCredentials: req.query.credentials }
 
   if (req.session.recovered) {
     context.recovered = Object.assign({}, req.session.recovered)

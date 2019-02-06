@@ -25,7 +25,7 @@ const schema = {
 
 class StripeAccount {
   constructor (body) {
-    const { error, value: model } = Joi.validate(body, schema)
+    const { error, value: model } = Joi.validate(body, schema, { allowUnknown: true, stripUnknown: true })
 
     if (error) {
       throw new ValidationError(`StripeAccount ${error.details[0].message}`)
@@ -57,7 +57,7 @@ class StripeAccount {
           city: params.org_address_city,
           postal_code: params.org_address_postcode
         },
-        additional_owners: [],
+        additional_owners: '',
         dob: {
           day: Number(params.person_dob_day),
           month: Number(params.person_dob_month),

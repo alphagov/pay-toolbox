@@ -124,7 +124,8 @@
 					<input class="govuk-input" id="org_ip_address" name="org_ip_address" value="{{ recovered.org_ip_address }}">
 				</div>
 				<div class="govuk-form-group">
-					<label class="govuk-label">Statement descriptor</label>
+          <label class="govuk-label">Statement descriptor</label>
+          <span class="govuk-hint">Payment description to appear on user's bank statement</span>
 					<input class="govuk-input" id="org_statement_descriptor" name="org_statement_descriptor" value="{{ recovered.org_statement_descriptor }}">
 				</div>
 				<div class="govuk-form-group">
@@ -170,9 +171,13 @@
 					<input class="govuk-input" id="org_address_postcode" name="org_address_postcode" value="{{ recovered.org_address_postcode }}">
 				</div>
 			</fieldset>
-		</div>
-	</fieldset>
+    </div> 
+  </fieldset>
 </div>
+{% if systemLinkService %}
+  <input hidden name="systemLinkService" id="systemLinkService" value="{{ systemLinkService }}">
+{% endif %}
+
 <div class="govuk-form-group">
 	{{ govukButton({
 		text: "Create Stripe Connected Account"

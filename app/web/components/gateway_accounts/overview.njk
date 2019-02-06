@@ -17,7 +17,7 @@
       </tr>
     </thead>
     <tbody class="govuk-table__body">
-      {% for account in accounts %}
+      {% for account in accounts | sort(true, false, 'gateway_account_id') %}
       <tr class="govuk-table__row">
         <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ account.gateway_account_id }}">{{ account.gateway_account_id }}</a></td>
         <td class="govuk-table__cell">{{ account.type | capitalize }}</td> 
