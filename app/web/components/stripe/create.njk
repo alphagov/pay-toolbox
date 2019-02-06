@@ -186,4 +186,35 @@
 </div>
 </form>
 
+<details class="govuk-details" id="parse_util">
+  <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">
+      Experimental (magical) CSV to Form utility
+    </span>
+  </summary>
+  <div class="govuk-details__text">
+
+		
+		<div class="govuk-form-group">
+			<label class="govuk-label" for="more-detail">
+				Details from spreadsheet
+			</label>
+			<span id="more-detail-hint" class="govuk-hint">
+				Copy and paste the service details from the engagement form in this text area. Note that this utility is configured for a specific version of the form which is subject to change.
+			</span>
+			<textarea class="govuk-textarea" id="csv_entry" name="more-detail" rows="5" aria-describedby="more-detail-hint"></textarea>
+		</div>
+
+		<p>Disclaimer one: Addresses are too dynamic and not supported until they are split up in the form</p>
+		<p>Disclaimer two: Names in particular can be all over the place, you still have to double check these are entered correctly</p>
+	
+			
+		<button type="button" id="parse_action" class="govuk-button">
+			Parse Input
+		</button>
+  </div>
+</details>
+	
+{% set js %}{% include "./clientjs/parse-csv.js" %}{% endset %}
+<script>{{ js | safe }}</script>
 {% endblock %}
