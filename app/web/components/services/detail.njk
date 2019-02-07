@@ -3,7 +3,7 @@
 
 {% block main %}
   
-  <h1 class="govuk-heading-s">Service Details</h1>
+  <h1 class="govuk-heading-m">Service Details</h1>
 
   {% for message in messages %}
     <div class="govuk-error-summary success-summary" role="alert">
@@ -40,20 +40,38 @@
       </tr>
     </tbody>
   </table>
-  
+   
   <div>
-    {{ govukButton({
-      text: "Add New Gateway Account",
-      href: "/gateway_accounts/create?service=" + service.external_id
-      })
-      }}
+    <h1 class="govuk-heading-s">Going Live - New Stripe Payment Provider Provider</h1>
+    <p class="govuk-body">This will guide you through:</p>
+    <ul class="govuk-list govuk-list--number">
+      <li>Creating new Stripe account through the Stripe API</li>
+      <li>Creating a GOV.UK Pay Gateway Account, with the correct Stripe credentials</li>
+    </ul>
     
     {{ govukButton({
-      text: "Add New Stripe Account",
+      text: "Setup Live Stripe Account",
       href: "/stripe/create?service=" + service.external_id
       })
       }}
+  </div>
+  
+  <div>
+    <h1 class="govuk-heading-s">Going Live - Existing Payment Provider</h1>
+    <p class="govuk-body">This will guide you through:</p>
+    <ul class="govuk-list govuk-list--number">
+      <li>Creating a GOV.UK Pay Gateway Account</li>
+    </ul>
 
+  {{ govukButton({
+      text: "Setup Live Gateway Account",
+      href: "/gateway_accounts/create?service=" + service.external_id
+      })
+      }}
+  </div>
+
+  <div>
+    <h1 class="govuk-heading-s">Service Actions</h1>
     {{ govukButton({
       text: "Edit Custom Branding",
       href: "/services/" + serviceId + "/branding"
