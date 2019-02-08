@@ -1,7 +1,6 @@
-// Pay API service utility wrapper methods
 const index = {}
 
-// @TODO(sfount) serviceStore will have to be shipped with pay-request itself
+// @TODO(sfount) dependancy on toolbox service store - encapsulate into pay-request
 const serviceStore = require('./../../services.store')
 
 index[serviceStore.ADMINUSERS.key] = require('./adminUsers')

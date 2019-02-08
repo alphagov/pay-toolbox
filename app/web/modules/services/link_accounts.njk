@@ -1,0 +1,31 @@
+{% from "components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "components/input/macro.njk" import govukInput %}
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  <h1 class="govuk-heading-m">Link gateway accounts</h1>
+  
+  <div>
+    <a href="/services/{{ serviceId }}" class="govuk-back-link">Back to service ({{ serviceId }})</a>
+  </div> 
+
+  {% for message in messages %}
+    {{ govukErrorSummary({
+      titleText: "There is a problem",
+      errorList: [ { text: message } ]
+      })
+      }}
+  {% endfor %}
+    
+  <form method="POST" action="/services/{{ serviceId }}/link_accounts">
+    {{ govukInput({ 
+      id: "account_id",
+      name: "account_id",
+      value: recovered.id,
+      label: { text: "Gateway account ID to add" }
+      })
+      }}
+      
+      <button type="submit">Submit</button>
+  </form>
+{% endblock %}

@@ -1,5 +1,5 @@
 {
-  "name": "pay-toolbox-revised",
+  "name": "pay-toolbox",
   "version": "0.1.0",
   "description": "Internal administrative tools service for the GOV.UK Pay products.",
   "engines": {
@@ -13,24 +13,23 @@
     "dev": "nodemon app/index.js",
     "lint": "standard",
     "test": "npm run lint && npm run test:unit",
-    "test:unit": "echo \"Error: no test specified\" && exit 1",
+    "test:unit": "echo \"Test runner short-circuit\" && exit 1",
     "build:sass": "scripts/compile-assets",
     "preinstall": "echo \"Preinstall hook\" && exit 0",
     "postinstall": "npm run build:sass"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alphagov/pay-toolbox-revised.git"
+    "url": "git+https://github.com/alphagov/pay-toolbox.git"
   },
   "license": "MIT",
-  "homepage": "https://github.com/alphagov/pay-toolbox-revised#readme",
+  "homepage": "https://github.com/alphagov/pay-toolbox#readme",
   "dependencies": {
     "axios": "0.18.0",
     "body-parser": "1.18.3",
     "client-sessions": "0.8.0",
     "cls-hooked": "4.2.2",
     "connect-flash": "0.1.1",
-    "cookie-parser": "1.4.3",
     "cookie-session": "2.0.0-beta.3",
     "dotenv": "6.2.0",
     "express": "4.16.4",

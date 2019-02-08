@@ -1,5 +1,5 @@
-// connected services environment requirements - if a service should be
-// live it should be required in the environment
+// connected services environment requirements - any referenced services should
+// be configured even if they are not used by all flows
 const Joi = require('joi')
 
 const expectedConnectedServicesEnvironmentValues = {
@@ -10,8 +10,6 @@ const expectedConnectedServicesEnvironmentValues = {
   PUBLIC_AUTH_URL: Joi.string().required()
 }
 
-// @TODO(sfount) write a wrapper library to do validation step - right now this
-// is duplicated across all env config files
 const { error, value: validatedConnectedServicesEnvironmentValues } =
   Joi.validate(process.env, expectedConnectedServicesEnvironmentValues, { allowUnknown: true, stripUnknown: true })
 

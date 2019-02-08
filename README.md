@@ -3,30 +3,31 @@ Internal administrative tools service for GOV.UK Pay products.
 
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-## top level todo tomerge 
-* include generate dev .env as part of post install potentially - for getting people up and running 
-* update readmes and code comments, either address concerns or remove them into a top level 'to consider'
+## Running in a support role
+The repository is pushed to Dockerhub when changes are approved into master, to use 
+the latest version in a support role, simply run: 
 
-## (to-be-removed) To remove before initial commit 
-* remove .npmrc - no need to specifiy --save-exact going forward
-* investigate `Got` vs. `axios` REST client libraries, small vs. feature complete?
-* ensure travis CI build passing badge is added to the README 
-* if code coverage or code climate is used include these badges too
-* latest version number in badge
+```bash
+pay toolbox start
+```
 
-## (to-be-removed) Motivation for development 
-// @TODO
-1. can run in proudction (allowing non-technical users in support to access production information)
-2. increased testing infrastructure around sensitive procedures 
-3. common language that the pay development team are familiar with 
-4. fits the Java backend, Node frontend pattern adopted by the pay team 
-5. set a standard for modern Pay Node apps that can be referenced as good practice 
-6. improve development tooling for team working on frontend apps 
-7. improve CI environment configurations, tests that should always pass, strong linting practices
+## Setting up local development 
+Getting the toolbox up and running for development. 
 
-## (to-be-removed) Technical goals
+```bash
+npm install
+
+# generate a dev environment file - run the version according to your needs
+./scripts/generate-dev-environment # default - target services running through SSH tunnel
+./scripts/generate-dev-environment local # target services running locally on your machine
+./scripts/generate-dev-environment docker # for docker deployment - talk to external network
+
+# this will watch javascript files for changes and restart the server accordingly
+npm run dev
+```
 
 ## Development Goals/ Focus
-* tiny files, each piece responsible for one thing 
-* contextual tests, tests close to what they are testing, organised by feature
-* simple to understand architecture
+* Small files, each piece responsible for one thing 
+* Contextual tests, tests close to what they are testing, organised by feature
+* Simple to understand architecture
+* Latest language development standards

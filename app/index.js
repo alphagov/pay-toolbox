@@ -1,13 +1,11 @@
 const http = require('http')
 
+const { server } = require('./config')
 const logger = require('./lib/logger')
 const app = require('./web/server')
-const config = require('./config')
-
-// const serverInitEntry = function serverInitEntry () { }
 
 const logHTTPServerStarted = function logHTTPServerStarted () {
-  logger.info(`Toolbox HTTP server listening on port ${config.server.PORT}`)
+  logger.info(`Toolbox HTTP server listening on port ${server.PORT}`)
 }
 
-http.createServer(app).listen(config.server.PORT, logHTTPServerStarted)
+http.createServer(app).listen(server.PORT, logHTTPServerStarted)

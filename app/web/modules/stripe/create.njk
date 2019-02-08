@@ -1,0 +1,219 @@
+{% from "components/button/macro.njk" import govukButton %}
+{% from "components/error-summary/macro.njk" import govukErrorSummary %}
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+<h1 class="govuk-heading-m">Create a Stripe Connected Account</h1>
+
+{% for message in messages %}
+  {{ govukErrorSummary({
+    titleText: "There is a problem",
+    errorList: [ { text: message } ]
+  }) 
+  }}
+{% endfor %}
+
+<form method="POST" action="/stripe/create">
+<div class="govuk-form-group">
+	<fieldset class="govuk-fieldset">
+		<legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+			<h3 class="govuk-fieldset__heading">
+				Responsible Person
+			</h3>
+		</legend>
+		<div class="govuk-form-group">
+			<fieldset class="govuk-fieldset">
+				<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+					<h4 class="govuk-fieldset__heading">
+						Name
+					</h4>
+				</legend>
+				<div class="govuk-form-group">
+					<label class="govuk-label">First name</label>
+					<input class="govuk-input" id="person_first_name" name="person_first_name" value="{{ recovered.person_first_name }}">
+				</div>
+				<div class="govuk-form-group">
+					<label class="govuk-label">Last name</label>
+					<input class="govuk-input" id="person_last_name" name="person_last_name" value="{{ recovered.person_last_name }}">
+				</div>
+			</fieldset>
+		</div>
+		<div class="govuk-form-group">
+			<fieldset class="govuk-fieldset">
+				<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+					<h4 class="govuk-fieldset__heading">
+						Date of Birth
+					</h4>
+				</legend>
+				<div class="govuk-date-input" id="dob">
+					<div class="govuk-date-input__item">
+						<div class="govuk-form-group">
+							<label class="govuk-label govuk-date-input__label" for="dob-day">
+								Day
+							</label>
+              <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="dob-day" name="person_dob_day" type="number" pattern="[0-9]*" value="{{ recovered.person_dob_day }}">
+						</div>
+					</div>
+					<div class="govuk-date-input__item">
+						<div class="govuk-form-group">
+							<label class="govuk-label govuk-date-input__label" for="dob-month">
+								Month
+							</label>
+							<input class="govuk-input govuk-date-input__input govuk-input--width-2" id="dob-month" name="person_dob_month" type="number" pattern="[0-9]*" value="{{ recovered.person_dob_month }}">
+						</div>
+					</div>
+					<div class="govuk-date-input__item">
+						<div class="govuk-form-group">
+							<label class="govuk-label govuk-date-input__label" for="dob-year">
+								Year
+							</label>
+							<input class="govuk-input govuk-date-input__input govuk-input--width-4" id="dob-year" name="person_dob_year" type="number" pattern="[0-9]*" value="{{ recovered.person_dob_year }}">
+						</div>
+					</div>
+				</div>
+			</fieldset>
+		</div>
+		<div class="govuk-form-group">
+			<fieldset class="govuk-fieldset">
+				<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+					<h4 class="govuk-fieldset__heading">
+						Address
+					</h4>
+				</legend>
+				<div class="govuk-form-group">
+					<label class="govuk-label">Line 1</label>
+					<input class="govuk-input" id="person_address_line_1" name="person_address_line_1" value="{{ recovered.person_address_line_1 }}">
+				</div>
+				<div class="govuk-form-group">
+					<label class="govuk-label">City</label>
+					<input class="govuk-input" id="person_address_city" name="person_address_city" value="{{ recovered.person_address_city }}">
+				</div>
+				<div class="govuk-form-group">
+					<label class="govuk-label">Postcode</label>
+					<input class="govuk-input" id="person_address_postcode" name="person_address_postcode" value="{{ recovered.person_address_postcode }}">
+				</div>
+			</fieldset>
+		</div>
+	</fieldset>
+</div>
+
+ <div class="govuk-form-group">
+	<fieldset class="govuk-fieldset">
+		<legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+			<h3 class="govuk-fieldset__heading">
+				Organisation
+			</h3>
+		</legend>
+		<div class="govuk-form-group">
+			<fieldset class="govuk-fieldset">
+				<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+					<h4 class="govuk-fieldset__heading">
+						Identity
+					</h4>
+				</legend>
+				<div class="govuk-form-group">
+					<label class="govuk-label">Name</label>
+					<input class="govuk-input" id="org_name" name="org_name" value="{{ recovered.org_name }}">
+				</div>
+				<div class="govuk-form-group">
+					<label class="govuk-label">VAT number</label>
+					<input class="govuk-input" id="org_id" name="org_id" value="{{ recovered.org_id }}">
+				</div>
+				<div class="govuk-form-group">
+					<label class="govuk-label">TOS IP address</label>
+					<input class="govuk-input" id="org_ip_address" name="org_ip_address" value="{{ recovered.org_ip_address }}">
+				</div>
+				<div class="govuk-form-group">
+          <label class="govuk-label">Statement descriptor</label>
+          <span class="govuk-hint">Payment description to appear on user's bank statement</span>
+					<input class="govuk-input" id="org_statement_descriptor" name="org_statement_descriptor" value="{{ recovered.org_statement_descriptor }}">
+				</div>
+				<div class="govuk-form-group">
+					<label class="govuk-label">Phone number</label>
+					<input class="govuk-input" id="org_phone_number" name="org_phone_number" value="{{ recovered.org_phone_number }}">
+				</div>
+			</fieldset>
+		</div>
+		<div class="govuk-form-group">
+			<fieldset class="govuk-fieldset">
+				<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+					<h4 class="govuk-fieldset__heading">
+						Bank Account
+					</h4>
+				</legend>
+				<div class="govuk-form-group">
+					<label class="govuk-label">Sort Code</label>
+					<input class="govuk-input" id="bank_account_sort_code" name="bank_account_sort_code" value="{{ recovered.bank_account_sort_code }}">
+				</div>
+				<div class="govuk-form-group">
+					<label class="govuk-label">Account Number</label>
+					<input class="govuk-input" id="bank_account_number" name="bank_account_number" value="{{ recovered.bank_account_number }}">
+				</div>
+			</fieldset>
+		</div>
+		<div class="govuk-form-group">
+			<fieldset class="govuk-fieldset">
+				<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+					<h4 class="govuk-fieldset__heading">
+						Address
+					</h4>
+				</legend>
+				<div class="govuk-form-group">
+					<label class="govuk-label">Line 1</label>
+					<input class="govuk-input" id="org_address_line_1" name="org_address_line_1" value="{{ recovered.org_address_line_1 }}">
+				</div>
+				<div class="govuk-form-group">
+					<label class="govuk-label">City</label>
+					<input class="govuk-input" id="org_address_city" name="org_address_city" value="{{ recovered.org_address_city }}">
+				</div>
+				<div class="govuk-form-group">
+					<label class="govuk-label">Postcode</label>
+					<input class="govuk-input" id="org_address_postcode" name="org_address_postcode" value="{{ recovered.org_address_postcode }}">
+				</div>
+			</fieldset>
+    </div> 
+  </fieldset>
+</div>
+{% if systemLinkService %}
+  <input hidden name="systemLinkService" id="systemLinkService" value="{{ systemLinkService }}">
+{% endif %}
+
+<div class="govuk-form-group">
+	{{ govukButton({
+		text: "Create Stripe Connected Account"
+		})
+	}}
+</div>
+</form>
+
+<details class="govuk-details" id="parse_util">
+  <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">
+      Experimental (magical) CSV to Form utility
+    </span>
+  </summary>
+  <div class="govuk-details__text">
+
+		
+		<div class="govuk-form-group">
+			<label class="govuk-label" for="more-detail">
+				Details from spreadsheet
+			</label>
+			<span id="more-detail-hint" class="govuk-hint">
+				Copy and paste the service details from the engagement form in this text area. Note that this utility is configured for a specific version of the form which is subject to change.
+			</span>
+			<textarea class="govuk-textarea" id="csv_entry" name="more-detail" rows="5" aria-describedby="more-detail-hint"></textarea>
+		</div>
+
+		<p>Disclaimer one: Addresses are too dynamic and not supported until they are split up in the form</p>
+		<p>Disclaimer two: Names in particular can be all over the place, you still have to double check these are entered correctly</p>
+			
+		<button type="button" id="parse_action" class="govuk-button">
+			Parse Input
+		</button>
+  </div>
+</details>
+	
+{% set js %}{% include "./clientjs/parse-csv.js" %}{% endset %}
+<script>{{ js | safe }}</script>
+{% endblock %}

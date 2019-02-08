@@ -8,13 +8,12 @@ COPY package*.json ./
 
 RUN npm install
 
-# copy this folder into WORKDIR directory
+# current folder assets into working directory
 COPY . .
 
-RUN apk add bash
-# hacky method of setting build defaults - this should be removed when
+# questionable method of setting build defaults - this should be removed when
 # tunneling is no longer required
-# RUN chmod +x /app/scripts/generate-dev-environment && . /app/scripts/generate-dev-environment
+RUN apk add bash
 RUN ./scripts/generate-dev-environment docker
 
 EXPOSE 3000

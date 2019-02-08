@@ -1,8 +1,3 @@
-/**
- * helpful logger pieces
- * * production aware (see common configs)
- * * logging.DISABLE_HTTP_LOGGING
- */
 const Joi = require('joi')
 
 const expectedLoggingEnvironmentValues = {

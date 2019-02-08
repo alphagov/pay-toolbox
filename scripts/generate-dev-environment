@@ -1,11 +1,10 @@
 #!/bin/bash
 
 ENV_FILE=.env
+
 # remove existing environment files
 rm -f "$ENV_FILE" 
 touch "$ENV_FILE"
-
-# @TODO(sfount) this should be done much better if it's actually used
 
 read -r -d '' URL_TARGET_LOCAL << EOM
 ADMINUSERS_URL=http://localhost:9001

@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# @TODO(sfount) move to simple Javascript scripts that
-# 1. build sass 
-# 2. generate unique hash uuid 
-# 3. generate a manifesto.json
-
 # Ensure structure for writing file exists
 mkdir -p app/public
 
@@ -15,7 +10,6 @@ rm -f app/public/payuk-toolbox*
 APPLICATION_SASS="app/assets/payuk-toolbox.scss"
 BUILD_FOLDER="app/public"
 BUILD_TARGET="payuk-toolbox"
-
 MANIFEST_TARGET="app/public/manifest.json"
 
 TEMP_FILE="$BUILD_FOLDER/$BUILD_TARGET.tmp"

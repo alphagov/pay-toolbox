@@ -13,7 +13,6 @@ const publicAuthMethods = function publicAuthMethods (instance) {
   }
 
   const utilExtractData = response => response.data
-
   return { apiKeyTokens, deleteApiToken }
 }
 

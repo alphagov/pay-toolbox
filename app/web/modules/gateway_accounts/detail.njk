@@ -1,0 +1,59 @@
+{% from "components/table/macro.njk" import govukTable %}
+{% from "components/button/macro.njk" import govukButton %}
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  <h1 class="govuk-heading-m">Gateway account details</h1>
+  
+  {% if services.external_id %}
+  <div>
+    <a href="/services/{{ services.external_id }}" class="govuk-back-link">Associated service {{services.name}} ({{ services.id }})</a>
+  </div>
+  {% endif %}
+
+  <table class="govuk-table">
+    <tbody class="govuk-table__body">
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">ID</th>
+        <td class="govuk-table__cell">{{ account.gateway_account_id }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Type</th>
+        <td class="govuk-table__cell">{{ account.type | capitalize }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Description</th>
+        <td class="govuk-table__cell">{{ account.description }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Payment Provider</th>
+        <td class="govuk-table__cell">{{ account.payment_provider | capitalize }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Service</th>
+        <td class="govuk-table__cell">{{ account.service_name }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Analytics</th>
+        <td class="govuk-table__cell"><code>{{ account.analytics_id }}</code></td>
+      </tr>
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Toggle 3DS</th>
+        <td class="govuk-table__cell">{{ account.toggle_3ds | capitalize }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div>
+    {{ govukButton({
+    text: "Manage API Keys",
+    href: "/gateway_accounts/" + account.gateway_account_id + "/api_keys"
+    })
+    }}
+  </div>
+
+  <div>
+    <pre><code>{{ account | dump('\t') }}</code></pre>
+    <pre><code>{{ services | dump('\t') }}</code></pre>
+  </div>
+{% endblock %}

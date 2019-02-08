@@ -1,0 +1,19 @@
+{% from "components/table/macro.njk" import govukTable %}
+{% extends "layout/layout.njk" %} 
+
+{% block main %}
+  <h1 class="govuk-heading-m">Statistics</h1>
+
+  <!-- @TODO(sfount) this could be a one liner -->
+  {% if date %} 
+    <h4 class="govuk-heading-s">{{ date | formatDateLong }}</h4>
+  {% else %}
+    <h4 class="govuk-heading-s">All time</h4>
+  {% endif %}
+
+  {{ govukTable({
+      firstCellIsHeader: true,
+      rows: stats
+    })
+  }}
+{% endblock %}

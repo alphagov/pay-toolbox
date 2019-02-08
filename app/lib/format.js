@@ -1,5 +1,3 @@
-// simple formatting methods for dates and currencies
-
 const currencyFormatter = new Intl.NumberFormat('en-GB', {
   style: 'currency',
   currency: 'GBP'

@@ -1,5 +1,4 @@
-// @TODO(sfount) move these out of index
-
+// @TODO(sfount) move error definitions outside of index file
 class RequestError extends Error {
   constructor (message) {
     super(message)
@@ -15,7 +14,7 @@ class EntityNotFoundError extends RequestError {
   }
 }
 
-// potential to wrap errors from other frameworks
+// wrap errors from other frameworks in a format that this service can report on
 // @FIXME(sfount) stack trace isn't respected
 class RESTClientError extends Error {
   constructor (error, key, name) {
