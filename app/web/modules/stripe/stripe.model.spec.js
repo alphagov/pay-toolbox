@@ -1,5 +1,6 @@
 const StripeAccount = require('./stripe.model')
 
+// @TODO(mrlumbu) Make these proper
 const stripeAccount1 = new StripeAccount({
   org_id: 'org_id',
   org_name: 'org_name',

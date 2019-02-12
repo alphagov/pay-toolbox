@@ -1,16 +1,18 @@
 const _ = require('lodash')
 
-const addEntityIfValid = function (object, params, modelName, name) {
+const logger = require('../lib/logger')
+
+const addModelIfValid = function addModelIfValid (target, source, modelName, modelKey) {
   try {
-    object[name] = Reflect.construct(modelName, [params]).basicObject()
+    target[modelKey] = Reflect.construct(modelName, [source]).basicObject()
   } catch (e) {
-    console.log(`${modelName.name} not added: ${e.message}`)
+    logger.debug(`${modelName.name} not added: ${e.message}`)
   }
-  return Object.assign({}, object)
+  return Object.assign({}, target)
 }
 
-const stripEmpty = function (object) {
+const stripEmpty = function stripEmpty (object) {
   return _.pickBy(object, _.identity)
 }
 
-module.exports = { addEntityIfValid, stripEmpty }
+module.exports = { addModelIfValid, stripEmpty }

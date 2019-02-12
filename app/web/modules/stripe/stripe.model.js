@@ -1,8 +1,7 @@
 const Joi = require('joi')
-const _ = require('lodash')
 
 const { ValidationError } = require('./../../../lib/errors')
-const { addEntityIfValid, stripEmpty } = require('./../../../lib/validation')
+const { addModelIfValid, stripEmpty } = require('./../../../lib/validation')
 
 const StripeBankAccount = require('./bankAccount.model')
 const StripeLegalEntity = require('./legalEntity.model')
@@ -31,7 +30,7 @@ class StripeAccount {
   }
 
   build (params) {
-    let core = {
+    const core = {
       type: 'custom',
       country: 'GB',
       business_name: params.org_name,
@@ -44,8 +43,8 @@ class StripeAccount {
       support_phone: params.org_phone_number
     }
 
-    let withSubModels = addEntityIfValid(core, params, StripeLegalEntity, 'legal_entity')
-    withSubModels = addEntityIfValid(withSubModels, params, StripeBankAccount, 'external_account')
+    let withSubModels = addModelIfValid(core, params, StripeLegalEntity, 'legal_entity')
+    withSubModels = addModelIfValid(withSubModels, params, StripeBankAccount, 'external_account')
 
     return stripEmpty(withSubModels)
   }

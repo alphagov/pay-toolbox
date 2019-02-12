@@ -1,7 +1,7 @@
 const Joi = require('joi')
 
 const { ValidationError } = require('./../../../lib/errors')
-const { addEntityIfValid, stripEmpty } = require('./../../../lib/validation')
+const { addModelIfValid, stripEmpty } = require('./../../../lib/validation')
 const Address = require('./address.model')
 const Dob = require('./dob.model')
 
@@ -12,18 +12,18 @@ const schema = {
   person_last_name: Joi.string()
 }
 
-const addSubModels = function (legalEntity, params) {
-  legalEntity = addEntityIfValid(legalEntity, {
+const addSubModels = function addSubModels (legalEntity, params) {
+  legalEntity = addModelIfValid(legalEntity, {
     line1: params.person_address_line_1,
     city: params.person_city,
     postcode: params.person_postcode
   }, Address, 'personal_address')
-  legalEntity = addEntityIfValid(legalEntity, {
+  legalEntity = addModelIfValid(legalEntity, {
     line1: params.org_address_line_1,
     city: params.org_city,
     postcode: params.org_postcode
   }, Address, 'address')
-  legalEntity = addEntityIfValid(legalEntity, params, Dob, 'external_account')
+  legalEntity = addModelIfValid(legalEntity, params, Dob, 'external_account')
 
   return legalEntity
 }
@@ -46,7 +46,7 @@ class StripeLegalEntity {
 
   build (params) {
     const core = {
-      additional_owners: '',
+      additional_owners: '', // Stripe interprets an empty string to mean no other owners, which is what we want
       type: 'government_agency',
       business_tax_id: params.org_id,
       business_name: params.org_name,
