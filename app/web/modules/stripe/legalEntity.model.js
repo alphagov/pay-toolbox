@@ -15,15 +15,19 @@ const schema = {
 const addSubModels = function addSubModels (legalEntity, params) {
   legalEntity = addModelIfValid(legalEntity, {
     line1: params.person_address_line_1,
-    city: params.person_city,
-    postcode: params.person_postcode
+    city: params.person_address_city,
+    postal_code: params.person_address_postcode
   }, Address, 'personal_address')
   legalEntity = addModelIfValid(legalEntity, {
     line1: params.org_address_line_1,
-    city: params.org_city,
-    postcode: params.org_postcode
+    city: params.org_address_city,
+    postal_code: params.org_address_postcode
   }, Address, 'address')
-  legalEntity = addModelIfValid(legalEntity, params, Dob, 'external_account')
+  legalEntity = addModelIfValid(legalEntity, {
+    day: params.person_dob_day,
+    month: params.person_dob_month,
+    year: params.person_dob_year
+  }, Dob, 'dob')
 
   return legalEntity
 }
@@ -31,10 +35,10 @@ const addSubModels = function addSubModels (legalEntity, params) {
 class StripeLegalEntity {
   constructor (body) {
     const params = Object.assign({}, body)
-    const { error, value: model } = Joi.validate(params, schema, { allowUnknown: true, stripUnknown: true })
+    const { error, value: model } = Joi.validate(params, schema, { allowUnknown: true })
 
     if (error) {
-      throw new ValidationError(`Dob ${error.details[0].message}`)
+      throw new ValidationError(`StripeLegalEntity ${error.details[0].message}`)
     }
 
     Object.assign(this, this.build(model))
