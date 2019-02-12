@@ -40,6 +40,7 @@ class StripeAccount {
         date: Math.floor(Date.now() / 1000)
       },
       payout_statement_descriptor: params.org_statement_descriptor,
+      statement_descriptor: params.org_statement_descriptor,
       support_phone: params.org_phone_number
     }
 
