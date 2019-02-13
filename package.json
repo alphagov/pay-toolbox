@@ -38,7 +38,7 @@
     "lodash": "^4.17.11",
     "morgan": "1.9.1",
     "nunjucks": "3.1.7",
-    "stripe": "6.23.1",
+    "stripe": "6.24.0",
     "winston": "3.2.1"
   },
   "devDependencies": {
