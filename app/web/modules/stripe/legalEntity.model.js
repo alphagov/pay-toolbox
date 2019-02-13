@@ -49,16 +49,21 @@ class StripeLegalEntity {
   }
 
   build (params) {
-    const core = {
-      additional_owners: '', // Stripe interprets an empty string to mean no other owners, which is what we want
+    const coreEntity = {
       type: 'government_agency',
       business_tax_id: params.org_id,
       business_name: params.org_name,
       first_name: params.person_first_name,
       last_name: params.person_last_name
     }
-    const withSubModels = addSubModels(core, params)
-    return stripEmpty(withSubModels)
+
+    // full legal entity including sub model attributes if they are validated
+    const legalEntity = stripEmpty(addSubModels(coreEntity, params))
+
+    // Stripe interprets an empty string to mean no other owners, which is what we want
+    legalEntity.additional_owners = ''
+
+    return legalEntity
   }
 }
 
