@@ -2,7 +2,7 @@
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1 class="govuk-heading-m">Service Details</h1>
+  <h1 class="govuk-heading-m">Service details</h1>
 
   {% for message in messages %}
     <div class="govuk-error-summary success-summary" role="alert">
@@ -29,7 +29,7 @@
         <td class="govuk-table__cell">{{service.current_go_live_stage | upper }}</td>
       </tr>
       <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">Gateway Accounts</th>
+        <th class="govuk-table__header" scope="col">Gateway accounts</th>
         <td class="govuk-table__cell">
           {% for id in service.gateway_account_ids %}
             <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ id }}">{{id}}</a>
@@ -40,43 +40,43 @@
   </table>
    
   <div>
-    <h1 class="govuk-heading-s">Going Live - New Stripe Payment Provider</h1>
+    <h1 class="govuk-heading-s">Going live - new Stripe payment provider</h1>
     <p class="govuk-body">This will guide you through:</p>
     <ul class="govuk-list govuk-list--number">
       <li>Creating new Stripe account through the Stripe API</li>
-      <li>Creating a GOV.UK Pay Gateway Account, with the correct Stripe credentials</li>
+      <li>Creating a GOV.UK Pay gateway account, with the correct Stripe credentials</li>
     </ul>
     
     {{ govukButton({
-      text: "Setup Live Stripe Account",
+      text: "Setup live Stripe account",
       href: "/stripe/create?service=" + service.external_id
       })
       }}
   </div>
   
   <div>
-    <h1 class="govuk-heading-s">Going Live - Existing Payment Provider</h1>
+    <h1 class="govuk-heading-s">Going live - existing payment provider</h1>
     <p class="govuk-body">This will guide you through:</p>
     <ul class="govuk-list govuk-list--number">
-      <li>Creating a GOV.UK Pay Gateway Account</li>
+      <li>Creating a GOV.UK Pay gateway account</li>
     </ul>
 
   {{ govukButton({
-      text: "Setup Live Gateway Account",
+      text: "Setup live gateway account",
       href: "/gateway_accounts/create?service=" + service.external_id
       })
       }}
   </div>
 
   <div>
-    <h1 class="govuk-heading-s">Service Actions</h1>
+    <h1 class="govuk-heading-s">Service actions</h1>
     {{ govukButton({
-      text: "Edit Custom Branding",
+      text: "Edit custom branding",
       href: "/services/" + serviceId + "/branding"
       })
       }}
     {{ govukButton({
-      text: "Link Gateway Accounts",
+      text: "Link gateway accounts",
       href: "/services/" + serviceId + "/link_accounts"
       })
     }}
@@ -88,7 +88,7 @@
       <tr class="govuk-table__row">
         <th class="govuk-table__header" scope="col">Email</th> 
         <th class="govuk-table__header" scope="col">Disabled</th> 
-        <th class="govuk-table__header" scope="col">Login Count</th> 
+        <th class="govuk-table__header" scope="col">Login count</th> 
       </tr>
     </thead>
     <tbody class="govuk-table__body">
