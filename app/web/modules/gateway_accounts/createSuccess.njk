@@ -3,7 +3,7 @@
 {% block main %}
 <div class="govuk-panel govuk-panel--confirmation">
 	<h1 class="govuk-panel__title">
-		Gateway Account created
+		Gateway account created
 	</h1>
 	<div class="govuk-panel__body">
 		Your account reference
@@ -12,7 +12,7 @@
 </div>
 
 <p class="govuk-body">
-A {{ account.type | upper }} Gateway Account has been created through Admin Users.
+A {{ account.type | upper }} Gateway account has been created through Admin Users.
 </p>
 
 <h2 class="govuk-heading-m">Actions taken</h2>
@@ -21,18 +21,18 @@ A {{ account.type | upper }} Gateway Account has been created through Admin User
  
   <!-- @TODO(sfount) not a scalable pattern -->
   {% if provider === 'stripe' %}
-  <li>(Stripe account) Set 'requires_3ds' on new account to 'true'</li>
+  <li>(Stripe account) Set ‘requires_3ds’ on new account to ‘true’</li>
   {% endif %}
   
   {% if linkedService %}
-	<li>(System Link) Service '{{ account.service_name }}' linked to new Gateway Account ({{ account.gateway_account_id }})</li>
-	<li>Service '{{ account.service_name }}' go live status updated to 'LIVE'</li>
+	<li>(System Link) Service ‘{{ account.service_name }}’ linked to new Gateway account ({{ account.gateway_account_id }})</li>
+	<li>Service ‘{{ account.service_name }}’ go live status updated to ‘LIVE’</li>
 	{% endif %}
 </ol>
 
 <h2 class="govuk-heading-m">Relevent resources</h2>
 <ul class="govuk-list">
-	<li><a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ account.gateway_account_id }}">{{ account.type | upper }} Gateway Account ({{ account.gateway_account_id }}) details</a></li>
+	<li><a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ account.gateway_account_id }}">{{ account.type | upper }} Gateway account ({{ account.gateway_account_id }}) details</a></li>
 	<li><a class="govuk-link govuk-link--no-visited-state" href="/services/{{ linkedService }}">{{ account.service_name }} details</a></li>
 </ul>
 

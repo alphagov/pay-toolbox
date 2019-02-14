@@ -5,7 +5,7 @@
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1 class="govuk-heading-m">Search Transactions</h1>
+  <h1 class="govuk-heading-m">Search transactions</h1>
   
   {% for message in messages %}
   {{ govukErrorSummary({
@@ -17,7 +17,7 @@
 
   <form method="POST" action="/transactions/search">
       <div class="govuk-form-group">
-        <label class="govuk-label">Gateway Account ID</label>
+        <label class="govuk-label">Gateway account ID</label>
         <input class="govuk-input" id="account_id" name="account_id" type="number" value="{{ recovered.account_id }}" autocomplete="off">
       </div>
 
@@ -27,7 +27,7 @@
       name: "search_by",
       fieldset: { 
         legend: { 
-          text: "Search By",
+          text: "Search by",
           isPageHeading: false
         }
         },
@@ -40,12 +40,12 @@
     }}
   
       <div class="govuk-form-group">
-        <label class="govuk-label">Search String</label>
+        <label class="govuk-label">Search string</label>
         <input class="govuk-input" id="search_string" name="search_string" type="text" value="{{ recovered.search_string }}" autocomplete="off">
       </div>
    
       {{ govukButton({
-        text: "Search Transactions"
+        text: "Search transactions"
         })
       }}
   </form>
