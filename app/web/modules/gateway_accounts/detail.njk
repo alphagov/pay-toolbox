@@ -26,7 +26,7 @@
         <td class="govuk-table__cell">{{ account.description }}</td>
       </tr>
       <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">Payment Provider</th>
+        <th class="govuk-table__header" scope="col">Payment provider</th>
         <td class="govuk-table__cell">{{ account.payment_provider | capitalize }}</td>
       </tr>
       <tr class="govuk-table__row">
@@ -46,7 +46,7 @@
 
   <div>
     {{ govukButton({
-    text: "Manage API Keys",
+    text: "Manage API keys",
     href: "/gateway_accounts/" + account.gateway_account_id + "/api_keys"
     })
     }}

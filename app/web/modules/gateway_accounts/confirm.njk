@@ -3,17 +3,17 @@
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-  <h1 class="govuk-heading-m">Confirm details for new Gateway Account</h1>
+  <h1 class="govuk-heading-m">Confirm details for new gateway account</h1>
 
   {{ govukTable({
     firstCellIsHeader: true,
     rows: [
-    [ { text: 'Payment Method' }, { text: request.paymentMethod | capitalize } ],
-    [ { text: 'Account Type' }, { text: request.provider | capitalize } ],
-    [ { text: 'Service Name' }, { text: request.serviceName } ],
+    [ { text: 'Payment method' }, { text: request.paymentMethod | capitalize } ],
+    [ { text: 'Account type' }, { text: request.provider | capitalize } ],
+    [ { text: 'Service name' }, { text: request.serviceName } ],
     [ { text: 'Description' }, { text: request.description } ],
-    [ { text: 'Google Analytics ID' }, { text: request.analyticsId } ],
-    [ { text: 'Is Live' }, { text: request.live | capitalize } ],
+    [ { text: 'Google analytics ID' }, { text: request.analyticsId } ],
+    [ { text: 'Is live' }, { text: request.live | capitalize } ],
     [ { text: 'Credentials' }, { text: request.credentials } ]
     ]
   })
@@ -32,7 +32,7 @@
     <input type="hidden" name="credentials" value="{{ request.credentials }}"> 
   
     {{ govukButton({
-      text: "Create Gateway Account"
+      text: "Create gateway account"
       })
     }}
   </form>

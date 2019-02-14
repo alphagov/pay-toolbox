@@ -25,13 +25,13 @@
       name: "live",
       fieldset: { 
         legend: { 
-          text: "Live Status",
+          text: "Live status",
           isPageHeading: false
         }
       }, 
       items: [
         { value: "live", text: "Live", checked: recovered.live and recovered.live === "live" or true },
-        { value: "not-live", text: "Not Live", checked: recovered.live === "not-live" }
+        { value: "not-live", text: "Not live", checked: recovered.live === "not-live" }
       ]
     })
     }}
@@ -42,13 +42,13 @@
       name: "paymentMethod",
       fieldset: { 
         legend: { 
-          text: "Payment Method",
+          text: "Payment method",
           isPageHeading: false
         }
       }, 
       items: [
         { value: "card", text: "Card", checked: recovered.paymentMethod and recovered.paymentMethod === "card" or true },
-        { value: "direct-debit", text: "Direct Debit", checked: recovered.paymentMethod === "direct-debit" }
+        { value: "direct-debit", text: "Direct debit", checked: recovered.paymentMethod === "direct-debit" }
       ]
     })
     }}
@@ -59,7 +59,7 @@
       name: "provider",
       fieldset: { 
         legend: { 
-          text: "Card Provider",
+          text: "Card provider",
           isPageHeading: false
         }
       }, 
@@ -79,7 +79,7 @@
       name: "provider",
       fieldset: { 
         legend: { 
-          text: "Direct Debit Provider",
+          text: "Direct debit provider",
           isPageHeading: false
         }
       }, 
@@ -93,16 +93,16 @@
     {% if service %}
       <div class="govuk-form-group">
         {{ govukWarningText({
-          text: "System link: this Gateway Account will be automatically asigned to this service."
+          text: "System link: this gateway account will be automatically asigned to this service."
           })
         }}
-        <label class="govuk-label">Service Name</label>
+        <label class="govuk-label">Service name</label>
         <input readonly class="govuk-input" id="serviceName" name="serviceName" type="text" value="{{ service.name }}" autocomplete="off">
         <input hidden id="systemLinkedService" name="systemLinkedService" value="{{ service.external_id }}">
       </div>
     {% else %}
       <div class="govuk-form-group">
-        <label class="govuk-label">Service Name</label>
+        <label class="govuk-label">Service name</label>
         <input class="govuk-input" id="serviceName" name="serviceName" type="text" value="{{ recovered.serviceName }}" autocomplete="off">
       </div>
     {% endif %}
@@ -113,14 +113,14 @@
         GOV.UK Pay standard: "${Department} ${Service} ${Provider} ${IsLive}"
       </span>
       <span class="govuk-hint">
-        Blue Badge standard: "${Service} Blue Badge Admin Stripe LIVE"
+        Blue Badge standard: "${Service} Blue Badge admin Stripe LIVE"
       </span>
 
       <input class="govuk-input" id="description" name="description" type="text" value="{{ recovered.description }}" autocomplete="off">
     </div>
 
     <div class="govuk-form-group">
-      <label class="govuk-label">Google Analytics ID</label>
+      <label class="govuk-label">Google analytics ID</label>
       <span class="govuk-hint">
         GOV.UK Pay standard: "${Department}-${Service}"
       </span>
@@ -133,7 +133,7 @@
     
     {% if linkedCredentials %} 
     <div class="govuk-form-group">
-      <label class="govuk-label">Stripe Credentials</label>
+      <label class="govuk-label">Stripe credentials</label>
       <span class="govuk-hint">
         This is only required for Stripe accounts
       </span>
@@ -142,7 +142,7 @@
     </div>
     {% else %}
     <div class="govuk-form-group">
-      <label class="govuk-label">Stripe Credentials</label>
+      <label class="govuk-label">Stripe credentials</label>
       <span class="govuk-hint">
         This is only required for Stripe accounts
       </span>

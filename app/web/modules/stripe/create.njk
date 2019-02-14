@@ -3,7 +3,7 @@
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
-<h1 class="govuk-heading-m">Create a Stripe Connected Account</h1>
+<h1 class="govuk-heading-m">Create a Stripe connected account</h1>
 
 {% for message in messages %}
   {{ govukErrorSummary({
@@ -18,7 +18,7 @@
 	<fieldset class="govuk-fieldset">
 		<legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
 			<h3 class="govuk-fieldset__heading">
-				Responsible Person
+				Responsible person
 			</h3>
 		</legend>
 		<div class="govuk-form-group">
@@ -42,7 +42,7 @@
 			<fieldset class="govuk-fieldset">
 				<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
 					<h4 class="govuk-fieldset__heading">
-						Date of Birth
+						Date of birth
 					</h4>
 				</legend>
 				<div class="govuk-date-input" id="dob">
@@ -138,15 +138,15 @@
 			<fieldset class="govuk-fieldset">
 				<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
 					<h4 class="govuk-fieldset__heading">
-						Bank Account
+						Bank account
 					</h4>
 				</legend>
 				<div class="govuk-form-group">
-					<label class="govuk-label">Sort Code</label>
+					<label class="govuk-label">Sort code</label>
 					<input class="govuk-input" id="bank_account_sort_code" name="bank_account_sort_code" value="{{ recovered.bank_account_sort_code }}">
 				</div>
 				<div class="govuk-form-group">
-					<label class="govuk-label">Account Number</label>
+					<label class="govuk-label">Account number</label>
 					<input class="govuk-input" id="bank_account_number" name="bank_account_number" value="{{ recovered.bank_account_number }}">
 				</div>
 			</fieldset>
@@ -180,7 +180,7 @@
 
 <div class="govuk-form-group">
 	{{ govukButton({
-		text: "Create Stripe Connected Account"
+		text: "Create Stripe connected account"
 		})
 	}}
 </div>
@@ -189,7 +189,7 @@
 <details class="govuk-details" id="parse_util">
   <summary class="govuk-details__summary">
     <span class="govuk-details__summary-text">
-      Experimental (magical) CSV to Form utility
+      Experimental (magical) CSV to form utility
     </span>
   </summary>
   <div class="govuk-details__text">
@@ -209,7 +209,7 @@
 		<p>Disclaimer two: Names in particular can be all over the place, you still have to double check these are entered correctly</p>
 			
 		<button type="button" id="parse_action" class="govuk-button">
-			Parse Input
+			Parse input
 		</button>
   </div>
 </details>
