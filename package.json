@@ -11,7 +11,7 @@
   "scripts": {
     "start": "node app/index.js",
     "dev": "nodemon app/index.js",
-    "lint": "standard",
+    "lint": "standard --env mocha",
     "test": "npm run lint && npm run test:unit",
     "test:unit": "echo \"Test runner short-circuit\" && exit 1",
     "build:sass": "scripts/compile-assets",
@@ -42,6 +42,8 @@
     "winston": "3.2.1"
   },
   "devDependencies": {
+    "chai": "4.2.0",
+    "mocha": "6.0.1",
     "node-sass": "4.11.0",
     "nodemon": "1.18.10",
     "standard": "12.0.1"
