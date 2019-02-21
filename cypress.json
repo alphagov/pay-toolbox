@@ -1,0 +1,10 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "viewportHeight": 800,
+  "viewportWidth": 1200,
+  "integrationFolder": "app/tests/cypress/integration",
+  "pluginsFile": "app/tests/cypress/plugins",
+  "supportFile": "app/tests/cypress/support",
+  "screenshotsFolder": "app/tests/cypress/screenshots",
+  "videosFolder": "app/tests/cypress/videos"
+}
