@@ -31,7 +31,7 @@ const connectorMethods = function connectorMethods (instance) {
   }
 
   const getGatewayComparison = function getGatewayComparison (chargeId) {
-    return getGatewayComparisons([chargeId])
+    return getGatewayComparisons([ chargeId ])
   }
 
   const getGatewayComparisons = function getGatewayComparisons (chargeIds) {
@@ -39,7 +39,7 @@ const connectorMethods = function connectorMethods (instance) {
   }
 
   const resolveDiscrepancy = function resolve (chargeId) {
-    return axiosInstance.post('/v1/api/discrepancies/resolveDiscrepancy', [chargeId]).then(utilExtractData)
+    return axiosInstance.post('/v1/api/discrepancies/resolve', [ chargeId ]).then(utilExtractData)
   }
 
   const searchTransactionsByReference = function searchTransactionsByReference (accountId, reference) {
