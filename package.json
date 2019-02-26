@@ -12,8 +12,9 @@
     "start": "node app/index.js",
     "dev": "nodemon app/index.js",
     "lint": "standard --env mocha",
-    "test": "npm run lint && npm run test:unit",
-    "test:unit": "echo \"Test runner short-circuit\" && exit 1",
+    "test": "npm run test:unit",
+    "test:unit": "mocha app/web/modules/**/*.spec.js",
+    "test:cypress": "cypress run",
     "build:sass": "scripts/compile-assets",
     "preinstall": "echo \"Preinstall hook\" && exit 0",
     "postinstall": "npm run build:sass"
