@@ -1,0 +1,35 @@
+{% extends "layout/layout.njk" %} 
+{% from "components/button/macro.njk" import govukButton %}
+
+{% block main %}
+  <h1 class="govuk-heading-m">Discrepancy results</h1>
+  <table class="govuk-table">
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">External Id</th>
+        <th class="govuk-table__header" scope="col">State</th>
+        <th class="govuk-table__header" scope="col">Gateway status</th>
+        <th class="govuk-table__header" scope="col">Resolve status</th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+     {% for comparison in comparisons %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">{{ comparison.chargeId }}</td>
+        <td class="govuk-table__cell">{{ comparison.payStatus }}</td>
+        <td class="govuk-table__cell">{{ comparison.gatewayStatus }}</td>
+        <td class="govuk-table__cell">
+        {% if comparison.canBeResolved %}
+            <form method="POST" action="/discrepancies/resolve/{{ comparison.chargeId }}">
+                {{ govukButton({
+                  text: "Resolve"
+                  })
+                }}
+            </form>
+       {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

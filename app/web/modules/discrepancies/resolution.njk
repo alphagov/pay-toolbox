@@ -1,0 +1,24 @@
+{% extends "layout/layout.njk" %}
+{% from "components/button/macro.njk" import govukButton %}
+
+{% block main %}
+  <h1 class="govuk-heading-m">Discrepancy resolution</h1>
+  <table class="govuk-table">
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">External Id</th>
+        <th class="govuk-table__header" scope="col">State</th>
+        <th class="govuk-table__header" scope="col">Gateway status</th>
+        <th class="govuk-table__header" scope="col">Resolved</th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">{{ resolution.chargeId }}</td>
+        <td class="govuk-table__cell">{{ resolution.payStatus }}</td>
+        <td class="govuk-table__cell">{{ resolution.gatewayStatus }}</td>
+        <td class="govuk-table__cell">{{ resolution.processed }}</td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock %}
