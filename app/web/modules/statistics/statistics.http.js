@@ -45,7 +45,7 @@ const byServices = async function byServices (req, res, next) {
     Connector.gatewayAccountPerformanceReport()
   ])
 
-  res.render('statistics/by_service', { stats: report })
+  res.render('statistics/by_service', { stats: report, services })
 }
 
 const handlers = { overview, dateFilter, dateFilterRequest, compareFilter, compareFilterRequest, byServices }
