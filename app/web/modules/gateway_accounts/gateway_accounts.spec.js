@@ -20,11 +20,13 @@ describe('Gateway Accounts', () => {
   describe('Modeling a Gateway Account', () => {
     it('successfully creates a model with valid details', () => {
       const account = new GatewayAccount(validGatewayAccountDetails)
+      expect(account).to.be.an('object')
     })
 
     it('rejects a model with invalid details', () => {
       expect(() => {
         const account = new GatewayAccount(invalidLiveSandboxAccountDetails)
+        expect(account).to.be.an('object')
       }).to.throw('live accounts cannot use Sandbox providers')
     })
   })

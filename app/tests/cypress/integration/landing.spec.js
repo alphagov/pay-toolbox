@@ -1,3 +1,4 @@
+/* global cy */
 describe('Landing health check page', () => {
   it('Renders successfully without any valid healthcheck responses', () => {
     cy.visit('/')

@@ -12,6 +12,7 @@ describe('Stripe Account model', () => {
         org_statement_descriptor: 'org_statement_descriptor',
         org_phone_number: 'org_phone_number'
       })
+      expect(stripeAccount1).to.be.an('object')
     }).to.not.throw()
   })
 
