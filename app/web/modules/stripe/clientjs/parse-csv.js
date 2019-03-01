@@ -42,32 +42,6 @@ function parseDefault (value, field) {
   document.getElementById(field.element).value = value
 }
 
-function parseName (value, field) {
-  if (!value) return
-  const commonTitles = ['Mr', 'Miss', 'Mrs', 'Ms', 'Mx', 'M']
-  const splitName = value.split(' ')
-
-  // consider title on supported name
-  if (splitName.length === 3) {
-    if (commonTitles.includes(splitName[0])) {
-      splitName.shift()
-    }
-  }
-
-  if (splitName.length !== 2) {
-    // we don't understand this name for now - leave to support discretion
-    setNameValues('', '')
-    return
-  }
-
-  setNameValues(splitName[0], splitName[1])
-}
-
-function setNameValues (firstName, lastName) {
-  document.getElementById('person_first_name').value = firstName
-  document.getElementById('person_last_name').value = lastName
-}
-
 // assumes DD/MM/YYYY - can't do anything with anything else
 function parseDOB (value, field) {
   if (!value) return
@@ -83,15 +57,15 @@ const setup = function setup () {
 document.addEventListener('DOMContentLoaded', setup)
 
 // experimental/ potentially hacks - get IP of machine through webRTC
-function parseIPAddress() {
-  window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;   //compatibility for firefox and chrome
-  const pc = new RTCPeerConnection({iceServers:[]}), noop = function(){};
-  pc.createDataChannel("");    //create a bogus data channel
-  pc.createOffer(pc.setLocalDescription.bind(pc), noop);    // create offer and set local description
-  pc.onicecandidate = function(ice){  //listen for candidate events
-      if(!ice || !ice.candidate || !ice.candidate.candidate)  return;
-      const myIP = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(ice.candidate.candidate)[1];
-      document.getElementById('org_ip_address').value = myIP
-      pc.onicecandidate = noop;
-  };
+function parseIPAddress () {
+  window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection // compatibility for firefox and chrome
+  const pc = new window.RTCPeerConnection({ iceServers: [] }); const noop = function () {}
+  pc.createDataChannel('') // create a bogus data channel
+  pc.createOffer(pc.setLocalDescription.bind(pc), noop) // create offer and set local description
+  pc.onicecandidate = function (ice) { // listen for candidate events
+    if (!ice || !ice.candidate || !ice.candidate.candidate) return
+    const myIP = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(ice.candidate.candidate)[1]
+    document.getElementById('org_ip_address').value = myIP
+    pc.onicecandidate = noop
+  }
 }
