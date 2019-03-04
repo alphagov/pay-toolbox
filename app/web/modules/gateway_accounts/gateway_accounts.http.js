@@ -1,6 +1,6 @@
 const logger = require('./../../../lib/logger')
 
-const { Connector, AdminUsers, PublicAuth } = require('./../../../lib/pay-request')
+const { Connector, DirectDebitConnector, AdminUsers, PublicAuth } = require('./../../../lib/pay-request')
 const { wrapAsyncErrorHandlers } = require('./../../../lib/routes')
 
 const GatewayAccount = require('./gatewayAccount.model')
@@ -36,7 +36,9 @@ const writeAccount = async function writeAccount (req, res, next) {
   const account = new GatewayAccount(req.body)
   const linkedService = req.body.systemLinkedService
 
-  jobs.account = await Connector.createAccount(account.formatPayload())
+  const createAccountMethod = account.isDirectDebit ? DirectDebitConnector.createAccount : Connector.createAccount
+  jobs.account = await createAccountMethod(account.formatPayload())
+
   logger.info(`Created new Gateway Account ${jobs.account.gateway_account_id}`)
 
   // connect system linked services to the created account

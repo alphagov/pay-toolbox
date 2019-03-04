@@ -7,27 +7,31 @@ const sandbox = {
   directDebit: 'direct-debit-sandbox'
 }
 const providers = {
-  card: [ sandbox.card, 'worldpay', 'smartpay', 'epdq', 'stripe' ],
-  directDebit: [ sandbox.directDebit, 'gocardless' ]
+  card: [sandbox.card, 'worldpay', 'smartpay', 'epdq', 'stripe'],
+  directDebit: [sandbox.directDebit, 'gocardless']
+}
+const paymentMethod = {
+  card: 'card',
+  directDebit: 'direct-debit'
 }
 
 const schema = {
   live: Joi.string().required().valid('live', 'not-live').required(),
-  paymentMethod: Joi.string().valid('card', 'direct-debit').required(),
+  paymentMethod: Joi.string().valid(paymentMethod.card, paymentMethod.directDebit).required(),
   description: Joi.string().required(),
   serviceName: Joi.string().required(),
   provider: Joi
     .when('paymentMethod', {
-      is: 'card',
+      is: paymentMethod.card,
       then: Joi.string().required().valid(providers.card)
     })
     .when('paymentMethod', {
-      is: 'direct-debit',
+      is: paymentMethod.directDebit,
       then: Joi.string().required().valid(providers.directDebit)
     })
     .when('live', {
       is: 'live',
-      then: Joi.string().required().invalid('card-sandbox', 'direct-debit-sandbox')
+      then: Joi.string().required().invalid(sandbox.card, sandbox.directDebit)
     }),
   analyticsId: Joi.string().required(),
   credentials: Joi.string().allow('')
@@ -50,6 +54,9 @@ class GatewayAccount {
     if (parsed.live === 'live' && [sandbox.card, sandbox.directDebit].includes(parsed.provider)) {
       throw new ValidationError('GatewayAccount live accounts cannot use Sandbox providers.')
     }
+
+    parsed.isDirectDebit = parsed.paymentMethod === paymentMethod.directDebit
+
     Object.assign(this, parsed)
   }
 
