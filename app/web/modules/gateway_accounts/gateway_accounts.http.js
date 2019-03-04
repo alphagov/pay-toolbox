@@ -9,6 +9,10 @@ const overview = async function overview (req, res, next) {
   const { accounts } = await Connector.accounts()
   res.render('gateway_accounts/overview', { accounts, messages: req.flash('info') })
 }
+const overviewDirectDebit = async function overview (req, res, next) {
+  const { accounts } = await DirectDebitConnector.accounts()
+  res.render('gateway_accounts/overview', { accounts, messages: req.flash('info') })
+}
 
 const create = async function create (req, res, next) {
   const linkedService = req.query.service
@@ -95,5 +99,5 @@ const deleteApiKey = async function deleteApiKey (req, res, next) {
   res.redirect(`/gateway_accounts/${accountId}/api_keys`)
 }
 
-const handlers = { overview, create, confirm, writeAccount, detail, apiKeys, deleteApiKey }
+const handlers = { overview, overviewDirectDebit, create, confirm, writeAccount, detail, apiKeys, deleteApiKey }
 module.exports = wrapAsyncErrorHandlers(handlers)

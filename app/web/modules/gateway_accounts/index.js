@@ -3,6 +3,7 @@ const exceptions = require('./gateway_accounts.exceptions')
 
 module.exports = {
   overview: http.overview,
+  overviewDirectDebit: http.overviewDirectDebit,
   create: {
     http: http.create,
     exceptions: exceptions.create

@@ -17,6 +17,12 @@
         <th class="govuk-table__header" scope="col">ID</th>
         <td class="govuk-table__cell">{{ account.gateway_account_id }}</td>
       </tr>
+      {% if account.gateway_account_external_id %}
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col">Gateway account external ID</th>
+          <td class="govuk-table__cell">{{ account.gateway_account_external_id }}</td>
+        </tr>
+      {% endif %}
       <tr class="govuk-table__row">
         <th class="govuk-table__header" scope="col">Type</th>
         <td class="govuk-table__cell">{{ account.type | capitalize }}</td>
@@ -43,7 +49,7 @@
         <th class="govuk-table__header" scope="col">Analytics</th>
         <td class="govuk-table__cell"><code>{{ account.analytics_id }}</code></td>
       </tr>
-      {% if account.payment_method != 'DIRECT_DEBIT' %}
+      {% if account.toggle_3ds != undefined %}
           <tr class="govuk-table__row">
             <th class="govuk-table__header" scope="col">Toggle 3DS</th>
             <td class="govuk-table__cell">{{ account.toggle_3ds | string | capitalize }}</td>
