@@ -4,7 +4,7 @@ const { ValidationError } = require('./../../../lib/errors')
 
 const sandbox = {
   card: 'card-sandbox',
-  directDebit: 'direct-debit-sandbox'
+  directDebit: 'sandbox'
 }
 const providers = {
   card: [sandbox.card, 'worldpay', 'smartpay', 'epdq', 'stripe'],

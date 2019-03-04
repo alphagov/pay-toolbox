@@ -4,7 +4,7 @@
 
 {% block main %}
   <h1 class="govuk-heading-m">Gateway account details</h1>
-  
+
   {% if services.external_id %}
   <div>
     <a href="/services/{{ services.external_id }}" class="govuk-back-link">Associated service {{services.name}} ({{ services.id }})</a>
@@ -26,6 +26,12 @@
         <td class="govuk-table__cell">{{ account.description }}</td>
       </tr>
       <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col">Payment method</th>
+          <td class="govuk-table__cell">
+              {% if account.payment_method %} {{ account.payment_method }}  {%else %} CARD {% endif %}
+          </td>
+      </tr>
+      <tr class="govuk-table__row">
         <th class="govuk-table__header" scope="col">Payment provider</th>
         <td class="govuk-table__cell">{{ account.payment_provider | capitalize }}</td>
       </tr>
@@ -37,10 +43,13 @@
         <th class="govuk-table__header" scope="col">Analytics</th>
         <td class="govuk-table__cell"><code>{{ account.analytics_id }}</code></td>
       </tr>
-      <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">Toggle 3DS</th>
-        <td class="govuk-table__cell">{{ account.toggle_3ds | string | capitalize }}</td>
-      </tr>
+      {% if account.payment_method != 'DIRECT_DEBIT' %}
+          <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="col">Toggle 3DS</th>
+            <td class="govuk-table__cell">{{ account.toggle_3ds | string | capitalize }}</td>
+          </tr>
+      {% endif %}
+
     </tbody>
   </table>
 

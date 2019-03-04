@@ -7,7 +7,7 @@
 	</h1>
 	<div class="govuk-panel__body">
 		Your account reference
-		<br><strong>{{ account.gateway_account_id }}</strong>
+		<br><h5>{{ gatewayAccountIdDerived }}</h5>
 	</div>
 </div>
 
@@ -17,7 +17,7 @@ A {{ account.type | upper }} Gateway account has been created through Admin User
 
 <h2 class="govuk-heading-m">Actions taken</h2>
 <ol class="govuk-list govuk-list--number">
-	<li>New {{ account.type }} {{ provider | capitalize }} account ({{ account.gateway_account_id }}) record created</li>
+	<li>New {{ account.type }} {{ provider | capitalize }} account ({{ gatewayAccountIdDerived }}) record created</li>
  
   <!-- @TODO(sfount) not a scalable pattern -->
   {% if provider === 'stripe' %}
@@ -25,14 +25,14 @@ A {{ account.type | upper }} Gateway account has been created through Admin User
   {% endif %}
   
   {% if linkedService %}
-	<li>(System Link) Service ‘{{ account.service_name }}’ linked to new Gateway account ({{ account.gateway_account_id }})</li>
+	<li>(System Link) Service ‘{{ account.service_name }}’ linked to new Gateway account ({{ gatewayAccountIdDerived }})</li>
 	<li>Service ‘{{ account.service_name }}’ go live status updated to ‘LIVE’</li>
 	{% endif %}
 </ol>
 
 <h2 class="govuk-heading-m">Relevant resources</h2>
 <ul class="govuk-list">
-	<li><a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ account.gateway_account_id }}">{{ account.type | upper }} Gateway account ({{ account.gateway_account_id }}) details</a></li>
+	<li><a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ gatewayAccountIdDerived }}">{{ account.type | upper }} Gateway account ({{ gatewayAccountIdDerived }}) details</a></li>
 	<li><a class="govuk-link govuk-link--no-visited-state" href="/services/{{ linkedService }}">{{ account.service_name }} details</a></li>
 </ul>
 

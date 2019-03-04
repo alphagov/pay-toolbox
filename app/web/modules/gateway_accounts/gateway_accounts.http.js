@@ -39,30 +39,41 @@ const writeAccount = async function writeAccount (req, res, next) {
   const createAccountMethod = account.isDirectDebit ? DirectDebitConnector.createAccount : Connector.createAccount
   jobs.account = await createAccountMethod(account.formatPayload())
 
-  logger.info(`Created new Gateway Account ${jobs.account.gateway_account_id}`)
+  logger.info(`Created new Gateway Account ${jobs.account.gateway_account_id} with external ID ${jobs.account.gateway_account_external_id}`)
+
+  // derive Gateway account ID. For Direct Debit use `gateway_account_external_id` otherwise `gateway_account_id`
+  const gatewayAccountIdDerived = account.isDirectDebit
+    ? `${jobs.account.gateway_account_external_id}`
+    : `${jobs.account.gateway_account_id}`
 
   // connect system linked services to the created account
   if (linkedService) {
-    jobs.linkService = await AdminUsers.updateServiceGatewayAccount(linkedService, jobs.account.gateway_account_id)
-    logger.info(`Service ${linkedService} linked to new Gateway Account ${jobs.account.gateway_account_id}`)
+    jobs.linkService = await AdminUsers.updateServiceGatewayAccount(linkedService, gatewayAccountIdDerived)
+    logger.info(`Service ${linkedService} linked to new Gateway Account ${gatewayAccountIdDerived}`)
 
     jobs.serviceStatus = await AdminUsers.updateServiceGoLiveStatus(linkedService, 'LIVE')
     logger.info(`Service ${linkedService} 'current_go_live_stage' updated to 'LIVE'`)
   }
 
   // note payment_provider is not returned in the object returned from createAccount
-  res.render('gateway_accounts/createSuccess', { account: jobs.account, linkedService, provider: account.provider })
+  res.render('gateway_accounts/createSuccess', { account: jobs.account, linkedService, gatewayAccountIdDerived, provider: account.provider })
 }
 
 const detail = async function detail (req, res, next) {
   const id = req.params.id
   let services = {}
-  const account = await Connector.account(id)
+  let account = ''
+
+  if (id.match(/^DIRECT_DEBIT:/)) {
+    account = await DirectDebitConnector.account(id)
+  } else {
+    account = await Connector.account(id)
+  }
 
   try {
     services = await AdminUsers.gatewayAccountServices(id)
   } catch (error) {
-    logger.warn(`Services request for gatway account ${id} returned "${error.message}"`)
+    logger.warn(`Services request for gateway account ${id} returned "${error.message}"`)
   }
 
   res.render('gateway_accounts/detail', { account, services })
