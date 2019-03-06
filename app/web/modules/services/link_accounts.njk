@@ -1,4 +1,5 @@
 {% from "components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "components/button/macro.njk" import govukButton %}
 {% from "components/input/macro.njk" import govukInput %}
 {% extends "layout/layout.njk" %} 
 
@@ -25,7 +26,11 @@
       label: { text: "Gateway account ID to add" }
       })
       }}
-      
-      <button type="submit">Submit</button>
+
+    {{ govukButton({
+          text: "Submit"
+      })
+    }}
+
   </form>
 {% endblock %}

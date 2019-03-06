@@ -34,7 +34,7 @@
       <tr class="govuk-table__row">
           <th class="govuk-table__header" scope="col">Payment method</th>
           <td class="govuk-table__cell">
-              {% if account.payment_method %} {{ account.payment_method }}  {%else %} CARD {% endif %}
+              {% if account.payment_method %} {{ account.payment_method }}  {% else %} CARD {% endif %}
           </td>
       </tr>
       <tr class="govuk-table__row">
@@ -62,7 +62,7 @@
   <div>
     {{ govukButton({
     text: "Manage API keys",
-    href: "/gateway_accounts/" + account.gateway_account_id + "/api_keys"
+    href: "/gateway_accounts/" + gatewayAccountId + "/api_keys"
     })
     }}
   </div>

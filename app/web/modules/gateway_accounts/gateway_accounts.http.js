@@ -9,7 +9,7 @@ const overview = async function overview (req, res, next) {
   const { accounts } = await Connector.accounts()
   res.render('gateway_accounts/overview', { accounts, messages: req.flash('info') })
 }
-const overviewDirectDebit = async function overview (req, res, next) {
+const overviewDirectDebit = async function overviewDirectDebit (req, res, next) {
   const { accounts } = await DirectDebitConnector.accounts()
   res.render('gateway_accounts/overview', { accounts, messages: req.flash('info') })
 }
@@ -66,13 +66,10 @@ const writeAccount = async function writeAccount (req, res, next) {
 const detail = async function detail (req, res, next) {
   const id = req.params.id
   let services = {}
-  let account = ''
+  const isDirectDebitID = id.match(/^DIRECT_DEBIT:/)
+  const readAccountMethod = isDirectDebitID ? DirectDebitConnector.account : Connector.account
 
-  if (id.match(/^DIRECT_DEBIT:/)) {
-    account = await DirectDebitConnector.account(id)
-  } else {
-    account = await Connector.account(id)
-  }
+  const account = await readAccountMethod(id)
 
   try {
     services = await AdminUsers.gatewayAccountServices(id)
@@ -80,7 +77,7 @@ const detail = async function detail (req, res, next) {
     logger.warn(`Services request for gateway account ${id} returned "${error.message}"`)
   }
 
-  res.render('gateway_accounts/detail', { account, services })
+  res.render('gateway_accounts/detail', { account, gatewayAccountId: id, services })
 }
 
 const apiKeys = async function apiKeys (req, res, next) {

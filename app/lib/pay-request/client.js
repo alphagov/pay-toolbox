@@ -24,8 +24,9 @@ const buildPayBaseClient = function buildPayBaseClient (service) {
     maxContentLength: 5 * 1000 * 1000,
 
     // @TODO(sfount) configure headers based on each services requirements
-    headers:
-        service.key === serviceStore.DIRECTDEBITCONNECTOR.key ? { 'Content-Type': 'application/json' } : '',
+    headers: {
+      'Content-Type': 'application/json'
+    },
     // @TODO(sfount) this should only ignore authorized TLS in a non-production environment
     httpsAgent: new https.Agent({
       rejectUnauthorized: false
