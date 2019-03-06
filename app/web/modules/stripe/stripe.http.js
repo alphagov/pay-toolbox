@@ -2,6 +2,7 @@ const logger = require('./../../../lib/logger')
 
 const STRIPE_API_KEY = process.env.STRIPE_API_KEY
 const stripe = require('stripe')(STRIPE_API_KEY)
+stripe.setApiVersion('2018-09-24')
 
 const { AdminUsers } = require('./../../../lib/pay-request')
 const StripeAccount = require('./stripe.model')
