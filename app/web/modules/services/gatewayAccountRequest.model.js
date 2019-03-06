@@ -3,7 +3,7 @@ const Joi = require('joi')
 const { ValidationError } = require('./../../../lib/errors')
 
 const schema = {
-  id: Joi.number().integer().required()
+  id: Joi.string().required()
 }
 
 // simplified gateway account model for processing valid request

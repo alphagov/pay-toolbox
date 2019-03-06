@@ -6,5 +6,6 @@ const serviceStore = require('./../../services.store')
 index[serviceStore.ADMINUSERS.key] = require('./adminUsers')
 index[serviceStore.CONNECTOR.key] = require('./connector')
 index[serviceStore.PUBLICAUTH.key] = require('./publicAuth')
+index[serviceStore.DIRECTDEBITCONNECTOR.key] = require('./directDebitConnector')
 
 module.exports = index

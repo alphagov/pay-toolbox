@@ -2,11 +2,11 @@
 
 {% block main %}
   <h1 class="govuk-heading-m">Gateway accounts</h1>
-  
+
   <table class="govuk-table">
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">ID</th>
+        <th class="govuk-table__header" scope="col">ID / External ID</th>
         <th class="govuk-table__header" scope="col">Type</th>
         <th class="govuk-table__header" scope="col">Service</th>
         <th class="govuk-table__header" scope="col">Provider</th>
@@ -16,11 +16,15 @@
     <tbody class="govuk-table__body">
       {% for account in accounts | sort(true, false, 'gateway_account_id') %}
       <tr class="govuk-table__row">
-        <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ account.gateway_account_id }}">{{ account.gateway_account_id }}</a></td>
-        <td class="govuk-table__cell">{{ account.type | capitalize }}</td> 
-        <td class="govuk-table__cell">{{ account.service_name | truncate(30) }}</td> 
-        <td class="govuk-table__cell">{{ account.payment_provider | capitalize }}</td> 
-        <td class="govuk-table__cell"><code>{{ account.analytics_id }}</code></td> 
+        <td class="govuk-table__cell">
+            <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{% if account.gateway_account_external_id %}{{ account.gateway_account_external_id }}{% else %}{{ account.gateway_account_id }}{% endif %}">
+                {% if account.gateway_account_external_id %}{{ account.gateway_account_external_id }}{% else %}{{ account.gateway_account_id }}{% endif %}
+            </a>
+        </td>
+        <td class="govuk-table__cell">{{ account.type | capitalize }}</td>
+        <td class="govuk-table__cell">{{ account.service_name | truncate(30) }}</td>
+        <td class="govuk-table__cell">{{ account.payment_provider | capitalize }}</td>
+        <td class="govuk-table__cell"><code>{{ account.analytics_id }}</code></td>
       </tr>
       {% else %}
       <tr class="govuk-table__row">
