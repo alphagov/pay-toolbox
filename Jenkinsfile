@@ -1,6 +1,10 @@
 pipeline { 
   // use the repository Dockerfile for building the environment image
   agent { dockerfile true }
+  environment { 
+    npm_config_cache = 'npm-cache'
+    HOME="${env.WORKSPACE}"
+  }
   stages { 
     stage('Setup') { 
       steps { 
@@ -25,16 +29,6 @@ pipeline {
     stage('Unit tests') { 
       steps { 
         sh 'npm run test:unit'
-      }
-    }
-    stage('Cypress tests') { 
-      agent { 
-        docker { image 'cypress/base:8' }
-      }
-      steps { 
-        sh 'npm ci' 
-        sh 'node --version'
-        sh 'npm run test:cypress'
       }
     }
   }
