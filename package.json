@@ -1,6 +1,6 @@
 {
   "name": "pay-toolbox",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Internal administrative tools service for the GOV.UK Pay products.",
   "engines": {
     "node": "10.15.0",
