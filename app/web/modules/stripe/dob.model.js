@@ -11,7 +11,11 @@ const schema = {
 class Dob {
   constructor(body) {
     const params = Object.assign({}, body)
-    const { error, value: model } = Joi.validate(params, schema, { allowUnknown: true, stripUnknown: true })
+    const { error, value: model } = Joi.validate(
+      params,
+      schema,
+      { allowUnknown: true, stripUnknown: true }
+    )
 
     if (error) {
       throw new ValidationError(`Dob ${error.details[0].message}`)

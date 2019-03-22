@@ -1,6 +1,6 @@
-const GatewayAccount = require('./gatewayAccount.model.js')
-
 const { expect } = require('chai')
+
+const GatewayAccount = require('./gatewayAccount.model.js')
 
 const validGatewayAccountDetails = {
   live: 'live',

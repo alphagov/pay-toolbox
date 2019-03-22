@@ -1,6 +1,6 @@
-const StripeAccount = require('./stripe.model')
-
 const { expect } = require('chai')
+
+const StripeAccount = require('./stripe.model')
 
 describe('Stripe Account model', () => {
   it('validates model with core details', () => {

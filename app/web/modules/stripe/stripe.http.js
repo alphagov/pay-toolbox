@@ -1,7 +1,7 @@
-const logger = require('./../../../lib/logger')
-
 const { STRIPE_API_KEY } = process.env
-const stripe = require('stripe')(STRIPE_API_KEY)
+const stripe = require('stripe')(process.env.STRIPE_API_KEY)
+
+const logger = require('./../../../lib/logger')
 
 stripe.setApiVersion('2018-09-24')
 
@@ -18,7 +18,7 @@ const verifyStripeSetup = async function verifyStripeSetup() {
   return true
 }
 
-const create = async function create(req, res, next) {
+const create = async function create(req, res) {
   const context = { messages: req.flash('error'), systemLinkService: req.query.service }
   await verifyStripeSetup()
 
@@ -29,7 +29,7 @@ const create = async function create(req, res, next) {
   res.render('stripe/create', context)
 }
 
-const createAccount = async function createAccount(req, res, next) {
+const createAccount = async function createAccount(req, res) {
   await verifyStripeSetup()
   const account = new StripeAccount(req.body)
   const { systemLinkService } = req.body

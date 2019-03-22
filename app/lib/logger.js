@@ -1,13 +1,16 @@
 // Sensible defaults for different logging transports based on environment
 // set through config
-// @TODO(sfount) also extract and log the correlation ID sent from the nginx reverse proxy servers in production
+// @TODO(sfount) also extract and log the correlation ID sent from the nginx
+//               reverse proxy servers in production
 const crypto = require('crypto')
 const { createLogger, format, transports } = require('winston')
 
 const { combine, timestamp, printf } = format
 
-// @FIXME(sfount) performance implications of cls-hooked and using the async-hooks node libraries should be very carefully considered
-//                continuation-local storage is basically the equivalent of Java thread storage, expires after all methods in a call have ended
+// @FIXME(sfount) performance implications of cls-hooked and using the async-hooks
+//                node libraries should be very carefully considered continuation-local
+//                storage is basically the equivalent of Java thread storage, expires
+//                after all methods in a call have ended
 const { createNamespace } = require('cls-hooked')
 
 const { common } = require('./../config')
@@ -15,7 +18,7 @@ const { common } = require('./../config')
 const logger = createLogger()
 const session = createNamespace('govuk-pay-logging')
 
-const middleware = function loggerMiddleware(req, res, next) {
+const loggerMiddleware = function loggerMiddleware(req, res, next) {
   session.run(() => {
     session.set('toolboxid', crypto.randomBytes(4).toString('hex'))
     next()
@@ -50,11 +53,11 @@ if (!common.production) {
 
 // configure logger specifically for `Morgan` stream
 logger.stream = {
-  write: (message, encoding) => {
+  write: (message) => {
     logger.info(message)
   }
 }
 
 // @TODO(sfount) attaching object to logger could muddy API in future
-Object.assign(logger, { middleware })
+Object.assign(logger, { middleware: loggerMiddleware })
 module.exports = logger

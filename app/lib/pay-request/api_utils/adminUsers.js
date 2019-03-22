@@ -1,5 +1,6 @@
 const adminUsersMethods = function adminUsersMethods(instance) {
   const axiosInstance = instance || this
+  const utilExtractData = response => response.data
 
   const service = function service(id) {
     const path = `/v1/api/services/${id}`
@@ -49,10 +50,14 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     }
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
-
-  const utilExtractData = response => response.data
   return {
-    service, services, serviceUsers, updateServiceBranding, updateServiceGatewayAccount, gatewayAccountServices, updateServiceGoLiveStatus
+    service,
+    services,
+    serviceUsers,
+    updateServiceBranding,
+    updateServiceGatewayAccount,
+    gatewayAccountServices,
+    updateServiceGoLiveStatus
   }
 }
 

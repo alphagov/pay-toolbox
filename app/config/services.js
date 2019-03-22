@@ -10,7 +10,11 @@ const expectedConnectedServicesEnvironmentValues = {
   PUBLIC_AUTH_URL: Joi.string().required()
 }
 
-const { error, value: validatedConnectedServicesEnvironmentValues } = Joi.validate(process.env, expectedConnectedServicesEnvironmentValues, { allowUnknown: true, stripUnknown: true })
+const { error, value: validatedConnectedServicesEnvironmentValues } = Joi.validate(
+  process.env,
+  expectedConnectedServicesEnvironmentValues,
+  { allowUnknown: true, stripUnknown: true }
+)
 
 if (error) {
   throw new Error(`Invalid connected services environment variables set ${error.message}`)

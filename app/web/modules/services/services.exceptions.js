@@ -1,7 +1,7 @@
 const logger = require('./../../../lib/logger')
 const { EntityNotFoundError } = require('./../../../lib/errors')
 
-const detail = function details(error, req, res, next) {
+const detail = function detail(error, req, res, next) {
   if (error.name === 'RESTClientError' && error.data.response && error.data.response.status === 404) {
     throw new EntityNotFoundError('Service', req.params.id)
   }

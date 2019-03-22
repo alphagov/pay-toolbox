@@ -8,6 +8,7 @@ const route = method => async (req, res, next) => {
 
 const wrapAsyncErrorHandlers = function wrapAsyncErrorHandlers(handlers) {
   return Object.keys(handlers).reduce((aggregate, handlerKey) => {
+    // eslint-disable-next-line no-param-reassign
     aggregate[handlerKey] = route(handlers[handlerKey])
     return aggregate
   }, {})

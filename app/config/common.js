@@ -8,7 +8,11 @@ const expectedCommonEnvironmentValues = {
   NODE_ENV: Joi.string().valid([ 'development', 'production', 'test' ]).required()
 }
 
-const { error, value: validatedCommonEnvironmentValues } = Joi.validate(process.env, expectedCommonEnvironmentValues, { allowUnknown: true, stripUnknown: true })
+const { error, value: validatedCommonEnvironmentValues } = Joi.validate(
+  process.env,
+  expectedCommonEnvironmentValues,
+  { allowUnknown: true, stripUnknown: true }
+)
 
 if (error) {
   throw new Error(`Invalid common environment variables set ${error.message}`)

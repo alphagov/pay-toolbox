@@ -1,6 +1,24 @@
 const logger = require('./../../../lib/logger')
 const { EntityNotFoundError } = require('./../../../lib/errors')
 
+// @FIXME(sfount) util to build preserving queries - should be evalutated to scale
+const buildPreservedQuery = function buildPreservedQuery(body) {
+  const supported = {
+    systemLinkedService: 'service',
+    systemLinkedCredentials: 'credentials'
+  }
+
+  const queryElements = []
+
+  Object.keys(body).forEach((key) => {
+    if (Object.keys(supported).includes(key)) {
+      queryElements.push(`${supported[key]}=${body[key]}`)
+    }
+  })
+
+  return queryElements.length ? `?${queryElements.join('&')}` : ''
+}
+
 const confirm = function confirm(error, req, res, next) {
   if (error.name === 'ValidationError') {
     const preserveQuery = buildPreservedQuery(req.body)
@@ -20,7 +38,7 @@ const create = function create(error, req, res, next) {
   next(error)
 }
 
-const writeAccount = function writeAccount(error, req, res, next) {
+const writeAccount = function writeAccount(error, req, res) {
   const preserveQuery = buildPreservedQuery(req.body)
   req.session.recovered = req.body
   logger.error(`Create GatewayAccount ${error.message}`)
@@ -33,24 +51,6 @@ const detail = function detail(error, req, res, next) {
     throw new EntityNotFoundError('Gateway Account', req.params.id)
   }
   next(error)
-}
-
-// @FIXME(sfount) util to build preserving queries - should be evalutated to scale
-const buildPreservedQuery = function buildPreservedQuery(body) {
-  const supported = {
-    systemLinkedService: 'service',
-    systemLinkedCredentials: 'credentials'
-  }
-
-  const queryElements = []
-
-  Object.keys(body).forEach((key) => {
-    if (Object.keys(supported).includes(key)) {
-      queryElements.push(`${supported[key]}=${body[key]}`)
-    }
-  })
-
-  return queryElements.length ? `?${queryElements.join('&')}` : ''
 }
 
 module.exports = {

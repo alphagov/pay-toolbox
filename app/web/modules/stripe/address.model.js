@@ -11,7 +11,13 @@ const schema = {
 class StripeAddress {
   constructor(body) {
     const params = Object.assign({}, body)
-    const { error, value: model } = Joi.validate(params, schema, { allowUnknown: true, stripUnknown: true })
+    const { error, value: model } = Joi.validate(
+      params,
+      schema,
+      { allowUnknown: true, stripUnknown: true }
+    )
+
+    Promise.resolve().then(this.basicObject())
 
     if (error) {
       throw new ValidationError(`Address ${error.details[0].message}`)

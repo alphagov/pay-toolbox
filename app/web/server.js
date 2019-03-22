@@ -16,7 +16,8 @@ const router = require('./router')
 // @FIXME(sfount) move this out of server configuration
 const { toFormattedDate, toFormattedDateLong } = require('./../lib/format')
 
-// @FIXME(sfount) errors should be thrown and this should be properly handled if there is no manifest etc.
+// @FIXME(sfount) errors should be thrown and this should be properly handled if
+//                there is no manifest etc.
 const staticResourceManifest = require('./../public/manifest')
 
 const app = express()
@@ -33,7 +34,8 @@ const configureRequestParsing = function configureRequestParsing(instance) {
   instance.use(bodyParser.json({ strict: true, limit: '15kb' }))
   instance.use(flash())
 
-  // logger middleware included after flash and body parsing middleware as they alter the call stack (it should ideally be placed just before routes)
+  // logger middleware included after flash and body parsing middleware as they
+  // alter the call stack (it should ideally be placed just before routes)
   instance.use(logger.middleware)
   instance.use(morgan(httpRequestLoggingFormat, { stream: logger.stream }))
 }
@@ -77,7 +79,14 @@ const configureErrorHandling = function configureErrorHandling(instance) {
 }
 
 // order of configuration options important given the nature of Express Middleware
-const configure = [ configureRequestParsing, configureServingPublicStaticFiles, configureClientSessions, configureTemplateRendering, configureRouting, configureErrorHandling ]
+const configure = [
+  configureRequestParsing,
+  configureServingPublicStaticFiles,
+  configureClientSessions,
+  configureTemplateRendering,
+  configureRouting,
+  configureErrorHandling
+]
 configure.map(config => config(app))
 
 module.exports = app
