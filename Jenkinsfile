@@ -1,6 +1,9 @@
 pipeline { 
   // use the repository Dockerfile for building the environment image
   agent { dockerfile true }
+  parameters { 
+    booleanParam(name: 'SKIP_NPM_AUDIT', defaultValue: false, description: 'Run npm security audit. This should only ever be set to false if a known fix is not yet merged on a dependency.')
+  }
   environment { 
     npm_config_cache = 'npm-cache'
     HOME="${env.WORKSPACE}"
@@ -17,6 +20,9 @@ pipeline {
       }
     }
     stage('Security audit') { 
+      when { 
+        not { expression { return params.SKIP_NPM_AUDIT } }
+      }
       steps { 
         sh 'npm audit'
       }
