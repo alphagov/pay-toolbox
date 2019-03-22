@@ -3,7 +3,7 @@ const logger = require('./../lib/logger')
 const config = require('./../config')
 const { EntityNotFoundError, RESTClientError, ValidationError } = require('./../lib/errors')
 
-const handleRequestErrors = function handleRequestErrors (error, req, res, next) {
+const handleRequestErrors = function handleRequestErrors(error, req, res, next) {
   // generic entity wasn't found - format reponse
   if (error.name === EntityNotFoundError.name) {
     logger.warn(error.message)
@@ -31,7 +31,7 @@ const handleRequestErrors = function handleRequestErrors (error, req, res, next)
 
 // both custom route handling and application level handling have not categorised
 // this error - log the error and return unknown system error to client
-const handleDefault = function handleDefault (error, req, res, next) {
+const handleDefault = function handleDefault(error, req, res, next) {
   if (res.headersSent) {
     return next(error)
   }

@@ -8,7 +8,7 @@ const schema = {
 
 // simplified gateway account model for processing valid request
 class GatewayAccountRequest {
-  constructor (id) {
+  constructor(id) {
     const { error, value: model } = Joi.validate({ id }, schema)
 
     if (error) {

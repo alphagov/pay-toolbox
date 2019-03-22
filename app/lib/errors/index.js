@@ -1,6 +1,6 @@
 // @TODO(sfount) move error definitions outside of index file
 class RequestError extends Error {
-  constructor (message) {
+  constructor(message) {
     super(message)
     this.name = this.constructor.name
     Error.captureStackTrace(this, this.constructor)
@@ -8,7 +8,7 @@ class RequestError extends Error {
 }
 
 class EntityNotFoundError extends RequestError {
-  constructor (name, identifier) {
+  constructor(name, identifier) {
     super(`${name} with ID ${identifier} was not found.`)
     this.data = { name, identifier }
   }
@@ -17,7 +17,7 @@ class EntityNotFoundError extends RequestError {
 // wrap errors from other frameworks in a format that this service can report on
 // @FIXME(sfount) stack trace isn't respected
 class RESTClientError extends Error {
-  constructor (error, key, name) {
+  constructor(error, key, name) {
     super(error.message)
     this.name = this.constructor.name
     this.data = error
@@ -27,7 +27,7 @@ class RESTClientError extends Error {
 }
 
 class ValidationError extends Error {
-  constructor (message) {
+  constructor(message) {
     super(message)
     this.name = this.constructor.name
     Error.captureStackTrace(this, this.constructor)

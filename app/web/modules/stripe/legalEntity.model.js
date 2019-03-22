@@ -12,7 +12,7 @@ const schema = {
   person_last_name: Joi.string()
 }
 
-const addSubModels = function addSubModels (legalEntity, params) {
+const addSubModels = function addSubModels(legalEntity, params) {
   legalEntity = addModelIfValid(legalEntity, {
     line1: params.person_address_line_1,
     city: params.person_address_city,
@@ -33,7 +33,7 @@ const addSubModels = function addSubModels (legalEntity, params) {
 }
 
 class StripeLegalEntity {
-  constructor (body) {
+  constructor(body) {
     const params = Object.assign({}, body)
     const { error, value: model } = Joi.validate(params, schema, { allowUnknown: true })
 
@@ -44,11 +44,11 @@ class StripeLegalEntity {
     Object.assign(this, this.build(model))
   }
 
-  basicObject () {
+  basicObject() {
     return Object.assign({}, this)
   }
 
-  build (params) {
+  build(params) {
     const coreEntity = {
       type: 'government_agency',
       business_tax_id: params.org_id,

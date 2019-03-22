@@ -8,7 +8,7 @@ const schema = {
 }
 
 class DateFilter {
-  constructor (body) {
+  constructor(body) {
     const { error, value: model } = Joi.validate(this.parseFromBody(body), schema)
 
     if (error) {
@@ -17,13 +17,13 @@ class DateFilter {
     Object.assign(this, this.convertToISODates(model))
   }
 
-  convertToISODates (model) {
+  convertToISODates(model) {
     model.date = model.date && model.date.toISOString()
     model.compareDate = model.compareDate && model.compareDate.toISOString()
     return model
   }
 
-  parseFromBody (body) {
+  parseFromBody(body) {
     const params = {}
 
     params.date = new Date(body['filter-year'], body['filter-month'] - 1, body['filter-day'])

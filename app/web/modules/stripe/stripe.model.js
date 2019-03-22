@@ -15,7 +15,7 @@ const schema = {
 }
 
 class StripeAccount {
-  constructor (body) {
+  constructor(body) {
     const { error, value: model } = Joi.validate(body, schema, { allowUnknown: true })
 
     if (error) {
@@ -25,11 +25,11 @@ class StripeAccount {
     Object.assign(this, this.build(model))
   }
 
-  basicObject () {
+  basicObject() {
     return Object.assign({}, this)
   }
 
-  build (params) {
+  build(params) {
     const core = {
       type: 'custom',
       country: 'GB',

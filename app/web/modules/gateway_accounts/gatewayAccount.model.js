@@ -7,8 +7,8 @@ const sandbox = {
   directDebit: 'sandbox'
 }
 const providers = {
-  card: [sandbox.card, 'worldpay', 'smartpay', 'epdq', 'stripe'],
-  directDebit: [sandbox.directDebit, 'gocardless']
+  card: [ sandbox.card, 'worldpay', 'smartpay', 'epdq', 'stripe' ],
+  directDebit: [ sandbox.directDebit, 'gocardless' ]
 }
 const paymentMethod = {
   card: 'card',
@@ -42,7 +42,7 @@ const schema = {
 }
 
 class GatewayAccount {
-  constructor (body) {
+  constructor(body) {
     const { error, value: model } = Joi.validate(body, schema, { allowUnknown: true, stripUnknown: true })
     const parsed = this.defaults(model)
 
@@ -51,7 +51,7 @@ class GatewayAccount {
     }
 
     // throw custom error if live account is attempting to use sandbox
-    if (parsed.live === 'live' && [sandbox.card, sandbox.directDebit].includes(parsed.provider)) {
+    if (parsed.live === 'live' && [ sandbox.card, sandbox.directDebit ].includes(parsed.provider)) {
       throw new ValidationError('GatewayAccount live accounts cannot use Sandbox providers.')
     }
 
@@ -60,12 +60,12 @@ class GatewayAccount {
     Object.assign(this, parsed)
   }
 
-  defaults (model) {
+  defaults(model) {
     return model
   }
 
   // formats gateway account according to the Connector patch standard
-  formatPayload () {
+  formatPayload() {
     const payload = {
       payment_provider: this.provider,
       description: this.description,

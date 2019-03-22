@@ -1,7 +1,8 @@
 const logger = require('./../../../lib/logger')
 
-const STRIPE_API_KEY = process.env.STRIPE_API_KEY
+const { STRIPE_API_KEY } = process.env
 const stripe = require('stripe')(STRIPE_API_KEY)
+
 stripe.setApiVersion('2018-09-24')
 
 const { AdminUsers } = require('./../../../lib/pay-request')
@@ -10,14 +11,14 @@ const { wrapAsyncErrorHandlers } = require('./../../../lib/routes')
 
 const { ValidationError } = require('./../../../lib/errors')
 
-const verifyStripeSetup = async function verifyStripeSetup () {
+const verifyStripeSetup = async function verifyStripeSetup() {
   if (!STRIPE_API_KEY) {
     throw new ValidationError('Stripe API Key was not configured for this Toolbox instance')
   }
   return true
 }
 
-const create = async function create (req, res, next) {
+const create = async function create(req, res, next) {
   const context = { messages: req.flash('error'), systemLinkService: req.query.service }
   await verifyStripeSetup()
 
@@ -28,7 +29,7 @@ const create = async function create (req, res, next) {
   res.render('stripe/create', context)
 }
 
-const createAccount = async function createAccount (req, res, next) {
+const createAccount = async function createAccount(req, res, next) {
   await verifyStripeSetup()
   const account = new StripeAccount(req.body)
   const { systemLinkService } = req.body

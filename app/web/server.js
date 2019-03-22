@@ -21,7 +21,7 @@ const staticResourceManifest = require('./../public/manifest')
 
 const app = express()
 
-const configureRequestParsing = function configureRequestParsing (instance) {
+const configureRequestParsing = function configureRequestParsing(instance) {
   const httpRequestLoggingFormat = common.production ? 'short' : 'dev'
 
   if (common.production) {
@@ -38,22 +38,22 @@ const configureRequestParsing = function configureRequestParsing (instance) {
   instance.use(morgan(httpRequestLoggingFormat, { stream: logger.stream }))
 }
 
-const configureServingPublicStaticFiles = function configureServingPublicStaticFiles (instance) {
+const configureServingPublicStaticFiles = function configureServingPublicStaticFiles(instance) {
   const cache = { maxage: '1y' }
   instance.use('/public', express.static(path.join(common.TOOLBOX_FILE_ROOT, 'app/public'), cache))
   instance.use('/assets/fonts', express.static(path.join(common.TOOLBOX_FILE_ROOT, 'node_modules/govuk-frontend/assets/fonts'), cache))
   instance.use('/favicon.ico', express.static(path.join(common.TOOLBOX_FILE_ROOT, 'node_modules/govuk-frontend/assets/images/', 'favicon.ico')))
 }
 
-const configureClientSessions = function configureClientSessions (instance) {
+const configureClientSessions = function configureClientSessions(instance) {
   instance.use(cookieSession({
     name: 'pay-toolbox-service-cookies',
-    keys: ['secret-cryptographically-secure'],
+    keys: [ 'secret-cryptographically-secure' ],
     maxAge: '24h'
   }))
 }
 
-const configureTemplateRendering = function configureTemplateRendering (instance) {
+const configureTemplateRendering = function configureTemplateRendering(instance) {
   const templateRendererConfig = { autoescape: true, express: instance, watch: !common.production }
 
   // include both templates from this repository and from govuk frontend
@@ -62,22 +62,22 @@ const configureTemplateRendering = function configureTemplateRendering (instance
 
   // make static manifest details available to all templates
   templaterEnvironment.addGlobal('manifest', staticResourceManifest)
-  templaterEnvironment.addFilter('formatDate', (date) => toFormattedDate(new Date(date)))
-  templaterEnvironment.addFilter('formatDateLong', (date) => toFormattedDateLong(new Date(date)))
+  templaterEnvironment.addFilter('formatDate', date => toFormattedDate(new Date(date)))
+  templaterEnvironment.addFilter('formatDateLong', date => toFormattedDateLong(new Date(date)))
 
   instance.set('view engine', 'njk')
 }
 
-const configureRouting = function configureRouting (instance) { instance.use('/', router) }
+const configureRouting = function configureRouting(instance) { instance.use('/', router) }
 
 // top level service stack wide error handling
-const configureErrorHandling = function configureErrorHandling (instance) {
+const configureErrorHandling = function configureErrorHandling(instance) {
   instance.use(errors.handleRequestErrors)
   instance.use(errors.handleDefault)
 }
 
 // order of configuration options important given the nature of Express Middleware
 const configure = [ configureRequestParsing, configureServingPublicStaticFiles, configureClientSessions, configureTemplateRendering, configureRouting, configureErrorHandling ]
-configure.map((config) => config(app))
+configure.map(config => config(app))
 
 module.exports = app

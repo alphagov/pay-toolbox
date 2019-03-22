@@ -1,14 +1,14 @@
 const logger = require('./../../../lib/logger')
 const { EntityNotFoundError } = require('./../../../lib/errors')
 
-const detail = function details (error, req, res, next) {
+const detail = function details(error, req, res, next) {
   if (error.name === 'RESTClientError' && error.data.response && error.data.response.status === 404) {
     throw new EntityNotFoundError('Service', req.params.id)
   }
   next(error)
 }
 
-const updateLinkAccounts = function updateLinkAccounts (error, req, res, next) {
+const updateLinkAccounts = function updateLinkAccounts(error, req, res, next) {
   if (error.name === 'ValidationError') {
     // @FIXME(sfount) formalise recovery with recover utility (that timeout destroys objects)
     req.session.recovered = { id: req.body.account_id }

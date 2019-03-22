@@ -3,6 +3,7 @@
 // @TODO(sfount) also extract and log the correlation ID sent from the nginx reverse proxy servers in production
 const crypto = require('crypto')
 const { createLogger, format, transports } = require('winston')
+
 const { combine, timestamp, printf } = format
 
 // @FIXME(sfount) performance implications of cls-hooked and using the async-hooks node libraries should be very carefully considered
@@ -14,7 +15,7 @@ const { common } = require('./../config')
 const logger = createLogger()
 const session = createNamespace('govuk-pay-logging')
 
-const middleware = function loggerMiddleware (req, res, next) {
+const middleware = function loggerMiddleware(req, res, next) {
   session.run(() => {
     session.set('toolboxid', crypto.randomBytes(4).toString('hex'))
     next()
@@ -28,7 +29,7 @@ if (common.production) {
   logger.add(productionTransport)
 }
 
-const payLogsFormatter = printf(log => {
+const payLogsFormatter = printf((log) => {
   const id = session.get('toolboxid')
   return `${log.timestamp} [${id || '(none)'}] ${log.level}: ${log.message}`
 })

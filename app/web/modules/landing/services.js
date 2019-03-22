@@ -4,11 +4,11 @@ const { toFormattedDate } = require('./../../../lib/format')
 
 const totalHealthyServices = function (serviceHealthCheckResults) {
   return serviceHealthCheckResults
-    .filter((healthCheckResult) => healthCheckResult.healthCheckPassed)
+    .filter(healthCheckResult => healthCheckResult.healthCheckPassed)
     .length
 }
 
-const healthCheck = async function healthCheck () {
+const healthCheck = async function healthCheck() {
   const results = await broadcast('healthcheck')
   const healthChecks = results.map(({ name, key, success }) => ({ name, key, healthCheckPassed: success }))
   const healthCheckCompleteTimestamp = toFormattedDate(new Date())

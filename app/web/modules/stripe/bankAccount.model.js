@@ -9,7 +9,7 @@ const schema = {
 }
 
 class StripeBankAccount {
-  constructor (body) {
+  constructor(body) {
     const params = Object.assign({}, body)
     const { error, value: model } = Joi.validate(params, schema, { allowUnknown: true, stripUnknown: true })
 
@@ -20,12 +20,12 @@ class StripeBankAccount {
     Object.assign(this, this.build(model))
   }
 
-  basicObject () {
+  basicObject() {
     return Object.assign({}, this)
   }
 
-  build (params) {
-    let core = {
+  build(params) {
+    const core = {
       object: 'bank_account',
       country: 'GB',
       currency: 'GBP',

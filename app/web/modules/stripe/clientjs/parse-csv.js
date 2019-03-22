@@ -23,7 +23,7 @@ const fields = [
   { index: 19, label: 'Nominated DOB', custom: parseDOB }
 ]
 
-const parseInput = function parseInput () {
+const parseInput = function parseInput() {
   const stringToParse = document.getElementById(INPUT_ID).value
   const splitString = stringToParse.split('\t')
 
@@ -38,26 +38,26 @@ const parseInput = function parseInput () {
   document.body.scrollTop = document.documentElement.scrollTop = 0
 }
 
-function parseDefault (value, field) {
+function parseDefault(value, field) {
   document.getElementById(field.element).value = value
 }
 
 // assumes DD/MM/YYYY - can't do anything with anything else
-function parseDOB (value, field) {
+function parseDOB(value, field) {
   if (!value) return
-  const elements = ['dob-day', 'dob-month', 'dob-year']
+  const elements = [ 'dob-day', 'dob-month', 'dob-year' ]
   const splitDOB = value.split('/')
   elements.map((id, index) => { document.getElementById(id).value = splitDOB[index] })
 }
 
-const setup = function setup () {
+const setup = function setup() {
   document.getElementById(PARSE_BUTTON_ID).onclick = parseInput
 }
 
 document.addEventListener('DOMContentLoaded', setup)
 
 // experimental/ potentially hacks - get IP of machine through webRTC
-function parseIPAddress () {
+function parseIPAddress() {
   window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection // compatibility for firefox and chrome
   const pc = new window.RTCPeerConnection({ iceServers: [] }); const noop = function () {}
   pc.createDataChannel('') // create a bogus data channel

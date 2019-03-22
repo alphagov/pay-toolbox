@@ -12,15 +12,15 @@ const dateFormatter = new Intl.DateTimeFormat('en-GB', {
   hour12: false
 })
 
-const toFormattedDate = function toFormattedDate (date) {
+const toFormattedDate = function toFormattedDate(date) {
   return dateFormatter.format(date)
 }
 
-const toFormattedDateLong = function toFormattedDateLong (date) {
+const toFormattedDateLong = function toFormattedDateLong(date) {
   return date.toDateString()
 }
 
-const toCurrencyString = function toCurrencyString (total) {
+const toCurrencyString = function toCurrencyString(total) {
   return currencyFormatter.format(total)
 }
 

@@ -1,6 +1,6 @@
 const logger = require('./../../../lib/logger')
 
-const createAccount = function createAccount (error, req, res, next) {
+const createAccount = function createAccount(error, req, res, next) {
   if (error.name === 'ValidationError') {
     // @FIXME(sfount) recovery doesn't scale
     const { systemLinkService } = req.body
