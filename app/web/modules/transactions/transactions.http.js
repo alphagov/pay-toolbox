@@ -6,13 +6,13 @@ const { wrapAsyncErrorHandlers } = require('./../../../lib/routes')
 
 const TransactionSearch = require('./transactionSearch.model')
 
-const search = async function search (req, res, next) {
+const search = async function search(req, res) {
   const recovered = Object.assign({}, req.session.recovered)
   delete req.session.recovered
   res.render('transactions/search', { messages: req.flash('error'), recovered })
 }
 
-const getChargeIdFromReference = async function getChargeIdFromReference (accountId, reference) {
+const getChargeIdFromReference = async function getChargeIdFromReference(accountId, reference) {
   const response = await Connector.searchTransactionsByReference(accountId, reference)
   const totalResults = Number(response.total)
   logger.info(`Searched for transactions with reference ${reference}`)
@@ -30,12 +30,14 @@ const getChargeIdFromReference = async function getChargeIdFromReference (accoun
   return charge.charge_id
 }
 
-const searchTransaction = async function searchTransaction (req, res, next) {
-  const search = new TransactionSearch(req.body)
-  const chargeId = search.byCharge ? search.search_string : await getChargeIdFromReference(search.account_id, search.search_string)
-  const response = await Connector.searchTransactionsByChargeId(search.account_id, chargeId)
+const searchTransaction = async function searchTransaction(req, res) {
+  const searchParams = new TransactionSearch(req.body)
+  const chargeId = searchParams.byCharge
+    ? searchParams.search_string
+    : await getChargeIdFromReference(searchParams.account_id, searchParams.search_string)
+  const response = await Connector.searchTransactionsByChargeId(searchParams.account_id, chargeId)
 
-  logger.info(`Successful search for ${search.search_string} on account ${search.account_id}`)
+  logger.info(`Successful search for ${searchParams.search_string} on account ${searchParams.account_id}`)
   res.render('transactions/search_results', { events: response.events, chargeId })
 }
 

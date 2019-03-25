@@ -1,0 +1,24 @@
+{
+  "env": {
+    "commonjs": true,
+    "es6": true,
+    "node": true,
+    "mocha": true
+  },
+  "extends": "airbnb-base",
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018
+  },
+  "rules": {
+    "semi": ["error", "never"],
+    "comma-dangle": ["error", "never"],
+    "array-bracket-spacing": ["error", "always"],
+    "no-multiple-empty-lines": ["error", { "max": 1 }],
+    "prefer-promise-reject-errors": "error",
+    "func-name-matching": ["error", "always"]
+  }
+}

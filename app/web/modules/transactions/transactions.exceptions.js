@@ -1,6 +1,6 @@
 const logger = require('./../../../lib/logger')
 
-const searchTransaction = function searchTransaction (error, req, res, next) {
+const searchTransaction = function searchTransaction(error, req, res, next) {
   if (error.name === 'ValidationError') {
     logger.warn(`TransactionSearch request ${error.message}`)
     req.flash('error', `TransactionSearch ${error.message}`)

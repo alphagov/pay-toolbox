@@ -8,16 +8,44 @@ const axios = require('axios')
 
 const logger = require('./../logger')
 
-// @TODO(sfount) external dependency on toolbox errors - should encapsulate this behaviour into pay-request
+// @TODO(sfount) external dependency on toolbox errors - should encapsulate
+//               this behaviour into pay-request
 const { RESTClientError } = require('./../../lib/errors')
 
-// @TODO(sfount) config is going to have  to be passed dynamically; recommend: single config at the top of the application payreqest.config(config)
+// @TODO(sfount) config is going to have  to be passed dynamically; recommend:
+//               single config at the top of the application payreqest.config(config)
 const serviceStore = require('./../services.store')
 const serviceApiMethodUtils = require('./api_utils')
 
 const PAY_REQUEST_TIMEOUT = 10000
 
-const buildPayBaseClient = function buildPayBaseClient (service) {
+const timestampRequest = function timestampRequest(request) {
+  request.metadata = { start: new Date() }
+  return request
+}
+
+const logSuccessfulResponse = function logSuccessfulResponse(response) {
+  response.config.metadata.end = new Date()
+  response.config.metadata.duration = response.config.metadata.end - response.config.metadata.start
+  logger.debug(`[${this.metadata.serviceKey}] "${response.request.method}" success from ${response.config.url} (${response.config.metadata.duration}ms)`)
+  return response
+}
+
+const logFailureResponse = function logFailureResponse(error) {
+  const code = (error.response && error.response.status) || error.code
+
+  // @TODO(sfount) review how errors are passed through axios stack, favour
+  //               not disabling eslint rules
+  error.config.metadata.end = new Date() // eslint-disable-line no-param-reassign
+  // eslint-disable-next-line no-param-reassign
+  error.config.metadata.duration = error.config.metadata.end - error.config.metadata.start
+  logger.debug(`[${this.metadata.serviceKey}] "${error.config.method}" failed with ${code} from ${error.config.url} (${error.config.metadata.duration}ms)`)
+  return Promise.reject(
+    new RESTClientError(error, this.metadata.serviceKey, this.metadata.serviceName)
+  )
+}
+
+const buildPayBaseClient = function buildPayBaseClient(service) {
   const instance = axios.create({
     baseURL: service.target,
     timeout: PAY_REQUEST_TIMEOUT,
@@ -39,34 +67,19 @@ const buildPayBaseClient = function buildPayBaseClient (service) {
   }
 
   // tracking reponse times, default REST service logging
-  instance.interceptors.request.use(timestampRequest, (error) => Promise.reject(error))
-  instance.interceptors.response.use(logSuccessfulResponse.bind(instance), logFailureResponse.bind(instance))
+  instance.interceptors.request.use(timestampRequest, error => Promise.reject(error))
+  instance.interceptors.response.use(
+    logSuccessfulResponse.bind(instance),
+    logFailureResponse.bind(instance)
+  )
 
-  const apiUtilityMethods = (serviceApiMethodUtils[service.key] && serviceApiMethodUtils[service.key](instance)) || {}
+  const apiUtilityMethods = (serviceApiMethodUtils[service.key]
+    && serviceApiMethodUtils[service.key](instance)) || {}
   return Object.assign({}, instance, apiUtilityMethods)
 }
 
-const timestampRequest = function timestampRequest (request) {
-  request.metadata = { start: new Date() }
-  return request
-}
-
-const logSuccessfulResponse = function logSuccessfulResponse (response) {
-  response.config.metadata.end = new Date()
-  response.config.metadata.duration = response.config.metadata.end - response.config.metadata.start
-  logger.debug(`[${this.metadata.serviceKey}] "${response.request.method}" success from ${response.config.url} (${response.config.metadata.duration}ms)`)
-  return response
-}
-
-const logFailureResponse = function logFailureResponse (error) {
-  const code = (error.response && error.response.status) || error.code
-  error.config.metadata.end = new Date()
-  error.config.metadata.duration = error.config.metadata.end - error.config.metadata.start
-  logger.debug(`[${this.metadata.serviceKey}] "${error.config.method}" failed with ${code} from ${error.config.url} (${error.config.metadata.duration}ms)`)
-  return Promise.reject(new RESTClientError(error, this.metadata.serviceKey, this.metadata.serviceName))
-}
-
-// @FIXME(sfount) only make clients if they are imported anywhere in the code base - could eventually cause performance issues
+// @FIXME(sfount) only make clients if they are imported anywhere in the code
+//                base - could eventually cause performance issues
 const AdminUsers = buildPayBaseClient(serviceStore.ADMINUSERS)
 const Connector = buildPayBaseClient(serviceStore.CONNECTOR)
 const DirectDebitConnector = buildPayBaseClient(serviceStore.DIRECTDEBITCONNECTOR)
@@ -75,8 +88,9 @@ const PublicAuth = buildPayBaseClient(serviceStore.PUBLICAUTH)
 
 const clients = [ AdminUsers, Connector, DirectDebitConnector, Products, PublicAuth ]
 
-// make a GET request to all supported clients - for now supress throwing the error upwards as the calling code probably wants all results
-const broadcast = async function broadcast (path) {
+// make a GET request to all supported clients - for now supress throwing the
+// error upwards as the calling code probably wants all results
+const broadcast = async function broadcast(path) {
   return Promise.all(clients.map(async (client) => {
     const response = { name: client.metadata.serviceName, key: client.metadata.serviceKey }
     try {
@@ -88,4 +102,6 @@ const broadcast = async function broadcast (path) {
   }))
 }
 
-module.exports = { broadcast, AdminUsers, Connector, PublicAuth, Products, DirectDebitConnector }
+module.exports = {
+  broadcast, AdminUsers, Connector, PublicAuth, Products, DirectDebitConnector
+}

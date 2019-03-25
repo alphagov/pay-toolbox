@@ -39,11 +39,12 @@ const data = [
 ]
 
 const keyIndex = data.reduce((index, service) => {
+  // eslint-disable-next-line no-param-reassign
   index[service.key] = service
   return index
 }, {})
 
-const lookup = async function lookup (serviceKey) {
+const lookup = async function lookup(serviceKey) {
   const service = keyIndex[serviceKey]
 
   if (!service) {
@@ -52,4 +53,6 @@ const lookup = async function lookup (serviceKey) {
   return service
 }
 
-module.exports = { data, lookup, ADMINUSERS, CONNECTOR, DIRECTDEBITCONNECTOR, PRODUCTS, PUBLICAUTH }
+module.exports = {
+  data, lookup, ADMINUSERS, CONNECTOR, DIRECTDEBITCONNECTOR, PRODUCTS, PUBLICAUTH
+}

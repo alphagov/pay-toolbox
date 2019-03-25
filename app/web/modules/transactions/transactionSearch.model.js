@@ -9,7 +9,7 @@ const schema = {
 }
 
 class TransactionSearch {
-  constructor (body) {
+  constructor(body) {
     const { error, value: model } = Joi.validate(body, schema)
 
     if (error) {

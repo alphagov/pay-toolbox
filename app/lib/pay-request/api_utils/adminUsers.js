@@ -1,26 +1,27 @@
-const adminUsersMethods = function adminUsersMethods (instance) {
+const adminUsersMethods = function adminUsersMethods(instance) {
   const axiosInstance = instance || this
+  const utilExtractData = response => response.data
 
-  const service = function service (id) {
+  const service = function service(id) {
     const path = `/v1/api/services/${id}`
     return axiosInstance.get(path).then(utilExtractData)
   }
 
-  const services = function services () {
+  const services = function services() {
     const path = '/v1/api/services/list'
     return axiosInstance.get(path).then(utilExtractData)
   }
 
-  const serviceUsers = function serviceUsers (id) {
+  const serviceUsers = function serviceUsers(id) {
     const path = `/v1/api/services/${id}/users`
     return axiosInstance.get(path).then(utilExtractData)
   }
 
-  const gatewayAccountServices = function gatewayAccountServices (id) {
+  const gatewayAccountServices = function gatewayAccountServices(id) {
     return axiosInstance.get(`/v1/api/services?gatewayAccountId=${id}`).then(utilExtractData)
   }
 
-  const updateServiceBranding = function updateServiceBranding (id, imageUrl, cssUrl) {
+  const updateServiceBranding = function updateServiceBranding(id, imageUrl, cssUrl) {
     const path = `/v1/api/services/${id}`
     const payload = {
       op: 'replace',
@@ -30,7 +31,7 @@ const adminUsersMethods = function adminUsersMethods (instance) {
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
 
-  const updateServiceGatewayAccount = function updateServiceGatewayAccount (id, accountId) {
+  const updateServiceGatewayAccount = function updateServiceGatewayAccount(id, accountId) {
     const path = `/v1/api/services/${id}`
     const payload = {
       op: 'add',
@@ -40,7 +41,7 @@ const adminUsersMethods = function adminUsersMethods (instance) {
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
 
-  const updateServiceGoLiveStatus = function updateServiceGoLiveStatus (id, status) {
+  const updateServiceGoLiveStatus = function updateServiceGoLiveStatus(id, status) {
     const path = `v1/api/services/${id}`
     const payload = {
       op: 'replace',
@@ -49,9 +50,15 @@ const adminUsersMethods = function adminUsersMethods (instance) {
     }
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
-
-  const utilExtractData = response => response.data
-  return { service, services, serviceUsers, updateServiceBranding, updateServiceGatewayAccount, gatewayAccountServices, updateServiceGoLiveStatus }
+  return {
+    service,
+    services,
+    serviceUsers,
+    updateServiceBranding,
+    updateServiceGatewayAccount,
+    gatewayAccountServices,
+    updateServiceGoLiveStatus
+  }
 }
 
 module.exports = adminUsersMethods
