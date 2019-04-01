@@ -15,9 +15,12 @@
     "test": "npm run test:unit",
     "test:unit": "mocha app/web/modules/**/*.spec.js",
     "test:cypress": "cypress run",
+    "build": "npm run build:typescript && npm run build:copy && npm run build:sass",
+    "build:typescript": "tsc",
     "build:sass": "scripts/compile-assets",
+    "build:copy": "copyfiles --up 1 src/**/*.njk dist/",
     "preinstall": "echo \"Preinstall hook\" && exit 0",
-    "postinstall": "npm run build:sass"
+    "postinstall": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -44,12 +47,14 @@
   },
   "devDependencies": {
     "chai": "4.2.0",
+    "copyfiles": "2.1.0",
     "cypress": "3.1.5",
     "eslint": "5.16.0",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "2.16.0",
     "mocha": "6.0.2",
     "node-sass": "4.11.0",
-    "nodemon": "1.18.10"
+    "nodemon": "1.18.10",
+    "typescript": "3.4.1"
   }
 }
