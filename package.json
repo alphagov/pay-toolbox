@@ -15,7 +15,7 @@
     "test": "npm run test:unit",
     "test:unit": "mocha app/web/modules/**/*.spec.js",
     "test:cypress": "cypress run",
-    "build": "npm run build:typescript && npm run build:copy && npm run build:sass",
+    "build": "scripts/build && npm run build:typescript && npm run build:copy && npm run build:sass",
     "build:typescript": "tsc",
     "build:sass": "scripts/compile-assets",
     "build:copy": "copyfiles --up 1 src/**/*.njk dist/",

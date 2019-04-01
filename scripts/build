@@ -1,0 +1,8 @@
+#!/bin/bash
+# source .env
+
+# Prepare build environment
+# rm -rf "$BUILD_FOLDER_ROOT"
+# mkdir "$BUILD_FOLDER_ROOT"
+rm -rf ./dist
+mkdir ./dist
