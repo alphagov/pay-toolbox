@@ -1,4 +1,6 @@
-const connectorMethods = function connectorMethods(instance) {
+import { AxiosInstance } from 'axios'
+
+export default function connectorMethods(instance: AxiosInstance): void {
   const axiosInstance = instance || this
 
   // @TODO(sfount) extract and standardise this - there should be no need to
@@ -39,11 +41,11 @@ const connectorMethods = function connectorMethods(instance) {
   }
 
   const getGatewayComparison = function getGatewayComparison(chargeId) {
-    return getGatewayComparisons([ chargeId ])
+    return getGatewayComparisons([chargeId])
   }
 
   const resolveDiscrepancy = function resolveDiscrepancy(chargeId) {
-    return axiosInstance.post('/v1/api/discrepancies/resolve', [ chargeId ]).then(utilExtractData)
+    return axiosInstance.post('/v1/api/discrepancies/resolve', [chargeId]).then(utilExtractData)
   }
 
   // eslint-disable-next-line max-len
@@ -65,5 +67,3 @@ const connectorMethods = function connectorMethods(instance) {
     resolveDiscrepancy
   }
 }
-
-module.exports = connectorMethods
