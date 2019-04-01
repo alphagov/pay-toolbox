@@ -17,6 +17,7 @@ const { toFormattedDate, toFormattedDateLong } = require('./../lib/format')
 
 // @FIXME(sfount) errors should be thrown and this should be properly handled if
 //                there is no manifest etc.
+// eslint-disable-next-line import/no-unresolved
 const staticResourceManifest = require('./../public/manifest')
 
 const app = express()
