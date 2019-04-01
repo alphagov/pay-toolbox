@@ -6,7 +6,6 @@ const morgan = require('morgan')
 const flash = require('connect-flash')
 const cookieSession = require('cookie-session')
 const nunjucks = require('nunjucks')
-
 const { common } = require('./../config')
 const logger = require('./../lib/logger')
 

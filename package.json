@@ -7,13 +7,13 @@
     "npm": "6.4.1"
   },
   "private": true,
-  "main": "app/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node app/index.js",
-    "dev": "nodemon app/index.js",
-    "lint": "eslint app",
+    "start": "node dist/index.js",
+    "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
+    "lint": "eslint src",
     "test": "npm run test:unit",
-    "test:unit": "mocha app/web/modules/**/*.spec.js",
+    "test:unit": "mocha src/web/modules/**/*.spec.js",
     "test:cypress": "cypress run",
     "build": "scripts/build && npm run build:typescript && npm run build:copy && npm run build:sass",
     "build:typescript": "tsc",
@@ -54,7 +54,8 @@
     "eslint-plugin-import": "2.17.2",
     "mocha": "6.0.2",
     "node-sass": "^4.12.0",
-    "nodemon": "1.19.0"
+    "nodemon": "1.19.0",
+    "tsc-watch": "2.1.2",
     "typescript": "3.4.1"
   }
 }
