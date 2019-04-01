@@ -13,7 +13,7 @@
     "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
     "lint": "eslint src",
     "test": "npm run test:unit",
-    "test:unit": "mocha src/web/modules/**/*.spec.js",
+    "test:unit": "mocha -r ts-node/register src/web/modules/**/*.spec.js",
     "test:cypress": "cypress run",
     "build": "scripts/build && npm run build:typescript && npm run build:copy && npm run build:sass",
     "build:typescript": "tsc",
@@ -55,6 +55,7 @@
     "mocha": "6.0.2",
     "node-sass": "^4.12.0",
     "nodemon": "1.19.0",
+    "ts-node": "8.0.3",
     "tsc-watch": "2.1.2",
     "typescript": "3.4.1"
   }
