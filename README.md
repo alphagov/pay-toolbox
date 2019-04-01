@@ -41,3 +41,4 @@ exceptions.
 `comma-dangle` - many popular diff/ review tools now allow ignoring whitespace
 this should no longer be something we have to account for with hacks 
 `array-bracket-spacing` - opinion: :+1: spacing
+`@typescript-eslint/no-var-requires` - not yet using Typescript module syntax, rule should be set to error when we switch

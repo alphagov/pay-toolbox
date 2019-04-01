@@ -1,11 +1,13 @@
 {
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
   "env": {
     "commonjs": true,
     "es6": true,
     "node": true,
     "mocha": true
   },
-  "extends": "airbnb-base",
+  "extends": ["airbnb-base", "plugin:@typescript-eslint/recommended"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
@@ -19,6 +21,11 @@
     "array-bracket-spacing": ["error", "always"],
     "no-multiple-empty-lines": ["error", { "max": 1 }],
     "prefer-promise-reject-errors": "error",
-    "func-name-matching": ["error", "always"]
+    "func-name-matching": ["error", "always"],
+    "indent": "off",
+    "@typescript-eslint/indent": ["error", 2],
+    "camelcase": "off",
+    "@typescript-eslint/camelcase": ["error", { "properties": "never" }],
+    "@typescript-eslint/no-var-requires": 1
   }
 }
