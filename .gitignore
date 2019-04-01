@@ -1,8 +1,9 @@
 # Compiled assets 
+dist/
 app/public 
 
-app/tests/cypress/videos
-app/tests/cypress/screenshots
+src/tests/cypress/videos
+src/tests/cypress/screenshots
 
 # Logs 
 npm-debug.log*

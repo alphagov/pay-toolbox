@@ -66,8 +66,8 @@ const parseInput = function parseInput() {
   document.documentElement.scrollTop = 0
 }
 
-const setup = function setup() {
+const setupParserTool = function setupParserTool() {
   document.getElementById(PARSE_BUTTON_ID).onclick = parseInput
 }
 
-document.addEventListener('DOMContentLoaded', setup)
+document.addEventListener('DOMContentLoaded', setupParserTool)
