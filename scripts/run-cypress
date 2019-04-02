@@ -1,0 +1,12 @@
+#!/bin/sh
+CYPRESS_AVAILABLE=$(command -v cypress > /dev/null)
+
+if ! $CYPRESS_AVAILABLE; then 
+  echo "Cypress not found in this environment"
+  echo "For development, Cypress can be added with \`npm i -g cypress\`"
+  echo "For CI Cypress should be available through the container node"
+  exit 1
+fi 
+
+echo "Cypress found in environment, executing run"
+cypress run
