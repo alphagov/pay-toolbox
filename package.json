@@ -10,7 +10,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
+    "dev": "tsc-watch --noClear --onSuccess \"./scripts/run-dev\"",
     "lint": "eslint src",
     "test": "npm run test:unit",
     "test:unit": "mocha -r ts-node/register src/web/modules/**/*.spec.js",
