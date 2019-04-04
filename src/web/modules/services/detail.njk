@@ -1,5 +1,5 @@
 {% from "components/button/macro.njk" import govukButton %}
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 
 {% block main %}
   <h1 class="govuk-heading-m">Service details</h1>
@@ -38,7 +38,7 @@
       </tr>
     </tbody>
   </table>
-   
+
   <div>
     <h1 class="govuk-heading-s">Going live - new Stripe payment provider</h1>
     <p class="govuk-body">This will guide you through:</p>
@@ -60,7 +60,7 @@
     </p>
     <br/>
   </div>
-  
+
   <div>
     <h1 class="govuk-heading-s">Going live - existing payment provider</h1>
     <p class="govuk-body">This will guide you through:</p>
@@ -93,15 +93,17 @@
   <table class="govuk-table">
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">Email</th> 
-        <th class="govuk-table__header" scope="col">Disabled</th> 
-        <th class="govuk-table__header" scope="col">Login count</th> 
+        <th class="govuk-table__header" scope="col">Email</th>
+        <th class="govuk-table__header" scope="col">Disabled</th>
+        <th class="govuk-table__header" scope="col">Login count</th>
       </tr>
     </thead>
     <tbody class="govuk-table__body">
       {% for user in users %}
         <tr class="govuk-table__row">
-          <td class="govuk-table__cell">{{ user.email }}</td>
+          <td class="govuk-table__cell">
+            <a href="/users/{{ user.external_id }}" class="govuk-link govuk-link--no-visited-state">{{ user.email }}
+          </td>
           <td class="govuk-table__cell">{{ user.disabled | string | capitalize }}</td>
           <td class="govuk-table__cell">{{ user.login_counter }}</td>
         </tr>

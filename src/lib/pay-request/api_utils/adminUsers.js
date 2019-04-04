@@ -4,6 +4,16 @@ const adminUsersMethods = function adminUsersMethods(instance) {
   const axiosInstance = instance || this
   const utilExtractData = response => response.data
 
+  const user = function user(id) {
+    const path = `/v1/api/users/${id}`
+    return axiosInstance.get(path)
+      .then(utilExtractData)
+      .catch((error) => {
+        if (error.data.response && error.data.response.status === 404) throw new EntityNotFoundError('User', id)
+        throw error
+      })
+  }
+
   const service = function service(id) {
     const path = `/v1/api/services/${id}`
     return axiosInstance.get(path)
@@ -72,6 +82,7 @@ const adminUsersMethods = function adminUsersMethods(instance) {
   }
 
   return {
+    user,
     service,
     services,
     serviceUsers,

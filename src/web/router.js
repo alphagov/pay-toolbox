@@ -13,6 +13,10 @@ const transactions = require('./modules/transactions')
 const discrepancies = require('./modules/discrepancies')
 const stripe = require('./modules/stripe')
 
+// @TODO(sfount) remove `default`s on update to import export syntax
+// eslint-disable-next-line import/no-unresolved
+const users = require('./modules/users/users.http').default
+
 const router = express.Router()
 
 router.get('/', auth.secured, landing.root)
@@ -54,4 +58,7 @@ router.post('/stripe/create', auth.secured, stripe.createAccount.http, stripe.cr
 
 router.get('/stripe/basic/create', auth.secured, stripe.basic)
 router.post('/stripe/basic/create', auth.secured, stripe.basicCreate)
+
+router.get('/users/:id', auth.secured, users.show)
+
 module.exports = router
