@@ -26,6 +26,15 @@ class RESTClientError extends Error {
   }
 }
 
+// expects to be passed a class-validator ValidationError object
+class IOValidationError extends Error {
+  constructor(validations) {
+    super(validations[0].toString())
+    this.source = validations
+    Error.captureStackTrace(this, this.constructor)
+  }
+}
+
 class ValidationError extends Error {
   constructor(message) {
     super(message)
@@ -34,4 +43,6 @@ class ValidationError extends Error {
   }
 }
 
-module.exports = { EntityNotFoundError, RESTClientError, ValidationError }
+module.exports = {
+  EntityNotFoundError, RESTClientError, ValidationError, IOValidationError
+}
