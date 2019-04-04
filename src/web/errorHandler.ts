@@ -1,9 +1,16 @@
 // handle common service errors thrown by HTTP request handlers
-const logger = require('./../lib/logger')
-const config = require('./../config')
-const { EntityNotFoundError, RESTClientError, ValidationError } = require('./../lib/errors')
+import { Request, Response, NextFunction } from 'express'
 
-const handleRequestErrors = function handleRequestErrors(error, req, res, next) {
+import * as logger from '../lib/logger'
+import * as config from '../config'
+import { EntityNotFoundError, RESTClientError, ValidationError } from '../lib/errors'
+
+const handleRequestErrors = function handleRequestErrors(
+  error: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
   // generic entity wasn't found - format reponse
   if (error.name === EntityNotFoundError.name) {
     logger.warn(error.message)
@@ -12,7 +19,7 @@ const handleRequestErrors = function handleRequestErrors(error, req, res, next) 
   }
 
   // could not access end point - gracefully show service that we were trying to access
-  if (error.name === RESTClientError.name) {
+  if (error instanceof RESTClientError) {
     if (error.data.code === 'ECONNREFUSED' || error.data.code === 'ECONNRESET') {
       const message = `${error.service.name} API endpoint is unavailable (${error.data.code})`
       res.status(503).render('common/error', { message })
@@ -21,7 +28,7 @@ const handleRequestErrors = function handleRequestErrors(error, req, res, next) 
   }
 
   // generic entity failed to validate fields - format reponse
-  if (error.name === ValidationError.name) {
+  if (error instanceof ValidationError) {
     res.status(400).render('common/error', { message: error.message })
     return
   }
@@ -33,7 +40,12 @@ const handleRequestErrors = function handleRequestErrors(error, req, res, next) 
 // this error - log the error and return unknown system error to client
 // allow this method to not return consistently as it is the last method in the stack
 // eslint-disable-next-line consistent-return
-const handleDefault = function handleDefault(error, req, res, next) {
+const handleDefault = function handleDefault(
+  error: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
   if (res.headersSent) {
     return next(error)
   }
@@ -42,4 +54,4 @@ const handleDefault = function handleDefault(error, req, res, next) {
   res.status(500).render('common/error', { message })
 }
 
-module.exports = { handleRequestErrors, handleDefault }
+export { handleRequestErrors, handleDefault }

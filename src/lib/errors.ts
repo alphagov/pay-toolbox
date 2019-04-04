@@ -1,6 +1,10 @@
-// @TODO(sfount) move error definitions outside of index file
+import { ValidationError as ClassValidatorError } from 'class-validator'
+import { AxiosError } from 'axios'
+
 class RequestError extends Error {
-  constructor(message) {
+  public name: string
+
+  public constructor(message: string) {
     super(message)
     this.name = this.constructor.name
     Error.captureStackTrace(this, this.constructor)
@@ -8,7 +12,9 @@ class RequestError extends Error {
 }
 
 class EntityNotFoundError extends RequestError {
-  constructor(name, identifier) {
+  public data: { name: string; identifier: string }
+
+  public constructor(name: string, identifier: string) {
     super(`${name} with ID ${identifier} was not found.`)
     this.data = { name, identifier }
   }
@@ -17,18 +23,26 @@ class EntityNotFoundError extends RequestError {
 // wrap errors from other frameworks in a format that this service can report on
 // @FIXME(sfount) stack trace isn't respected
 class RESTClientError extends Error {
-  constructor(error, key, name) {
+  public name: string
+
+  public data: AxiosError
+
+  public service: { key: string; name: string }
+
+  public constructor(error: AxiosError, serviceKey: string, serviceName: string) {
     super(error.message)
     this.name = this.constructor.name
     this.data = error
-    this.service = { key, name }
+    this.service = { key: serviceKey, name: serviceName }
     Error.captureStackTrace(this, this.constructor)
   }
 }
 
 // expects to be passed a class-validator ValidationError object
 class IOValidationError extends Error {
-  constructor(validations) {
+  public source: ClassValidatorError[]
+
+  public constructor(validations: ClassValidatorError[]) {
     super(validations[0].toString())
     this.source = validations
     Error.captureStackTrace(this, this.constructor)
@@ -36,13 +50,15 @@ class IOValidationError extends Error {
 }
 
 class ValidationError extends Error {
-  constructor(message) {
+  public name: string
+
+  public constructor(message: string) {
     super(message)
     this.name = this.constructor.name
     Error.captureStackTrace(this, this.constructor)
   }
 }
 
-module.exports = {
+export {
   EntityNotFoundError, RESTClientError, ValidationError, IOValidationError
 }
