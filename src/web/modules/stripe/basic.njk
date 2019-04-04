@@ -1,0 +1,58 @@
+{% extends "layout/layout.njk" %}
+{% from "components/button/macro.njk" import govukButton %}
+{% from "components/input/macro.njk" import govukInput %}
+{% from "components/table/macro.njk" import govukTable %}
+{% from "common/errorSummary.njk" import errorSummary %}
+
+{% block main %}
+  <h1 class="govuk-heading-m">Create Stripe account for service</h1>
+
+  {% if errors %}
+    {{ errorSummary({ errors: errors }) }}
+  {% endif %}
+
+  {{ govukTable({
+    firstCellIsHeader: true,
+    rows: [
+      [
+        {
+          text: "Service Name"
+        },
+        {
+          text: serviceName
+        }
+      ],
+      [
+        {
+          text: "Organisation Name"
+        },
+        {
+          text: organisationName
+        }
+      ]
+    ]
+  })
+  }}
+
+  <form method="POST" action="/stripe/basic/create">
+    {{ govukInput({
+      label: { text: "Statement descriptor" },
+      hint: { text: "Payment description to appear on user's bank statement" },
+      id: "statementDescriptor",
+      name: "statementDescriptor",
+      value: formValues.statementDescriptor,
+      errorMessage: errorMap.statementDescriptor and { text: errorMap.statementDescriptor },
+      classes: "govuk-input--width-10"
+    })
+    }}
+
+    <input hidden="hidden" name="systemLinkService" id="systemLinkService" value="{{ systemLinkService }}">
+
+    <div class="govuk-form-group">
+      {{ govukButton({
+		    text: "Create Stripe connected account"
+		    })
+	    }}
+    </div>
+  </form>
+{% endblock %}

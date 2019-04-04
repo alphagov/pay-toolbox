@@ -52,4 +52,6 @@ router.post('/transactions/search', auth.secured, transactions.searchTransaction
 router.get('/stripe/create', auth.secured, stripe.create)
 router.post('/stripe/create', auth.secured, stripe.createAccount.http, stripe.createAccount.exceptions)
 
+router.get('/stripe/basic/create', auth.secured, stripe.basic)
+router.post('/stripe/basic/create', auth.secured, stripe.basicCreate)
 module.exports = router
