@@ -46,12 +46,19 @@
       <li>Creating new Stripe account through the Stripe API</li>
       <li>Creating a GOV.UK Pay gateway account, with the correct Stripe credentials</li>
     </ul>
-    
+
     {{ govukButton({
       text: "Setup live Stripe account",
       href: "/stripe/create?service=" + service.external_id
       })
-      }}
+    }}
+
+    <p>
+      <a class="govuk-link" href="/stripe/basic/create?service={{ service.external_id }}">
+        Create live Stripe account using stored details (do not use yet)
+      </a>
+    </p>
+    <br/>
   </div>
   
   <div>

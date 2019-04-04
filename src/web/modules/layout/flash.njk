@@ -1,0 +1,18 @@
+{% block flash %}
+  <div class="govuk-grid-column-two-thirds">
+    {% if flash.error %}
+    <div class="flash-container">
+      <div class="notification generic-error error-summary">
+        {{ flash.error | safe }}
+      </div>
+    </div>
+    {% endif %}
+    {% if flash.generic %}
+    <div class="flash-container flash-container--good">
+      <div class="notification generic-flash">
+        {{ flash.generic | safe }}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+{% endblock %}

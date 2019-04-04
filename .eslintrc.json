@@ -27,6 +27,7 @@
     "@typescript-eslint/indent": ["error", 2],
     "camelcase": "off",
     "@typescript-eslint/camelcase": ["error", { "properties": "never" }],
-    "@typescript-eslint/no-var-requires": 1
+    "@typescript-eslint/no-var-requires": 1,
+    "import/no-unresolved": "off"
   }
 }
