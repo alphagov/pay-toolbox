@@ -25,3 +25,20 @@
 .status-disconnected { 
   background-color: govuk-colour("red");
 }
+
+.flash-container {
+  @extend .govuk-error-summary;
+  margin-top: govuk-spacing(6);
+
+    &--good {
+    border-color:  govuk-colour("green");
+  }
+
+  .notification {
+    @include govuk-font($size: 19);
+
+    h2 {
+      margin-top: 0;
+    }
+  }
+}
