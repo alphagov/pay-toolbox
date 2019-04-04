@@ -1,0 +1,47 @@
+{% extends "layout/layout.njk" %}
+{% block main %}
+<h1 class="govuk-heading-m">User details</h1>
+
+<table class="govuk-table">
+  <tbody class="govuk-table__body">
+    <tr class="govuk-table__row">
+      <th class="govuk-table__header" scope="col">ID</th>
+      <td class="govuk-table__cell">{{user.external_id}}</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th class="govuk-table__header" scope="col">Email</th>
+      <td class="govuk-table__cell">{{user.email}}</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th class="govuk-table__header" scope="col">Phone</th>
+      <td class="govuk-table__cell">{{user.telephone_number}}</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th class="govuk-table__header" scope="col">MFA</th>
+      <td class="govuk-table__cell">{{user.second_factor}}</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th class="govuk-table__header" scope="col">Account Disabled</th>
+      <td class="govuk-table__cell">{{"True" if user.disabled else "False"}}</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th class="govuk-table__header" scope="col" valign="top">Services</th>
+      <td class="govuk-table__cell">
+        <ul class="govuk-list">
+          {% for role in user.service_roles %}
+          <li>
+            <a href="/services/{{ role.service.external_id}}" class="govuk-link govuk-link--no-visited-state">{{ role.service.name }}</a>
+            <span> | </span>
+            <a class="govuk-link govuk-link--no-visited-state" href="/user/{{ user.external_id }}/services">(Remove user from service)</a>
+           </li>
+          {% endfor %}
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div>
+  <pre><code>{{ user | dump('\t') }}</code></pre>
+</div>
+{% endblock %}
