@@ -9,7 +9,7 @@ const nunjucks = require('nunjucks')
 const { common } = require('./../config')
 const logger = require('./../lib/logger')
 
-const errors = require('./errors')
+const errors = require('./errorHandler')
 const router = require('./router')
 
 // @FIXME(sfount) move this out of server configuration

@@ -1,4 +1,4 @@
-const { EntityNotFoundError } = require('../../errors/index')
+const { EntityNotFoundError } = require('../../errors')
 
 const adminUsersMethods = function adminUsersMethods(instance) {
   const axiosInstance = instance || this
