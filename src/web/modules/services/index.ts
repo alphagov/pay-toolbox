@@ -1,5 +1,5 @@
-const http = require('./services.http')
-const exceptions = require('./services.exceptions')
+import http from './services.http'
+import * as exceptions from './services.exceptions'
 
 module.exports = {
   overview: http.overview,

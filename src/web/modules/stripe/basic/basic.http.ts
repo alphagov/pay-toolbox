@@ -1,45 +1,19 @@
 import * as Stripe from 'stripe'
 import { Request, Response } from 'express'
-import {
-  validateSync,
-  Length,
-  IsString,
-  IsNotEmpty,
-  ValidationError,
-  Matches
-} from 'class-validator'
 
-import * as logger from '../../../lib/logger'
-import { AdminUsers } from '../../../lib/pay-request'
-import { ValidationError as CustomValidationError, IOValidationError } from '../../../lib/errors'
-import { wrapAsyncErrorHandlers } from '../../../lib/routes'
-import { formatErrorsForTemplate, ClientFormError } from '../common/validationErrorFormat'
-import { Service, StripeAgreement } from '../../../lib/pay-request/api_utils/adminUsersTypes'
+import * as logger from '../../../../lib/logger'
+import { AdminUsers } from '../../../../lib/pay-request'
+import { ValidationError as CustomValidationError, IOValidationError } from '../../../../lib/errors'
+import { wrapAsyncErrorHandler } from '../../../../lib/routes'
+import { formatErrorsForTemplate, ClientFormError } from '../../common/validationErrorFormat'
+import { Service, StripeAgreement } from '../../../../lib/pay-request/types/adminUsers'
+import AccountDetails from './basicAccountDetails.model'
 
 const STRIPE_API_KEY: string = process.env.STRIPE_API_KEY || ''
 const stripe = new Stripe(STRIPE_API_KEY)
 const { StripeError } = Stripe.errors
 
 stripe.setApiVersion('2018-09-24')
-
-class AccountDetails {
-  @Matches(/^[^<>'"\\]+$/, { message: 'Statement descriptor cannot contain the following < > \\ \' "' })
-  @Length(5, 22, { message: 'Statement descriptor must be between 5 and 22 characters' })
-  @IsString()
-  @IsNotEmpty({ message: 'Please enter a statement descriptor' })
-  public statementDescriptor: string;
-
-  public validate(): void {
-    // ensure that information passed from HTML form is correct
-    const errors: ValidationError[] = validateSync(this)
-    if (errors.length) throw new IOValidationError(errors)
-  }
-
-  public constructor(formValues: { [key: string]: string }) {
-    this.statementDescriptor = formValues.statementDescriptor
-    this.validate()
-  }
-}
 
 const createAccountForm = async function createAccountForm(
   req: Request,
@@ -158,4 +132,7 @@ const submitAccountCreate = async function submitAccountCreate(
   }
 }
 
-export default wrapAsyncErrorHandlers({ createAccountForm, submitAccountCreate })
+export default {
+  createAccountForm: wrapAsyncErrorHandler(createAccountForm),
+  submitAccountCreate: wrapAsyncErrorHandler(submitAccountCreate)
+}

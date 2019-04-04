@@ -20,8 +20,8 @@
     
   <form method="POST" action="/services/{{ serviceId }}/link_accounts">
     {{ govukInput({ 
-      id: "account_id",
-      name: "account_id",
+      id: "id",
+      name: "id",
       value: recovered.id,
       label: { text: "Gateway account ID to add" }
       })
