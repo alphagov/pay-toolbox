@@ -128,7 +128,7 @@ const submitAccountCreate = async function submitAccountCreate(
       formValues: req.body,
       errors
     }
-    res.redirect(`/stripe/basic?service=${systemLinkService}`)
+    res.redirect(`/stripe/basic/create?service=${systemLinkService}`)
   }
 }
 
