@@ -14,13 +14,22 @@ const adminUsersMethods = function adminUsersMethods(instance) {
       })
   }
 
-  // @FIXME(sfount) update phone number method
-  const updateUserPhone = function updateUserPhone(id, telephoneNumber) {
+  const updateUserPhone = function updateUserPhone(id, email) {
     const path = `/v1/api/users/${id}`
     const payload = {
       op: 'replace',
-      path: 'telephone_number',
-      value: telephoneNumber
+      path: 'email',
+      value: email
+    }
+    return axiosInstance.patch(path, payload).then(utilExtractData)
+  }
+
+  const updateUserEmail = function updateUserEmail(id, email) {
+    const path = `/v1/api/users/${id}`
+    const payload = {
+      op: 'replace',
+      path: 'username',
+      value: email
     }
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
@@ -102,7 +111,8 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     updateServiceGatewayAccount,
     gatewayAccountServices,
     updateServiceGoLiveStatus,
-    updateUserPhone
+    updateUserPhone,
+    updateUserEmail
   }
 }
 

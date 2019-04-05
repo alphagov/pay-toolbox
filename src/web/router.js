@@ -69,6 +69,8 @@ router.post('/stripe/basic/create', auth.secured, stripe.basicCreate)
 router.get('/users/:id', auth.secured, users.show)
 router.get('/users/:id/phone', auth.secured, users.updatePhoneNumberForm)
 router.post('/users/:id/phone', auth.secured, users.updatePhoneNumber)
+router.get('/users/:id/email', auth.secured, users.updateEmailForm)
+router.post('/users/:id/email', auth.secured, users.updateEmail)
 
 router.get('/logout', auth.secured, auth.revokeSession)
 
