@@ -1,5 +1,5 @@
 // import { Request, Response, NextFunction } from 'express'
-import { IsString, IsPhoneNumber, IsMobilePhone, IsNotEmpty } from 'class-validator'
+import { IsString, IsPhoneNumber, IsMobilePhone, IsNotEmpty, IsEmail } from 'class-validator'
 
 import { wrapAsyncErrorHandlers } from '../../../lib/routes'
 import { AdminUsers } from '../../../lib/pay-request'
@@ -59,6 +59,45 @@ const updatePhoneNumberForm = async function updatePhoneNumberForm(req: any, res
   res.render('users/users.update_phone.njk', context)
 }
 
+const updateEmailForm = async function updateEmailForm(req: any, res: any): Promise<void> {
+  const user = await AdminUsers.user(req.params.id)
+  const context: any = { user }
+  const { recovered } = req.session
+
+  console.log(recovered)
+  // @TODO(sfount) move all recovery code into one place -- all mapping to formats the template
+  //               understand should be done in one place
+  if (recovered) {
+    context.formValues = recovered.formValues
+
+    if (recovered.errors) {
+      context.errors = recovered.errors
+      context.errorMap = recovered.errors.reduce((aggregate: {
+        [key: string]: string;
+      }, error: ClientFormError) => {
+        // eslint-disable-next-line no-param-reassign
+        aggregate[error.id] = error.message
+        return aggregate
+      }, {})
+    }
+    delete req.session.recovered
+  }
+  res.render('users/users.update_email.njk', context)
+}
+
+class EmailRequest extends Validated {
+  @IsEmail({}, { message: 'Provided value must be a valid email' })
+  @IsNotEmpty()
+  @IsString()
+  public email: string;
+
+  public constructor(formValues: {[key: string]: string}) {
+    super()
+    this.email = formValues.email
+    this.validate()
+  }
+}
+
 class PhoneNumberRequest extends Validated {
   @IsPhoneNumber('ZZ', { message: 'User telephone number must be a valid international phone number' })
   @IsNotEmpty()
@@ -69,6 +108,29 @@ class PhoneNumberRequest extends Validated {
     super()
     this.telephone_number = formValues.telephone_number
     this.validate()
+  }
+}
+
+const updateEmail = async function updateEmail(req: any, res: any, next: any): Promise<void> {
+  const id = req.params.id
+
+  try {
+    const updateRequest = new EmailRequest(req.body)
+
+    const result = await AdminUsers.updateUserEmail(id, updateRequest.email)
+    req.flash('info', 'Updated phone number ')
+    res.redirect(`/users/${id}`)
+  } catch (error) {
+    let errors
+    if (error instanceof IOValidationError) {
+      req.session.recovered = {
+        formValues: req.body,
+        errors: formatErrorsForTemplate(error.source)
+      }
+      res.redirect(`/users/${id}/email`)
+      return
+    }
+    next(error)
   }
 }
 
@@ -98,4 +160,4 @@ const updatePhoneNumber = async function updatePhoneNumber(req: any, res: any, n
 // const removeFromService = async function removeFromService(req: any, res: any): Promise<void> {
 // }
 // @TODO(sfount) use individual wrapAsyncErrorHandler
-export default wrapAsyncErrorHandlers({ show, updatePhoneNumber, updatePhoneNumberForm })
+export default wrapAsyncErrorHandlers({ show, updatePhoneNumber, updatePhoneNumberForm, updateEmailForm, updateEmail })

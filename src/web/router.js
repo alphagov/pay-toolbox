@@ -64,5 +64,7 @@ router.get('/users/:id', auth.secured, users.show)
 // @TODO(sfount) simple to integrate into table action - should be reconsidered for POST or PATCH
 router.get('/users/:id/phone', auth.secured, users.updatePhoneNumberForm)
 router.post('/users/:id/phone', auth.secured, users.updatePhoneNumber)
+router.get('/users/:id/email', auth.secured, users.updateEmailForm)
+router.post('/users/:id/email', auth.secured, users.updateEmail)
 
 module.exports = router

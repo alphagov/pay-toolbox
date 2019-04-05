@@ -1,0 +1,34 @@
+{% from "components/input/macro.njk" import govukInput %}
+{% from "components/button/macro.njk" import govukButton %}
+{% from "common/errorSummary.njk" import errorSummary %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+<span class="govuk-caption-m">Update user</span>
+<h1 class="govuk-heading-m">Email</h1>
+
+<div>
+    <a href="/users/{{ user.external_id }}" class="govuk-back-link">Back to user ({{ user.email }})</a>
+</div>
+
+{% if errors %}
+  {{ errorSummary({ errors: errors }) }}
+{% endif %}
+
+<form action="/users/{{user.external_id}}/email" method="POST">
+  {{ govukInput({
+    label: { text: "Email" },
+    hint: { text: "Current email is " + user.email },
+    id: "email",
+    name: "email",
+    value: formValues.email,
+    errorMessage: errorMap.email and { text: errorMap.email }
+    })
+  }}
+
+  {{ govukButton({
+    text: "Update user email"
+    })
+  }}
+</form>
+{% endblock %}
