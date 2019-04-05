@@ -1,7 +1,7 @@
 import http from './services.http'
 import * as exceptions from './services.exceptions'
 
-module.exports = {
+export default {
   overview: http.overview,
   detail: {
     http: http.detail,

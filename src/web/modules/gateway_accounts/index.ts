@@ -1,7 +1,7 @@
-const http = require('./gateway_accounts.http')
-const exceptions = require('./gateway_accounts.exceptions')
+import http from './gateway_accounts.http'
+import exceptions from './gateway_accounts.exceptions'
 
-module.exports = {
+export default {
   overview: http.overview,
   overviewDirectDebit: http.overviewDirectDebit,
   create: {
