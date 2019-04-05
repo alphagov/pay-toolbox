@@ -7,8 +7,8 @@ const auth = require('./../lib/auth')
 // module HTTP controllers
 const landing = require('./modules/landing/landing.http')
 const statistics = require('./modules/statistics/statistics.http')
-const gatewayAccounts = require('./modules/gateway_accounts')
-const services = require('./modules/services')
+const gatewayAccounts = require('./modules/gateway_accounts').default
+const services = require('./modules/services').default
 const transactions = require('./modules/transactions')
 const discrepancies = require('./modules/discrepancies')
 const stripe = require('./modules/stripe')

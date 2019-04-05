@@ -3,18 +3,15 @@
 {% from "components/button/macro.njk" import govukButton %}
 {% from "components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "components/warning-text/macro.njk" import govukWarningText %}
+{% from "common/errorSummary.njk" import errorSummary %}
 {% extends "layout/layout.njk" %} 
 
 {% block main %}
   <h1 class="govuk-heading-m">Create new gateway account</h1>
 
-  {% for message in messages %}
-    {{ govukErrorSummary({
-      titleText: "There is a problem",
-      errorList: [ { text: message } ]
-    }) 
-    }}
-  {% endfor %}
+  {% if errors %}
+    {{ errorSummary({ errors: errors }) }}
+  {% endif %}
 
   <form method="post" action="/gateway_accounts/create/confirm">
     <!-- @TODO(sfount) consider using standard markup vs. macros --> 
@@ -101,35 +98,35 @@
         <input hidden id="systemLinkedService" name="systemLinkedService" value="{{ service.external_id }}">
       </div>
     {% else %}
-      <div class="govuk-form-group">
-        <label class="govuk-label">Service name</label>
-        <input class="govuk-input" id="serviceName" name="serviceName" type="text" value="{{ recovered.serviceName }}" autocomplete="off">
-      </div>
+      {{govukInput({
+        label: { text: "Service name" },
+        id: "serviceName",
+        name: "serviceName",
+        value: recovered.serviceName,
+        errorMessage: errorMap.serviceName and { text: errorMap.serviceName },
+        autocomplete: "off"
+      }) }}
     {% endif %}
-        
-    <div class="govuk-form-group">
-      <label class="govuk-label">Description</label>
-      <span class="govuk-hint">
-        GOV.UK Pay standard: "${Department} ${Service} ${Provider} ${IsLive}"
-      </span>
-      <span class="govuk-hint">
-        Blue Badge standard: "${Service} Blue Badge admin Stripe LIVE"
-      </span>
 
-      <input class="govuk-input" id="description" name="description" type="text" value="{{ recovered.description }}" autocomplete="off">
-    </div>
+    {{govukInput({
+      label: { text: "Description" },
+      hint: { html: '<p>GOV.UK Pay standard: "${Department} ${Service} ${Provider} ${IsLive}"</p><p>Blue Badge standard: "${Service} Blue Badge admin Stripe LIVE"</p>' },
+      id: "description",
+      name: "description",
+      value: recovered.description,
+      errorMessage: errorMap.description and { text: errorMap.description },
+      autocomplete: "off"
+    }) }}
 
-    <div class="govuk-form-group">
-      <label class="govuk-label">Google analytics ID</label>
-      <span class="govuk-hint">
-        GOV.UK Pay standard: "${Department}-${Service}"
-      </span>
-      <span class="govuk-hint">
-        Blue Badge standard: "LG-${Service}-BB"
-      </span>
-
-      <input class="govuk-input" id="analyticsId" name="analyticsId" type="text" value="{{ recovered.analyticsId }}" autocomplete="off">
-    </div>
+    {{govukInput({
+      label: { text: "Google analytics ID" },
+      hint: { html: '<p>GOV.UK Pay standard: "${Department}-${Service}"</p><p>Blue Badge standard: "LG-${Service}-BB"</p>' },
+      id: "analyticsId",
+      name: "analyticsId",
+      value: recovered.analyticsId,
+      errorMessage: errorMap.analyticsId and { text: errorMap.analyticsId },
+      autocomplete: "off"
+    }) }}
     
     {% if linkedCredentials %} 
     <div class="govuk-form-group">
@@ -141,13 +138,15 @@
       <input hidden id="systemLinkedCredentials" name="systemLinkedCredentials" value="{{ linkedCredentials }}">
     </div>
     {% else %}
-    <div class="govuk-form-group">
-      <label class="govuk-label">Stripe credentials</label>
-      <span class="govuk-hint">
-        This is only required for Stripe accounts
-      </span>
-      <input class="govuk-input" id="credentials" name="credentials" type="text" value="{{ recovered.credentials }}" autocomplete="off">
-    </div>
+      {{govukInput({
+        label: { text: "Stripe credentials" },
+        hint: { text: "This is only required for Stripe accounts" },
+        id: "credentials",
+        name: "credentials",
+        value: recovered.credentials,
+        errorMessage: errorMap.credentials and { text: errorMap.credentials },
+        autocomplete: 'off'
+      }) }}
     {% endif %}
     
     {{ govukButton({
