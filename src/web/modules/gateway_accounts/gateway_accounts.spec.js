@@ -1,8 +1,8 @@
 const { expect } = require('chai')
 const _ = require('lodash')
 
-const GatewayAccount = require('./gatewayAccount.model.js')
-const { ValidationError } = require('./../../../lib/errors')
+const GatewayAccount = require('./gatewayAccount.model').default
+const { ValidationError, IOValidationError } = require('./../../../lib/errors')
 
 const validGatewayAccountDetails = {
   live: 'live',
@@ -14,7 +14,7 @@ const validGatewayAccountDetails = {
   credentials: 'valid-credentials'
 }
 
-describe.only('Gateway Accounts', () => {
+describe('Gateway Accounts', () => {
   describe('Modeling a Gateway Account', () => {
     it('successfully creates a model with valid details', () => {
       const account = new GatewayAccount(validGatewayAccountDetails)
@@ -28,7 +28,7 @@ describe.only('Gateway Accounts', () => {
 
         // eslint-disable-next-line no-new
         new GatewayAccount(details)
-      }).to.throw(ValidationError)
+      }).to.throw(IOValidationError)
     })
 
     it('rejects when live field is not allowed value', () => {
@@ -38,7 +38,7 @@ describe.only('Gateway Accounts', () => {
 
         // eslint-disable-next-line no-new
         new GatewayAccount(details)
-      }).to.throw(ValidationError)
+      }).to.throw(IOValidationError)
     })
 
     it('rejects when payment method is empty', () => {
@@ -48,7 +48,7 @@ describe.only('Gateway Accounts', () => {
 
         // eslint-disable-next-line no-new
         new GatewayAccount(details)
-      }).to.throw(ValidationError)
+      }).to.throw(IOValidationError)
     })
 
     it('rejects when payment method is not allowed value', () => {
@@ -58,7 +58,7 @@ describe.only('Gateway Accounts', () => {
 
         // eslint-disable-next-line no-new
         new GatewayAccount(details)
-      }).to.throw(ValidationError)
+      }).to.throw(IOValidationError)
     })
 
     it('rejects when description is empty', () => {
@@ -68,7 +68,7 @@ describe.only('Gateway Accounts', () => {
 
         // eslint-disable-next-line no-new
         new GatewayAccount(details)
-      }).to.throw(ValidationError)
+      }).to.throw(IOValidationError)
     })
 
     it('rejects when serviceName is empty', () => {
@@ -78,7 +78,7 @@ describe.only('Gateway Accounts', () => {
 
         // eslint-disable-next-line no-new
         new GatewayAccount(details)
-      }).to.throw(ValidationError)
+      }).to.throw(IOValidationError)
     })
 
     it('rejects when analyticsId is empty', () => {
@@ -88,7 +88,7 @@ describe.only('Gateway Accounts', () => {
 
         // eslint-disable-next-line no-new
         new GatewayAccount(details)
-      }).to.throw(ValidationError)
+      }).to.throw(IOValidationError)
     })
 
     it('rejects when paymentMethod is card and non-card provider given', () => {
