@@ -40,6 +40,29 @@
   </table>
 
   <div>
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col">Email</th>
+          <th class="govuk-table__header" scope="col">Disabled</th>
+          <th class="govuk-table__header" scope="col">Login count</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {% for user in users %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">
+              <a href="/users/{{ user.external_id }}" class="govuk-link govuk-link--no-visited-state">{{ user.email }}
+            </td>
+            <td class="govuk-table__cell">{{ user.disabled | string | capitalize }}</td>
+            <td class="govuk-table__cell">{{ user.login_counter }}</td>
+          </tr>
+        {% endfor %}
+      </body>
+    </table>
+  </div>
+
+  <div>
     <h1 class="govuk-heading-s">Going live - new Stripe payment provider</h1>
     <p class="govuk-body">This will guide you through:</p>
     <ul class="govuk-list govuk-list--number">
@@ -88,28 +111,6 @@
       })
     }}
   </div>
-
-  <h1 class="govuk-heading-s">Users</h1>
-  <table class="govuk-table">
-    <thead class="govuk-table__head">
-      <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">Email</th>
-        <th class="govuk-table__header" scope="col">Disabled</th>
-        <th class="govuk-table__header" scope="col">Login count</th>
-      </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-      {% for user in users %}
-        <tr class="govuk-table__row">
-          <td class="govuk-table__cell">
-            <a href="/users/{{ user.external_id }}" class="govuk-link govuk-link--no-visited-state">{{ user.email }}
-          </td>
-          <td class="govuk-table__cell">{{ user.disabled | string | capitalize }}</td>
-          <td class="govuk-table__cell">{{ user.login_counter }}</td>
-        </tr>
-      {% endfor %}
-    </body>
-  </table>
 
   <div>
     <pre><code>{{ service | dump('\t') }}</code></pre>

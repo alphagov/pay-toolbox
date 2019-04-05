@@ -24,7 +24,7 @@
   rows: [
     { key: { text: "ID" }, value: { html: "<code>" + user.external_id + "</code>" }, actions: { items: [{}] } },
     { key: { text: "Email" }, value: { text: user.email | truncate(35) }, actions: { items: [{ href: "#", text: "Change" }] } },
-    { key: { text: "Phone" }, value: { text: user.telephone_number }, actions: { items: [{ href: "#", text: "Change" }] } },
+    { key: { text: "Phone" }, value: { text: user.telephone_number }, actions: { items: [{ href: "/users/" + user.external_id + "/phone", text: "Change" }] } },
     { key: { text: "MFA" }, value: { text: user.second_factor }, actions: { items: [{}] }  },
     { key: { text: "Disabled" }, value: { text: "True" if user.disabled else "False" }, actions: { items: [{ href: "#", text: "Enable" if user.disabled else "Disable" }] }  }
   ]

@@ -61,4 +61,8 @@ router.post('/stripe/basic/create', auth.secured, stripe.basicCreate)
 
 router.get('/users/:id', auth.secured, users.show)
 
+// @TODO(sfount) simple to integrate into table action - should be reconsidered for POST or PATCH
+router.get('/users/:id/phone', auth.secured, users.updatePhoneNumberForm)
+router.post('/users/:id/phone', auth.secured, users.updatePhoneNumber)
+
 module.exports = router

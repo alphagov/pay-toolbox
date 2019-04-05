@@ -40,6 +40,8 @@ const logFailureResponse = function logFailureResponse(error) {
   // eslint-disable-next-line no-param-reassign
   error.config.metadata.duration = error.config.metadata.end - error.config.metadata.start
   logger.debug(`[${this.metadata.serviceKey}] "${error.config.method}" failed with ${code} from ${error.config.url} (${error.config.metadata.duration}ms)`)
+
+  console.log('full error', error.response.data)
   return Promise.reject(
     new RESTClientError(error, this.metadata.serviceKey, this.metadata.serviceName)
   )

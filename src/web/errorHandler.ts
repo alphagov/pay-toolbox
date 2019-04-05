@@ -25,6 +25,13 @@ const handleRequestErrors = function handleRequestErrors(
       res.status(503).render('common/error', { message })
       return
     }
+
+    if (error.data.response && error.data.response.data && error.data.response.data.errors) {
+      // take the first data response and present as error
+      const message = `${error.service.name}: ${error.data.response.data.errors[0]}`
+      res.status(400).render('common/error', { message })
+      return
+    }
   }
 
   // generic entity failed to validate fields - format reponse
