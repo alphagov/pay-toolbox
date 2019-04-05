@@ -1,45 +1,41 @@
+{% from "components/table/macro.njk" import govukTable %}
+{% from "components/summary-list/macro.njk" import govukSummaryList %}
 {% extends "layout/layout.njk" %}
+
 {% block main %}
 <h1 class="govuk-heading-m">User details</h1>
 
-<table class="govuk-table">
-  <tbody class="govuk-table__body">
-    <tr class="govuk-table__row">
-      <th class="govuk-table__header" scope="col">ID</th>
-      <td class="govuk-table__cell">{{user.external_id}}</td>
-    </tr>
-    <tr class="govuk-table__row">
-      <th class="govuk-table__header" scope="col">Email</th>
-      <td class="govuk-table__cell">{{user.email}}</td>
-    </tr>
-    <tr class="govuk-table__row">
-      <th class="govuk-table__header" scope="col">Phone</th>
-      <td class="govuk-table__cell">{{user.telephone_number}}</td>
-    </tr>
-    <tr class="govuk-table__row">
-      <th class="govuk-table__header" scope="col">MFA</th>
-      <td class="govuk-table__cell">{{user.second_factor}}</td>
-    </tr>
-    <tr class="govuk-table__row">
-      <th class="govuk-table__header" scope="col">Account Disabled</th>
-      <td class="govuk-table__cell">{{"True" if user.disabled else "False"}}</td>
-    </tr>
-    <tr class="govuk-table__row">
-      <th class="govuk-table__header" scope="col" valign="top">Services</th>
-      <td class="govuk-table__cell">
-        <ul class="govuk-list">
-          {% for role in user.service_roles %}
-          <li>
-            <a href="/services/{{ role.service.external_id}}" class="govuk-link govuk-link--no-visited-state">{{ role.service.name }}</a>
-            <span> | </span>
-            <a class="govuk-link govuk-link--no-visited-state" href="/user/{{ user.external_id }}/services">(Remove user from service)</a>
-           </li>
-          {% endfor %}
-        </ul>
-      </td>
-    </tr>
-  </tbody>
-</table>
+{# Table row listing services and service actions #}
+{% set services %}
+  <ul class="govuk-list">
+    {% for role in user.service_roles %}
+      <li>
+      <a href="/services/{{ role.service.external_id}}" class="govuk-link govuk-link--no-visited-state">{{ role.service.name }}</a>
+      <span> | </span>
+      <a class="govuk-link govuk-link--no-visited-state" href="/user/{{ user.external_id }}/services">(Remove user from service)</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endset %}
+
+{# {% set serviceRoles = user.service_roles.map((serviceRole) => serviceRole) %} #}
+
+{{ govukSummaryList({
+  rows: [
+    { key: { text: "ID" }, value: { html: "<code>" + user.external_id + "</code>" }, actions: { items: [{}] } },
+    { key: { text: "Email" }, value: { text: user.email | truncate(35) }, actions: { items: [{ href: "#", text: "Change" }] } },
+    { key: { text: "Phone" }, value: { text: user.telephone_number }, actions: { items: [{ href: "#", text: "Change" }] } },
+    { key: { text: "MFA" }, value: { text: user.second_factor }, actions: { items: [{}] }  },
+    { key: { text: "Disabled" }, value: { text: "True" if user.disabled else "False" }, actions: { items: [{ href: "#", text: "Enable" if user.disabled else "Disable" }] }  }
+  ]
+  })
+}}
+
+<h1 class="govuk-heading-m">User services</h1>
+{{ govukSummaryList({
+  rows: format.serviceRoles(user.service_roles)
+  })
+}}
 
 <div>
   <pre><code>{{ user | dump('\t') }}</code></pre>
