@@ -2,23 +2,29 @@
 // set through config
 // @TODO(sfount) also extract and log the correlation ID sent from the nginx
 //               reverse proxy servers in production
-const crypto = require('crypto')
-const { createLogger, format, transports } = require('winston')
-
-const { combine, timestamp, printf } = format
+// import * as crypto from 'crypto'
+import * as crypto from 'crypto'
+import { Request, Response, NextFunction } from 'express'
+import { createLogger, format, transports } from 'winston'
 
 // @FIXME(sfount) performance implications of cls-hooked and using the async-hooks
 //                node libraries should be very carefully considered continuation-local
 //                storage is basically the equivalent of Java thread storage, expires
 //                after all methods in a call have ended
-const { createNamespace } = require('cls-hooked')
+import { createNamespace } from 'cls-hooked'
 
-const { common } = require('./../config')
+import * as common from '../config'
+
+const { combine, timestamp, printf } = format
 
 const logger = createLogger()
 const session = createNamespace('govuk-pay-logging')
 
-const loggerMiddleware = function loggerMiddleware(req, res, next) {
+const loggerMiddleware = function loggerMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
   session.run(() => {
     session.set('toolboxid', crypto.randomBytes(4).toString('hex'))
     next()
@@ -52,12 +58,19 @@ if (!common.production) {
 }
 
 // configure logger specifically for `Morgan` stream
-logger.stream = {
-  write: (message) => {
+const morganStreamWriter = {
+  write: (message: string) => {
     logger.info(message)
   }
 }
 
+// Morgan -> Winston stream types aren't well defined - this can be typed strictly when these
+// are specified
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+logger.stream = morganStreamWriter as any
+
 // @TODO(sfount) attaching object to logger could muddy API in future
 Object.assign(logger, { middleware: loggerMiddleware })
-module.exports = logger
+
+// eslint-disable-next-line import/prefer-default-export
+export = logger
