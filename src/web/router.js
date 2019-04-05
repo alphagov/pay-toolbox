@@ -65,9 +65,13 @@ router.post('/stripe/create', auth.secured, stripe.createAccount.http, stripe.cr
 router.get('/stripe/basic/create', auth.secured, stripe.basic)
 router.post('/stripe/basic/create', auth.secured, stripe.basicCreate)
 
+// @TODO(sfount) simple to integrate into table action - should be reconsidered for POST or PATCH
 router.get('/users/:id', auth.secured, users.show)
+router.get('/users/:id/phone', auth.secured, users.updatePhoneNumberForm)
+router.post('/users/:id/phone', auth.secured, users.updatePhoneNumber)
 
 router.get('/logout', auth.secured, auth.revokeSession)
+
 router.get('/healthcheck', healthcheck.response)
 
 module.exports = router
