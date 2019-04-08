@@ -14,7 +14,7 @@
     "lint": "eslint app",
     "test": "npm run test:unit",
     "test:unit": "mocha app/web/modules/**/*.spec.js",
-    "test:cypress": "cypress run",
+    "test:cypress": "./scripts/run-cypress",
     "build:sass": "scripts/compile-assets",
     "preinstall": "echo \"Preinstall hook\" && exit 0",
     "postinstall": "npm run build:sass"
@@ -44,7 +44,6 @@
   },
   "devDependencies": {
     "chai": "4.2.0",
-    "cypress": "3.2.0",
     "eslint": "5.16.0",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "2.16.0",
