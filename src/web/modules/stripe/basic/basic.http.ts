@@ -70,7 +70,7 @@ const createAccountForm = async function createAccountForm(
       statementDescriptor: defaultStatementDescriptor
     }
   }
-  res.render('stripe/basic', context)
+  res.render('stripe/basic/basic', context)
 }
 
 const submitAccountCreate = async function submitAccountCreate(
