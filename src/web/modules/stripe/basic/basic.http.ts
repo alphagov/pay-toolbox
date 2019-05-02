@@ -106,7 +106,8 @@ const submitAccountCreate = async function submitAccountCreate(
           city: service.merchant_details.address_city,
           postal_code: service.merchant_details.address_postcode,
           country: service.merchant_details.address_country
-        }
+        },
+        additional_owners: ''
       },
       tos_acceptance: {
         ip: stripeAgreement.ip_address,
