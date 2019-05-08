@@ -27,7 +27,7 @@
   "homepage": "https://github.com/alphagov/pay-toolbox#readme",
   "dependencies": {
     "axios": "0.18.0",
-    "body-parser": "1.18.3",
+    "body-parser": "1.19.0",
     "client-sessions": "0.8.0",
     "cls-hooked": "4.2.2",
     "connect-flash": "0.1.1",
