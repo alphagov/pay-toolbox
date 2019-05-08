@@ -49,6 +49,6 @@
     "eslint-plugin-import": "2.17.1",
     "mocha": "6.1.4",
     "node-sass": "^4.12.0",
-    "nodemon": "1.18.11"
+    "nodemon": "1.19.0"
   }
 }
