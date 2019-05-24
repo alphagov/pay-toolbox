@@ -1,16 +1,18 @@
 #!/bin/bash
+# source .env
 
 # Ensure structure for writing file exists
-mkdir -p app/public
+mkdir -p dist/public
 
 # Cleanup previous builds for SASS 
 rm -f app/public/payuk-toolbox*
 
 # Build CSS from SASS root document
-APPLICATION_SASS="app/assets/payuk-toolbox.scss"
-BUILD_FOLDER="app/public"
+APPLICATION_SASS="src/assets/payuk-toolbox.scss"
+# BUILD_FOLDER="$BUILD_FOLDER_ROOT/public"
+BUILD_FOLDER="dist/public"
 BUILD_TARGET="payuk-toolbox"
-MANIFEST_TARGET="app/public/manifest.json"
+MANIFEST_TARGET="$BUILD_FOLDER/manifest.json"
 
 TEMP_FILE="$BUILD_FOLDER/$BUILD_TARGET.tmp"
 node-sass --output-style compressed $APPLICATION_SASS > $TEMP_FILE

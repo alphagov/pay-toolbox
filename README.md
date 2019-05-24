@@ -27,10 +27,10 @@ npm run dev
 ```
 
 ## Development Goals/ Focus
-* Small files, each piece responsible for one thing 
-* Contextual tests, tests close to what they are testing, organised by feature
-* Simple to understand architecture
-* Latest language development standards
+  * Small files, each piece responsible for one thing 
+  * Contextual tests, tests close to what they are testing, organised by feature
+  * Simple to understand architecture
+  * Latest language development standards
 
 ## Notes on coding style restriction
 See `.eslintrc.json` for specifics, we extend the popular
@@ -38,6 +38,15 @@ See `.eslintrc.json` for specifics, we extend the popular
 exceptions. 
 
 `semi` - see [Eslint referenced blogpost](https://blog.izs.me/2010/12/an-open-letter-to-javascript-leaders-regarding)
+
 `comma-dangle` - many popular diff/ review tools now allow ignoring whitespace
 this should no longer be something we have to account for with hacks 
+
 `array-bracket-spacing` - opinion: :+1: spacing
+`@typescript-eslint/no-var-requires` - not yet using Typescript module syntax, rule should be set to error when we switch
+
+## Build process (inbox)
+* Currently relies on `tsc-watch` to extend the Typescript compiler in dev mode, ideally
+this should combine `nodemon` waiting on standard `tsc --watch`
+* `ts-node` is used for directly interpreting unit test files, we can either use this 
+or include test files in the watch/ build process
