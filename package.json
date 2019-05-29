@@ -64,7 +64,7 @@
     "node-sass": "^4.12.0",
     "nodemon": "1.19.1",
     "ts-node": "8.0.3",
-    "tsc-watch": "2.1.2",
+    "tsc-watch": "2.2.1",
     "typescript": "3.4.5"
   }
 }
