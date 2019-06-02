@@ -55,6 +55,24 @@
             <td class="govuk-table__cell">{{ account.toggle_3ds | string | capitalize }}</td>
           </tr>
       {% endif %}
+      {% if account.email_collection_mode != undefined %}
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col">Email collection mode</th>
+          <td class="govuk-table__cell">{{ account.email_collection_mode }}</td>
+        </tr>
+      {% endif %}
+      {% if account.email_notifications != undefined %}
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col">Payment confirmation email</th>
+          <td class="govuk-table__cell">{{ 'Enabled' if (account.email_notifications.PAYMENT_CONFIRMED 
+            and account.email_notifications.PAYMENT_CONFIRMED.enabled) else 'Disabled' }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col">Refund issued email</th>
+          <td class="govuk-table__cell">{{ 'Enabled' if (account.email_notifications.REFUND_ISSUED 
+            and account.email_notifications.REFUND_ISSUED.enabled) else 'Disabled' }}</td>
+        </tr>
+      {% endif %}
 
     </tbody>
   </table>
