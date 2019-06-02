@@ -52,7 +52,7 @@
     "@types/express": "^4.16.1",
     "@types/express-flash": "0.0.0",
     "@types/node": "^12.0.4",
-    "@types/stripe": "^6.25.8",
+    "@types/stripe": "^6.26.5",
     "@typescript-eslint/eslint-plugin": "^1.5.0",
     "chai": "4.2.0",
     "copyfiles": "2.1.0",
