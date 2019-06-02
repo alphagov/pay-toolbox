@@ -72,13 +72,13 @@
 
     {{ govukButton({
       text: "Setup live Stripe account",
-      href: "/stripe/create?service=" + service.external_id
+      href: "/stripe/basic/create?service=" + service.external_id
       })
     }}
 
     <p>
-      <a class="govuk-link" href="/stripe/basic/create?service={{ service.external_id }}">
-        Create live Stripe account using stored details (do not use yet)
+      <a class="govuk-link" href="/stripe/create?service={{ service.external_id }}">
+        Create live Stripe account with all details (the old way)
       </a>
     </p>
     <br/>
