@@ -13,4 +13,9 @@ const secured = function secured(req, res, next) {
   res.redirect('/auth')
 }
 
-module.exports = { secured }
+const unauthorised = function unauthorised(req, res, next) {
+  const FORBIDDEN = 403
+  res.send(FORBIDDEN, 'User does not have permissions to access the resource')
+}
+
+module.exports = { secured, unauthorised }
