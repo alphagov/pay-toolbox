@@ -5,5 +5,6 @@ const server = require('./server')
 const logger = require('./logger')
 const common = require('./common')
 const services = require('./services')
+const auth = require('./auth')
 
-module.exports = Object.assign({}, server, common, logger, services)
+module.exports = Object.assign({}, server, common, logger, services, auth)

@@ -3,15 +3,13 @@ const passport = require('passport')
 const { Strategy } = require('passport-github')
 
 const logger = require('./../lib/logger')
+const config = require('./../config')
 const { isPermittedUser } = require('./../lib/permissions')
 
-// @TODO(sfount) use config files instead of directly accessing process
-const process = require('process')
-
 const githubAuthCredentials = {
-  clientID: process.env.AUTH_GITHUB_CLIENT_ID,
-  clientSecret: process.env.AUTH_GITHUB_CLIENT_SECRET,
-  callbackURL: process.env.AUTH_GITHUB_RETURN_URL
+  clientID: config.auth.AUTH_GITHUB_CLIENT_ID,
+  clientSecret: config.auth.AUTH_GITHUB_CLIENT_SECRET,
+  callbackURL: config.auth.AUTH_GITHUB_RETURN_URL
 }
 
 const serialiseAuthForSession = function serialiseAuthForSession(profile, done) {
