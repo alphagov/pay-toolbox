@@ -25,21 +25,22 @@ const deserialiseAuthFromSession = function deserialiseAuthFromSession(profile, 
 // @TODO(sfount) return error if call to team permissions fails
 const handleOAuthSuccessResponse = async function handleOAuthSuccessResponse(accessToken, refreshToken, profile, callback) {
   const { username, displayName } = profile
-  // eslint-disable-next-line no-underscore-dangle
-  const avatarUrl = profile._json.avatar_url
-
   try {
-    const userHasAccess = await isPermittedUser(username, accessToken)
+    // eslint-disable-next-line no-underscore-dangle
+    const avatarUrl = profile._json.avatar_url
     const sessionProfile = {
       user: username,
       fullName: displayName,
       avatarUrl
     }
-    logger.info('Authorisation accepted')
+
+    logger.info(`Successful account auth from GitHub for user ${username}`)
+    await isPermittedUser(username, accessToken)
+
+    logger.info(`Permissions valid for user, setting session for ${username}`)
     callback(null, sessionProfile)
   } catch (e) {
-    logger.warn('Authorisation rejected')
-    console.log(e)
+    logger.warn(`Permissions rejected for user ${username} [${e.message}]`)
     callback(null, false, e)
   }
 }

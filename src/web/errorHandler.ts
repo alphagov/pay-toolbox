@@ -46,11 +46,18 @@ const handleDefault = function handleDefault(
   res: Response,
   next: NextFunction
 ): void {
+  logger.error('Unhandled error caught by middleware stack')
+  logger.error(error.stack)
+
   if (res.headersSent) {
     return next(error)
   }
+  if (!req.isAuthenticated()) {
+    // don't render application structure for non authenticated issues
+    return res.redirect('/auth/unauthorised?default_throw')
+  }
+
   const message = config.common.production ? error.message : error.stack
-  logger.error(error.stack)
   res.status(500).render('common/error', { message })
 }
 

@@ -18,7 +18,7 @@ const router = express.Router()
 
 router.get('/auth', passport.authenticate('github'))
 router.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/auth/unauthorised', successRedirect: '/' }))
-router.get('/auth/ununauthorised', auth.unauthorised)
+router.get('/auth/unauthorised', auth.unauthorised)
 
 router.get('/', auth.secured, landing.root)
 

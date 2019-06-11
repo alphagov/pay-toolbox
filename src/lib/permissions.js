@@ -19,8 +19,6 @@ const validateUserTeamMembership = async function validateUserTeamMembership(use
   }
 
   logger.info(`Requesting team ${team} permissions for ${user}`)
-  // const membershipResponse = await axios.get(GITHUB_TEAMS_API_ENDPOINT, githubRestOptions)
-  // the only `then` path will be a valid response, anything else will propagate the error up
   return axios.get(url, githubRestOptions)
 }
 

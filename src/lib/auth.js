@@ -14,8 +14,13 @@ const secured = function secured(req, res, next) {
 }
 
 const unauthorised = function unauthorised(req, res, next) {
-  const FORBIDDEN = 403
-  res.send(FORBIDDEN, 'User does not have permissions to access the resource')
+  if (req.isAuthenticated()) {
+    res.redirect('/')
+    return
+  }
+
+  logger.warn('Unauthorised response rendered for unauthenticated session')
+  res.status(403).send('User does not have permissions to access the resource')
 }
 
 module.exports = { secured, unauthorised }
