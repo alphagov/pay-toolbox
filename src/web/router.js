@@ -1,6 +1,7 @@
 // top level service router, responsible for matching paths with module controllers
 // @TODO(sfount) this should be split up as the service grows
 const express = require('express')
+const passport = require('passport')
 
 const auth = require('./../lib/auth')
 
@@ -14,6 +15,9 @@ const discrepancies = require('./modules/discrepancies')
 const stripe = require('./modules/stripe')
 
 const router = express.Router()
+
+router.get('/auth', passport.authenticate('github'))
+router.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/auth', successRedirect: '/' }))
 
 router.get('/', auth.secured, landing.root)
 
