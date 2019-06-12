@@ -1,6 +1,6 @@
 pipeline {
   // use the repository Dockerfile for building the environment image
-  /* agent { dockerfile true } */
+  // agent { dockerfile true }
   agent any
   options { timestamps() }
   parameters {
@@ -11,75 +11,89 @@ pipeline {
     npm_config_cache = 'npm-cache'
   }
   stages {
-    stage('Build') {
+    stage('Prepare tagged docker container') {
       steps {
         script {
-          env.GIT_COMMIT = gitCommit()
-          buildAppWithMetrics {
-            app = "toolbox"
-          }
+          env.image = "${gitCommit()}-${env.BUILD_NUMBER}"
+          buildAppWithMetrics { app = "toolbox" }
         }
       }
     }
-    stage('Setup') {
-      agent { docker { image "govukpay/toolbox:${env.GIT_COMMIT}-${env.BUILD_NUMBER}" } }
-      steps {
-        sh 'node --version'
-        sh 'npm --version'
-        sh 'npm ci'
+    stage('Docker CI') {
+      agent { docker { image "govukpay/toolbox:${env.image}" } }
+      stages {
+        stage('Setup') {
+          // agent { docker { image "govukpay/toolbox:${env.GIT_COMMIT}-${env.BUILD_NUMBER}" } }
+          steps {
+            sh 'node --version'
+            sh 'npm --version'
+            sh 'npm ci'
 
-        // @TODO(sfount) CI envrionment should be configured outside of direct Jenkinsfile call
-        sh 'scripts/generate-dev-environment'
-      }
-    }
-    stage('Security audit') {
-      agent { docker { image "govukpay/toolbox:${env.GIT_COMMIT}-${env.BUILD_NUMBER}" } }
-      when {
-        not { expression { return params.SKIP_NPM_AUDIT } }
-      }
-      steps {
-        sh 'npm audit'
-      }
-    }
-    stage('Lint') {
-      agent { docker { image "govukpay/toolbox:${env.GIT_COMMIT}-${env.BUILD_NUMBER}" } }
-      steps {
-        sh 'npm run lint'
-      }
-    }
-    stage('Unit tests') {
-      agent { docker { image "govukpay/toolbox:${env.GIT_COMMIT}-${env.BUILD_NUMBER}" } }
-      steps {
-        sh 'npm run test:unit'
-      }
-    }
-    // @TODO(sfount) investigate using built-in Jenkins `docker.build()` and
-    //               `docker.push()` commands in steps
-    stage('Docker push') {
-      steps {
-        script {
-          /* image = docker.build "govukpay/toolbox" */
-          /* image.push() */
-          dockerTagWithMetrics {
-            app = "toolbox"
+            // @TODO(sfount) CI envrionment should be configured outside of direct Jenkinsfile call
+            sh 'scripts/generate-dev-environment'
+          }
+        }
+        stage('Security audit') {
+          // agent { docker { image "govukpay/toolbox:${env.GIT_COMMIT}-${env.BUILD_NUMBER}" } }
+          when {
+            not { expression { return params.SKIP_NPM_AUDIT } }
+          }
+          steps {
+            sh 'npm audit'
+          }
+        }
+        stage('Lint') {
+          // agent { docker { image "govukpay/toolbox:${env.GIT_COMMIT}-${env.BUILD_NUMBER}" } }
+          steps {
+            sh 'npm run lint'
+          }
+        }
+        stage('Unit tests') {
+          // agent { docker { image "govukpay/toolbox:${env.GIT_COMMIT}-${env.BUILD_NUMBER}" } }
+          steps {
+            sh 'npm run test:unit'
           }
         }
       }
     }
-    stage('Deploy') {
-      // when {
-        // branch 'master'
-      // }
-      steps {
-        deployEcs("toolbox")
-      }
-    }
-    stage('Tag deployment') {
-      // when {
-        // branch 'master'
-      // }
-      steps {
-        tagDeployment("toolbox")
+    // stage('Build') {
+    //   steps {
+    //     script {
+    //       env.GIT_COMMIT = gitCommit()
+    //       buildAppWithMetrics {
+    //         app = "toolbox"
+    //       }
+    //     }
+    //   }
+    // }
+
+    stage('Build and deploy') {
+      stages {
+        // @TODO(sfount) investigate using built-in Jenkins `docker.build()` and
+        //               `docker.push()` commands in steps
+        stage('Docker push') {
+          steps {
+            script {
+              dockerTagWithMetrics { app = "toolbox" }
+            }
+          }
+        }
+        stage('Deploy') {
+          when {
+            branch 'master'
+          }
+          steps {
+            deployEcs("toolbox")
+          }
+        }
+        stage('Tag deployment') {
+          when {
+            branch 'master'
+          }
+          steps {
+            tagDeployment("toolbox")
+          }
+        }
       }
     }
   }
