@@ -55,7 +55,7 @@ pipeline {
     }
     // @TODO(sfount) investigate using built-in Jenkins `docker.build()` and
     //               `docker.push()` commands in steps
-    stage('DockerHub tag/push') {
+    stage('Docker push') {
       steps {
         script {
           /* image = docker.build "govukpay/toolbox" */
@@ -64,6 +64,22 @@ pipeline {
             app = "toolbox"
           }
         }
+      }
+    }
+    stage('Deploy') {
+      // when {
+        // branch 'master'
+      // }
+      steps {
+        deployEcs("toolbox")
+      }
+    }
+    stage('Tag deployment') {
+      // when {
+        // branch 'master'
+      // }
+      steps {
+        tagDeployment("toolbox")
       }
     }
   }
