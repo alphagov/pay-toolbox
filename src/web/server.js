@@ -9,7 +9,7 @@ const nunjucks = require('nunjucks')
 
 const { common } = require('./../config')
 const logger = require('./../lib/logger')
-const passport = require('./../lib/passport')
+const passport = require('../lib/auth/passport')
 
 const errors = require('./errorHandler')
 const router = require('./router')

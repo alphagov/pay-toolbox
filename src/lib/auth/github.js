@@ -1,10 +1,9 @@
-// configure app wide passport instance
-const passport = require('passport')
+// github OAuth strategy
 const { Strategy } = require('passport-github')
+const config = require('../../config')
+const logger = require('../logger')
 
-const logger = require('./../lib/logger')
-const config = require('./../config')
-const { isPermittedUser } = require('./../lib/permissions')
+const { isPermittedUser } = require('./../permissions')
 
 const githubAuthCredentials = {
   clientID: config.auth.AUTH_GITHUB_CLIENT_ID,
@@ -12,20 +11,17 @@ const githubAuthCredentials = {
   callbackURL: config.auth.AUTH_GITHUB_RETURN_URL
 }
 
-const serialiseAuthForSession = function serialiseAuthForSession(profile, done) {
-  done(null, profile)
-}
-
-const deserialiseAuthFromSession = function deserialiseAuthFromSession(profile, done) {
-  done(null, profile)
-}
-
 // @TODO(sfount) return error if call to team permissions fails
-const handleOAuthSuccessResponse = async function handleOAuthSuccessResponse(accessToken, refreshToken, profile, callback) {
+const handleGitHubOAuthSuccessResponse = async function handleGitHubOAuthSuccessResponse(
+  accessToken,
+  refreshToken,
+  profile,
+  callback
+) {
   const { username, displayName } = profile
   try {
     // eslint-disable-next-line no-underscore-dangle
-    const avatarUrl = profile._json.avatar_url
+    const avatarUrl = profile._json && profile._json.avatar_url
     const sessionProfile = {
       user: username,
       fullName: displayName,
@@ -43,9 +39,4 @@ const handleOAuthSuccessResponse = async function handleOAuthSuccessResponse(acc
   }
 }
 
-passport.serializeUser(serialiseAuthForSession)
-passport.deserializeUser(deserialiseAuthFromSession)
-
-passport.use(new Strategy(githubAuthCredentials, handleOAuthSuccessResponse))
-
-module.exports = passport
+module.exports = { Strategy, githubAuthCredentials, handleGitHubOAuthSuccessResponse }
