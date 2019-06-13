@@ -2,7 +2,7 @@
 const passport = require('passport')
 const logger = require('../logger')
 
-const { Strategy, githubAuthCredentials, handleGitHubOAuthSuccessResponse } = require('./github')
+const { Strategy, githubAuthCredentials, handleGitHubOAuthSuccessResponse } = require('./github/strategy')
 
 const serialiseAuthForSession = function serialiseAuthForSession(profile, done) {
   done(null, profile)

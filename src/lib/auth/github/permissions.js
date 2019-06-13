@@ -2,8 +2,8 @@
 // responsible for accessing the GitHub API and checking is user has certain team permissions
 const axios = require('axios')
 
-const config = require('./../config')
-const logger = require('./../lib/logger')
+const config = require('../../../config')
+const logger = require('../../logger')
 
 const GITHUB_TEAMS_API_ENDPOINT = 'https://api.github.com/teams'
 

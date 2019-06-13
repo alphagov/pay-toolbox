@@ -9,7 +9,7 @@ const auth = require('./auth')
 const requestMock = {}
 
 describe('Authorisation middleware', () => {
-  it('secured should allow authenticated requests', () => {
+  it('secured middleware should allow authenticated requests', () => {
     const responseSpy = chai.spy()
     const nextSpy = chai.spy()
 
@@ -19,7 +19,7 @@ describe('Authorisation middleware', () => {
     expect(nextSpy).to.have.been.called.once.with()
   })
 
-  it('secured should block unauthenticated requests, redirecting them to /auth', () => {
+  it('secured middleware should block unauthenticated requests, redirecting them to /auth', () => {
     const responseSpy = {
       redirect: chai.spy()
     }
@@ -29,5 +29,18 @@ describe('Authorisation middleware', () => {
     auth.secured(requestMock, responseSpy, nextSpy)
 
     expect(responseSpy.redirect).to.have.been.called.with('/auth')
+  })
+
+  it('unauthorised HTTP route should reject with 403 given aunauthenticated request', () => {
+    const send = chai.spy()
+    const responseSpy = {
+      status: code => ({ send })
+    }
+    const nextSpy = chai.spy()
+
+    requestMock.isAuthenticated = () => false
+    auth.unauthorised(requestMock, responseSpy, nextSpy)
+
+    expect(send).to.have.been.called.with('User does not have permissions to access the resource')
   })
 })

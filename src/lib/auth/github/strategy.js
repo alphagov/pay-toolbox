@@ -1,9 +1,9 @@
 // github OAuth strategy
 const { Strategy } = require('passport-github')
-const config = require('../../config')
-const logger = require('../logger')
+const config = require('../../../config')
+const logger = require('../../logger')
 
-const { isPermittedUser } = require('./../permissions')
+const { isPermittedUser } = require('./permissions')
 
 const githubAuthCredentials = {
   clientID: config.auth.AUTH_GITHUB_CLIENT_ID,
@@ -11,7 +11,6 @@ const githubAuthCredentials = {
   callbackURL: config.auth.AUTH_GITHUB_RETURN_URL
 }
 
-// @TODO(sfount) return error if call to team permissions fails
 const handleGitHubOAuthSuccessResponse = async function handleGitHubOAuthSuccessResponse(
   accessToken,
   refreshToken,

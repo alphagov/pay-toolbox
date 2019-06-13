@@ -27,26 +27,26 @@ describe('GitHub OAuth strategy', () => {
   afterEach(() => { mockery.disable() })
 
   it('invokes callback with `true` valid permissions and profile details given valid permissions', async () => {
-    const spy = chai.spy()
-    mockery.registerMock('./../permissions', { isPermittedUser: validPermissions })
+    const authCallbackSpy = chai.spy()
+    mockery.registerMock('./permissions', { isPermittedUser: validPermissions })
     // eslint-disable-next-line prefer-destructuring
-    handleGitHubOAuthSuccessResponse = require('./github').handleGitHubOAuthSuccessResponse
+    handleGitHubOAuthSuccessResponse = require('./strategy').handleGitHubOAuthSuccessResponse
 
-    await handleGitHubOAuthSuccessResponse('some-access-token', 'some-refresh-token', profile, spy)
+    await handleGitHubOAuthSuccessResponse('some-access-token', 'some-refresh-token', profile, authCallbackSpy)
 
-    expect(spy).to.have.been.called.once.with(
+    expect(authCallbackSpy).to.have.been.called.once.with(
       null,
       { user: profile.username, fullName: profile.displayName, avatarUrl: profile.avatarUrl }
     )
   })
 
   it('invokes callback with `false` invalid permissions given invalid permissions', async () => {
-    const spy = chai.spy()
-    mockery.registerMock('./../permissions', { isPermittedUser: invalidPermissions })
+    const authCallbackSpy = chai.spy()
+    mockery.registerMock('./permissions', { isPermittedUser: invalidPermissions })
     // eslint-disable-next-line prefer-destructuring
-    handleGitHubOAuthSuccessResponse = require('./github').handleGitHubOAuthSuccessResponse
+    handleGitHubOAuthSuccessResponse = require('./strategy').handleGitHubOAuthSuccessResponse
 
-    await handleGitHubOAuthSuccessResponse('some-access-token', 'some-refresh-token', profile, spy)
-    expect(spy).to.have.been.called.once.with(null, false)
+    await handleGitHubOAuthSuccessResponse('some-access-token', 'some-refresh-token', profile, authCallbackSpy)
+    expect(authCallbackSpy).to.have.been.called.once.with(null, false)
   })
 })
