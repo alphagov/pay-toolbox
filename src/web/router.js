@@ -4,6 +4,7 @@ const express = require('express')
 const passport = require('passport')
 
 const auth = require('./../lib/auth')
+const healthcheck = require('./../lib/healthcheck')
 
 // module HTTP controllers
 const landing = require('./modules/landing/landing.http')
@@ -59,4 +60,7 @@ router.post('/stripe/create', auth.secured, stripe.createAccount.http, stripe.cr
 
 router.get('/stripe/basic/create', auth.secured, stripe.basic)
 router.post('/stripe/basic/create', auth.secured, stripe.basicCreate)
+
+router.get('/healthcheck', healthcheck.response)
+
 module.exports = router
