@@ -6,8 +6,10 @@ const morgan = require('morgan')
 const flash = require('connect-flash')
 const cookieSession = require('cookie-session')
 const nunjucks = require('nunjucks')
+
 const { common } = require('./../config')
 const logger = require('./../lib/logger')
+const passport = require('../lib/auth/passport')
 
 const errors = require('./errorHandler')
 const router = require('./router')
@@ -55,6 +57,11 @@ const configureClientSessions = function configureClientSessions(instance) {
   }))
 }
 
+const configureAuth = function configureAuth(instance) {
+  instance.use(passport.initialize())
+  instance.use(passport.session())
+}
+
 const configureTemplateRendering = function configureTemplateRendering(instance) {
   const templateRendererConfig = { autoescape: true, express: instance, watch: !common.production }
 
@@ -83,6 +90,7 @@ const configure = [
   configureRequestParsing,
   configureServingPublicStaticFiles,
   configureClientSessions,
+  configureAuth,
   configureTemplateRendering,
   configureRouting,
   configureErrorHandling
