@@ -7,7 +7,7 @@ const flash = require('connect-flash')
 const cookieSession = require('cookie-session')
 const nunjucks = require('nunjucks')
 
-const { common } = require('./../config')
+const { common, server } = require('./../config')
 const logger = require('./../lib/logger')
 const passport = require('../lib/auth/passport')
 
@@ -59,7 +59,7 @@ const configureServingPublicStaticFiles = function configureServingPublicStaticF
 const configureClientSessions = function configureClientSessions(instance) {
   instance.use(cookieSession({
     name: 'pay-toolbox-service-cookies',
-    keys: [ 'secret-cryptographically-secure' ],
+    keys: [ server.COOKIE_SESSION_ENCRYPTION_SECRET ],
     maxAge: '24h'
   }))
 }
