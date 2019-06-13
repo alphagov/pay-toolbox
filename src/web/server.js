@@ -1,6 +1,7 @@
 const path = require('path')
 
 const express = require('express')
+const helmet = require('helmet')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const flash = require('connect-flash')
@@ -23,6 +24,13 @@ const { toFormattedDate, toFormattedDateLong } = require('./../lib/format')
 const staticResourceManifest = require('./../public/manifest')
 
 const app = express()
+
+const configureSecureHeaders = function configureSecureHeaders() {
+  app.use(helmet())
+  app.use(helmet.contentSecurityPolicy({
+    directives: { defaultSrc: [ '\'self\'' ] }
+  }))
+}
 
 const configureRequestParsing = function configureRequestParsing(instance) {
   const httpRequestLoggingFormat = common.production ? 'short' : 'dev'
@@ -87,6 +95,7 @@ const configureErrorHandling = function configureErrorHandling(instance) {
 
 // order of configuration options important given the nature of Express Middleware
 const configure = [
+  configureSecureHeaders,
   configureRequestParsing,
   configureServingPublicStaticFiles,
   configureClientSessions,
