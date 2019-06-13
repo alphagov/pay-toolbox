@@ -61,4 +61,18 @@ const handleDefault = function handleDefault(
   res.status(500).render('common/error', { message })
 }
 
-export { handleRequestErrors, handleDefault }
+const handleNotFound = function handleNotFound(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  if (!req.isAuthenticated()) {
+    // do not give specific feedback to any non-authenticated requests
+    res.redirect('/')
+    return
+  }
+  // use default express not found exception
+  next()
+}
+
+export { handleRequestErrors, handleDefault, handleNotFound }

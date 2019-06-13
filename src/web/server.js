@@ -1,5 +1,4 @@
 const path = require('path')
-
 const express = require('express')
 const helmet = require('helmet')
 const bodyParser = require('body-parser')
@@ -85,7 +84,10 @@ const configureTemplateRendering = function configureTemplateRendering(instance)
   instance.set('view engine', 'njk')
 }
 
-const configureRouting = function configureRouting(instance) { instance.use('/', router) }
+const configureRouting = function configureRouting(instance) {
+  instance.use('/', router)
+  instance.use(errors.handleNotFound)
+}
 
 // top level service stack wide error handling
 const configureErrorHandling = function configureErrorHandling(instance) {
