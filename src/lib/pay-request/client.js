@@ -5,7 +5,7 @@
  */
 const https = require('https')
 const axios = require('axios')
-
+const { common } = require('./../../config')
 const logger = require('./../logger')
 
 // @TODO(sfount) external dependency on toolbox errors - should encapsulate
@@ -55,9 +55,10 @@ const buildPayBaseClient = function buildPayBaseClient(service) {
     headers: {
       'Content-Type': 'application/json'
     },
-    // @TODO(sfount) this should only ignore authorized TLS in a non-production environment
+
     httpsAgent: new https.Agent({
-      rejectUnauthorized: false
+      // ensure that production environment rejects unauthorised (non HTTPS requests)
+      rejectUnauthorized: !common.production
     })
   })
 

@@ -5,7 +5,7 @@ const expectedAuthEnvironmentValues = {
   AUTH_GITHUB_CLIENT_SECRET: Joi.string().required(),
   AUTH_GITHUB_RETURN_URL: Joi.string().required(),
   AUTH_GITHUB_TEAM_ID: Joi.number().required(),
-  AUTH_GITHUB_ADMIN_TEAM_ID: Joi.number()
+  AUTH_GITHUB_ADMIN_TEAM_ID: Joi.number().allow('')
 }
 
 const { error, value: validatedAuthEnvironmentValues } = Joi.validate(

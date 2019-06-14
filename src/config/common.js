@@ -4,9 +4,7 @@
 const Joi = require('joi')
 
 const expectedCommonEnvironmentValues = {
-  BUILD_FOLDER_ROOT: Joi.string().required(),
-  TOOLBOX_FILE_ROOT: Joi.string().required(),
-  NODE_ENV: Joi.string().valid([ 'development', 'production', 'test' ]).required()
+  NODE_ENV: Joi.string().valid([ 'development', 'production', 'staging', 'test' ]).required()
 }
 
 const { error, value: validatedCommonEnvironmentValues } = Joi.validate(
@@ -21,5 +19,6 @@ if (error) {
 
 // custom mapping for commonly referenced NODE_ENV production check
 validatedCommonEnvironmentValues.production = process.env.NODE_ENV === 'production'
+validatedCommonEnvironmentValues.development = process.env.NODE_ENV === 'development'
 
 module.exports = { common: validatedCommonEnvironmentValues }

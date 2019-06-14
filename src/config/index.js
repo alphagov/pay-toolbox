@@ -1,5 +1,5 @@
 // eslint-disable-next-line global-require
-if (process.env.NODE_ENV !== 'production') require('dotenv').config()
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') require('dotenv').config()
 
 const server = require('./server')
 const logger = require('./logger')

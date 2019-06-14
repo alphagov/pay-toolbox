@@ -13,7 +13,7 @@ import { createLogger, format, transports } from 'winston'
 //                after all methods in a call have ended
 import { createNamespace } from 'cls-hooked'
 
-import * as common from '../config'
+import * as config from '../config'
 
 const { combine, timestamp, printf } = format
 
@@ -31,7 +31,7 @@ const loggerMiddleware = function loggerMiddleware(
   })
 }
 
-if (common.production) {
+if (!config.common.development) {
   const productionTransport = new transports.Console({
     level: 'info'
   })
@@ -45,7 +45,7 @@ const payLogsFormatter = printf((log) => {
 
 // coloursise and timestamp developer logs as these will probably be viewed
 // in a simple console (vs. in an already timestamped web viewer)
-if (!common.production) {
+if (config.common.development) {
   const developmentTransport = new transports.Console({
     level: 'debug',
     format: combine(
