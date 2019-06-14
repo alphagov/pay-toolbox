@@ -11,7 +11,7 @@ const overview = async function overview(req, res) {
 
 const dateFilterRequest = function dateFilterRequest(req, res) {
   const date = new Date()
-  res.render('statistics/filter_date', { date })
+  res.render('statistics/filter_date', { date, csrf: req.csrfToken() })
 }
 
 const dateFilter = async function dateFilter(req, res) {

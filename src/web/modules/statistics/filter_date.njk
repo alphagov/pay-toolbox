@@ -1,10 +1,10 @@
 {% from "components/date-input/macro.njk" import govukDateInput %}
 {% from "components/button/macro.njk" import govukButton %}
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 
 {% block main %}
   <h1 class="govuk-heading-m">Statistics for a given day</h1>
-  
+
   <form method="post" action="/statistics/filter/date">
     {{ govukDateInput({
         id: "filter",
@@ -15,10 +15,12 @@
           { name: "year", value: date.getFullYear(), classes: "govuk-input--width-4" }
         ]
       })
-    }}  
-    
+    }}
+
     {{ govukButton({
         text: "View statistics"
       }) }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
   </form>
 {% endblock %}

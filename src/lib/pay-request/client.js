@@ -58,7 +58,7 @@ const buildPayBaseClient = function buildPayBaseClient(service) {
 
     httpsAgent: new https.Agent({
       // ensure that production environment rejects unauthorised (non HTTPS requests)
-      rejectUnauthorized: !common.production
+      rejectUnauthorized: common.production
     })
   })
 
