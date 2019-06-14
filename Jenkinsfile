@@ -1,6 +1,4 @@
 pipeline {
-  // use the repository Dockerfile for building the environment image
-  // agent { dockerfile true }
   agent any
   options { timestamps() }
   parameters {
@@ -23,7 +21,6 @@ pipeline {
       agent { docker { image "govukpay/toolbox:${env.image}" } }
       stages {
         stage('Setup') {
-          // agent { docker { image "govukpay/toolbox:${env.GIT_COMMIT}-${env.BUILD_NUMBER}" } }
           steps {
             sh 'node --version'
             sh 'npm --version'
@@ -34,7 +31,6 @@ pipeline {
           }
         }
         stage('Security audit') {
-          // agent { docker { image "govukpay/toolbox:${env.GIT_COMMIT}-${env.BUILD_NUMBER}" } }
           when {
             not { expression { return params.SKIP_NPM_AUDIT } }
           }
@@ -43,31 +39,18 @@ pipeline {
           }
         }
         stage('Lint') {
-          // agent { docker { image "govukpay/toolbox:${env.GIT_COMMIT}-${env.BUILD_NUMBER}" } }
           steps {
             sh 'npm run lint'
           }
         }
         stage('Unit tests') {
-          // agent { docker { image "govukpay/toolbox:${env.GIT_COMMIT}-${env.BUILD_NUMBER}" } }
           steps {
             sh 'npm run test:unit'
           }
         }
       }
     }
-    // stage('Build') {
-    //   steps {
-    //     script {
-    //       env.GIT_COMMIT = gitCommit()
-    //       buildAppWithMetrics {
-    //         app = "toolbox"
-    //       }
-    //     }
-    //   }
-    // }
-
-    stage('Build and deploy') {
+   stage('Build and deploy') {
       stages {
         // @TODO(sfount) investigate using built-in Jenkins `docker.build()` and
         //               `docker.push()` commands in steps
