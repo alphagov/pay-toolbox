@@ -1,7 +1,8 @@
 const Joi = require('joi')
 
 const expectedServerEnvironmentValues = {
-  PORT: Joi.number().integer().required()
+  PORT: Joi.number().integer().required(),
+  COOKIE_SESSION_ENCRYPTION_SECRET: Joi.string().required()
 }
 
 const { error, value: validatedServerEnvironmentValues } = Joi.validate(
