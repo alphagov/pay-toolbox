@@ -19,5 +19,6 @@ if (error) {
 
 // custom mapping for commonly referenced NODE_ENV production check
 validatedCommonEnvironmentValues.production = process.env.NODE_ENV === 'production'
+validatedCommonEnvironmentValues.development = process.env.NODE_ENV === 'development'
 
 module.exports = { common: validatedCommonEnvironmentValues }

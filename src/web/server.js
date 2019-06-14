@@ -34,7 +34,7 @@ const configureSecureHeaders = function configureSecureHeaders() {
 const configureRequestParsing = function configureRequestParsing(instance) {
   const httpRequestLoggingFormat = common.production ? 'short' : 'dev'
 
-  if (common.production) {
+  if (!common.development) {
     // service is behind a front-facing proxy - set req IP values accordinglyi
     instance.enable('trust proxy')
   }
@@ -70,7 +70,7 @@ const configureAuth = function configureAuth(instance) {
 }
 
 const configureTemplateRendering = function configureTemplateRendering(instance) {
-  const templateRendererConfig = { autoescape: true, express: instance, watch: !common.production }
+  const templateRendererConfig = { autoescape: true, express: instance, watch: common.development }
 
   // include both templates from this repository and from govuk frontend
   const templatePathRoots = [ path.join(process.cwd(), 'node_modules/govuk-frontend'), path.join(__dirname, 'modules') ]
