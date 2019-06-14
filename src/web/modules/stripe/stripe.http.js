@@ -19,7 +19,7 @@ const verifyStripeSetup = async function verifyStripeSetup() {
 }
 
 const create = async function create(req, res) {
-  const context = { messages: req.flash('error'), systemLinkService: req.query.service }
+  const context = { messages: req.flash('error'), systemLinkService: req.query.service, csrf: req.csrfToken() }
   await verifyStripeSetup()
 
   if (req.session.recovered) {

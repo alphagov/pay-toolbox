@@ -1,24 +1,24 @@
 {% from "components/input/macro.njk" import govukInput %}
 {% from "components/button/macro.njk" import govukButton %}
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 
 {% block main %}
   <h1 class="govuk-heading-m">Update custom branding</h1>
 
   <div>
     <a href="/services/{{ serviceId }}" class="govuk-back-link">Back to service ({{ serviceId }})</a>
-  </div> 
+  </div>
 
   <form method="POST" action="/services/{{ serviceId }}/branding">
-    {{ govukInput({ 
+    {{ govukInput({
       id: "image_url",
       name: "image_url",
       value: service.custom_branding and service.custom_branding.image_url,
       label: { text: "Image URL" }
       })
       }}
-    
-    {{ govukInput({ 
+
+    {{ govukInput({
       id: "css_url",
       name: "css_url",
       value: service.custom_branding and service.custom_branding.css_url,
@@ -30,5 +30,7 @@
     text: "Update Branding Links"
     })
     }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
   </form>
 {% endblock %}

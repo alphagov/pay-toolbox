@@ -25,7 +25,7 @@ const compareFilterRequest = function compareFilterRequest(req, res) {
   const date = new Date()
   const comparison = new Date()
   comparison.setDate(date.getDate() - 1)
-  res.render('statistics/filter_comparison', { date, comparison })
+  res.render('statistics/filter_comparison', { date, comparison, csrf: req.csrfToken() })
 }
 
 const compareFilter = async function compareFilter(req, res) {

@@ -4,7 +4,7 @@
 {% from "components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "components/warning-text/macro.njk" import govukWarningText %}
 {% from "common/errorSummary.njk" import errorSummary %}
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 
 {% block main %}
   <h1 class="govuk-heading-m">Create new gateway account</h1>
@@ -14,18 +14,18 @@
   {% endif %}
 
   <form method="post" action="/gateway_accounts/create/confirm">
-    <!-- @TODO(sfount) consider using standard markup vs. macros --> 
+    <!-- @TODO(sfount) consider using standard markup vs. macros -->
     <!-- @TODO(sfount) repopulating values in this method is very manual -->
     {{ govukRadios({
       classes: "govuk-radios--inline",
       idPrefix: "live",
       name: "live",
-      fieldset: { 
-        legend: { 
+      fieldset: {
+        legend: {
           text: "Live status",
           isPageHeading: false
         }
-      }, 
+      },
       items: [
         { value: "live", text: "Live", checked: recovered.live and recovered.live === "live" or true },
         { value: "not-live", text: "Not live", checked: recovered.live === "not-live" }
@@ -37,12 +37,12 @@
       classes: "govuk-radios--inline",
       idPrefix: "paymentMethod",
       name: "paymentMethod",
-      fieldset: { 
-        legend: { 
+      fieldset: {
+        legend: {
           text: "Payment method",
           isPageHeading: false
         }
-      }, 
+      },
       items: [
         { value: "card", text: "Card", checked: recovered.paymentMethod and recovered.paymentMethod === "card" or true },
         { value: "direct-debit", text: "Direct debit", checked: recovered.paymentMethod === "direct-debit" }
@@ -54,12 +54,12 @@
       classes: "govuk-radios--inline",
       idPrefix: "provider",
       name: "provider",
-      fieldset: { 
-        legend: { 
+      fieldset: {
+        legend: {
           text: "Card provider",
           isPageHeading: false
         }
-      }, 
+      },
       items: [
         { value: "card-sandbox", text: "Sandbox", checked: recovered.provider and recovered.provider === "card-sandbox" or true },
         { value: "worldpay", text: "Worldpay", checked: recovered.provider === "worldpay" },
@@ -69,24 +69,24 @@
       ]
     })
     }}
-    
+
     {{ govukRadios({
       classes: "govuk-radios--inline",
       idPrefix: "provider",
       name: "provider",
-      fieldset: { 
-        legend: { 
+      fieldset: {
+        legend: {
           text: "Direct debit provider",
           isPageHeading: false
         }
-      }, 
+      },
       items: [
         { value: "sandbox", text: "Sandbox", checked: recovered.provider === "direct-debit-sandbox" },
         { value: "gocardless", text: "Gocardless", checked: recovered.provider === "gocardless" }
       ]
     })
     }}
-  
+
     {% if service %}
       <div class="govuk-form-group">
         {{ govukWarningText({
@@ -127,8 +127,8 @@
       errorMessage: errorMap.analyticsId and { text: errorMap.analyticsId },
       autocomplete: "off"
     }) }}
-    
-    {% if linkedCredentials %} 
+
+    {% if linkedCredentials %}
     <div class="govuk-form-group">
       <label class="govuk-label">Stripe credentials</label>
       <span class="govuk-hint">
@@ -148,11 +148,12 @@
         autocomplete: 'off'
       }) }}
     {% endif %}
-    
+
     {{ govukButton({
       text: "Submit"
       })
       }}
 
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
   </form>
 {% endblock %}

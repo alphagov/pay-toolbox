@@ -9,7 +9,7 @@ const TransactionSearch = require('./transactionSearch.model')
 const search = async function search(req, res) {
   const recovered = Object.assign({}, req.session.recovered)
   delete req.session.recovered
-  res.render('transactions/search', { messages: req.flash('error'), recovered })
+  res.render('transactions/search', { messages: req.flash('error'), recovered, csrf: req.csrfToken() })
 }
 
 const getChargeIdFromReference = async function getChargeIdFromReference(accountId, reference) {
