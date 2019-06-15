@@ -3,7 +3,7 @@
 # Ensure structure for writing file exists
 mkdir -p dist/public
 
-# Cleanup previous builds for SASS 
+# Cleanup previous builds for SASS
 rm -f app/public/payuk-toolbox*
 
 # Build CSS from SASS root document
@@ -11,6 +11,7 @@ APPLICATION_SASS="src/assets/payuk-toolbox.scss"
 BUILD_FOLDER="dist/public"
 BUILD_TARGET="payuk-toolbox"
 MANIFEST_TARGET="$BUILD_FOLDER/manifest.json"
+VERSION=$(npm run version --silent)
 
 TEMP_FILE="$BUILD_FOLDER/$BUILD_TARGET.tmp"
 node-sass --output-style compressed $APPLICATION_SASS > $TEMP_FILE
@@ -23,5 +24,8 @@ mv "$TEMP_FILE" "$OUT_FILE"
 echo "Application styles compiled ($OUT_FILE)"
 
 # Write a manifest to be used by templating libraries pointing to this resource
-echo "{ \"payuk-toolbox.css\": \"/public/$BUILD_TARGET-$HASH.css\" }" > $MANIFEST_TARGET
+echo "{
+  \"payuk-toolbox.css\": \"/public/$BUILD_TARGET-$HASH.css\",
+  \"version\": \"$VERSION\"
+  }" > $MANIFEST_TARGET
 echo "Asset manifest written ($MANIFEST_TARGET)"
