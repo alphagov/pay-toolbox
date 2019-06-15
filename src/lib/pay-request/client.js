@@ -25,21 +25,35 @@ const timestampRequest = function timestampRequest(request) {
 }
 
 const logSuccessfulResponse = function logSuccessfulResponse(response) {
+  const logContext = {
+    service: this.metadata.serviceKey,
+    method: response.request.method,
+    url: response.config.url,
+    duration: response.config.metadata.duration
+  }
+
   response.config.metadata.end = new Date()
   response.config.metadata.duration = response.config.metadata.end - response.config.metadata.start
-  logger.debug(`[${this.metadata.serviceKey}] "${response.request.method}" success from ${response.config.url} (${response.config.metadata.duration}ms)`)
+  logger.info('Pay request: internal service success fulfilled', logContext)
   return response
 }
 
 const logFailureResponse = function logFailureResponse(error) {
   const code = (error.response && error.response.status) || error.code
+  const logContext = {
+    service: this.metadata.serviceKey,
+    method: error.config.method,
+    url: error.config.url,
+    duration: error.config.metadata.duration,
+    code
+  }
 
   // @TODO(sfount) review how errors are passed through axios stack, favour
   //               not disabling eslint rules
   error.config.metadata.end = new Date() // eslint-disable-line no-param-reassign
   // eslint-disable-next-line no-param-reassign
   error.config.metadata.duration = error.config.metadata.end - error.config.metadata.start
-  logger.debug(`[${this.metadata.serviceKey}] "${error.config.method}" failed with ${code} from ${error.config.url} (${error.config.metadata.duration}ms)`)
+  logger.warn('Pay request: internal service request failed', logContext)
   return Promise.reject(
     new RESTClientError(error, this.metadata.serviceKey, this.metadata.serviceName)
   )

@@ -71,9 +71,10 @@ if (config.common.development) {
   const developmentTransport = new transports.Console({
     level: 'debug',
     format: combine(
-      format.colorize(),
+      format(info => Object.assign(info, { toolboxId: session.get(TOOLBOX_ID_KEY) }))(),
       timestamp({ format: 'HH:mm:ss' }),
-      payLogsFormatter
+      format.colorize(),
+      format.simple()
     )
   })
   logger.add(developmentTransport)

@@ -89,10 +89,8 @@ const configureTemplateRendering = function configureTemplateRendering(instance)
   instance.set('view engine', 'njk')
 }
 
-// @TODO(sfount) double check that errors thrown by CSRF prevention etc. have enough information to log
-// -- putting this so late in the stack might mean those logs fail
 const configureRouting = function configureRouting(instance) {
-  const httpRequestLoggingFormat = common.development ? 'dev' : 'common'
+  const httpRequestLoggingFormat = common.development ? 'dev' : 'short'
 
   // logger middleware included after flash and body parsing middleware as they
   // alter the call stack (it should ideally be placed just before routes)
