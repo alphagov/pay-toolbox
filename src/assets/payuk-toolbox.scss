@@ -58,7 +58,16 @@
 }
 
 .user-profile__item {
-  margin-right: 5px;
+  line-height: normal;
+}
+.user-profile__item:not(:last-child) {
+  margin-right: govuk-spacing(1);
+}
+.user-profile__item.right {
+  margin-left: auto;
+}
+.user-profile__item img {
+  vertical-align: middle;
 }
 
 .avatar {

@@ -23,12 +23,6 @@
 
   <div class="govuk-width-container">
     {% include "layout/user_banner.njk" %}
-		{{
-			govukPhaseBanner({
-				tag: { text: 'alpha' },
-				html: 'This tool is in active development. It should not be used in production.'
-			})
-		}}
 
     <div class="govuk-main-wrapper govuk-!-padding-top-4">
       <div class="govuk-grid-row">
@@ -97,11 +91,10 @@
         <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
           <div class="govuk-footer__meta-custom">
             <span>To contribute or request features please refer to </span>
-            <a class="govuk-footer__link" href="https://github.com/alphagov/pay-toolbox-revised">alphagov/pay-toolbox-revised</a>
+            <a class="govuk-footer__link" href="https://github.com/alphagov/pay-toolbox">alphagov/pay-toolbox</a>
           </div>
           <div class="govuk-footer__meta-custom">
             <!-- span>pay-toolbox-revised(1.0.4)</span -->
-            <!-- span>pay-toolbox-revised(1.0.4) served <code>er32523</code></span -->
           </div>
         </div>
       </div>

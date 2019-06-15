@@ -5,7 +5,11 @@
     </div>
 
     <div class="user-profile__item">
-      {{ user.displayName or user.username }}
+      <span>{{ user.displayName or user.username }}</span>
+    </div>
+
+    <div class="user-profile__item right">
+      <span><a class="govuk-link govuk-link--no-visited-state" href="/signout">Clear session</a></span>
     </div>
   </div>
 </div>
