@@ -31,9 +31,13 @@ const loggerMiddleware = function loggerMiddleware(
 ): void {
   session.run((): void => {
     const correlationHeader = 'x-request-id'
-    session.set(TOOLBOX_ID_KEY, crypto.randomBytes(4).toString('hex'))
+    const toolboxId = crypto.randomBytes(4).toString('hex')
+    session.set(TOOLBOX_ID_KEY, toolboxId)
     session.set(CORRELATION_ID_KEY, req.headers[correlationHeader])
     session.set(AUTHENTICATED_USER_ID_KEY, req.user && req.user.user)
+
+    // expose toolbox ID to template for debugging
+    res.locals.toolboxId = toolboxId
     next()
   })
 }
@@ -60,8 +64,8 @@ if (!config.common.development) {
 }
 
 const payLogsFormatter = printf((log) => {
-  const id = session.get('toolbox_id')
-  const user = session.get('authenticated_user_id')
+  const id = session.get(TOOLBOX_ID_KEY)
+  const user = session.get(AUTHENTICATED_USER_ID_KEY)
   return `${log.timestamp} [${id || '(none)'}] [${user || '(no_user)'}] ${log.level}: ${log.message}`
 })
 
