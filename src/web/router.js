@@ -61,6 +61,8 @@ router.post('/stripe/create', auth.secured, stripe.createAccount.http, stripe.cr
 router.get('/stripe/basic/create', auth.secured, stripe.basic)
 router.post('/stripe/basic/create', auth.secured, stripe.basicCreate)
 
+router.get('/logout', auth.secured, auth.revokeSession)
+
 router.get('/healthcheck', healthcheck.response)
 
 module.exports = router
