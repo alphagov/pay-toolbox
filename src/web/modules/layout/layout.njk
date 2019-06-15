@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Toolbox</title>
   <link rel="stylesheet" href="{{ manifest['payuk-toolbox.css'] }}">
+  <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
 </html>
 
 <body class="govuk-template__body js-enabled">
@@ -21,6 +22,7 @@
   </header>
 
   <div class="govuk-width-container">
+    {% include "layout/user_banner.njk" %}
 		{{
 			govukPhaseBanner({
 				tag: { text: 'alpha' },
@@ -31,7 +33,7 @@
     <div class="govuk-main-wrapper govuk-!-padding-top-4">
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-quarter">
-          
+
           <h4 class="govuk-heading-s app-subnav__header">Statistics</h4>
           <ul class="govuk-list app-subnav__section">
             <li class="app-subnav__section-item">
@@ -57,7 +59,7 @@
               <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/gateway_accounts/direct_debit">Direct debit</a>
             </li>
           </ul>
-        
+
           <h4 class="govuk-heading-s app-subnav__header">Services</h4>
           <ul class="govuk-list app-subnav__section">
             <li class="app-subnav__section-item">
@@ -67,7 +69,7 @@
               <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/services/search">Find a service</a>
             </li>
           </ul>
-        
+
           <h4 class="govuk-heading-s app-subnav__header">Transactions</h4>
           <ul class="govuk-list app-subnav__section">
             <li class="app-subnav__section-item">

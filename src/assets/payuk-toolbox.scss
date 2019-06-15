@@ -1,16 +1,16 @@
 /*  @TODO(sfount) only import scss from frontend that is required */
-@import "node_modules/govuk-frontend/all"; 
+@import "node_modules/govuk-frontend/all";
 
-.success-summary { 
+.success-summary {
   border-color: govuk-colour("green");
 }
 
-.success-summary > .govuk-error-summary__title { 
+.success-summary > .govuk-error-summary__title {
   margin-bottom: 0px;
 }
 
-.circle { 
-  width: 15px; 
+.circle {
+  width: 15px;
   height: 15px;
   background-color: govuk-colour("grey-3");
   border-radius: 50%;
@@ -18,11 +18,11 @@
   display: inline-block;
 }
 
-.status-connected { 
+.status-connected {
   background-color: govuk-colour("green");
 }
 
-.status-disconnected { 
+.status-disconnected {
   background-color: govuk-colour("red");
 }
 
@@ -41,4 +41,26 @@
       margin-top: 0;
     }
   }
+}
+
+.user-profile {
+  padding-top: govuk-spacing(2);
+  padding-bottom: govuk-spacing(2);
+  border-bottom: 1px solid $govuk-border-colour;
+}
+
+.user-profile__container {
+  @include govuk-font($size: 16);
+  @include govuk-text-colour;
+
+  display: flex;
+  flex-direction: row;
+}
+
+.user-profile__item {
+  margin-right: 5px;
+}
+
+.avatar {
+  border-radius: 3px;
 }

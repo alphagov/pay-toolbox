@@ -28,7 +28,10 @@ const app = express()
 const configureSecureHeaders = function configureSecureHeaders(instance) {
   instance.use(helmet())
   instance.use(helmet.contentSecurityPolicy({
-    directives: { defaultSrc: [ '\'self\'' ] }
+    directives: {
+      defaultSrc: [ '\'self\'' ],
+      imgSrc: [ 'avatars3.githubusercontent.com', '\'self\'' ]
+    }
   }))
 
   instance.use(csurf())
@@ -56,20 +59,26 @@ const configureServingPublicStaticFiles = function configureServingPublicStaticF
   const cache = { maxage: '1y' }
   instance.use('/public', express.static(path.join(__dirname, '../public'), cache))
   instance.use('/assets/fonts', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/assets/fonts'), cache))
-  instance.use('/favicon.ico', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/assets/images/', 'favicon.ico')))
+  instance.use('/images/favicon.ico', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/assets/images/', 'favicon.ico'), cache))
 }
 
 const configureClientSessions = function configureClientSessions(instance) {
   instance.use(cookieSession({
-    name: 'pay-toolbox-service-cookies',
+    name: 'tbx',
     keys: [ server.COOKIE_SESSION_ENCRYPTION_SECRET ],
     maxAge: '24h'
   }))
 }
 
 const configureAuth = function configureAuth(instance) {
+  const exposeAuthenticatedUserToTemplate = (req, res, next) => {
+    res.locals.user = req.user
+    next()
+  }
+
   instance.use(passport.initialize())
   instance.use(passport.session())
+  instance.use(exposeAuthenticatedUserToTemplate)
 }
 
 const configureTemplateRendering = function configureTemplateRendering(instance) {
