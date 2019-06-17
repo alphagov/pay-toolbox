@@ -1,4 +1,4 @@
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 {% from "components/button/macro.njk" import govukButton %}
 
 {% block main %}
@@ -25,6 +25,8 @@
                   text: "Resolve"
                   })
                 }}
+
+              <input type="hidden" name="_csrf" value="{{ csrf }}">
             </form>
        {% endif %}
         </td>

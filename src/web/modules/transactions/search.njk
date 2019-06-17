@@ -2,11 +2,11 @@
 {% from "components/radios/macro.njk" import govukRadios %}
 {% from "components/button/macro.njk" import govukButton %}
 {% from "components/error-summary/macro.njk" import govukErrorSummary %}
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 
 {% block main %}
   <h1 class="govuk-heading-m">Search transactions</h1>
-  
+
   {% for message in messages %}
   {{ govukErrorSummary({
     titleText: "There is a problem",
@@ -25,8 +25,8 @@
       classes: "govuk-radios--inline",
       idPrefix: "search_by",
       name: "search_by",
-      fieldset: { 
-        legend: { 
+      fieldset: {
+        legend: {
           text: "Search by",
           isPageHeading: false
         }
@@ -38,15 +38,17 @@
       ]
     })
     }}
-  
+
       <div class="govuk-form-group">
         <label class="govuk-label">Search string</label>
         <input class="govuk-input" id="search_string" name="search_string" type="text" value="{{ recovered.search_string }}" autocomplete="off">
       </div>
-   
+
       {{ govukButton({
         text: "Search transactions"
         })
       }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
   </form>
 {% endblock %}

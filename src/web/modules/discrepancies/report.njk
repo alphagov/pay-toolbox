@@ -2,11 +2,11 @@
 {% from "components/radios/macro.njk" import govukRadios %}
 {% from "components/button/macro.njk" import govukButton %}
 {% from "components/error-summary/macro.njk" import govukErrorSummary %}
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 
 {% block main %}
   <h1 class="govuk-heading-m">Find discrepancies</h1>
-  
+
   {% for message in messages %}
   {{ govukErrorSummary({
     titleText: "There is a problem",
@@ -16,19 +16,19 @@
   {% endfor %}
 
   <form method="POST" action="/discrepancies/search">
+    <div class="govuk-form-group">
+      <label class="govuk-label">Charge IDs</label>
+      <span class="govuk-hint">
+        A comma separated list of charge IDs
+      </span>
+      <input class="govuk-input" id="search_string" name="search_string" type="text" value="{{ recovered.search_string }}" autocomplete="off">
+    </div>
 
-  
-      <div class="govuk-form-group">
-        <label class="govuk-label">Charge IDs</label>
-        <span class="govuk-hint">
-          A comma separated list of charge IDs
-        </span>
-        <input class="govuk-input" id="search_string" name="search_string" type="text" value="{{ recovered.search_string }}" autocomplete="off">
-      </div>
-   
-      {{ govukButton({
-        text: "Search Discrepancies"
-        })
-      }}
+    {{ govukButton({
+      text: "Search Discrepancies"
+      })
+    }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
   </form>
 {% endblock %}

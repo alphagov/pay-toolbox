@@ -4,7 +4,7 @@ const { Connector } = require('./../../../lib/pay-request')
 const { wrapAsyncErrorHandlers } = require('./../../../lib/routes')
 
 const searchTransaction = async function searchTransaction(req, res) {
-  res.render('discrepancies/report')
+  res.render('discrepancies/report', { csrf: req.csrfToken() })
 }
 
 const getDiscrepancyReport = async function getDiscrepancyReport(req, res) {
@@ -18,7 +18,7 @@ const getDiscrepancyReport = async function getDiscrepancyReport(req, res) {
     return interpretedComparison
   })
 
-  res.render('discrepancies/search_results', { comparisons: interpretedComparisons })
+  res.render('discrepancies/search_results', { comparisons: interpretedComparisons, csrf: req.csrfToken() })
 }
 
 const resolveDiscrepancy = async function resolveDiscrepancy(req, res) {

@@ -41,11 +41,13 @@ const createAccountForm = async function createAccountForm(
     serviceName: string;
     organisationName: string;
     flash: object;
+    csrf: string;
   } = {
     systemLinkService,
     serviceName: service.service_name.en,
     organisationName: service.merchant_details.name,
-    flash: req.flash()
+    flash: req.flash(),
+    csrf: req.csrfToken()
   }
 
   const { recovered } = req.session

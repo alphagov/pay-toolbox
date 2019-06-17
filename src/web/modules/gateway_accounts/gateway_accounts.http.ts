@@ -35,9 +35,11 @@ const create = async function create(req: Request, res: Response): Promise<void>
     flash: object;
     errors?: ClientFormError[];
     errorMap?: object;
+    csrf: string;
   } = {
     linkedCredentials: req.query.credentials,
-    flash: req.flash()
+    flash: req.flash(),
+    csrf: req.csrfToken()
   }
 
   const { recovered } = req.session
@@ -66,7 +68,7 @@ const create = async function create(req: Request, res: Response): Promise<void>
 
 const confirm = async function confirm(req: Request, res: Response): Promise<void> {
   const account = new GatewayAccountFormModel(req.body)
-  res.render('gateway_accounts/confirm', { account, request: req.body })
+  res.render('gateway_accounts/confirm', { account, request: req.body, csrf: req.csrfToken() })
 }
 
 const writeAccount = async function writeAccount(req: Request, res: Response): Promise<void> {

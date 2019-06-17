@@ -1,14 +1,14 @@
 {% from "components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "components/button/macro.njk" import govukButton %}
 {% from "components/input/macro.njk" import govukInput %}
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 
 {% block main %}
   <h1 class="govuk-heading-m">Link gateway accounts</h1>
-  
+
   <div>
     <a href="/services/{{ serviceId }}" class="govuk-back-link">Back to service ({{ serviceId }})</a>
-  </div> 
+  </div>
 
   {% for message in messages %}
     {{ govukErrorSummary({
@@ -17,9 +17,9 @@
       })
       }}
   {% endfor %}
-    
+
   <form method="POST" action="/services/{{ serviceId }}/link_accounts">
-    {{ govukInput({ 
+    {{ govukInput({
       id: "id",
       name: "id",
       value: recovered.id,
@@ -32,5 +32,6 @@
       })
     }}
 
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
   </form>
 {% endblock %}

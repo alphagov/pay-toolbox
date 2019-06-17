@@ -28,7 +28,7 @@ const branding = async function branding(req: Request, res: Response): Promise<v
   const serviceId: string = req.params.id
   const service = await AdminUsers.service(serviceId)
 
-  res.render('services/branding', { serviceId, service })
+  res.render('services/branding', { serviceId, service, csrf: req.csrfToken() })
 }
 
 const updateBranding = async function updateBranding(req: Request, res: Response): Promise<void> {
@@ -47,9 +47,11 @@ const linkAccounts = async function linkAccounts(req: Request, res: Response): P
     serviceId: string;
     messages: object;
     recovered?: object;
+    csrf: string;
   } = {
     serviceId,
-    messages: req.flash('error')
+    messages: req.flash('error'),
+    csrf: req.csrfToken()
   }
 
   if (req.session.recovered) {
@@ -74,7 +76,7 @@ const updateLinkAccounts = async function updateLinkAccounts(
 }
 
 const search = async function search(req: Request, res: Response): Promise<void> {
-  res.render('services/search')
+  res.render('services/search', { csrf: req.csrfToken() })
 }
 
 const searchRequest = async function searchRequest(req: Request, res: Response): Promise<void> {

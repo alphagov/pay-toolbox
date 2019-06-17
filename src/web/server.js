@@ -6,6 +6,7 @@ const morgan = require('morgan')
 const flash = require('connect-flash')
 const cookieSession = require('cookie-session')
 const nunjucks = require('nunjucks')
+const csurf = require('csurf')
 
 const { common, server } = require('./../config')
 const logger = require('./../lib/logger')
@@ -24,11 +25,13 @@ const staticResourceManifest = require('./../public/manifest')
 
 const app = express()
 
-const configureSecureHeaders = function configureSecureHeaders() {
-  app.use(helmet())
-  app.use(helmet.contentSecurityPolicy({
+const configureSecureHeaders = function configureSecureHeaders(instance) {
+  instance.use(helmet())
+  instance.use(helmet.contentSecurityPolicy({
     directives: { defaultSrc: [ '\'self\'' ] }
   }))
+
+  instance.use(csurf())
 }
 
 const configureRequestParsing = function configureRequestParsing(instance) {
@@ -97,11 +100,11 @@ const configureErrorHandling = function configureErrorHandling(instance) {
 
 // order of configuration options important given the nature of Express Middleware
 const configure = [
-  configureSecureHeaders,
   configureRequestParsing,
-  configureServingPublicStaticFiles,
   configureClientSessions,
   configureAuth,
+  configureSecureHeaders,
+  configureServingPublicStaticFiles,
   configureTemplateRendering,
   configureRouting,
   configureErrorHandling

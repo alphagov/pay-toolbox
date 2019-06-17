@@ -1,12 +1,12 @@
 {% from "components/input/macro.njk" import govukInput %}
 {% from "components/button/macro.njk" import govukButton %}
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 
 {% block main %}
   <h1 class="govuk-heading-m">Find a service</h1>
-  
+
   <form method="POST" action="/services/search">
-    {{ govukInput({ 
+    {{ govukInput({
       id: "id",
       name: "id",
       label: { text: "External service ID" }
@@ -17,5 +17,7 @@
       text: "Search"
       })
       }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
   </form>
 {% endblock %}

@@ -1,10 +1,10 @@
 {% from "components/date-input/macro.njk" import govukDateInput %}
 {% from "components/button/macro.njk" import govukButton %}
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 
 {% block main %}
   <h1 class="govuk-heading-m">Compare statistics for two days</h1>
-  
+
   <form method="post" action="/statistics/compare/date">
     {{ govukDateInput({
         id: "filter",
@@ -15,7 +15,7 @@
           { name: "year", value: date.getFullYear(), classes: "govuk-input--width-4" }
         ]
       })
-    }} 
+    }}
     {{ govukDateInput({
         id: "filter-compare",
         namePrefix: "filter-compare",
@@ -25,9 +25,11 @@
           { name: "year", value: date.getFullYear(), classes: "govuk-input--width-4" }
         ]
       })
-    }} 
+    }}
     {{ govukButton({
         text: "View statistics"
       }) }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
   </form>
 {% endblock %}

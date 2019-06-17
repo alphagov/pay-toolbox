@@ -1,6 +1,6 @@
 {% from "components/table/macro.njk" import govukTable %}
 {% from "components/button/macro.njk" import govukButton %}
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 
 {% block main %}
   <h1 class="govuk-heading-m">Confirm details for new gateway account</h1>
@@ -18,23 +18,25 @@
     ]
   })
   }}
-  
-  <form method="post" action="/gateway_accounts/create">
-    <input type="hidden" name="paymentMethod" value="{{ request.paymentMethod }}"> 
-    <input type="hidden" name="provider" value="{{ request.provider }}"> 
-    <input type="hidden" name="serviceName" value="{{ request.serviceName }}"> 
-    <input type="hidden" name="description" value="{{ request.description }}"> 
-    <input type="hidden" name="analyticsId" value="{{ request.analyticsId }}"> 
-    <input type="hidden" name="systemLinkedService" value="{{ request.systemLinkedService }}"> 
-    <input type="hidden" name="systemLinkedCredentials" value="{{ request.systemLinkedCredentials }}"> 
 
-    <input type="hidden" name="live" value="{{ request.live }}"> 
-    <input type="hidden" name="credentials" value="{{ request.credentials }}"> 
-  
+  <form method="post" action="/gateway_accounts/create">
+    <input type="hidden" name="paymentMethod" value="{{ request.paymentMethod }}">
+    <input type="hidden" name="provider" value="{{ request.provider }}">
+    <input type="hidden" name="serviceName" value="{{ request.serviceName }}">
+    <input type="hidden" name="description" value="{{ request.description }}">
+    <input type="hidden" name="analyticsId" value="{{ request.analyticsId }}">
+    <input type="hidden" name="systemLinkedService" value="{{ request.systemLinkedService }}">
+    <input type="hidden" name="systemLinkedCredentials" value="{{ request.systemLinkedCredentials }}">
+
+    <input type="hidden" name="live" value="{{ request.live }}">
+    <input type="hidden" name="credentials" value="{{ request.credentials }}">
+
     {{ govukButton({
       text: "Create gateway account"
       })
     }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
   </form>
 
 {% endblock %}

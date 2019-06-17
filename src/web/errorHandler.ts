@@ -5,6 +5,10 @@ import * as logger from '../lib/logger'
 import * as config from '../config'
 import { EntityNotFoundError, RESTClientError, ValidationError } from '../lib/errors'
 
+interface HttpError extends Error {
+  code: string;
+}
+
 const handleRequestErrors = function handleRequestErrors(
   error: Error,
   req: Request,
@@ -12,7 +16,7 @@ const handleRequestErrors = function handleRequestErrors(
   next: NextFunction
 ): void {
   // generic entity wasn't found - format reponse
-  if (error.name === EntityNotFoundError.name) {
+  if (error instanceof EntityNotFoundError) {
     logger.warn(error.message)
     res.status(404).render('common/error', { message: error.message })
     return
@@ -30,6 +34,12 @@ const handleRequestErrors = function handleRequestErrors(
   // generic entity failed to validate fields - format reponse
   if (error instanceof ValidationError) {
     res.status(400).render('common/error', { message: error.message })
+    return
+  }
+
+  if ((error as HttpError).code === 'EBADCSRFTOKEN') {
+    logger.warn('Bad CSRF token received for request')
+    res.status(403).render('common/error', { message: `Request forbidden: ${error.message}` })
     return
   }
 

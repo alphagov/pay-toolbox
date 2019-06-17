@@ -1,6 +1,6 @@
 {% from "components/button/macro.njk" import govukButton %}
 {% from "components/error-summary/macro.njk" import govukErrorSummary %}
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 
 {% block main %}
 <h1 class="govuk-heading-m">Create a Stripe connected account</h1>
@@ -9,7 +9,7 @@
   {{ govukErrorSummary({
     titleText: "There is a problem",
     errorList: [ { text: message } ]
-  }) 
+  })
   }}
 {% endfor %}
 
@@ -171,7 +171,7 @@
 					<input class="govuk-input" id="org_address_postcode" name="org_address_postcode" value="{{ recovered.org_address_postcode }}">
 				</div>
 			</fieldset>
-    </div> 
+    </div>
   </fieldset>
 </div>
 {% if systemLinkService %}
@@ -184,6 +184,8 @@
 		})
 	}}
 </div>
+
+	<input type="hidden" name="_csrf" value="{{ csrf }}">
 </form>
 
 <details class="govuk-details" id="parse_util">
@@ -194,7 +196,7 @@
   </summary>
   <div class="govuk-details__text">
 
-		
+
 		<div class="govuk-form-group">
 			<label class="govuk-label" for="more-detail">
 				Details from spreadsheet
@@ -207,13 +209,13 @@
 
 		<p>Disclaimer one: Addresses are too dynamic and not supported until they are split up in the form</p>
 		<p>Disclaimer two: Names in particular can be all over the place, you still have to double check these are entered correctly</p>
-			
+
 		<button type="button" id="parse_action" class="govuk-button">
 			Parse input
 		</button>
   </div>
 </details>
-	
+
 {% set js %}{% include "./clientjs/parse-csv.js" %}{% endset %}
 <script>{{ js | safe }}</script>
 {% endblock %}
