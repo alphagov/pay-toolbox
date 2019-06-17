@@ -30,7 +30,7 @@ const configureSecureHeaders = function configureSecureHeaders(instance) {
   instance.use(helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: [ '\'self\'' ],
-      imgSrc: [ 'avatars3.githubusercontent.com', '\'self\'' ]
+      imgSrc: [ '*.githubusercontent.com', '\'self\'' ]
     }
   }))
 

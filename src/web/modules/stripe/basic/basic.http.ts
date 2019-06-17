@@ -9,8 +9,8 @@ import { formatErrorsForTemplate, ClientFormError } from '../../common/validatio
 import { Service, StripeAgreement } from '../../../../lib/pay-request/types/adminUsers'
 import AccountDetails from './basicAccountDetails.model'
 
-const STRIPE_API_KEY: string = process.env.STRIPE_API_KEY || ''
-const stripe = new Stripe(STRIPE_API_KEY)
+const STRIPE_ACCOUNT_API_KEY: string = process.env.STRIPE_ACCOUNT_API_KEY || ''
+const stripe = new Stripe(STRIPE_ACCOUNT_API_KEY)
 const { StripeError } = Stripe.errors
 
 stripe.setApiVersion('2018-09-24')
@@ -19,7 +19,7 @@ const createAccountForm = async function createAccountForm(
   req: Request,
   res: Response
 ): Promise<void> {
-  if (!STRIPE_API_KEY) {
+  if (!STRIPE_ACCOUNT_API_KEY) {
     throw new CustomValidationError('Stripe API Key was not configured for this Toolbox instance')
   }
   if (!req.query.service) {
