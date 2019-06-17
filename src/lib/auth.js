@@ -23,4 +23,10 @@ const unauthorised = function unauthorised(req, res, next) {
   res.status(403).send('User does not have permissions to access the resource')
 }
 
-module.exports = { secured, unauthorised }
+const revokeSession = function revokeSession(req, res, next) {
+  logger.info(`Revoking session for user ${req.user.username}`)
+  req.logout()
+  res.redirect('/')
+}
+
+module.exports = { secured, unauthorised, revokeSession }

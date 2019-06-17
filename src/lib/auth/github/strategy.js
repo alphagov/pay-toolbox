@@ -21,11 +21,7 @@ const handleGitHubOAuthSuccessResponse = async function handleGitHubOAuthSuccess
   try {
     // eslint-disable-next-line no-underscore-dangle
     const avatarUrl = profile._json && profile._json.avatar_url
-    const sessionProfile = {
-      user: username,
-      fullName: displayName,
-      avatarUrl
-    }
+    const sessionProfile = { username, displayName, avatarUrl }
 
     logger.info(`Successful account auth from GitHub for user ${username}`)
     await isPermittedUser(username, accessToken)

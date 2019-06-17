@@ -14,7 +14,8 @@ const invalidPermissions = async (username, token) => {
 }
 
 describe('GitHub OAuth strategy', () => {
-  const profile = { username: 'some-test-user', displayName: 'Some User', avaterUrl: 'some-url' }
+  // eslint-disable-next-line key-spacing
+  const profile = { username: 'some-test-user', displayName: 'Some User', _json: { avatar_url : 'some-url' } }
   let handleGitHubOAuthSuccessResponse
 
   beforeEach(() => {
@@ -36,7 +37,13 @@ describe('GitHub OAuth strategy', () => {
 
     expect(authCallbackSpy).to.have.been.called.once.with(
       null,
-      { user: profile.username, fullName: profile.displayName, avatarUrl: profile.avatarUrl }
+      {
+        username: profile.username,
+        displayName: profile.displayName,
+
+        // eslint-disable-next-line no-underscore-dangle
+        avatarUrl: profile._json.avatar_url
+      }
     )
   })
 
