@@ -38,8 +38,6 @@ const configureSecureHeaders = function configureSecureHeaders(instance) {
 }
 
 const configureRequestParsing = function configureRequestParsing(instance) {
-  const httpRequestLoggingFormat = common.production ? 'short' : 'dev'
-
   if (!common.development) {
     // service is behind a front-facing proxy - set req IP values accordinglyi
     instance.enable('trust proxy')
@@ -48,11 +46,6 @@ const configureRequestParsing = function configureRequestParsing(instance) {
   instance.use(bodyParser.urlencoded({ extended: false }))
   instance.use(bodyParser.json({ strict: true, limit: '15kb' }))
   instance.use(flash())
-
-  // logger middleware included after flash and body parsing middleware as they
-  // alter the call stack (it should ideally be placed just before routes)
-  instance.use(logger.middleware)
-  instance.use(morgan(httpRequestLoggingFormat, { stream: logger.stream }))
 }
 
 const configureServingPublicStaticFiles = function configureServingPublicStaticFiles(instance) {
@@ -97,6 +90,13 @@ const configureTemplateRendering = function configureTemplateRendering(instance)
 }
 
 const configureRouting = function configureRouting(instance) {
+  const httpRequestLoggingFormat = common.development ? 'dev' : 'short'
+
+  // logger middleware included after flash and body parsing middleware as they
+  // alter the call stack (it should ideally be placed just before routes)
+  instance.use(logger.middleware)
+  instance.use(morgan(httpRequestLoggingFormat, { stream: logger.stream }))
+
   instance.use('/', router)
   instance.use(errors.handleNotFound)
 }

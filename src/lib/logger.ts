@@ -17,6 +17,10 @@ import * as config from '../config'
 
 const { combine, timestamp, printf } = format
 
+const TOOLBOX_ID_KEY = 'toolbox_id'
+const CORRELATION_ID_KEY = 'correlation_id'
+const AUTHENTICATED_USER_ID_KEY = 'authenticated_user_id'
+
 const logger = createLogger()
 const session = createNamespace('govuk-pay-logging')
 
@@ -25,22 +29,44 @@ const loggerMiddleware = function loggerMiddleware(
   res: Response,
   next: NextFunction
 ): void {
-  session.run(() => {
-    session.set('toolboxid', crypto.randomBytes(4).toString('hex'))
+  session.run((): void => {
+    const correlationHeader = 'x-request-id'
+    const toolboxId = crypto.randomBytes(4).toString('hex')
+    session.set(TOOLBOX_ID_KEY, toolboxId)
+    session.set(CORRELATION_ID_KEY, req.headers[correlationHeader])
+    session.set(AUTHENTICATED_USER_ID_KEY, req.user && req.user.user)
+
+    // expose toolbox ID to template for debugging
+    res.locals.toolboxId = toolboxId
     next()
   })
 }
 
+const supplementProductionInfo = format((info) => {
+  const productionContext = {
+    toolboxId: session.get(TOOLBOX_ID_KEY),
+    correlationId: session.get(CORRELATION_ID_KEY),
+    userId: session.get(AUTHENTICATED_USER_ID_KEY)
+  }
+  return Object.assign(info, productionContext)
+})
+
 if (!config.common.development) {
   const productionTransport = new transports.Console({
+    format: combine(
+      supplementProductionInfo(),
+      timestamp({ format: 'HH:mm:ss' }),
+      format.json()
+    ),
     level: 'info'
   })
   logger.add(productionTransport)
 }
 
 const payLogsFormatter = printf((log) => {
-  const id = session.get('toolboxid')
-  return `${log.timestamp} [${id || '(none)'}] ${log.level}: ${log.message}`
+  const id = session.get(TOOLBOX_ID_KEY)
+  const user = session.get(AUTHENTICATED_USER_ID_KEY)
+  return `${log.timestamp} [${id || '(none)'}] [${user || '(no_user)'}] ${log.level}: ${log.message}`
 })
 
 // coloursise and timestamp developer logs as these will probably be viewed
@@ -49,9 +75,10 @@ if (config.common.development) {
   const developmentTransport = new transports.Console({
     level: 'debug',
     format: combine(
-      format.colorize(),
+      format(info => Object.assign(info, { toolboxId: session.get(TOOLBOX_ID_KEY) }))(),
       timestamp({ format: 'HH:mm:ss' }),
-      payLogsFormatter
+      format.colorize(),
+      format.simple()
     )
   })
   logger.add(developmentTransport)
