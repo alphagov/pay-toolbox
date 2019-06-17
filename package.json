@@ -20,7 +20,8 @@
     "build:sass": "scripts/compile-assets",
     "build:copy": "copyfiles --up 1 src/**/*.njk dist/",
     "preinstall": "echo \"Preinstall hook\" && exit 0",
-    "postinstall": "npm run build"
+    "prepare": "npm run build:sass",
+    "postinstall": "echo \"postinstall set to run with prepare (only in dev)\" && exit 0"
   },
   "repository": {
     "type": "git",
