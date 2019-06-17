@@ -34,7 +34,7 @@ const loggerMiddleware = function loggerMiddleware(
     const toolboxId = crypto.randomBytes(4).toString('hex')
     session.set(TOOLBOX_ID_KEY, toolboxId)
     session.set(CORRELATION_ID_KEY, req.headers[correlationHeader])
-    session.set(AUTHENTICATED_USER_ID_KEY, req.user && req.user.user)
+    session.set(AUTHENTICATED_USER_ID_KEY, req.user && req.user.username)
 
     // expose toolbox ID to template for debugging
     res.locals.toolboxId = toolboxId
