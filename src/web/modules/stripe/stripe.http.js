@@ -1,5 +1,5 @@
-const { STRIPE_API_KEY } = process.env
-const stripe = require('stripe')(process.env.STRIPE_API_KEY)
+const { STRIPE_ACCOUNT_API_KEY } = process.env
+const stripe = require('stripe')(STRIPE_ACCOUNT_API_KEY)
 
 const logger = require('./../../../lib/logger')
 
@@ -12,7 +12,7 @@ const { wrapAsyncErrorHandlers } = require('./../../../lib/routes')
 const { ValidationError } = require('./../../../lib/errors')
 
 const verifyStripeSetup = async function verifyStripeSetup() {
-  if (!STRIPE_API_KEY) {
+  if (!STRIPE_ACCOUNT_API_KEY) {
     throw new ValidationError('Stripe API Key was not configured for this Toolbox instance')
   }
   return true
