@@ -1,7 +1,9 @@
 import * as Stripe from 'stripe'
+import * as HTTPSProxyAgent from 'https-proxy-agent'
 import { Request, Response } from 'express'
 
 import * as logger from '../../../../lib/logger'
+import * as config from '../../../../config'
 import { AdminUsers } from '../../../../lib/pay-request'
 import { ValidationError as CustomValidationError, IOValidationError } from '../../../../lib/errors'
 import { wrapAsyncErrorHandler } from '../../../../lib/routes'
@@ -13,6 +15,10 @@ const STRIPE_ACCOUNT_API_KEY: string = process.env.STRIPE_ACCOUNT_API_KEY || ''
 const stripe = new Stripe(STRIPE_ACCOUNT_API_KEY)
 const { StripeError } = Stripe.errors
 
+if (config.server.HTTPS_PROXY) {
+  // @ts-ignore
+  stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
+}
 stripe.setApiVersion('2018-09-24')
 
 const createAccountForm = async function createAccountForm(
