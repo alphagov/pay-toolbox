@@ -1,8 +1,13 @@
 const { STRIPE_ACCOUNT_API_KEY } = process.env
+const HTTPSProxyAgent = require('https-proxy-agent')
 const stripe = require('stripe')(STRIPE_ACCOUNT_API_KEY)
 
+const { server } = require('./../../../config')
 const logger = require('./../../../lib/logger')
 
+if (server.HTTPS_PROXY) {
+  stripe.setHttpAgent(new HTTPSProxyAgent(server.HTTPS_PROXY))
+}
 stripe.setApiVersion('2018-09-24')
 
 const { AdminUsers } = require('./../../../lib/pay-request')
