@@ -26,7 +26,15 @@ const staticResourceManifest = require('./../public/manifest')
 const app = express()
 
 const configureSecureHeaders = function configureSecureHeaders(instance) {
-  instance.use(helmet())
+  const serverBehindProxy = server.HTTP_PROXY
+
+  // only set certain proxy configured headers if not behind a proxy
+  instance.use(helmet({
+    noSniff: !serverBehindProxy,
+    framegaurd: !serverBehindProxy,
+    hsts: !serverBehindProxy,
+    xssFilter: !serverBehindProxy
+  }))
   instance.use(helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: [ '\'self\'' ],
