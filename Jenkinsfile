@@ -16,6 +16,7 @@ pipeline {
           buildAppWithMetrics { app = "toolbox" }
         }
       }
+      post { failure { postMetric("toolbox.docker-build.failure", 1) } }
     }
     stage('Docker CI') {
       agent { docker { image "govukpay/toolbox:${env.image}" } }
@@ -50,7 +51,7 @@ pipeline {
         }
       }
     }
-   stage('Build and deploy') {
+   stage('Push and deploy') {
       stages {
         // @TODO(sfount) investigate using built-in Jenkins `docker.build()` and
         //               `docker.push()` commands in steps
@@ -60,6 +61,7 @@ pipeline {
               dockerTagWithMetrics { app = "toolbox" }
             }
           }
+          post { failure { postMetric("toolbox.docker-tag.failure", 1) } }
         }
         stage('Deploy') {
           when {
@@ -69,6 +71,11 @@ pipeline {
             deployEcs("toolbox")
           }
         }
+      }
+    }
+    stage('Tag deployment') {
+      failFast true
+      parallel {
         stage('Tag deployment') {
           when {
             branch 'master'
@@ -77,7 +84,20 @@ pipeline {
             tagDeployment("toolbox")
           }
         }
+        stage('Deploy notification') {
+          when {
+            branch 'master'
+          }
+          steps {
+            triggerGraphiteDeployEvent("toolbox")
+          }
+        }
       }
     }
+  }
+  post {
+    // build wide post metrics
+    failure { postMetric(appendBranchSuffix("toolbox") + ".failure", 1) }
+    success { postSuccessfulMetrics(appendBranchSuffix("toolbox")) }
   }
 }
