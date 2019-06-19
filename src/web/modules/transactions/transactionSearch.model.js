@@ -10,7 +10,11 @@ const schema = {
 
 class TransactionSearch {
   constructor(body) {
-    const { error, value: model } = Joi.validate(body, schema)
+    const { error, value: model } = Joi.validate(
+      body,
+      schema,
+      { allowUnknown: true, stripUnknown: true }
+    )
 
     if (error) {
       throw new ValidationError(`TransactionSearch ${error.details[0].message}`)

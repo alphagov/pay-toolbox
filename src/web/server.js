@@ -31,7 +31,7 @@ const configureSecureHeaders = function configureSecureHeaders(instance) {
   // only set certain proxy configured headers if not behind a proxy
   instance.use(helmet({
     noSniff: !serverBehindProxy,
-    framegaurd: !serverBehindProxy,
+    frameguard: !serverBehindProxy,
     hsts: !serverBehindProxy,
     xssFilter: !serverBehindProxy
   }))
