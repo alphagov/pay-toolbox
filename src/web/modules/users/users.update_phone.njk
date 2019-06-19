@@ -1,0 +1,35 @@
+{% from "components/input/macro.njk" import govukInput %}
+{% from "components/button/macro.njk" import govukButton %}
+{% from "common/errorSummary.njk" import errorSummary %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+<span class="govuk-caption-m">Update user</span>
+<h1 class="govuk-heading-m">Phone number</h1>
+
+<div>
+    <a href="/users/{{ user.external_id }}" class="govuk-back-link">Back to user ({{ user.email }})</a>
+</div>
+
+{% if errors %}
+  {{ errorSummary({ errors: errors }) }}
+{% endif %}
+
+<form action="/users/{{user.external_id}}/phone" method="POST">
+  {{ govukInput({
+    label: { text: "Phone number" },
+    hint: { text: "Current telephone number is " + user.telephone_number },
+    id: "telephone_number",
+    name: "telephone_number",
+    value: formValues.telephone_number,
+    errorMessage: errorMap.telephone_number and { text: errorMap.telephone_number }
+    })
+  }}
+
+  {{ govukButton({
+    text: "Update user phone number"
+    })
+  }}
+  <input type="hidden" name="_csrf" value="{{ csrf }}">
+</form>
+{% endblock %}

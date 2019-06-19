@@ -1,0 +1,49 @@
+{% from "components/table/macro.njk" import govukTable %}
+{% from "components/summary-list/macro.njk" import govukSummaryList %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+<h1 class="govuk-heading-m">User details</h1>
+
+{% for message in messages %}
+  <div class="govuk-error-summary success-summary" role="alert">
+    <h2 class="govuk-error-summary__title">{{message}}</h2>
+  </div>
+{% endfor %}
+
+{# Table row listing services and service actions #}
+{% set services %}
+  <ul class="govuk-list">
+    {% for role in payUser.service_roles %}
+      <li>
+      <a href="/services/{{ role.service.external_id}}" class="govuk-link govuk-link--no-visited-state">{{ role.service.name }}</a>
+      <span> | </span>
+      <a class="govuk-link govuk-link--no-visited-state" href="/user/{{ payUser.external_id }}/service/{{ role.service.external_id }}/delete">(Remove user from service)</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endset %}
+
+{# {% set serviceRoles = user.service_roles.map((serviceRole) => serviceRole) %} #}
+
+{{ govukSummaryList({
+  rows: [
+    { key: { text: "ID" }, value: { html: "<code>" + payUser.external_id + "</code>" }, actions: { items: [{}] } },
+    { key: { text: "Email" }, value: { text: payUser.email | truncate(35) }, actions: { items: [{ href: "/users/" + payUser.external_id + "/email", text: "Change" }] } },
+    { key: { text: "Phone" }, value: { text: payUser.telephone_number }, actions: { items: [{ href: "/users/" + payUser.external_id + "/phone", text: "Change" }] } },
+    { key: { text: "MFA" }, value: { text: payUser.second_factor }, actions: { items: [{ href: "/users/" + payUser.external_id + "/2FA/reset", text: "Reset" }] } },
+    { key: { text: "Disabled" }, value: { text: "True" if payUser.disabled else "False" }, actions: { items: [{ href: "/users/" + payUser.external_id + "/toggle", text: "Enable" if payUser.disabled else "Disable" }] }  }
+  ]
+  })
+}}
+
+<h1 class="govuk-heading-m">User services</h1>
+{{ govukSummaryList({
+  rows: format.serviceRoles(payUser, payUser.service_roles)
+  })
+}}
+
+<div>
+  <pre><code>{{ payUser | dump('\t') }}</code></pre>
+</div>
+{% endblock %}

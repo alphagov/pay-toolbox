@@ -15,6 +15,10 @@ const transactions = require('./modules/transactions')
 const discrepancies = require('./modules/discrepancies')
 const stripe = require('./modules/stripe')
 
+// @TODO(sfount) remove `default`s on update to import export syntax
+// eslint-disable-next-line import/no-unresolved
+const users = require('./modules/users/users.http').default
+
 const router = express.Router()
 
 router.get('/auth', passport.authenticate('github'))
@@ -60,6 +64,18 @@ router.post('/stripe/create', auth.secured, stripe.createAccount.http, stripe.cr
 
 router.get('/stripe/basic/create', auth.secured, stripe.basic)
 router.post('/stripe/basic/create', auth.secured, stripe.basicCreate)
+
+// @TODO(sfount) simple to integrate into table action - should be reconsidered for POST or PATCH
+router.get('/users/:id', auth.secured, users.show)
+router.get('/users/:id/phone', auth.secured, users.updatePhoneNumberForm)
+router.post('/users/:id/phone', auth.secured, users.updatePhoneNumber)
+router.get('/users/:id/email', auth.secured, users.updateEmailForm)
+router.post('/users/:id/email', auth.secured, users.updateEmail)
+
+// @TODO(sfount) PATCH and DELETE respectively
+router.get('/users/:id/toggle', auth.secured, users.toggleUserEnabled)
+router.get('/users/:userId/service/:serviceId/delete', auth.secured, users.removeUserFromService)
+router.get('/users/:id/2FA/reset', auth.secured, users.resetUserSecondFactor)
 
 router.get('/logout', auth.secured, auth.revokeSession)
 
