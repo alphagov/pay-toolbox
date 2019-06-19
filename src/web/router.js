@@ -72,6 +72,11 @@ router.post('/users/:id/phone', auth.secured, users.updatePhoneNumber)
 router.get('/users/:id/email', auth.secured, users.updateEmailForm)
 router.post('/users/:id/email', auth.secured, users.updateEmail)
 
+// @TODO(sfount) PATCH and DELETE respectively
+router.get('/users/:id/toggle', auth.secured, users.toggleUserEnabled)
+router.get('/users/:userId/service/:serviceId/delete', auth.secured, users.removeUserFromService)
+router.get('/users/:id/2FA/reset', auth.secured, users.resetUserSecondFactor)
+
 router.get('/logout', auth.secured, auth.revokeSession)
 
 router.get('/healthcheck', healthcheck.response)

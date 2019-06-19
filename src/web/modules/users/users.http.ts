@@ -12,14 +12,15 @@ const truncate = function truncate(value: string, length: number): string {
   return `${value.substr(0, length)}...`
 }
 
+// @TODO(sfount) move to template
 // eslint-disable-next-line arrow-body-style
-const formatServiceRoles = (serviceRoles: any): any => {
+const formatServiceRoles = (user: any, serviceRoles: any): any => {
   // eslint-disable-next-line arrow-body-style
   return serviceRoles.map((role: any) => {
     return {
       key: { text: role.service.name },
       value: { html: `<code>${role.service.external_id}</code` },
-      actions: { items: [ { href: '#', text: 'Remove user' } ] }
+      actions: { items: [ { href: `/users/${user.external_id }/service/${role.service.external_id}/delete`, text: 'Remove user' } ] }
     }
   })
 }
@@ -27,18 +28,17 @@ const formatServiceRoles = (serviceRoles: any): any => {
 // req: Request
 // res: Response
 const show = async function show(req: any, res: any): Promise<void> {
-  const user = await AdminUsers.user(req.params.id)
-  const context: any = { user, format: { serviceRoles: formatServiceRoles } }
+  const payUser = await AdminUsers.user(req.params.id)
+  const context: any = { payUser, format: { serviceRoles: formatServiceRoles }, messages: req.flash('info'), _csrf: req.csrfToken() }
 
   res.render('users/users.show.njk', context)
 }
 
 const updatePhoneNumberForm = async function updatePhoneNumberForm(req: any, res: any): Promise<void> {
   const user = await AdminUsers.user(req.params.id)
-  const context: any = { user }
+  const context: any = { user, csrf: req.csrfToken() }
   const { recovered } = req.session
 
-  console.log(recovered)
   // @TODO(sfount) move all recovery code into one place -- all mapping to formats the template
   //               understand should be done in one place
   if (recovered) {
@@ -61,10 +61,9 @@ const updatePhoneNumberForm = async function updatePhoneNumberForm(req: any, res
 
 const updateEmailForm = async function updateEmailForm(req: any, res: any): Promise<void> {
   const user = await AdminUsers.user(req.params.id)
-  const context: any = { user }
+  const context: any = { user, csrf: req.csrfToken() }
   const { recovered } = req.session
 
-  console.log(recovered)
   // @TODO(sfount) move all recovery code into one place -- all mapping to formats the template
   //               understand should be done in one place
   if (recovered) {
@@ -157,7 +156,29 @@ const updatePhoneNumber = async function updatePhoneNumber(req: any, res: any, n
   }
 }
 
-// const removeFromService = async function removeFromService(req: any, res: any): Promise<void> {
-// }
+const toggleUserEnabled = async function toggleUserEnabled(req: any, res: any, next: any): Promise<void> {
+  const id = req.params.id
+  const result = await AdminUsers.toggleUserEnabled(id)
+
+  req.flash('info', 'Updated disabled status')
+  res.redirect(`/users/${id}`)
+}
+
+const removeUserFromService = async function removeUserFromService(req: any, res: any, next: any): Promise<void> {
+  const { serviceId, userId } = req.params
+  const result = await AdminUsers.removeUserFromService(serviceId, userId)
+
+  req.flash('info', `User ${userId} removed from service ${serviceId}`)
+  res.redirect(`/users/${userId}`)
+}
+
+const resetUserSecondFactor = async function resetUserSecondFactor(req: any, res: any, next: any): Promise<void> {
+  const { id } = req.params
+  const result = await AdminUsers.resetUserSecondFactor(id)
+
+  req.flash('info', 'User second factor method reset')
+  res.redirect(`/users/${id}`)
+}
+
 // @TODO(sfount) use individual wrapAsyncErrorHandler
-export default wrapAsyncErrorHandlers({ show, updatePhoneNumber, updatePhoneNumberForm, updateEmailForm, updateEmail })
+export default wrapAsyncErrorHandlers({ show, updatePhoneNumber, updatePhoneNumberForm, updateEmailForm, updateEmail, toggleUserEnabled, removeUserFromService, resetUserSecondFactor })

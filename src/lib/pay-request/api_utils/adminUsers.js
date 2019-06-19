@@ -34,6 +34,18 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
 
+  const toggleUserEnabled = async function toggleUserEnabled(id) {
+    const path = `/v1/api/users/${id}`
+    const currentUser = await user(id)
+
+    const payload = {
+      op: 'replace',
+      path: 'disabled',
+      value: !currentUser.disabled
+    }
+    return axiosInstance.patch(path, payload).then(utilExtractData)
+  }
+
   const service = function service(id) {
     const path = `/v1/api/services/${id}`
     return axiosInstance.get(path)
@@ -44,6 +56,18 @@ const adminUsersMethods = function adminUsersMethods(instance) {
         }
         throw error
       })
+  }
+
+  const removeUserFromService = function removeUserFromService(serviceId, userId) {
+    const path = `/v1/api/services/${serviceId}/users/${userId}`
+
+    // @TODO(sfount) make sure admin headers are correctly set to allow user to be removed
+    throw new Error('Remove user from service end point not configured')
+  }
+
+  const resetUserSecondFactor = function resetUserSecondFactor(id) {
+    // @TODO(sfount) configure new OTP source and reset secondFactor = SMS
+    throw new Error('Reset second factor end point not configured')
   }
 
   const services = function services() {
@@ -112,7 +136,10 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     gatewayAccountServices,
     updateServiceGoLiveStatus,
     updateUserPhone,
-    updateUserEmail
+    updateUserEmail,
+    toggleUserEnabled,
+    removeUserFromService,
+    resetUserSecondFactor
   }
 }
 
