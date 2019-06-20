@@ -9,7 +9,12 @@ COPY package*.json ./
 # prepare build process modules
 RUN npm ci --no-progress
 
-COPY . .
+# ideally command is COPY scr/ scripts/ tsconfig.json ./
+# COPY flattens file structures so this is not possible inline right now
+# ref: https://github.com/moby/moby/issues/15858
+COPY src/ src
+COPY scripts/ scripts
+COPY tsconfig.json tsconfig.json
 
 # questionable method of setting build defaults - this should be removed when
 # tunneling is no longer required
