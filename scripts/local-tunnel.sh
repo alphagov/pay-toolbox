@@ -1,12 +1,13 @@
-# 9001 admin users  
-# 9002 cardid 
+#!/bin/sh
+# 9001 admin users
+# 9002 cardid
 # 9003 connector
 # 9004 direct debit connector
-# 9005 products 
-# 9006 publicauth 
-# adminusers_db  
-# connector_db  
-# directdebit-connector_db  
+# 9005 products
+# 9006 publicauth
+# adminusers_db
+# connector_db
+# directdebit-connector_db
 # products_db
 # publicauth_db
 ssh \
