@@ -1,5 +1,5 @@
 import * as Stripe from 'stripe'
-import * as HTTPSProxyAgent from 'https-proxy-agent'
+import HTTPSProxyAgent from 'https-proxy-agent'
 import { Request, Response } from 'express'
 
 import * as logger from '../../../../lib/logger'
