@@ -1,4 +1,3 @@
-const passport = require('passport')
 const logger = require('./logger')
 
 // Simple method to ensure that all `req` objects passed in have
@@ -13,7 +12,7 @@ const secured = function secured(req, res, next) {
   res.redirect('/auth')
 }
 
-const unauthorised = function unauthorised(req, res, next) {
+const unauthorised = function unauthorised(req, res) {
   if (req.isAuthenticated()) {
     res.redirect('/')
     return
@@ -23,7 +22,7 @@ const unauthorised = function unauthorised(req, res, next) {
   res.status(403).send('User does not have permissions to access the resource')
 }
 
-const revokeSession = function revokeSession(req, res, next) {
+const revokeSession = function revokeSession(req, res) {
   logger.info(`Revoking session for user ${req.user.username}`)
   req.logout()
   res.redirect('/')

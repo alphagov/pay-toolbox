@@ -31,10 +31,10 @@ npm run dev
 
 ## Development Goals/ Focus
 
-* Small files, each piece responsible for one thing
-* Contextual tests, tests close to what they are testing, organised by feature
-* Simple to understand architecture
-* Latest language development standards
+  * Small files, each piece responsible for one thing
+  * Contextual tests, tests close to what they are testing, organised by feature
+  * Simple to understand architecture
+  * Latest language development standards
 
 ## Notes on coding style restriction
 
@@ -52,7 +52,7 @@ this should no longer be something we have to account for with hacks
 
 ## Build process (inbox)
 
-* Currently relies on `tsc-watch` to extend the Typescript compiler in dev mode, ideally
-this should combine `nodemon` waiting on standard `tsc --watch`
-* `ts-node` is used for directly interpreting unit test files, we can either use this
-or include test files in the watch/ build process
+  * Currently relies on `tsc-watch` to extend the Typescript compiler in dev mode, ideally
+    this should combine `nodemon` waiting on standard `tsc --watch`
+  * `ts-node` is used for directly interpreting unit test files, we can either use this
+    or include test files in the watch/ build process

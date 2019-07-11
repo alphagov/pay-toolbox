@@ -8,8 +8,8 @@ const { expect } = chai
 
 chai.use(spies)
 
-const validPermissions = async (username, token) => true
-const invalidPermissions = async (username, token) => {
+const validPermissions = async () => true
+const invalidPermissions = async () => {
   throw new Error('Invalid permissions')
 }
 

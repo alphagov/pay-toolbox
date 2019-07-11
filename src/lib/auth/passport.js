@@ -1,7 +1,6 @@
 // configure app wide passport instance
 const passport = require('passport')
 const HTTPSProxyAgent = require('https-proxy-agent')
-const logger = require('../logger')
 
 const { Strategy, githubAuthCredentials, handleGitHubOAuthSuccessResponse } = require('./github/strategy')
 
