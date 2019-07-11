@@ -14,12 +14,12 @@ const adminUsersMethods = function adminUsersMethods(instance) {
       })
   }
 
-  const updateUserPhone = function updateUserPhone(id, email) {
+  const updateUserPhone = function updateUserPhone(id, phoneNumber) {
     const path = `/v1/api/users/${id}`
     const payload = {
       op: 'replace',
       path: 'telephone_number',
-      value: email
+      value: phoneNumber
     }
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
