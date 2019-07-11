@@ -59,13 +59,14 @@ const adminUsersMethods = function adminUsersMethods(instance) {
   }
 
   const removeUserFromService = function removeUserFromService(serviceId, userId) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const path = `/v1/api/services/${serviceId}/users/${userId}`
 
     // @TODO(sfount) make sure admin headers are correctly set to allow user to be removed
     throw new Error('Remove user from service end point not configured')
   }
 
-  const resetUserSecondFactor = function resetUserSecondFactor(id) {
+  const resetUserSecondFactor = function resetUserSecondFactor() {
     // @TODO(sfount) configure new OTP source and reset secondFactor = SMS
     throw new Error('Reset second factor end point not configured')
   }
