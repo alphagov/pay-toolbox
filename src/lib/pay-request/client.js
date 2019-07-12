@@ -36,12 +36,12 @@ const logSuccessfulResponse = function logSuccessfulResponse(response) {
   const logContext = {
     service: this.metadata.serviceKey,
     method: response.request.method,
-    url: response.config.url,
-    duration: response.config.metadata.duration
+    url: response.config.url
   }
 
   response.config.metadata.end = new Date()
   response.config.metadata.duration = response.config.metadata.end - response.config.metadata.start
+  logContext.duration = response.config.metadata.duration
   logger.info(`Pay request ${logContext.service} success from ${logContext.method} ${logContext.url}`, logContext)
   return response
 }
@@ -52,7 +52,6 @@ const logFailureResponse = function logFailureResponse(error) {
     service: this.metadata.serviceKey,
     method: error.config.method,
     url: error.config.url,
-    duration: error.config.metadata.duration,
     code
   }
 
@@ -61,6 +60,7 @@ const logFailureResponse = function logFailureResponse(error) {
   error.config.metadata.end = new Date() // eslint-disable-line no-param-reassign
   // eslint-disable-next-line no-param-reassign
   error.config.metadata.duration = error.config.metadata.end - error.config.metadata.start
+  logContext.duration = error.config.metadata.duration
   logger.warn(`Pay request ${logContext.service} failed from ${logContext.method} ${logContext.url}`, logContext)
   return Promise.reject(
     new RESTClientError(error, this.metadata.serviceKey, this.metadata.serviceName)
