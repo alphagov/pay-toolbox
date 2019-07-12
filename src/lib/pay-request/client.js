@@ -3,6 +3,7 @@
  * provided for the GOV.UK Internal Pay API. Provides simple semantic wrappers
  * for common API end points.
  */
+const http = require('http')
 const https = require('https')
 const axios = require('axios')
 const { getNamespace } = require('cls-hooked')
@@ -18,8 +19,6 @@ const { RESTClientError } = require('./../../lib/errors')
 //               single config at the top of the application payreqest.config(config)
 const serviceStore = require('./../services.store')
 const serviceApiMethodUtils = require('./api_utils')
-
-const PAY_REQUEST_TIMEOUT = 10000
 
 const configureRequest = function configureRequest(request) {
   // @TODO(sfount) share definitions for session closure among modules
@@ -37,12 +36,12 @@ const logSuccessfulResponse = function logSuccessfulResponse(response) {
   const logContext = {
     service: this.metadata.serviceKey,
     method: response.request.method,
-    url: response.config.url,
-    duration: response.config.metadata.duration
+    url: response.config.url
   }
 
   response.config.metadata.end = new Date()
   response.config.metadata.duration = response.config.metadata.end - response.config.metadata.start
+  logContext.duration = response.config.metadata.duration
   logger.info(`Pay request ${logContext.service} success from ${logContext.method} ${logContext.url}`, logContext)
   return response
 }
@@ -53,7 +52,6 @@ const logFailureResponse = function logFailureResponse(error) {
     service: this.metadata.serviceKey,
     method: error.config.method,
     url: error.config.url,
-    duration: error.config.metadata.duration,
     code
   }
 
@@ -62,6 +60,7 @@ const logFailureResponse = function logFailureResponse(error) {
   error.config.metadata.end = new Date() // eslint-disable-line no-param-reassign
   // eslint-disable-next-line no-param-reassign
   error.config.metadata.duration = error.config.metadata.end - error.config.metadata.start
+  logContext.duration = error.config.metadata.duration
   logger.warn(`Pay request ${logContext.service} failed from ${logContext.method} ${logContext.url}`, logContext)
   return Promise.reject(
     new RESTClientError(error, this.metadata.serviceKey, this.metadata.serviceName)
@@ -69,19 +68,23 @@ const logFailureResponse = function logFailureResponse(error) {
 }
 
 const buildPayBaseClient = function buildPayBaseClient(service) {
+  const timeoutInMillis = 60 * 1000
+  const maxContentLengthInBytes = 50 * 1000 * 1000
   const instance = axios.create({
     baseURL: service.target,
-    timeout: PAY_REQUEST_TIMEOUT,
-    maxContentLength: 5 * 1000 * 1000,
+    timeout: timeoutInMillis,
+    maxContentLength: maxContentLengthInBytes,
 
     // @TODO(sfount) configure headers based on each services requirements
     headers: {
       'Content-Type': 'application/json'
     },
 
+    httpAgent: new http.Agent({ keepAlive: true }),
     httpsAgent: new https.Agent({
       // ensure that production environment rejects unauthorised (non HTTPS requests)
-      rejectUnauthorized: common.production
+      rejectUnauthorized: common.production,
+      keepAlive: true
     })
   })
 
