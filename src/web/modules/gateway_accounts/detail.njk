@@ -1,6 +1,6 @@
 {% from "components/table/macro.njk" import govukTable %}
 {% from "components/button/macro.njk" import govukButton %}
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 
 {% block main %}
   <h1 class="govuk-heading-m">Gateway account details</h1>
@@ -64,12 +64,12 @@
       {% if account.email_notifications != undefined %}
         <tr class="govuk-table__row">
           <th class="govuk-table__header" scope="col">Payment confirmation email</th>
-          <td class="govuk-table__cell">{{ 'Enabled' if (account.email_notifications.PAYMENT_CONFIRMED 
+          <td class="govuk-table__cell">{{ 'Enabled' if (account.email_notifications.PAYMENT_CONFIRMED
             and account.email_notifications.PAYMENT_CONFIRMED.enabled) else 'Disabled' }}</td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__header" scope="col">Refund issued email</th>
-          <td class="govuk-table__cell">{{ 'Enabled' if (account.email_notifications.REFUND_ISSUED 
+          <td class="govuk-table__cell">{{ 'Enabled' if (account.email_notifications.REFUND_ISSUED
             and account.email_notifications.REFUND_ISSUED.enabled) else 'Disabled' }}</td>
         </tr>
       {% endif %}
@@ -83,6 +83,14 @@
     href: "/gateway_accounts/" + gatewayAccountId + "/api_keys"
     })
     }}
+    {# @TODO(sfount) use standard enum for provider type #}
+    {% if account.payment_provider == 'stripe' %}
+    {{ govukButton({
+    text: "Manage Payouts",
+    href: "/services/" + services.external_id + "/gateway_account/" + gatewayAccountId + "/payouts"
+    })
+    }}
+    {% endif %}
   </div>
 
   <div>
