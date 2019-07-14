@@ -35,4 +35,9 @@ const unixDate = function unixDate(timestamp) {
   return unixDateFormatter.format(date)
 }
 
-module.exports = { toFormattedDate, toCurrencyString, toFormattedDateLong, unixDate }
+const filenameDate = function filenameDate(timestamp) {
+  const date = new Date(timestamp * 1000)
+  return date.toISOString().split('T')[0]
+}
+
+module.exports = { toFormattedDate, toCurrencyString, toFormattedDateLong, unixDate, filenameDate }

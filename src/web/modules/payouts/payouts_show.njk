@@ -19,7 +19,7 @@
       </tr>
     </thead>
     <tbody class="govuk-table__body">
-      {% for payout in payouts %}
+      {% for payout in payouts.data %}
       <tr class="govuk-table__row">
         <td class="govuk-table__cell" title="{{payout.id}}}">
           <a class="govuk-link" href="payouts/{{payout.id}}" target="_blank">{{payout.id | truncate(10)}}</a>
@@ -37,4 +37,25 @@
       {% endfor %}
     </tbody>
   </table>
+
+  <div class="toolbox-right">
+    <a
+    {% if starting_after or (payouts.has_more and ending_before) %}
+      href="?ending_before={{ payouts.data[0].id }}"
+    {% else %}
+      disabled
+    {% endif %}
+    class="govuk-button govuk-button--secondary">
+      Previous
+    </a>
+    <a
+    {% if payouts.has_more or ending_before %}
+      href="?starting_after={{ payouts.data[payouts.data.length -1].id }}"
+    {% else %}
+      disabled
+    {% endif %}
+    class="govuk-button govuk-button--secondary">
+      Next
+    </a>
+  </div>
 {% endblock %}
