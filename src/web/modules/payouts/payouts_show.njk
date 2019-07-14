@@ -23,7 +23,6 @@
       <tr class="govuk-table__row">
         <td class="govuk-table__cell" title="{{payout.id}}}">
           <a class="govuk-link" href="payouts/{{payout.id}}" target="_blank">{{payout.id | truncate(10)}}</a>
-          {# <pre><code>{{payout.id | truncate(10)}}</code></pre> #}
         </td>
         <td class="govuk-table__cell govuk-table__cell--numeric">{{payout.amount | currency}}</td>
         <td class="govuk-table__cell"><strong class="govuk-tag">{{payout.status}}</strong></td>
@@ -40,8 +39,8 @@
 
   <div class="toolbox-right">
     <a
-    {% if starting_after or (payouts.has_more and ending_before) %}
-      href="?ending_before={{ payouts.data[0].id }}"
+    {% if startingAfter or (payouts.has_more and endingBefore) %}
+      href="?endingBefore={{ payouts.data[0].id }}"
     {% else %}
       disabled
     {% endif %}
@@ -49,8 +48,8 @@
       Previous
     </a>
     <a
-    {% if payouts.has_more or ending_before %}
-      href="?starting_after={{ payouts.data[payouts.data.length -1].id }}"
+    {% if payouts.has_more or endingBefore %}
+      href="?startingAfter={{ payouts.data[payouts.data.length -1].id }}"
     {% else %}
       disabled
     {% endif %}

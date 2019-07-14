@@ -16,7 +16,12 @@ const errors = require('./errorHandler')
 const router = require('./router')
 
 // @FIXME(sfount) move this out of server configuration
-const { toFormattedDate, toFormattedDateLong, toCurrencyString, unixDate } = require('./../lib/format')
+const {
+  toFormattedDate,
+  toFormattedDateLong,
+  toCurrencyString,
+  unixDate
+} = require('./../lib/format')
 
 // @FIXME(sfount) errors should be thrown and this should be properly handled if
 //                there is no manifest etc.

@@ -40,4 +40,10 @@ const filenameDate = function filenameDate(timestamp) {
   return date.toISOString().split('T')[0]
 }
 
-module.exports = { toFormattedDate, toCurrencyString, toFormattedDateLong, unixDate, filenameDate }
+module.exports = {
+  toFormattedDate,
+  toCurrencyString,
+  toFormattedDateLong,
+  unixDate,
+  filenameDate
+}
