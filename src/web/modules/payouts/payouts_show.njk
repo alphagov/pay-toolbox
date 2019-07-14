@@ -4,6 +4,10 @@
   <span class="govuk-caption-m">{{service.name}}</span>
   <h1 class="govuk-heading-m">Stripe payouts</h1>
 
+  <div>
+    <a href="/services/{{ service.external_id }}" class="govuk-back-link">Service ({{ service.name }})</a>
+  </div>
+
   <table class="govuk-table">
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
@@ -11,7 +15,7 @@
         <th class="govuk-table__header" scope="col">Amount</th>
         <th class="govuk-table__header" scope="col">Status</th>
         <th class="govuk-table__header" scope="col">Initiated</th>
-        <th class="govuk-table__header" scope="col">Arrival</th>
+        <th class="govuk-table__header" scope="col">Est. Arrival</th>
       </tr>
     </thead>
     <tbody class="govuk-table__body">
@@ -21,7 +25,7 @@
           <a class="govuk-link" href="payouts/{{payout.id}}" target="_blank">{{payout.id | truncate(10)}}</a>
           {# <pre><code>{{payout.id | truncate(10)}}</code></pre> #}
         </td>
-        <td class="govuk-table__cell">{{payout.amount | currency}}</td>
+        <td class="govuk-table__cell govuk-table__cell--numeric">{{payout.amount | currency}}</td>
         <td class="govuk-table__cell"><strong class="govuk-tag">{{payout.status}}</strong></td>
         <td class="govuk-table__cell">{{payout.created | unixDate }}</td>
         <td class="govuk-table__cell">{{payout.arrival_date | unixDate }}</td>

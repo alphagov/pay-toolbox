@@ -55,6 +55,14 @@ const connectorMethods = function connectorMethods(instance) {
     return axiosInstance.get(`/v1/api/accounts/${accountId}/stripe-account`).then(utilExtractData)
   }
 
+  const charge = function charge(accountId, externalChargeId) {
+    return axiosInstance.get(`/v1/api/accounts/${accountId}/charges/${externalChargeId}`).then(utilExtractData)
+  }
+
+  const refunds = function refunds(accountId, externalChargeId) {
+    return axiosInstance.get(`/v1/api/accounts/${accountId}/charges/${externalChargeId}/refunds`).then(utilExtractData)
+  }
+
   return {
     performanceReport,
     gatewayAccountPerformanceReport,
@@ -67,7 +75,9 @@ const connectorMethods = function connectorMethods(instance) {
     getGatewayComparison,
     getGatewayComparisons,
     resolveDiscrepancy,
-    stripe
+    stripe,
+    charge,
+    refunds
   }
 }
 

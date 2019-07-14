@@ -13,7 +13,7 @@ const dateFormatter = new Intl.DateTimeFormat('en-GB', {
 })
 
 const unixDateFormatter = new Intl.DateTimeFormat('en-GB', {
-  weekday: 'long',
+  weekday: 'short',
   month: 'short',
   day: '2-digit'
 })
