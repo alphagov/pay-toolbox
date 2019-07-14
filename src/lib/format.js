@@ -12,6 +12,12 @@ const dateFormatter = new Intl.DateTimeFormat('en-GB', {
   hour12: false
 })
 
+const unixDateFormatter = new Intl.DateTimeFormat('en-GB', {
+  weekday: 'long',
+  month: 'short',
+  day: '2-digit'
+})
+
 const toFormattedDate = function toFormattedDate(date) {
   return dateFormatter.format(date)
 }
@@ -24,4 +30,9 @@ const toCurrencyString = function toCurrencyString(total) {
   return currencyFormatter.format(total)
 }
 
-module.exports = { toFormattedDate, toCurrencyString, toFormattedDateLong }
+const unixDate = function unixDate(timestamp) {
+  const date = new Date(timestamp * 1000)
+  return unixDateFormatter.format(date)
+}
+
+module.exports = { toFormattedDate, toCurrencyString, toFormattedDateLong, unixDate }
