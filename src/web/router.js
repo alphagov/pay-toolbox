@@ -14,6 +14,7 @@ const services = require('./modules/services').default
 const transactions = require('./modules/transactions')
 const discrepancies = require('./modules/discrepancies')
 const stripe = require('./modules/stripe')
+const payouts = require('./modules/payouts/payouts.http')
 
 // @TODO(sfount) remove `default`s on update to import export syntax
 // eslint-disable-next-line import/no-unresolved
@@ -51,6 +52,9 @@ router.get('/services/:id/branding', auth.secured, services.branding, services.d
 router.post('/services/:id/branding', auth.secured, services.updateBranding)
 router.get('/services/:id/link_accounts', auth.secured, services.linkAccounts, services.detail.exceptions)
 router.post('/services/:id/link_accounts', auth.secured, services.updateLinkAccounts.http, services.updateLinkAccounts.exceptions)
+
+router.get('/services/:serviceId/gateway_account/:gatewayAccountId/payouts', auth.secured, payouts.show)
+router.get('/services/:serviceId/gateway_account/:gatewayAccountId/payouts/:payoutId', auth.secured, payouts.csv)
 
 router.get('/discrepancies/search', auth.secured, discrepancies.search)
 router.post('/discrepancies/search', auth.secured, discrepancies.getDiscrepancyReport)

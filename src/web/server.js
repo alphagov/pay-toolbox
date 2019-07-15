@@ -16,7 +16,12 @@ const errors = require('./errorHandler')
 const router = require('./router')
 
 // @FIXME(sfount) move this out of server configuration
-const { toFormattedDate, toFormattedDateLong } = require('./../lib/format')
+const {
+  toFormattedDate,
+  toFormattedDateLong,
+  toCurrencyString,
+  toUnixDate
+} = require('./../lib/format')
 
 // @FIXME(sfount) errors should be thrown and this should be properly handled if
 //                there is no manifest etc.
@@ -93,6 +98,8 @@ const configureTemplateRendering = function configureTemplateRendering(instance)
   templaterEnvironment.addGlobal('manifest', staticResourceManifest)
   templaterEnvironment.addFilter('formatDate', date => toFormattedDate(new Date(date)))
   templaterEnvironment.addFilter('formatDateLong', date => toFormattedDateLong(new Date(date)))
+  templaterEnvironment.addFilter('unixDate', timestamp => toUnixDate(timestamp))
+  templaterEnvironment.addFilter('currency', currencyInPence => toCurrencyString(currencyInPence / 100))
 
   instance.set('view engine', 'njk')
 }
