@@ -20,7 +20,7 @@ const {
   toFormattedDate,
   toFormattedDateLong,
   toCurrencyString,
-  unixDate
+  toUnixDate
 } = require('./../lib/format')
 
 // @FIXME(sfount) errors should be thrown and this should be properly handled if
@@ -98,7 +98,7 @@ const configureTemplateRendering = function configureTemplateRendering(instance)
   templaterEnvironment.addGlobal('manifest', staticResourceManifest)
   templaterEnvironment.addFilter('formatDate', date => toFormattedDate(new Date(date)))
   templaterEnvironment.addFilter('formatDateLong', date => toFormattedDateLong(new Date(date)))
-  templaterEnvironment.addFilter('unixDate', timestamp => unixDate(timestamp))
+  templaterEnvironment.addFilter('unixDate', timestamp => toUnixDate(timestamp))
   templaterEnvironment.addFilter('currency', currencyInPence => toCurrencyString(currencyInPence / 100))
 
   instance.set('view engine', 'njk')

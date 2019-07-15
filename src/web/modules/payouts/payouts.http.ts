@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 
 import * as logger from '../../../lib/logger'
 import { AdminUsers, Connector } from '../../../lib/pay-request'
-import { filenameDate } from '../../../lib/format'
+import { toISODateString } from '../../../lib/format'
 
 import { getPayoutsForAccount, buildPayoutCSVReport, getPayout } from './reconcile'
 
@@ -40,7 +40,7 @@ export async function csv(req: Request, res: Response, next: NextFunction): Prom
 
     logger.info(`Report for [gatewayAccount=${req.params.gatewayAccountId}] generated for [payoutId=${payout.id}] authorised by ${req.user.username}`)
 
-    res.set('Content-Disposition', `attachment; filename=GOVUK_PAY_PAYOUT_${filenameDate(payout.arrival_date)}.csv`)
+    res.set('Content-Disposition', `attachment; filename=GOVUK_PAY_PAYOUT_${toISODateString(payout.arrival_date)}.csv`)
     res.type('text/csv').send(csvOut)
   } catch (error) {
     next(error)

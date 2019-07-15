@@ -30,12 +30,12 @@ const toCurrencyString = function toCurrencyString(total) {
   return currencyFormatter.format(total)
 }
 
-const unixDate = function unixDate(timestamp) {
+const toUnixDate = function toUnixDate(timestamp) {
   const date = new Date(timestamp * 1000)
   return unixDateFormatter.format(date)
 }
 
-const filenameDate = function filenameDate(timestamp) {
+const toISODateString = function toISODateString(timestamp) {
   const date = new Date(timestamp * 1000)
   return date.toISOString().split('T')[0]
 }
@@ -44,6 +44,6 @@ module.exports = {
   toFormattedDate,
   toCurrencyString,
   toFormattedDateLong,
-  unixDate,
-  filenameDate
+  toUnixDate,
+  toISODateString
 }
