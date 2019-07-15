@@ -61,8 +61,11 @@ const reconcileRefund = async function reconcileRefund(
   // @TODO(sfount) matching on amount and ~time won't work scalably,
   //               the transfer ID should be recorded by Connector during capture as the refund
   //               and transfer are entirely separate processes
-  // eslint-disable-next-line no-underscore-dangle
-  const indexed = _.groupBy(refunds._embedded.refunds, 'amount')
+  const indexed = _.groupBy(
+    // eslint-disable-next-line no-underscore-dangle
+    _.filter(refunds._embedded.refunds, [ 'status', 'success' ]),
+    'amount'
+  )
   const match = indexed[Math.abs(refund.amount)]
 
   if (match.length !== 1) {
