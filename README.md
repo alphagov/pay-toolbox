@@ -6,19 +6,13 @@ Internal administrative tools service for GOV.UK Pay products.
 [![Known Vulnerabilities](https://snyk.io//test/github/alphagov/pay-toolbox/badge.svg?targetFile=package.json)](https://snyk.io//test/github/alphagov/pay-toolbox?targetFile=package.json)
 [![Code Style](https://badgen.net/badge/eslint/airbnb/ff5a5f?icon=airbnb)](https://github.com/airbnb/javascript)
 
-
 ## Running in a support role
 
-The repository is pushed to Dockerhub when changes are approved into master, to use
-the latest version in a support role, simply run:
-
-```bash
-pay toolbox start
-```
+Toolbox runs alongside other GOV.UK Pay services in `production`, `staging` and `test` environments.
 
 ## Setting up local development
 
-Getting the toolbox up and running for development.
+Getting Toolbox up and running for development.
 
 ```bash
 npm install
@@ -36,9 +30,9 @@ npm run dev
 
 | Variable                 | Description                               |
 | ------------------------ |:----------------------------------------- |
-| `NODE_ENV`               | 
-| `STRIPE_ACCOUNT_API_KEY` | 
-| `https_proxy`            | 
+| `NODE_ENV`               |
+| `STRIPE_ACCOUNT_API_KEY` |
+| `https_proxy`            |
 
 ## Development Goals/ Focus
 
@@ -63,7 +57,6 @@ this should no longer be something we have to account for with hacks
 
 ## Build process (inbox)
 
-  * Currently relies on `tsc-watch` to extend the Typescript compiler in dev mode, ideally
-    this should combine `nodemon` waiting on standard `tsc --watch`
-  * `ts-node` is used for directly interpreting unit test files, we can either use this
-    or include test files in the watch/ build process
+Currently relies on `tsc-watch` to extend the Typescript compiler in dev mode, ideally this should combine `nodemon` waiting on standard `tsc --watch`
+
+`ts-node` is used for directly interpreting unit test files, we can either use this or include test files in the watch/ build process
