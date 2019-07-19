@@ -63,6 +63,12 @@ const connectorMethods = function connectorMethods(instance) {
     return axiosInstance.get(`/v1/api/accounts/${accountId}/charges/${externalChargeId}/refunds`).then(utilExtractData)
   }
 
+  const getChargeByGatewayTransactionId = function getChargeByGatewayTransactionId(
+    gatewayTransactionId
+  ) {
+    return axiosInstance.get(`/v1/charges/gateway_transaction/${gatewayTransactionId}`)
+  }
+
   return {
     performanceReport,
     gatewayAccountPerformanceReport,
@@ -77,7 +83,8 @@ const connectorMethods = function connectorMethods(instance) {
     resolveDiscrepancy,
     stripe,
     charge,
-    refunds
+    refunds,
+    getChargeByGatewayTransactionId
   }
 }
 
