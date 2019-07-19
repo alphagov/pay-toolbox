@@ -89,7 +89,6 @@ export async function renderCSV(
   return parseAsync(data, { fields })
 }
 
-// Payment gateway ID,Amount,Status,Statement descriptor,Initiated,Est. Arrival,File reference
 export async function renderPayoutListCSV(
   payouts: Stripe.payouts.IPayout[]
 ): Promise<string> {

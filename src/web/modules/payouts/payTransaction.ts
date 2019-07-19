@@ -66,7 +66,7 @@ export async function reconcilePayment(
     transactionDate: new Date(payCharge.created_date),
     amount: payCharge.amount,
     fee: payCharge.fee,
-    net: payCharge.net_amount,
+    net: payCharge.net_amount || payCharge.amount,
     refundForPayId: null,
     gatewayId: payCharge.gateway_transaction_id
   }
