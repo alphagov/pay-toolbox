@@ -66,7 +66,7 @@ const connectorMethods = function connectorMethods(instance) {
   const getChargeByGatewayTransactionId = function getChargeByGatewayTransactionId(
     gatewayTransactionId
   ) {
-    return axiosInstance.get(`/v1/charges/gateway_transaction/${gatewayTransactionId}`)
+    return axiosInstance.get(`/v1/api/charges/gateway_transaction/${gatewayTransactionId}`)
   }
 
   return {
