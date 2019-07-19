@@ -54,6 +54,7 @@ router.get('/services/:id/link_accounts', auth.secured, services.linkAccounts, s
 router.post('/services/:id/link_accounts', auth.secured, services.updateLinkAccounts.http, services.updateLinkAccounts.exceptions)
 
 router.get('/services/:serviceId/gateway_account/:gatewayAccountId/payouts', auth.secured, payouts.show)
+router.get('/services/:serviceId/gateway_account/:gatewayAccountId/payouts/csv', auth.secured, payouts.listPayoutsCsv)
 router.get('/services/:serviceId/gateway_account/:gatewayAccountId/payouts/:payoutId', auth.secured, payouts.csv)
 
 router.get('/discrepancies/search', auth.secured, discrepancies.search)
