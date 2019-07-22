@@ -39,6 +39,15 @@
 
   <div class="toolbox-right">
     <a
+      {% if not payouts.data.length %}
+      disabled
+      {% else %}
+      href="/services/{{ service.external_id }}/gateway_account/{{ gatewayAccountId }}/payouts/csv?startingAfter={{ startingAfter }}&endingBefore={{ endingBefore}}"
+      {% endif %}
+      class="govuk-button govuk-button--secondary">
+      Export page
+    </a>
+    <a
     {% if startingAfter or (payouts.has_more and endingBefore) %}
       href="?endingBefore={{ payouts.data[0].id }}"
     {% else %}
@@ -56,5 +65,6 @@
     class="govuk-button govuk-button--secondary">
       Next
     </a>
+
   </div>
 {% endblock %}
