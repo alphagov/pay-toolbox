@@ -42,7 +42,7 @@
     "dotenv": "8.0.0",
     "express": "4.17.1",
     "govuk-frontend": "2.13.0",
-    "helmet": "3.18.0",
+    "helmet": "3.19.0",
     "https-proxy-agent": "2.2.1",
     "joi": "14.3.1",
     "json2csv": "4.5.2",
