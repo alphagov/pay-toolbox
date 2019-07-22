@@ -38,7 +38,7 @@ const verifyReconciledTotals = async function verifyReconciledTotals(
   )
 
   if (reconciledAmount !== payout.amount) {
-    throw new Error('Unable to exactly match Stripe payout to GOV.UK Pay transactions (amount)')
+    throw new Error(`Unable to exactly match Stripe payout to GOV.UK Pay transactions (amount) [reconciledAmount=${reconciledAmount}] [payoutAmount=${payout.amount}]`)
   }
 }
 

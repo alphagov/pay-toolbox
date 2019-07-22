@@ -83,7 +83,9 @@ export async function renderCSV(
       payoutEstimatedArrival: new Date(payout.arrival_date * 1000).toISOString(),
       payoutMethod: payout.type && payout.type.toUpperCase(),
       payoutStatementDescriptor:
-        payout.statement_descriptor && payout.statement_descriptor.toUpperCase()
+        payout.statement_descriptor && payout.statement_descriptor.toUpperCase(),
+      amount: transaction.type === PaymentType.PAYMENT ? transaction.amount : `-${transaction.amount}`,
+      net: transaction.type === PaymentType.PAYMENT ? transaction.net : `-${transaction.net}`
     }
   ))
   return parseAsync(data, { fields })
