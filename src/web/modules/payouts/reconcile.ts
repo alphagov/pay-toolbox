@@ -7,25 +7,13 @@ import * as _ from 'lodash'
 import * as config from '../../../config'
 import { renderCSV, PayTransactionCSVEntity, PaymentType } from './csv'
 import { reconcilePayment, reconcileRefund } from './payTransaction'
+import { getTransactionsForPayout } from './page'
 
 const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY)
 stripe.setApiVersion('2018-09-24')
 
 // @ts-ignore
 if (config.server.HTTPS_PROXY) stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
-
-const getTransactionsForPayout = async function getTransactionsForPayout(
-  stripeAccountId: string,
-  payout: Stripe.payouts.IPayout
-): Promise<Stripe.IList<Stripe.balance.IBalanceTransaction>> {
-  const options: Stripe.balance.IBalanceListOptions = {
-    limit: 100,
-    payout: payout.id,
-    expand: [ 'data.source', 'data.source.source_transfer', 'data.source.charge', 'data.source.charge.source_transfer']
-  }
-  // @ts-ignore
-  return stripe.balanceTransactions.list(options, { stripe_account: stripeAccountId })
-}
 
 const verifyReconciledTotals = async function verifyReconciledTotals(
   payout: Stripe.payouts.IPayout,
@@ -45,9 +33,9 @@ const verifyReconciledTotals = async function verifyReconciledTotals(
 const reconcileStripePayTransactions = async function reconcileStripePayTransactions(
   gatewayAccountId: string,
   payout: Stripe.payouts.IPayout,
-  transactions: Stripe.IList<Stripe.balance.IBalanceTransaction>
+  transactions: Stripe.balance.IBalanceTransaction[]
 ): Promise<PayTransactionCSVEntity[]> {
-  const grouped = _.groupBy(transactions.data, 'type')
+  const grouped = _.groupBy(transactions, 'type')
   _.minBy(grouped.payment, 'created')
   const { transfer: refunds, payment: payments } = grouped
   const reconciled: PayTransactionCSVEntity[] = []
@@ -79,7 +67,6 @@ export async function buildPayoutCSVReport(
   payout: Stripe.payouts.IPayout,
   stripeAccountId: string
 ): Promise<string> {
-  // @TODO(sfount) pages.js equivalent to not be limited by 100 transactions
   const transactions = await getTransactionsForPayout(stripeAccountId, payout)
   const payTransactions = await reconcileStripePayTransactions(
     gatewayAccountId,
