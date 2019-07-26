@@ -13,7 +13,7 @@
     "dev": "tsc-watch --noClear --onSuccess \"./scripts/run-dev\"",
     "lint": "eslint src",
     "test": "npm run test:unit",
-    "test:unit": "mocha -r ts-node/register --recursive \"./src/**/*.spec.js\"",
+    "test:unit": "mocha -r ts-node/register --recursive \"./src/**/*.spec.{js,ts}\"",
     "test:cypress": "./scripts/run-cypress",
     "build": "scripts/build && npm run build:typescript && npm run build:copy && npm run build:sass",
     "build:typescript": "tsc",
@@ -55,6 +55,7 @@
     "winston": "3.2.1"
   },
   "devDependencies": {
+    "@types/chai": "4.1.7",
     "@types/cls-hooked": "4.3.0",
     "@types/cookie-session": "2.0.36",
     "@types/csurf": "1.9.35",
@@ -62,6 +63,7 @@
     "@types/express-flash": "0.0.0",
     "@types/json2csv": "4.5.0",
     "@types/lodash": "4.14.136",
+    "@types/mocha": "5.2.7",
     "@types/node": "12.0.4",
     "@types/passport": "1.0.0",
     "@types/stripe": "6.25.8",
