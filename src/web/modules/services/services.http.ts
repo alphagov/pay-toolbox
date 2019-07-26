@@ -4,6 +4,7 @@ import * as logger from '../../../lib/logger'
 import { AdminUsers } from '../../../lib/pay-request'
 import { Service } from '../../../lib/pay-request/types/adminUsers'
 import { wrapAsyncErrorHandler } from '../../../lib/routes'
+import { sanitiseCustomBrandingURL } from './branding'
 import GatewayAccountRequest from './gatewayAccountRequest.model'
 
 const overview = async function overview(req: Request, res: Response): Promise<void> {
@@ -34,7 +35,7 @@ const branding = async function branding(req: Request, res: Response): Promise<v
 const updateBranding = async function updateBranding(req: Request, res: Response): Promise<void> {
   const { id } = req.params
 
-  await AdminUsers.updateServiceBranding(id, req.body.image_url, req.body.css_url)
+  await AdminUsers.updateServiceBranding(id, sanitiseCustomBrandingURL(req.body.image_url), sanitiseCustomBrandingURL(req.body.css_url))
 
   logger.info(`Updated service branding for ${id}`)
   req.flash('info', `Service ${id} branding successfully replaced`)
