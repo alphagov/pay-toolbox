@@ -7,7 +7,8 @@ const expectedConnectedServicesEnvironmentValues = {
   CONNECTOR_URL: Joi.string().required(),
   DIRECT_DEBIT_CONNECTOR_URL: Joi.string().required(),
   PRODUCTS_URL: Joi.string().required(),
-  PUBLIC_AUTH_URL: Joi.string().required()
+  PUBLIC_AUTH_URL: Joi.string().required(),
+  LEDGER_URL: Joi.string().required()
 }
 
 const { error, value: validatedConnectedServicesEnvironmentValues } = Joi.validate(

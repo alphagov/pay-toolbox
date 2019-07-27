@@ -12,6 +12,7 @@ CONNECTOR_URL=http://localhost:9003
 DIRECT_DEBIT_CONNECTOR_URL=http://localhost:9004
 PRODUCTS_URL=http://localhost:9005
 PUBLIC_AUTH_URL=http://localhost:9006
+LEDGER_URL=http://localhost:9007
 EOM
 
 read -r -d '' URL_TARGET_TUNNEL << EOM
@@ -20,6 +21,7 @@ CONNECTOR_URL=https://localhost:9003
 DIRECT_DEBIT_CONNECTOR_URL=https://localhost:9004
 PRODUCTS_URL=https://localhost:9005
 PUBLIC_AUTH_URL=https://localhost:9006
+LEDGER_URL=https://localhost:9007
 EOM
 
 read -r -d '' URL_TARGET_DOCKER_TUNNEL << EOM
@@ -28,6 +30,7 @@ CONNECTOR_URL=https://docker.for.mac.localhost:9003
 DIRECT_DEBIT_CONNECTOR_URL=https://docker.for.mac.localhost:9004
 PRODUCTS_URL=https://docker.for.mac.localhost:9005
 PUBLIC_AUTH_URL=https://docker.for.mac.localhost:9006
+LEDGER_URL=https://docker.for.mac.localhost:9007
 EOM
 
 # @TODO(sfount) more consice IFs
