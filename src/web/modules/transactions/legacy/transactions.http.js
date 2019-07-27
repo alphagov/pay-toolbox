@@ -1,15 +1,15 @@
-const logger = require('./../../../lib/logger')
+const logger = require('../../../../lib/logger')
 
-const { Connector } = require('./../../../lib/pay-request')
-const { ValidationError } = require('./../../../lib/errors')
-const { wrapAsyncErrorHandlers } = require('./../../../lib/routes')
+const { Connector } = require('../../../../lib/pay-request')
+const { ValidationError } = require('../../../../lib/errors')
+const { wrapAsyncErrorHandlers } = require('../../../../lib/routes')
 
 const TransactionSearch = require('./transactionSearch.model')
 
 const search = async function search(req, res) {
   const recovered = Object.assign({}, req.session.recovered)
   delete req.session.recovered
-  res.render('transactions/search', { messages: req.flash('error'), recovered, csrf: req.csrfToken() })
+  res.render('transactions/legacy/search', { messages: req.flash('error'), recovered, csrf: req.csrfToken() })
 }
 
 const getChargeIdFromReference = async function getChargeIdFromReference(accountId, reference) {
@@ -38,7 +38,7 @@ const searchTransaction = async function searchTransaction(req, res) {
   const response = await Connector.searchTransactionsByChargeId(searchParams.account_id, chargeId)
 
   logger.info(`Successful search for ${searchParams.search_string} on account ${searchParams.account_id}`)
-  res.render('transactions/search_results', { events: response.events, chargeId })
+  res.render('transactions/legacy/search_results', { events: response.events, chargeId })
 }
 
 const handlers = { search, searchTransaction }

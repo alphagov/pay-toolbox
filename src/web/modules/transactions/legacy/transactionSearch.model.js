@@ -1,6 +1,6 @@
 const Joi = require('joi')
 
-const { ValidationError } = require('./../../../lib/errors')
+const { ValidationError } = require('../../../../lib/errors')
 
 const schema = {
   account_id: Joi.string().required(),

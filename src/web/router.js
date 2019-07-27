@@ -11,7 +11,7 @@ const landing = require('./modules/landing/landing.http')
 const statistics = require('./modules/statistics/statistics.http')
 const gatewayAccounts = require('./modules/gateway_accounts').default
 const services = require('./modules/services').default
-const transactions = require('./modules/transactions')
+const transactions = require('./modules/transactions/legacy')
 const discrepancies = require('./modules/discrepancies')
 const stripe = require('./modules/stripe')
 const payouts = require('./modules/payouts/payouts.http')
@@ -61,8 +61,8 @@ router.get('/discrepancies/search', auth.secured, discrepancies.search)
 router.post('/discrepancies/search', auth.secured, discrepancies.getDiscrepancyReport)
 router.post('/discrepancies/resolve/:id', auth.secured, discrepancies.resolveDiscrepancy)
 
-router.get('/transactions/search', auth.secured, transactions.search)
-router.post('/transactions/search', auth.secured, transactions.searchTransaction.http, transactions.searchTransaction.exceptions)
+router.get('/charges/search', auth.secured, transactions.search)
+router.post('/charges/search', auth.secured, transactions.searchTransaction.http, transactions.searchTransaction.exceptions)
 
 router.get('/stripe/create', auth.secured, stripe.create)
 router.post('/stripe/create', auth.secured, stripe.createAccount.http, stripe.createAccount.exceptions)
