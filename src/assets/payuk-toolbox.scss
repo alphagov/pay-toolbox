@@ -77,3 +77,55 @@
 .avatar {
   border-radius: 3px;
 }
+
+.toolbox_header__offset {
+  padding-left: 0px;
+}
+
+.payment__cell {
+  border-bottom: none;
+  padding-bottom: 0px;
+}
+
+.payment__header {
+  border-bottom: 1px solid $govuk-border-colour;
+  padding-bottom: 10px;
+  margin-bottom: 5px;
+}
+
+.center {
+  width: 100%;
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.bottom-spacer {
+  margin-bottom: 30px;
+}
+
+.border-right {
+  border-right: 1px solid $govuk-border-colour;
+}
+
+.status-amount {
+  vertical-align: middle;
+}
+
+.status-tag {
+  border-radius: 10px;
+  background-color: govuk-colour("turquoise");
+  text-transform: none;
+  letter-spacing: inherit;
+  margin-left: 5px;
+}
+
+.status-inline-spacer {
+  margin-bottom: 15px;
+}
+
+.status-spacer {
+  margin-bottom: 40px;
+}
