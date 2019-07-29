@@ -30,12 +30,19 @@ const PUBLICAUTH = {
   target: services.PUBLIC_AUTH_URL
 }
 
+const LEDGER = {
+  key: 'LEDGER',
+  name: 'Ledger',
+  target: services.LEDGER_URL
+}
+
 const data = [
   ADMINUSERS,
   CONNECTOR,
   DIRECTDEBITCONNECTOR,
   PRODUCTS,
-  PUBLICAUTH
+  PUBLICAUTH,
+  LEDGER
 ]
 
 const keyIndex = data.reduce((index, service) => {
@@ -54,5 +61,5 @@ const lookup = async function lookup(serviceKey) {
 }
 
 module.exports = {
-  data, lookup, ADMINUSERS, CONNECTOR, DIRECTDEBITCONNECTOR, PRODUCTS, PUBLICAUTH
+  data, lookup, ADMINUSERS, CONNECTOR, DIRECTDEBITCONNECTOR, PRODUCTS, PUBLICAUTH, LEDGER
 }

@@ -112,8 +112,9 @@ const Connector = buildPayBaseClient(serviceStore.CONNECTOR)
 const DirectDebitConnector = buildPayBaseClient(serviceStore.DIRECTDEBITCONNECTOR)
 const Products = buildPayBaseClient(serviceStore.PRODUCTS)
 const PublicAuth = buildPayBaseClient(serviceStore.PUBLICAUTH)
+const Ledger = buildPayBaseClient(serviceStore.LEDGER)
 
-const clients = [ AdminUsers, Connector, DirectDebitConnector, Products, PublicAuth ]
+const clients = [ AdminUsers, Connector, DirectDebitConnector, Products, PublicAuth, Ledger ]
 
 // make a GET request to all supported clients - for now supress throwing the
 // error upwards as the calling code probably wants all results
