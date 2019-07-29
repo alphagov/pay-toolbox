@@ -3,21 +3,21 @@
 {% extends "layout/layout.njk" %}
 
 {% block main %}
-  <h1 class="govuk-heading-m">Find a service</h1>
+  <span class="govuk-caption-m">GOV.UK Pay platform</span>
+  <h1 class="govuk-heading-m">Find a transaction</h1>
 
-  <form method="POST" action="/services/search">
+  <form method="POST" action="/transactions/search">
     {{ govukInput({
       id: "id",
       name: "id",
-      label: { text: "Identifier" }
-      hint: { text: "Supports: ledger transaction ID, gateway ID, payment reference, ledger event ID." },
+      label: { text: "Search" }
       })
-    }}
+      }}
 
     {{ govukButton({
       text: "Search"
       })
-    }}
+      }}
 
     <input type="hidden" name="_csrf" value="{{ csrf }}">
   </form>
