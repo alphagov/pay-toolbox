@@ -11,4 +11,9 @@ describe('Custom branding utilities', () => {
     const url = '/some/absolute/url'
     expect(sanitiseCustomBrandingURL(url)).to.equal(url)
   })
+
+  it('Just returns nothing if no values are passed, no preceding \/ added', () => {
+    const url = ''
+    expect(sanitiseCustomBrandingURL(url)).to.equal('')
+  })
 })
