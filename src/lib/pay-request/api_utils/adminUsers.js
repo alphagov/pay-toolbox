@@ -126,6 +126,21 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
 
+  const toggleTerminalStateRedirectFlag = async function toggleTerminalStateRedirectFlag(
+    id,
+    status
+  ) {
+    const path = `v1/api/services/${id}`
+    const targetService = await service(id)
+
+    const payload = {
+      op: 'replace',
+      path: 'redirect_to_service_immediately_on_terminal_state',
+      value: !targetService.redirect_to_service_immediately_on_terminal_state
+    }
+    return axiosInstance.patch(path, payload).then(utilExtractData)
+  }
+
   return {
     user,
     service,
@@ -140,7 +155,8 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     updateUserEmail,
     toggleUserEnabled,
     removeUserFromService,
-    resetUserSecondFactor
+    resetUserSecondFactor,
+    toggleTerminalStateRedirectFlag
   }
 }
 
