@@ -29,6 +29,10 @@
         <td class="govuk-table__cell">{{service.current_go_live_stage | upper }}</td>
       </tr>
       <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Redirect to service on terminal state</th>
+        <td class="govuk-table__cell">{{service.redirect_to_service_immediately_on_terminal_state | string | capitalize }}</td>
+      </tr>
+      <tr class="govuk-table__row">
         <th class="govuk-table__header" scope="col">Gateway accounts</th>
         <td class="govuk-table__cell">
           {% for id in service.gateway_account_ids %}
