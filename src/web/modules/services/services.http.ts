@@ -84,6 +84,20 @@ const searchRequest = async function searchRequest(req: Request, res: Response):
   res.redirect(`/services/${req.body.id}`)
 }
 
+const toggleTerminalStateRedirectFlag = async function toggleTerminalStateRedirectFlag(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const serviceId = req.params.id
+
+  const serviceResult = await AdminUsers.toggleTerminalStateRedirectFlag(serviceId)
+  const { redirect_to_service_immediately_on_terminal_state: state } = serviceResult
+  logger.info(`Toggled redirect to service on terminal state flag to ${state} for service ${serviceId}`, { externalId: serviceId })
+
+  req.flash('info', `Redirect to service on terminal state flag set to ${state} for service`)
+  res.redirect(`/services/${serviceId}`)
+}
+
 export default {
   overview: wrapAsyncErrorHandler(overview),
   detail: wrapAsyncErrorHandler(detail),
@@ -92,5 +106,6 @@ export default {
   linkAccounts: wrapAsyncErrorHandler(linkAccounts),
   updateLinkAccounts: wrapAsyncErrorHandler(updateLinkAccounts),
   search: wrapAsyncErrorHandler(search),
-  searchRequest: wrapAsyncErrorHandler(searchRequest)
+  searchRequest: wrapAsyncErrorHandler(searchRequest),
+  toggleTerminalStateRedirectFlag: wrapAsyncErrorHandler(toggleTerminalStateRedirectFlag)
 }

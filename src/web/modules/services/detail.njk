@@ -29,6 +29,10 @@
         <td class="govuk-table__cell">{{service.current_go_live_stage | upper }}</td>
       </tr>
       <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Redirect to service on terminal state</th>
+        <td class="govuk-table__cell">{{service.redirect_to_service_immediately_on_terminal_state | string | capitalize }}</td>
+      </tr>
+      <tr class="govuk-table__row">
         <th class="govuk-table__header" scope="col">Gateway accounts</th>
         <td class="govuk-table__cell">
           {% for id in service.gateway_account_ids %}
@@ -112,6 +116,16 @@
     }}
   </div>
 
+  <div>
+    <h1 class="govuk-heading-s">Toggle redirect to service on terminal state flag</h1>
+    <p class="govuk-body">Enabling this flag for a service will change the payment flow across all gateway accounts, this should never be done without consulting the service.</p>
+    <p class="govuk-body">Reference the <a <a class="govuk-link" href="https://docs.payments.service.gov.uk/optional_features/use_your_own_error_pages/#use-your-own-payment-failure-pages">use your own error pages</a> documentation for more details.</p>
+    {{ govukButton({
+      text: "Toggle redirect to service on terminal state flag",
+      classes: "govuk-button--warning",
+      href: "/services/" + serviceId + "/toggle_terminal_state_redirect"
+      })
+    }}
   <div>
     <pre><code>{{ service | dump('\t') }}</code></pre>
     <pre><code>{{ users | dump('\t') }}</code></pre>

@@ -29,7 +29,13 @@
       </tr>
       <tr class="govuk-table__row">
         <th class="govuk-table__header" scope="col">Description</th>
-        <td class="govuk-table__cell">{{ account.description }}</td>
+        <td class="govuk-table__cell">
+          {% if account.description %}
+          {{ account.description }}
+          {% else %}
+          <i>(None set)</i>
+          {% endif %}
+        </td>
       </tr>
       <tr class="govuk-table__row">
           <th class="govuk-table__header" scope="col">Payment method</th>
@@ -47,7 +53,13 @@
       </tr>
       <tr class="govuk-table__row">
         <th class="govuk-table__header" scope="col">Analytics</th>
-        <td class="govuk-table__cell"><code>{{ account.analytics_id }}</code></td>
+        <td class="govuk-table__cell">
+          {% if account.analytics_id %}
+          <code>{{ account.analytics_id }}</code>
+          {% else %}
+          <i>(None set)</i>
+          {% endif %}
+        </td>
       </tr>
       {% if account.toggle_3ds != undefined %}
           <tr class="govuk-table__row">

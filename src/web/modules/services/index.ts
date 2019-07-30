@@ -15,5 +15,6 @@ export default {
     exceptions: exceptions.updateLinkAccounts
   },
   search: http.search,
-  searchRequest: http.searchRequest
+  searchRequest: http.searchRequest,
+  toggleTerminalStateRedirectFlag: http.toggleTerminalStateRedirectFlag
 }
