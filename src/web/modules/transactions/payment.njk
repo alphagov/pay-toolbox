@@ -1,3 +1,4 @@
+{% from "transactions/status.macro.njk" import status %}
 {% extends "layout/layout.njk" %}
 
 {% block main %}
@@ -6,23 +7,26 @@
   <h1 class="govuk-heading-m">Payment</h1>
 
   <div class="status-inline-spacer">
-  <span class="govuk-body-l status-amount">{{ transaction.amount | currency }}</span>
-  <strong class="govuk-tag status-tag">Succeeded</strong>
+  <span class="govuk-body-l status-amount">{{ (transaction.total_amount or transaction.amount) | currency }}</span>
+
+  {{ status(transaction.state.status, transaction.state.finished) }}
   </div>
 
-  <div class="govuk-grid-row status-spacer">
-    <div class="govuk-grid-column-one-quarter border-right">
+  <div class="govuk-grid-row status-spacer payment-detail-row">
+    <div class="govuk-grid-column-one-quarter">
       <span class="govuk-caption-m">Date</span>
       <span class="govuk-body">{{ transaction.created_date | formatDate }}</span>
     </div>
-    <div class="govuk-grid-column-one-quarter border-right">
+    {% if transaction.card_details %}
+    <div class="govuk-grid-column-one-quarter">
       <span class="govuk-caption-m">Payee</span>
       <span class="govuk-body">{{ transaction.card_details.cardholder_name }}</span>
     </div>
     <div class="govuk-grid-column-one-quarter">
       <span class="govuk-caption-m">Payment method</span>
-      <span class="govuk-body">{{ transaction.card_details.card_brand }} <strong>••••</strong> {{ transaction.card_details.last_digits_card_number }}</span>
+      <span class="govuk-body">{{ transaction.card_details.card_brand | capitalize }} <strong>••••</strong> {{ transaction.card_details.last_digits_card_number }}</span>
     </div>
+    {% endif %}
   </div>
 
   <div>
@@ -40,7 +44,7 @@
         <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Amount</span></th>
           <td class="govuk-table__cell payment__cell">
-            <span>{{ transaction.total_amount | currency }} </span>
+            <span>{{ (transaction.total_amount or transaction.amount) | currency }} </span>
             {% if transaction.corperate_surcharge %}
             <span>(including {{ transaction.corperate_surcharge | currency }}) corperate surcharge</span>
             {% endif %}
@@ -111,22 +115,24 @@
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Payment provider</span></th>
           <td class="govuk-table__cell payment__cell">{{ transaction.payment_provider | capitalize }}</td>
         </tr>
+        {% if transaction.gateway_transaction_id %}
         <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Provider transaction</span></th>
           <td class="govuk-table__cell payment__cell">{{ transaction.gateway_transaction_id }}</td>
         </tr>
+        {% endif %}
         <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Delayed capture</span></th>
           <td class="govuk-table__cell payment__cell">{{ transaction.delayed_capture | string | capitalize }}</td>
         </tr>
-        <tr class="govuk-table__row">
+        <!-- tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Authorise duration</span></th>
           <td class="govuk-table__cell payment__cell">20ms</td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Capture duration</span></th>
           <td class="govuk-table__cell payment__cell">5s</td>
-        </tr>
+        </tr -->
       </tobdy>
     </table>
   </div>

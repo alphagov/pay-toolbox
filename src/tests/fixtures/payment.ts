@@ -1,8 +1,8 @@
 import {
   Transaction,
-  TransactionStatus,
   PaymentProvider,
-  CardBrand
+  CardBrand,
+  TransactionStatus
 } from 'ledger'
 
 const transaction: Transaction = {

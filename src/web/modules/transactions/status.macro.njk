@@ -1,0 +1,15 @@
+{% macro status(state, final) %}
+{# @TODO(sfount) this map could be done a lot better with more time + standard definitions being used #}
+{% set success = ['success'] %}
+{% set failed = ['failed', 'cancelled', 'error'] %}
+
+<strong
+  class="govuk-tag
+    {% if final and success.includes(state) %} status-success {% endif %}
+    {% if final and failed.includes(state) %} status-failed {% endif %}
+    {% if not final %} status-in-progress {% endif %}
+     status-tag">
+  {{ state | capitalize }}
+</strong>
+
+{% endmacro %}

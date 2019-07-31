@@ -25,6 +25,8 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     const transaction = await Ledger.transaction(req.params.id) as Transaction
     const account = await Connector.account(transaction.gateway_account_id)
     const service = await AdminUsers.gatewayAccountServices(transaction.gateway_account_id)
+
+    console.log(JSON.stringify(transaction))
     res.render('transactions/payment', { transaction, account, service })
   } catch (error) {
     next(error)
