@@ -2,8 +2,6 @@
 {% extends "layout/layout.njk" %}
 
 {% block main %}
-  {# <span class="govuk-caption-m">Payment</span> #}
-  {# <h1 class="govuk-heading-m">{{ transaction.reference }}</h1> #}
   <h1 class="govuk-heading-m">Payment</h1>
 
   <div class="status-inline-spacer">
@@ -45,8 +43,8 @@
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Amount</span></th>
           <td class="govuk-table__cell payment__cell">
             <span>{{ (transaction.total_amount or transaction.amount) | currency }} </span>
-            {% if transaction.corperate_surcharge %}
-            <span>(including {{ transaction.corperate_surcharge | currency }}) corperate surcharge</span>
+            {% if transaction.corporate_surcharge %}
+            <span>(including {{ transaction.corporate_surcharge | currency }}) corporate surcharge</span>
             {% endif %}
           </td>
         </tr>
@@ -125,14 +123,6 @@
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Delayed capture</span></th>
           <td class="govuk-table__cell payment__cell">{{ transaction.delayed_capture | string | capitalize }}</td>
         </tr>
-        <!-- tr class="govuk-table__row">
-          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Authorise duration</span></th>
-          <td class="govuk-table__cell payment__cell">20ms</td>
-        </tr>
-        <tr class="govuk-table__row">
-          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Capture duration</span></th>
-          <td class="govuk-table__cell payment__cell">5s</td>
-        </tr -->
       </tobdy>
     </table>
   </div>
@@ -147,7 +137,38 @@
 
   <div>
     <h1 class="govuk-heading-s payment__header">Ledger events</h1>
-    <div class="center bottom-spacer"><span class="govuk-caption-m">Events not implemented</span></div>
+
+    <table class="govuk-table">
+          <tbody class="govuk-table__body">
+    {% for event in events %}
+
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">{{ event.event_type }}</td>
+          <td class="govuk-table__cell">{{ event.timestamp | formatDate}}</td>
+        </tr>
+
+        {% if event.data %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell" colspan="2">
+            <details class="govuk-details" data-module="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                  Event details
+                </span>
+              </summary>
+              <div class="govuk-details__text">
+                <pre><code>{{ event.data | dump('\t') }}</code></pre>
+              </div>
+            </details>
+          </td>
+        </tr>
+        {% endif %}
+    {% else %}
+      <!-- @TODO(sfount) use a row here -->
+      <div class="center bottom-spacer"><span class="govuk-caption-m">No events</span></div>
+    {% endfor %}
+    </tbody>
+    </table>
   </div>
 
 {% endblock %}
