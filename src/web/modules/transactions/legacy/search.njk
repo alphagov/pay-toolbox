@@ -15,7 +15,7 @@
   }}
   {% endfor %}
 
-  <form method="POST" action="/transactions/search">
+  <form method="POST" action="/charges/search">
       <div class="govuk-form-group">
         <label class="govuk-label">Gateway account ID</label>
         <input class="govuk-input" id="account_id" name="account_id" type="number" value="{{ recovered.account_id }}" autocomplete="off">
