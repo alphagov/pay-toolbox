@@ -131,5 +131,5 @@ const broadcast = async function broadcast(path) {
 }
 
 module.exports = {
-  broadcast, AdminUsers, Connector, PublicAuth, Products, DirectDebitConnector
+  broadcast, AdminUsers, Connector, PublicAuth, Products, DirectDebitConnector, Ledger
 }
