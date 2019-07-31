@@ -147,7 +147,38 @@
 
   <div>
     <h1 class="govuk-heading-s payment__header">Ledger events</h1>
-    <div class="center bottom-spacer"><span class="govuk-caption-m">Events not implemented</span></div>
+
+    <table class="govuk-table">
+          <tbody class="govuk-table__body">
+    {% for event in events %}
+
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">{{ event.event_type }}</td>
+          <td class="govuk-table__cell">{{ event.timestamp | formatDate}}</td>
+        </tr>
+
+        {% if event.data %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell" colspan="2">
+            <details class="govuk-details" data-module="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                  Event details
+                </span>
+              </summary>
+              <div class="govuk-details__text">
+                <pre><code>{{ event.data | dump('\t') }}</code></pre>
+              </div>
+            </details>
+          </td>
+        </tr>
+        {% endif %}
+    {% else %}
+      <!-- @TODO(sfount) use a row here -->
+      <div class="center bottom-spacer"><span class="govuk-caption-m">No events</span></div>
+    {% endfor %}
+    </tbody>
+    </table>
   </div>
 
 {% endblock %}
