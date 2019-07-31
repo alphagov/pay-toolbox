@@ -106,7 +106,7 @@
   margin-bottom: 30px;
 }
 
-.border-right {
+.payment-detail-row div:not(:last-child) {
   border-right: 1px solid $govuk-border-colour;
 }
 
@@ -116,10 +116,22 @@
 
 .status-tag {
   border-radius: 10px;
-  background-color: govuk-colour("turquoise");
   text-transform: none;
   letter-spacing: inherit;
   margin-left: 5px;
+}
+
+.status-success {
+  background-color: govuk-colour("turquoise");
+}
+
+.status-failed {
+  background-color: govuk-colour("orange");
+}
+
+.status-in-progress {
+  background-color:	#6f777b;
+  color: 	#f3f2f1;
 }
 
 .status-inline-spacer {

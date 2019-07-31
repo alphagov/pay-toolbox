@@ -8,7 +8,7 @@ declare module 'ledger' {
   }
 
   export enum TransactionStatus {
-    'success'
+    success
   }
 
   interface BillingAddress {

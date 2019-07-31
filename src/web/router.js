@@ -84,6 +84,8 @@ router.get('/users/:id/toggle', auth.secured, users.toggleUserEnabled)
 router.get('/users/:userId/service/:serviceId/delete', auth.secured, users.removeUserFromService)
 router.get('/users/:id/2FA/reset', auth.secured, users.resetUserSecondFactor)
 
+router.get('/transactions/search', auth.secured, transactions.searchPage)
+router.post('/transactions/search', auth.secured, transactions.search)
 router.get('/transactions/:id', auth.secured, transactions.show)
 
 router.get('/logout', auth.secured, auth.revokeSession)
