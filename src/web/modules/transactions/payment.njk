@@ -2,8 +2,6 @@
 {% extends "layout/layout.njk" %}
 
 {% block main %}
-  {# <span class="govuk-caption-m">Payment</span> #}
-  {# <h1 class="govuk-heading-m">{{ transaction.reference }}</h1> #}
   <h1 class="govuk-heading-m">Payment</h1>
 
   <div class="status-inline-spacer">
@@ -45,8 +43,8 @@
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Amount</span></th>
           <td class="govuk-table__cell payment__cell">
             <span>{{ (transaction.total_amount or transaction.amount) | currency }} </span>
-            {% if transaction.corperate_surcharge %}
-            <span>(including {{ transaction.corperate_surcharge | currency }}) corperate surcharge</span>
+            {% if transaction.corporate_surcharge %}
+            <span>(including {{ transaction.corporate_surcharge | currency }}) corporate surcharge</span>
             {% endif %}
           </td>
         </tr>
@@ -125,14 +123,6 @@
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Delayed capture</span></th>
           <td class="govuk-table__cell payment__cell">{{ transaction.delayed_capture | string | capitalize }}</td>
         </tr>
-        <!-- tr class="govuk-table__row">
-          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Authorise duration</span></th>
-          <td class="govuk-table__cell payment__cell">20ms</td>
-        </tr>
-        <tr class="govuk-table__row">
-          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Capture duration</span></th>
-          <td class="govuk-table__cell payment__cell">5s</td>
-        </tr -->
       </tobdy>
     </table>
   </div>

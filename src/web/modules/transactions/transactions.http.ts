@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/prefer-default-export */
 import { Request, Response, NextFunction } from 'express'
@@ -27,7 +28,10 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     const account = await Connector.account(transaction.gateway_account_id)
     const service = await AdminUsers.gatewayAccountServices(transaction.gateway_account_id)
 
-    const transactionEvents = await Ledger.events(transaction.charge_id, transaction.gateway_account_id)
+    const transactionEvents = await Ledger.events(
+      transaction.charge_id,
+      transaction.gateway_account_id
+    )
     const events = transactionEvents.events
       .map((event: any) => {
         const data = JSON.parse(event.data)
