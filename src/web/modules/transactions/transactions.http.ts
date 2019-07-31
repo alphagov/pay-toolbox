@@ -2,14 +2,15 @@
 import { Request, Response, NextFunction } from 'express'
 import { Transaction } from 'ledger'
 
-import { Ledger } from '../../../lib/pay-request'
+import { Ledger, Connector, AdminUsers } from '../../../lib/pay-request'
 import * as logger from '../../../lib/logger'
 
 export async function show(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const transaction = await Ledger.transaction(req.params.id) as Transaction
-    logger.info(`Fetched transaction ${transaction.charge_id} from Ledger`)
-    res.status(200).send()
+    const account = await Connector.account(transaction.gateway_account_id)
+    const service = await AdminUsers.gatewayAccountServices(transaction.gateway_account_id)
+    res.render('transactions/payment', { transaction, account, service })
   } catch (error) {
     next(error)
   }
