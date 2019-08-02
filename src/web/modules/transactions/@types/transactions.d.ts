@@ -57,6 +57,6 @@ declare module 'ledger' {
     delayed_capture: boolean;
     gateway_transaction_id: string;
     refund_summary: RefundSummary;
-    charge_id: string;
+    transaction_id: string;
   }
 }
