@@ -29,7 +29,7 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     const service = await AdminUsers.gatewayAccountServices(transaction.gateway_account_id)
 
     const transactionEvents = await Ledger.events(
-      transaction.charge_id,
+      transaction.transaction_id,
       transaction.gateway_account_id
     )
     const events = transactionEvents.events
