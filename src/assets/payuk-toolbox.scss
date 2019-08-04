@@ -141,3 +141,21 @@
 .status-spacer {
   margin-bottom: 40px;
 }
+
+.row-invalid {
+  background-color: govuk-colour("orange");
+ }
+
+ .fixed-cell {
+   width: 200px;
+   max-width: 200px;
+ }
+
+ .missing-text {
+   color: govuk-colour("red");
+ }
+
+ .extra-text {
+   color: govuk-colour("green");
+ }
+
