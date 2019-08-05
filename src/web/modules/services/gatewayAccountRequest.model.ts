@@ -1,18 +1,18 @@
 import {
   IsNotEmpty,
-  IsNumber
+  IsString
 } from 'class-validator'
 
 import Validated from '../common/validated'
 
 class GatewayAccountRequest extends Validated {
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  public id: number;
+  public id: string;
 
   public constructor(formValues: { [key: string]: string }) {
     super()
-    this.id = Number(formValues.id)
+    this.id = formValues.id
     this.validate()
   }
 }
