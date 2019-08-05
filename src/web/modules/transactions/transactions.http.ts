@@ -34,8 +34,7 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     )
     const events = transactionEvents.events
       .map((event: any) => {
-        const data = JSON.parse(event.data)
-        event.data = Object.keys(data).length ? data : null
+        event.data = Object.keys(event.data).length ? event.data : null
         return event
       })
     res.render('transactions/payment', {
