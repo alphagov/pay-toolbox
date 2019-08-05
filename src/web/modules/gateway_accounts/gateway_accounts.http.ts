@@ -78,7 +78,9 @@ const writeAccount = async function writeAccount(req: Request, res: Response): P
   let gatewayAccountIdDerived: string
   let createdAccount: object
   if (account.isDirectDebit) {
-    const directDebitAccount: DirectDebitGatewayAccount = await DirectDebitConnector.createAccount(account.formatPayload())
+    const directDebitAccount: DirectDebitGatewayAccount = await DirectDebitConnector.createAccount(
+      account.formatPayload()
+    )
     createdAccount = directDebitAccount
     gatewayAccountIdDerived = directDebitAccount.gateway_account_external_id
   } else {
@@ -97,13 +99,19 @@ const writeAccount = async function writeAccount(req: Request, res: Response): P
     )
     logger.info(`Service ${linkedService} linked to new Gateway Account ${gatewayAccountIdDerived}`)
 
-    await AdminUsers.updateServiceGoLiveStatus(linkedService, 'LIVE')
-    logger.info(`Service ${linkedService} 'current_go_live_stage' updated to 'LIVE'`)
+    if (account.isLive()) {
+      await AdminUsers.updateServiceGoLiveStatus(linkedService, 'LIVE')
+      logger.info(`Service ${linkedService} 'current_go_live_stage' updated to 'LIVE'`)
+    }
   }
 
   // note payment_provider is not returned in the object returned from createAccount
   res.render('gateway_accounts/createSuccess', {
-    account: createdAccount, linkedService, gatewayAccountIdDerived, provider: account.provider
+    account: createdAccount,
+    linkedService,
+    gatewayAccountIdDerived,
+    provider: account.provider,
+    isLive: account.isLive()
   })
 }
 

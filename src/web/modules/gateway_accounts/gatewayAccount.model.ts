@@ -15,7 +15,7 @@ const liveStatus = {
 
 const sandbox = {
   card: 'card-sandbox',
-  directDebit: 'sandbox'
+  directDebit: 'direct-debit-sandbox'
 }
 
 const cardProviders = {
@@ -102,10 +102,12 @@ class GatewayAccount extends Validated {
 
   // formats gateway account according to the Connector patch standard
   public formatPayload(): GatewayAccountRequest {
+    if (Object.values(sandbox).includes(this.provider)) this.provider = 'sandbox'
+
     const payload: GatewayAccountRequest = {
       payment_provider: this.provider,
       description: this.description,
-      type: this.live === 'live' ? 'live' : 'test',
+      type: this.isLive() ? 'live' : 'test',
       service_name: this.serviceName,
       analytics_id: this.analyticsId,
       requires_3ds: this.provider === 'stripe' ? 'true' : 'false'
@@ -117,6 +119,10 @@ class GatewayAccount extends Validated {
       }
     }
     return payload
+  }
+
+  public isLive(): boolean {
+    return this.live === liveStatus.live
   }
 }
 
