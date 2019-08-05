@@ -130,7 +130,7 @@ describe('Gateway Accounts', () => {
         const details = _.cloneDeep(validGatewayAccountDetails)
         details.live = 'live'
         details.paymentMethod = 'direct-debit'
-        details.provider = 'sandbox'
+        details.provider = 'direct-debit-sandbox'
 
         // eslint-disable-next-line no-new
         new GatewayAccount(details)

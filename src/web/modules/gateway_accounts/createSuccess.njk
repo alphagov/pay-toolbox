@@ -26,11 +26,11 @@ A {{ account.type | upper }} Gateway account has been created through Admin User
   {% endif %}
 
   {% if linkedService %}
-	<li>(System Link) Service ‘{{ account.service_name }}’ linked to new Gateway account ({{ gatewayAccountIdDerived }})</li>
+	<li>(System Link) Service linked to new Gateway account ({{ gatewayAccountIdDerived }})</li>
 	{% endif %}
 
 	{% if isLive %}
-	<li>Service ‘{{ account.service_name }}’ go live status updated to ‘LIVE’</li>
+	<li>Service go live status updated to ‘LIVE’</li>
 	{% endif %}
 
 </ol>
@@ -38,7 +38,9 @@ A {{ account.type | upper }} Gateway account has been created through Admin User
 <h2 class="govuk-heading-m">Relevant resources</h2>
 <ul class="govuk-list">
 	<li><a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ gatewayAccountIdDerived }}">{{ account.type | upper }} Gateway account ({{ gatewayAccountIdDerived }}) details</a></li>
-	<li><a class="govuk-link govuk-link--no-visited-state" href="/services/{{ linkedService }}">{{ account.service_name }} details</a></li>
+	{% if linkedService %}
+	<li><a class="govuk-link govuk-link--no-visited-state" href="/services/{{ linkedService }}">Linked service details</a></li>
+	{% endif %}
 </ul>
 
 <pre><code> {{ account | dump('\t') }}</code></pre>
