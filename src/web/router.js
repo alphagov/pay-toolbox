@@ -16,6 +16,7 @@ const discrepancies = require('./modules/discrepancies')
 const stripe = require('./modules/stripe')
 const payouts = require('./modules/payouts/payouts.http')
 const transactions = require('./modules/transactions/transactions.http')
+const parity = require('./modules/transactions/discrepancies/validateLedger.http')
 
 // @TODO(sfount) remove `default`s on update to import export syntax
 // eslint-disable-next-line import/no-unresolved
@@ -87,6 +88,7 @@ router.get('/users/:id/2FA/reset', auth.secured, users.resetUserSecondFactor)
 router.get('/transactions/search', auth.secured, transactions.searchPage)
 router.post('/transactions/search', auth.secured, transactions.search)
 router.get('/transactions/:id', auth.secured, transactions.show)
+router.get('/transactions/:id/parity', auth.secured, parity.validateLedgerTransaction)
 
 router.get('/logout', auth.secured, auth.revokeSession)
 

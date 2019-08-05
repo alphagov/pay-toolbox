@@ -100,6 +100,7 @@ const configureTemplateRendering = function configureTemplateRendering(instance)
   templaterEnvironment.addFilter('formatDateLong', date => toFormattedDateLong(new Date(date)))
   templaterEnvironment.addFilter('unixDate', timestamp => toUnixDate(timestamp))
   templaterEnvironment.addFilter('currency', currencyInPence => toCurrencyString(currencyInPence / 100))
+  templaterEnvironment.addFilter('isObject', value => typeof value === 'object')
 
   instance.set('view engine', 'njk')
 }
