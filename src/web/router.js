@@ -46,6 +46,9 @@ router.get('/gateway_accounts/:accountId/api_keys/:tokenId/delete', auth.secured
 router.post('/gateway_accounts/create', auth.secured, gatewayAccounts.writeAccount.http, gatewayAccounts.writeAccount.exceptions)
 router.post('/gateway_accounts/create/confirm', auth.secured, gatewayAccounts.confirm.http, gatewayAccounts.confirm.exceptions)
 
+router.get('/gateway_accounts/:id/surcharge', auth.secured, gatewayAccounts.surcharge)
+router.post('/gateway_accounts/:id/surcharge', auth.secured, gatewayAccounts.updateSurcharge)
+
 router.get('/services', auth.secured, services.overview)
 router.get('/services/search', auth.secured, services.search)
 router.post('/services/search', auth.secured, services.searchRequest)
