@@ -1,4 +1,4 @@
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 
 {% block main %}
 <div class="govuk-panel govuk-panel--confirmation">
@@ -19,22 +19,28 @@ A {{ account.type | upper }} Gateway account has been created through Admin User
 <h2 class="govuk-heading-m">Actions taken</h2>
 <ol class="govuk-list govuk-list--number">
 	<li>New {{ account.type }} {{ provider | capitalize }} account ({{ gatewayAccountIdDerived }}) record created</li>
- 
+
   <!-- @TODO(sfount) not a scalable pattern -->
   {% if provider === 'stripe' %}
   <li>(Stripe account) Set ‘requires_3ds’ on new account to ‘true’</li>
   {% endif %}
-  
+
   {% if linkedService %}
-	<li>(System Link) Service ‘{{ account.service_name }}’ linked to new Gateway account ({{ gatewayAccountIdDerived }})</li>
-	<li>Service ‘{{ account.service_name }}’ go live status updated to ‘LIVE’</li>
+	<li>(System Link) Service linked to new Gateway account ({{ gatewayAccountIdDerived }})</li>
 	{% endif %}
+
+	{% if isLive %}
+	<li>Service go live status updated to ‘LIVE’</li>
+	{% endif %}
+
 </ol>
 
 <h2 class="govuk-heading-m">Relevant resources</h2>
 <ul class="govuk-list">
 	<li><a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ gatewayAccountIdDerived }}">{{ account.type | upper }} Gateway account ({{ gatewayAccountIdDerived }}) details</a></li>
-	<li><a class="govuk-link govuk-link--no-visited-state" href="/services/{{ linkedService }}">{{ account.service_name }} details</a></li>
+	{% if linkedService %}
+	<li><a class="govuk-link govuk-link--no-visited-state" href="/services/{{ linkedService }}">Linked service details</a></li>
+	{% endif %}
 </ul>
 
 <pre><code> {{ account | dump('\t') }}</code></pre>
