@@ -1,0 +1,60 @@
+{% from "components/input/macro.njk" import govukInput %}
+{% from "components/button/macro.njk" import govukButton %}
+{% from "components/warning-text/macro.njk" import govukWarningText %}
+
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">{{service.name}} ({{ account.gateway_account_id }})</span>
+  <h1 class="govuk-heading-m">Corporate surchage</h1>
+
+  <div>
+    <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Gateway account ({{ account.gateway_account_id }})</a>
+  </div>
+
+  {{ govukWarningText({
+  text: "Connector endpoint can fail updating multiple amounts simultaneously.",
+  iconFallbackText: "Warning"
+  }) }}
+
+  <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/surcharge">
+    {{ govukInput({
+      id: "corporate_credit_card_surcharge_amount",
+      name: "corporate_credit_card_surcharge_amount",
+      value: account.corporate_credit_card_surcharge_amount or "0",
+      label: { text: "Corporate credit card surcharge amount" }
+      })
+    }}
+
+    {{ govukInput({
+      id: "corporate_debit_card_surcharge_amount",
+      name: "corporate_debit_card_surcharge_amount",
+      value: account.corporate_debit_card_surcharge_amount or "0",
+      label: { text: "Corporate debit card surcharge amount" }
+      })
+    }}
+
+    {{ govukInput({
+      id: "corporate_prepaid_credit_card_surcharge_amount",
+      name: "corporate_prepaid_credit_card_surcharge_amount",
+      value: account.corporate_prepaid_credit_card_surcharge_amount or "0",
+      label: { text: "Corporate prepaid credit card surcharge amount" }
+      })
+    }}
+
+    {{ govukInput({
+      id: "corporate_prepaid_debit_card_surcharge_amount",
+      name: "corporate_prepaid_debit_card_surcharge_amount",
+      value: account.corporate_prepaid_debit_card_surcharge_amount or "0",
+      label: { text: "Corporate prepaid debit card surcharge amount" }
+      })
+    }}
+
+    {{ govukButton({
+    text: "Update corporate surchage amounts"
+    })
+    }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}

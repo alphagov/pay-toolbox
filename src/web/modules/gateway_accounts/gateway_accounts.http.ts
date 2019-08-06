@@ -122,7 +122,12 @@ const detail = async function detail(req: Request, res: Response): Promise<void>
     logger.warn(`Services request for gateway account ${id} returned "${error.message}"`)
   }
 
-  res.render('gateway_accounts/detail', { account, gatewayAccountId: id, services })
+  res.render('gateway_accounts/detail', {
+    account,
+    gatewayAccountId: id,
+    services,
+    messages: req.flash('info')
+  })
 }
 
 const apiKeys = async function apiKeys(req: Request, res: Response): Promise<void> {
@@ -158,11 +163,16 @@ const surcharge = async function surcharge(req: Request, res: Response): Promise
     logger.warn(`Services request for gateway account ${id} returned "${error.message}"`)
   }
 
-  res.render('gateway_accounts/surcharge', { account, service })
+  res.render('gateway_accounts/surcharge', { account, service, csrf: req.csrfToken() })
 }
 
 const updateSurcharge = async function updateSurcharge(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
+  const surcharges = req.body
 
+  await Connector.updateCorporateSurcharge(id, surcharges)
+  req.flash('info', 'Corporate surcharge values updated')
+  res.redirect(`/gateway_accounts/${id}`)
 }
 
 export default {
@@ -175,5 +185,5 @@ export default {
   apiKeys: wrapAsyncErrorHandler(apiKeys),
   deleteApiKey: wrapAsyncErrorHandler(deleteApiKey),
   surcharge: wrapAsyncErrorHandler(surcharge),
-  updateSurcharge: wrapAsyncErrorHandler(surcharge)
+  updateSurcharge: wrapAsyncErrorHandler(updateSurcharge)
 }
