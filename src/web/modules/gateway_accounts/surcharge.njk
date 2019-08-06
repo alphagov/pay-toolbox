@@ -6,7 +6,7 @@
 
 {% block main %}
   <span class="govuk-caption-m">{{service.name}} ({{ account.gateway_account_id }})</span>
-  <h1 class="govuk-heading-m">Corporate surchage</h1>
+  <h1 class="govuk-heading-m">Corporate surcharge</h1>
 
   <div>
     <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Gateway account ({{ account.gateway_account_id }})</a>
@@ -51,7 +51,7 @@
     }}
 
     {{ govukButton({
-    text: "Update corporate surchage amounts"
+    text: "Update corporate surcharge amounts"
     })
     }}
 
