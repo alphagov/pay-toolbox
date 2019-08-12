@@ -33,7 +33,7 @@
   "dependencies": {
     "axios": "0.19.0",
     "body-parser": "1.18.3",
-    "class-validator": "0.9.1",
+    "class-validator": "0.10.0",
     "client-sessions": "0.8.0",
     "cls-hooked": "4.2.2",
     "connect-flash": "0.1.1",
