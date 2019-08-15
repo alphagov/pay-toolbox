@@ -5,7 +5,10 @@
     </div>
 
     <div class="user-profile__item">
-      <span>{{ user.displayName or user.username }}</span>
+      <span>
+        {{ user.displayName or user.username }}
+        {% if user.admin %}(Admin){% endif %}
+      </span>
     </div>
 
     <div class="user-profile__item right">
