@@ -51,9 +51,9 @@ router.get('/services/search', auth.secured, services.search)
 router.post('/services/search', auth.secured, services.searchRequest)
 router.get('/services/:id', auth.secured, services.detail.http, services.detail.exceptions)
 router.get('/services/:id/branding', auth.secured, services.branding, services.detail.exceptions)
-router.post('/services/:id/branding', auth.secured, services.updateBranding)
-router.get('/services/:id/link_accounts', auth.secured, services.linkAccounts, services.detail.exceptions)
-router.post('/services/:id/link_accounts', auth.secured, services.updateLinkAccounts.http, services.updateLinkAccounts.exceptions)
+router.post('/services/:id/branding', auth.secured, auth.administrative, services.updateBranding)
+router.get('/services/:id/link_accounts', auth.secured, auth.administrative, services.linkAccounts, services.detail.exceptions)
+router.post('/services/:id/link_accounts', auth.secured, auth.administrative, services.updateLinkAccounts.http, services.updateLinkAccounts.exceptions)
 router.get('/services/:id/toggle_terminal_state_redirect', auth.secured, services.toggleTerminalStateRedirectFlag)
 
 router.get('/services/:serviceId/gateway_account/:gatewayAccountId/payouts', auth.secured, payouts.show)
@@ -67,8 +67,8 @@ router.post('/discrepancies/resolve/:id', auth.secured, discrepancies.resolveDis
 router.get('/charges/search', auth.secured, charges.search)
 router.post('/charges/search', auth.secured, charges.searchTransaction.http, charges.searchTransaction.exceptions)
 
-router.get('/stripe/create', auth.secured, stripe.create)
-router.post('/stripe/create', auth.secured, stripe.createAccount.http, stripe.createAccount.exceptions)
+router.get('/stripe/create', auth.secured, auth.administrative, stripe.create)
+router.post('/stripe/create', auth.secured, auth.administrative, stripe.createAccount.http, stripe.createAccount.exceptions)
 
 router.get('/stripe/basic/create', auth.secured, stripe.basic)
 router.post('/stripe/basic/create', auth.secured, stripe.basicCreate)
