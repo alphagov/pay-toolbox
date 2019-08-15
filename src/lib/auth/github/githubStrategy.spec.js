@@ -56,4 +56,24 @@ describe('GitHub OAuth strategy', () => {
     await handleGitHubOAuthSuccessResponse('some-access-token', 'some-refresh-token', profile, authCallbackSpy)
     expect(authCallbackSpy).to.have.been.called.once.with(null, false)
   })
+
+  it('invokes callback with admin flag set given admin permissions', async () => {
+    const authCallbackSpy = chai.spy()
+    mockery.registerMock('./permissions', { isAdminUser: validPermissions })
+    // eslint-disable-next-line prefer-destructuring
+    handleGitHubOAuthSuccessResponse = require('./strategy').handleGitHubOAuthSuccessResponse
+
+    await handleGitHubOAuthSuccessResponse('some-access-token', 'some-refresh-token', profile, authCallbackSpy)
+    expect(authCallbackSpy).to.have.been.called.once.with(
+      null,
+      {
+        username: profile.username,
+        displayName: profile.displayName,
+        admin: true,
+
+        // eslint-disable-next-line no-underscore-dangle
+        avatarUrl: profile._json.avatar_url
+      }
+    )
+  })
 })

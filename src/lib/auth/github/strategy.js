@@ -31,7 +31,6 @@ const handleGitHubOAuthSuccessResponse = async function handleGitHubOAuthSuccess
     logger.info(`Administrator checks passed, setting session for ${username}`)
     callback(null, sessionProfile)
   } catch (adminUserFailure) {
-
     try {
       await isPermittedUser(username, accessToken)
 

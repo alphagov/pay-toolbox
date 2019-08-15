@@ -37,4 +37,9 @@ const revokeSession = function revokeSession(req, res) {
   res.redirect('/')
 }
 
-module.exports = { secured, administrative, unauthorised, revokeSession }
+module.exports = {
+  secured,
+  administrative,
+  unauthorised,
+  revokeSession
+}
