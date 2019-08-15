@@ -3,7 +3,7 @@ const { Strategy } = require('passport-github')
 const config = require('../../../config')
 const logger = require('../../logger')
 
-const { isPermittedUser } = require('./permissions')
+const { isPermittedUser, isAdminUser } = require('./permissions')
 
 const githubAuthCredentials = {
   clientID: config.auth.AUTH_GITHUB_CLIENT_ID,
@@ -18,19 +18,28 @@ const handleGitHubOAuthSuccessResponse = async function handleGitHubOAuthSuccess
   callback
 ) {
   const { username, displayName } = profile
+  // eslint-disable-next-line no-underscore-dangle
+  const avatarUrl = profile._json && profile._json.avatar_url
+  const sessionProfile = { username, displayName, avatarUrl }
+
+  logger.info(`Successful account auth from GitHub for user ${username}`)
+
   try {
-    // eslint-disable-next-line no-underscore-dangle
-    const avatarUrl = profile._json && profile._json.avatar_url
-    const sessionProfile = { username, displayName, avatarUrl }
+    await isAdminUser(username, accessToken)
 
-    logger.info(`Successful account auth from GitHub for user ${username}`)
-    await isPermittedUser(username, accessToken)
-
-    logger.info(`Permissions valid for user, setting session for ${username}`)
+    sessionProfile.admin = true
+    logger.info(`Administrator checks passed, setting session for ${username}`)
     callback(null, sessionProfile)
-  } catch (e) {
-    logger.warn(`Permissions rejected for user ${username} [${e.message}]`)
-    callback(null, false, e)
+  } catch (adminUserFailure) {
+    try {
+      await isPermittedUser(username, accessToken)
+
+      logger.info(`Valid non-admin permissions, setting session for ${username}`)
+      callback(null, sessionProfile)
+    } catch (permittedUserFailure) {
+      logger.warn(`Permissions rejected for user ${username} [${permittedUserFailure.message}]`)
+      callback(null, false, permittedUserFailure)
+    }
   }
 }
 

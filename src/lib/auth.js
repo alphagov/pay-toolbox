@@ -12,6 +12,15 @@ const secured = function secured(req, res, next) {
   res.redirect('/auth')
 }
 
+const administrative = function administrative(req, res, next) {
+  if (req.user.admin) {
+    next()
+    return
+  }
+  logger.info(`Non admin user ${req.user.username} attempted to access administrative path`)
+  res.render('common/error', { message: 'Action requires admin role permissions' })
+}
+
 const unauthorised = function unauthorised(req, res) {
   if (req.isAuthenticated()) {
     res.redirect('/')
@@ -28,4 +37,9 @@ const revokeSession = function revokeSession(req, res) {
   res.redirect('/')
 }
 
-module.exports = { secured, unauthorised, revokeSession }
+module.exports = {
+  secured,
+  administrative,
+  unauthorised,
+  revokeSession
+}

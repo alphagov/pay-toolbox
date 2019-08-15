@@ -3,11 +3,17 @@ const { EntityNotFoundError } = require('../../errors')
 const adminUsersMethods = function adminUsersMethods(instance) {
   const axiosInstance = instance || this
   const utilExtractData = response => response.data
+  const redactOtp = (service) => {
+    // eslint-disable-next-line no-param-reassign
+    delete service.otp_key
+    return service
+  }
 
   const user = function user(id) {
     const path = `/v1/api/users/${id}`
     return axiosInstance.get(path)
       .then(utilExtractData)
+      .then(redactOtp)
       .catch((error) => {
         if (error.data.response && error.data.response.status === 404) throw new EntityNotFoundError('User', id)
         throw error
@@ -78,7 +84,9 @@ const adminUsersMethods = function adminUsersMethods(instance) {
 
   const serviceUsers = function serviceUsers(id) {
     const path = `/v1/api/services/${id}/users`
-    return axiosInstance.get(path).then(utilExtractData)
+    return axiosInstance.get(path)
+      .then(utilExtractData)
+      .then(users => users.map(redactOtp))
   }
 
   const gatewayAccountServices = function gatewayAccountServices(id) {
@@ -127,8 +135,7 @@ const adminUsersMethods = function adminUsersMethods(instance) {
   }
 
   const toggleTerminalStateRedirectFlag = async function toggleTerminalStateRedirectFlag(
-    id,
-    status
+    id
   ) {
     const path = `v1/api/services/${id}`
     const targetService = await service(id)
