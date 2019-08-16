@@ -159,3 +159,27 @@
    color: govuk-colour("green");
  }
 
+.transactions-filter__container {
+  display: flex; 
+  flex-direction: row;
+}
+
+.transactions-filter__container div:not(:last-child) {
+  // border-right: 1px solid $govuk-border-colour;
+}
+
+.transactions-filter__item { 
+  flex-grow: 1;
+  text-align: center;
+  border-top: 1px solid $govuk-border-colour;
+  border-bottom: 1px solid $govuk-border-colour;
+
+  padding-top: 15px;
+  padding-bottom: 15px;
+  cursor: pointer;
+}
+
+.transactions-filter__item.selected { 
+  border-bottom: 5px solid govuk-colour("blue");
+}
+

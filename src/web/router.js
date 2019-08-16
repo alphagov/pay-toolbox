@@ -93,6 +93,8 @@ router.post('/transactions/search', auth.secured, transactions.search)
 router.get('/transactions/:id', auth.secured, transactions.show)
 router.get('/transactions/:id/parity', auth.secured, parity.validateLedgerTransaction)
 
+router.get('/transactions', auth.secured, transactions.list)
+
 router.get('/logout', auth.secured, auth.revokeSession)
 
 router.get('/healthcheck', healthcheck.response)

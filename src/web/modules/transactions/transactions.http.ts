@@ -22,6 +22,20 @@ export async function search(req: Request, res: Response, next: NextFunction): P
   }
 }
 
+export async function list(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const transactions = await Ledger.transactions()
+
+    console.log('got transactions')
+    console.log(transactions)
+
+    // @TODO(sfount) pass in success/ failure filter into template so that it can be rendered
+    res.render('transactions/list', { transactions })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export async function show(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const transaction = await Ledger.transaction(req.params.id) as Transaction

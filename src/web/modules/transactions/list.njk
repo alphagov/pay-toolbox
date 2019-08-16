@@ -1,0 +1,66 @@
+{% from "transactions/status.macro.njk" import status %}
+
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">GOV.UK Pay platform</span>
+  {# @TODO(sfount) if service filter is applied, show service name as top level header #}
+  <h1 class="govuk-heading-m">Transactions</h1>
+
+  <div class="transactions-filter__container govuk-body">
+    <div class="transactions-filter__item selected">Succeeded</div>
+    <div class="transactions-filter__item">Failed</div>
+    <div class="transactions-filter__item">In-progress</div>
+    <div class="transactions-filter__item">Refunded</div>
+  </div>
+
+  <div>
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col"></th>
+          <th class="govuk-table__header" scope="col">Amount</th>
+          <th class="govuk-table__header" scope="col"></th>
+          <th class="govuk-table__header" scope="col">Description</th>
+          <th class="govuk-table__header" scope="col">Date created</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {% for payment in transactions %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">
+            <span class="govuk-caption-m">{{ payment.payment_provider | capitalize }}</span>
+          </td>
+          <td class="govuk-table__cell text-right">{{ payment.total_amount | currency }}
+          <td class="govuk-table__cell">{{ status(payment.state.status, payment.state.finished) }}</td>
+          <td class="govuk-table__cell">
+            <span class="govuk-caption-m">{{ payment.description | truncate(30) }}</span>
+          </td>
+          <td class="govuk-table__cell">
+            <span class="govuk-caption-m">{{ payment.created_date | formatDate }}</span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# @TODO(sfount) add pagination logic for a ledger type service #}
+  <div class="toolbox-right">
+    {# <a
+      href="#"
+      class="govuk-button govuk-button--secondary">
+      Export page
+    </a> #}
+    <a
+      href="#"
+      class="govuk-button govuk-button--secondary">
+      Previous
+    </a>
+    <a
+      href="#"
+      class="govuk-button govuk-button--secondary">
+      Next
+    </a>
+  </div>
+{% endblock %}
