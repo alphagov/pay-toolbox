@@ -81,7 +81,8 @@ const search = async function search(req: Request, res: Response): Promise<void>
 }
 
 const searchRequest = async function searchRequest(req: Request, res: Response): Promise<void> {
-  res.redirect(`/services/${req.body.id}`)
+  const serviceId = req.body.id.trim()
+  res.redirect(`/services/${serviceId}`)
 }
 
 const toggleTerminalStateRedirectFlag = async function toggleTerminalStateRedirectFlag(
