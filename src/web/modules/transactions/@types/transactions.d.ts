@@ -11,6 +11,10 @@ declare module 'ledger' {
     success
   }
 
+  export enum PaymentListFilterStatus {
+    'succeeded', 'failed', 'in-progress', 'refunded', 'all'
+  }
+
   interface BillingAddress {
     line1: string;
     line2: string;

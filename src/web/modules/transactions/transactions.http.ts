@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/prefer-default-export */
 import { Request, Response, NextFunction } from 'express'
-import { Transaction } from 'ledger'
+import { Transaction, PaymentListFilterStatus } from 'ledger'
 
 import { Ledger, Connector, AdminUsers } from '../../../lib/pay-request'
 import * as logger from '../../../lib/logger'
@@ -24,13 +24,10 @@ export async function search(req: Request, res: Response, next: NextFunction): P
 
 export async function list(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
+    const selectedStatus = req.query.status || PaymentListFilterStatus[PaymentListFilterStatus.all]
     const transactions = await Ledger.transactions()
 
-    console.log('got transactions')
-    console.log(transactions)
-
-    // @TODO(sfount) pass in success/ failure filter into template so that it can be rendered
-    res.render('transactions/list', { transactions })
+    res.render('transactions/list', { transactions, selectedStatus })
   } catch (error) {
     next(error)
   }

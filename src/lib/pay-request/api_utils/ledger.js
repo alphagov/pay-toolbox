@@ -22,7 +22,18 @@ const ledgerMethods = function ledgerMethods(instance) {
     return axiosInstance.get(`/v1/transaction?${overrideFlag}`)
   }*/
 
-  const transactions = async function transactions() {
+  const transactions = async function transactions(status) {
+    // @TODO(sfount) this should enforce `ledger` `PaymentListFilterStatus` when written in TypeScript
+    // @TODO(sfount) refunded state is handled in custom ledger search end point - this will have to be looked up separately
+    const externalStatusMap = {
+      'all': [],
+      'succeeded': [ 'success' ],
+      'failed': [ 'declined', 'timedout', 'cancelled', 'error' ],
+      'in-progress': [ 'created', 'started', 'submitted', 'capturable' ]
+    }
+    const filters = {
+      payment_states: externalStatusMap[status]
+    }
     return dummyTransactions
   }
 

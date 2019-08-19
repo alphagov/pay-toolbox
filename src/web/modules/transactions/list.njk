@@ -8,10 +8,13 @@
   <h1 class="govuk-heading-m">Transactions</h1>
 
   <div class="transactions-filter__container govuk-body">
-    <div class="transactions-filter__item selected">Succeeded</div>
-    <div class="transactions-filter__item">Failed</div>
-    <div class="transactions-filter__item">In-progress</div>
-    <div class="transactions-filter__item">Refunded</div>
+    {% for status in ["succeeded", "failed", "in-progress", "refunded", "all"] %}
+      <a
+        class="transactions-filter__item {% if selectedStatus === status %}selected{% endif %} no-decoration"
+        href="/transactions?status={{ status }}">
+        <span>{{ status | capitalize }}</span>
+      </a>
+    {% endfor %}
   </div>
 
   <div>
