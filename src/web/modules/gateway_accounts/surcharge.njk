@@ -1,6 +1,5 @@
 {% from "components/input/macro.njk" import govukInput %}
 {% from "components/button/macro.njk" import govukButton %}
-{% from "components/warning-text/macro.njk" import govukWarningText %}
 
 {% extends "layout/layout.njk" %}
 
@@ -11,11 +10,6 @@
   <div>
     <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Gateway account ({{ account.gateway_account_id }})</a>
   </div>
-
-  {{ govukWarningText({
-  text: "Connector endpoint can fail updating multiple amounts simultaneously.",
-  iconFallbackText: "Warning"
-  }) }}
 
   <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/surcharge">
     {{ govukInput({

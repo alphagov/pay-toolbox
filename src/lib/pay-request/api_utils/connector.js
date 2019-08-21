@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax, no-await-in-loop */
 const connectorMethods = function connectorMethods(instance) {
   const axiosInstance = instance || this
 
@@ -69,17 +70,18 @@ const connectorMethods = function connectorMethods(instance) {
     return axiosInstance.get(`/v1/api/charges/gateway_transaction/${gatewayTransactionId}`)
   }
 
-  const updateCorporateSurcharge = function updateCorporateSurcharge(id, surcharges) {
+  const updateCorporateSurcharge = async function updateCorporateSurcharge(id, surcharges) {
     const url = `/v1/api/accounts/${id}`
     const results = Object.keys(surcharges)
       .filter(key => key !== '_csrf')
-      .map(key => axiosInstance.patch(url, {
+
+    for (const key of results) {
+      await axiosInstance.patch(url, {
         op: 'replace',
         path: key,
         value: Number(surcharges[key])
-      }))
-
-    return Promise.all(results)
+      })
+    }
   }
 
   return {
