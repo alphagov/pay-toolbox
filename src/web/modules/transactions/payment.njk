@@ -40,6 +40,10 @@
           <td class="govuk-table__cell payment__cell">{{ transaction.description }}</td>
         </tr>
         <tr class="govuk-table__row">
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Created date</span></th>
+          <td class="govuk-table__cell payment__cell">{{ transaction.created_date | formatDateLong }}</td>
+        </tr>
+        <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Amount</span></th>
           <td class="govuk-table__cell payment__cell">
             <span>{{ (transaction.total_amount or transaction.amount) | currency }} </span>
