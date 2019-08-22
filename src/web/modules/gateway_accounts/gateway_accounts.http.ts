@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express'
 
 import * as logger from '../../../lib/logger'
@@ -129,7 +130,12 @@ const detail = async function detail(req: Request, res: Response): Promise<void>
     logger.warn(`Services request for gateway account ${id} returned "${error.message}"`)
   }
 
-  res.render('gateway_accounts/detail', { account, gatewayAccountId: id, services })
+  res.render('gateway_accounts/detail', {
+    account,
+    gatewayAccountId: id,
+    services,
+    messages: req.flash('info')
+  })
 }
 
 const apiKeys = async function apiKeys(req: Request, res: Response): Promise<void> {
@@ -148,6 +154,35 @@ const deleteApiKey = async function deleteApiKey(req: Request, res: Response): P
   res.redirect(`/gateway_accounts/${accountId}/api_keys`)
 }
 
+const getAccount = async function getAccount(id: string): Promise<any> {
+  const isDirectDebitID = id.match(/^DIRECT_DEBIT:/)
+  const readAccountMethod = isDirectDebitID ? DirectDebitConnector.account : Connector.account
+  return readAccountMethod(id)
+}
+
+const surcharge = async function surcharge(req: Request, res: Response): Promise<void> {
+  let service
+  const { id } = req.params
+  const account = await getAccount(id)
+
+  try {
+    service = await AdminUsers.gatewayAccountServices(id)
+  } catch (error) {
+    logger.warn(`Services request for gateway account ${id} returned "${error.message}"`)
+  }
+
+  res.render('gateway_accounts/surcharge', { account, service, csrf: req.csrfToken() })
+}
+
+const updateSurcharge = async function updateSurcharge(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
+  const surcharges = req.body
+
+  await Connector.updateCorporateSurcharge(id, surcharges)
+  req.flash('info', 'Corporate surcharge values updated')
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
 export default {
   overview: wrapAsyncErrorHandler(overview),
   overviewDirectDebit: wrapAsyncErrorHandler(overviewDirectDebit),
@@ -156,5 +191,7 @@ export default {
   writeAccount: wrapAsyncErrorHandler(writeAccount),
   detail: wrapAsyncErrorHandler(detail),
   apiKeys: wrapAsyncErrorHandler(apiKeys),
-  deleteApiKey: wrapAsyncErrorHandler(deleteApiKey)
+  deleteApiKey: wrapAsyncErrorHandler(deleteApiKey),
+  surcharge: wrapAsyncErrorHandler(surcharge),
+  updateSurcharge: wrapAsyncErrorHandler(updateSurcharge)
 }

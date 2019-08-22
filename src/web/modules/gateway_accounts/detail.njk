@@ -11,6 +11,12 @@
   </div>
   {% endif %}
 
+  {% for message in messages %}
+    <div class="govuk-error-summary success-summary" role="alert">
+      <h2 class="govuk-error-summary__title">{{message}}</h2>
+    </div>
+  {% endfor %}
+
   <table class="govuk-table">
     <tbody class="govuk-table__body">
       <tr class="govuk-table__row">
@@ -100,6 +106,13 @@
     {{ govukButton({
     text: "Manage Payouts",
     href: "/services/" + services.external_id + "/gateway_account/" + gatewayAccountId + "/payouts"
+    })
+    }}
+    {% endif %}
+    {% if account.payment_method !== "DIRECT_DEBIT" %}
+    {{ govukButton({
+    text: "Update surcharge amounts",
+    href: "/gateway_accounts/" + gatewayAccountId + "/surcharge"
     })
     }}
     {% endif %}
