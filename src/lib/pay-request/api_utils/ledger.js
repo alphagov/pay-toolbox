@@ -22,7 +22,9 @@ const ledgerMethods = function ledgerMethods(instance) {
     return axiosInstance.get(`/v1/transaction?${overrideFlag}`)
   }*/
 
-  const transactions = async function transactions(status) {
+  const transactions = async function transactions(currentPage, currentStatus) {
+    const page = currentPage || 1
+    const pageSize = 20
     // @TODO(sfount) this should enforce `ledger` `PaymentListFilterStatus` when written in TypeScript
     // @TODO(sfount) refunded state is handled in custom ledger search end point - this will have to be looked up separately
     const externalStatusMap = {
@@ -32,9 +34,12 @@ const ledgerMethods = function ledgerMethods(instance) {
       'in-progress': [ 'created', 'started', 'submitted', 'capturable' ]
     }
     const filters = {
-      payment_states: externalStatusMap[status]
+      payment_states: externalStatusMap[currentStatus]
     }
-    return dummyTransactions
+
+    return axiosInstance.get(`/v1/transaction?${platformAdminQuery}&page=${page}&display_size=${pageSize}&payment_states=${filters.payment_states.join(',')}`)
+      .then(utilExtractData)
+    // return dummyTransactions
   }
 
   const events = function events(transactionId, accountId) {
