@@ -164,10 +164,6 @@
   flex-direction: row;
 }
 
-.transactions-filter__container div:not(:last-child) {
-  // border-right: 1px solid $govuk-border-colour;
-}
-
 .transactions-filter__item { 
   flex-grow: 1;
   text-align: center;

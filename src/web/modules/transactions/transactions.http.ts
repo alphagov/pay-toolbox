@@ -31,13 +31,22 @@ export enum PaymentListFilterStatus {
 
 export async function list(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
+    let account
+    const accountId = req.query.account
     const selectedStatus = req.query.status || PaymentListFilterStatus[PaymentListFilterStatus.all]
-    const response = await Ledger.transactions(req.query.page, selectedStatus)
-    const transactions = response.results
+    const response = await Ledger.transactions(accountId, req.query.page, selectedStatus)
 
-    console.log(response)
+    if (req.query.account) {
+      account = await AdminUsers.gatewayAccountServices(accountId)
+    }
 
-    res.render('transactions/list', { transactions, selectedStatus, set: response })
+    res.render('transactions/list', {
+      transactions: response.results,
+      selectedStatus,
+      set: response,
+      account,
+      accountId
+    })
   } catch (error) {
     next(error)
   }

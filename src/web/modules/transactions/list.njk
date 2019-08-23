@@ -3,15 +3,21 @@
 {% extends "layout/layout.njk" %}
 
 {% block main %}
-  <span class="govuk-caption-m">GOV.UK Pay platform</span>
-  {# @TODO(sfount) if service filter is applied, show service name as top level header #}
+  <span class="govuk-caption-m">
+    {% if account %}
+      <span>{{ account.name }}</span>
+    {% else %}
+      <span>GOV.UK Pay platform</span>
+    {% endif %}
+  </span>
+
   <h1 class="govuk-heading-m">Transactions</h1>
 
   <div class="transactions-filter__container govuk-body">
     {% for status in ["succeeded", "failed", "in-progress", "all"] %}
       <a
         class="transactions-filter__item {% if selectedStatus === status %}selected{% endif %} no-decoration"
-        href="/transactions?status={{ status }}">
+        href="/transactions?status={{ status }}{% if account %}&account={{ accountId }}{% endif %}">
         <span>{{ status | capitalize }}</span>
       </a>
     {% endfor %}
@@ -30,16 +36,14 @@
       </thead>
       <tbody class="govuk-table__body">
         {% for payment in transactions %}
-        <tr class="govuk-table__row">
+        <tr class="govuk-table__row" onclick="local.href='/transactions'">
           <td class="govuk-table__cell">
             <span class="govuk-caption-m">{{ payment.payment_provider | capitalize }}</span>
           </td>
           <td class="govuk-table__cell text-right">
-            {# {% if payment.total_amount %} #}
-              {{ (payment.total_amount or payment.amount) | currency }}
-            {# {% else %} #}
-              {# - #}
-            {# {% endif %} #}
+              <a class="govuk-link govuk-link--no-visited-state" href="/transactions/{{ payment.transaction_id }}">
+                {{ (payment.total_amount or payment.amount) | currency }}
+              </a>
           <td class="govuk-table__cell">{{ status(payment.state.status, payment.state.finished) }}</td>
           <td class="govuk-table__cell">
             <span class="govuk-caption-m">{{ payment.description | truncate(20) }}</span>
@@ -50,30 +54,28 @@
         </tr>
         {% else %}
         <tr class="govuk-table__row">
-          <td class="govuk-table__cell center" colspan="5"><span><i>No transactions listed.</i></span></td>
+          <td class="govuk-table__cell center" colspan="5"><span><i>No transactions found.</i></span></td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 
-  {# @TODO(sfount) add pagination logic for a ledger type service #}
   <div class="govuk-body">
     <p>Showing page {{ set.page }} ({{ set.count }}) of about {{ set.total }} transactions</p>
   </div>
   <div class="toolbox-right">
-    {# <a
-      href="#"
-      class="govuk-button govuk-button--secondary">
-      Export page
-    </a> #}
     <a
-      href="/transactions?page={{ set.page - 1 }}&status={{ selectedStatus }}"
+      {% if set.page <= 1 %}
+      disabled
+      {% else %}
+      href="/transactions?page={{ set.page - 1 }}&status={{ selectedStatus }}{% if account %}&account={{ accountId }}{% endif %}"
+      {% endif %}
       class="govuk-button govuk-button--secondary">
       Previous
     </a>
     <a
-      href="/transactions?page={{ set.page + 1 }}&status={{ selectedStatus }}"
+      href="/transactions?page={{ set.page + 1 }}&status={{ selectedStatus }}{% if account %}&account={{ accountId }}{% endif %}"
       class="govuk-button govuk-button--secondary">
       Next
     </a>

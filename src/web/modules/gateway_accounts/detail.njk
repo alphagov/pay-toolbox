@@ -110,11 +110,16 @@
     }}
     {% endif %}
     {% if account.payment_method !== "DIRECT_DEBIT" %}
-    {{ govukButton({
-    text: "Update surcharge amounts",
-    href: "/gateway_accounts/" + gatewayAccountId + "/surcharge"
-    })
-    }}
+      {{ govukButton({
+        text: "View transactions",
+        href: "/transactions?account=" + gatewayAccountId
+      })
+      }}
+      {{ govukButton({
+        text: "Update surcharge amounts",
+        href: "/gateway_accounts/" + gatewayAccountId + "/surcharge"
+      })
+      }}
     {% endif %}
   </div>
 
