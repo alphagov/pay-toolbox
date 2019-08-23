@@ -2,6 +2,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/prefer-default-export */
 import { Request, Response, NextFunction } from 'express'
+
 import { Transaction } from 'ledger'
 
 import { Ledger, Connector, AdminUsers } from '../../../lib/pay-request'
@@ -17,6 +18,35 @@ export async function search(req: Request, res: Response, next: NextFunction): P
 
     // most basic search implementation - just forward to transactions route
     res.redirect(`/transactions/${id}`)
+  } catch (error) {
+    next(error)
+  }
+}
+
+// @TODO(sfount) move to `transaction.d.ts` -- resolve JavaScript/ TypeScript module issue
+export enum PaymentListFilterStatus {
+  'succeeded', 'failed', 'in-progress', 'all'
+}
+
+
+export async function list(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    let account
+    const accountId = req.query.account
+    const selectedStatus = req.query.status || PaymentListFilterStatus[PaymentListFilterStatus.all]
+    const response = await Ledger.transactions(accountId, req.query.page, selectedStatus)
+
+    if (req.query.account) {
+      account = await AdminUsers.gatewayAccountServices(accountId)
+    }
+
+    res.render('transactions/list', {
+      transactions: response.results,
+      selectedStatus,
+      set: response,
+      account,
+      accountId
+    })
   } catch (error) {
     next(error)
   }
