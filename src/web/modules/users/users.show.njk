@@ -3,6 +3,7 @@
 {% extends "layout/layout.njk" %}
 
 {% block main %}
+<span class="govuk-caption-m">{{ payUser.email }}</span>
 <h1 class="govuk-heading-m">User details</h1>
 
 {% for message in messages %}
@@ -11,7 +12,6 @@
   </div>
 {% endfor %}
 
-{# Table row listing services and service actions #}
 {% set services %}
   <ul class="govuk-list">
     {% for role in payUser.service_roles %}
@@ -24,8 +24,6 @@
   </ul>
 {% endset %}
 
-{# {% set serviceRoles = user.service_roles.map((serviceRole) => serviceRole) %} #}
-
 {{ govukSummaryList({
   rows: [
     { key: { text: "ID" }, value: { html: "<code>" + payUser.external_id + "</code>" }, actions: { items: [{}] } },
@@ -37,11 +35,23 @@
   })
 }}
 
-<h1 class="govuk-heading-m">User services</h1>
-{{ govukSummaryList({
-  rows: format.serviceRoles(payUser, payUser.service_roles)
-  })
-}}
+<dl class="govuk-summary-list">
+  {% for role in payUser.service_roles %}
+  <div class="govuk-summary-list__row">
+    <dd class="govuk-summary-list__value">
+      <a class="govuk-link govuk-link--no-visited-state" href="/services/{{ role.service.external_id }}">
+        {{ role.service.name }}
+      </a>
+    </dd>
+    <dd class="govuk-summary-list__value">
+      <code title="{{ role.service.external_id }}">{{ role.service.external_id | truncate(10) }}</code>
+    </dd>
+    <dd class="govuk-summary-list__actions">
+      <a class="govuk-link govuk-link--no-visited-state" href="/users/{{ payUser.external_id }}/service/{{ role.service.external_id }}/delete">Remove user</a>
+    </dd>
+  </div>
+  {% endfor %}
+</dl>
 
 <div>
   <pre><code>{{ payUser | dump('\t') }}</code></pre>
