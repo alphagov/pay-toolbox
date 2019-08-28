@@ -2,6 +2,7 @@
 {% extends "layout/layout.njk" %}
 
 {% block main %}
+  <span class="govuk-caption-m">{{ service.name }}</span>
   <h1 class="govuk-heading-m">Service details</h1>
 
   {% for message in messages %}
@@ -10,6 +11,7 @@
     </div>
   {% endfor %}
 
+  <div>
   <table class="govuk-table">
     <tbody class="govuk-table__body">
       <tr class="govuk-table__row">
@@ -32,16 +34,29 @@
         <th class="govuk-table__header" scope="col">Redirect to service on terminal state</th>
         <td class="govuk-table__cell">{{service.redirect_to_service_immediately_on_terminal_state | string | capitalize }}</td>
       </tr>
-      <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">Gateway accounts</th>
-        <td class="govuk-table__cell">
-          {% for id in service.gateway_account_ids %}
-            <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ id }}">{{id}}</a>
-          {% endfor %}
-        </td>
-      </tr>
     </tbody>
   </table>
+  </div>
+
+  <div>
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col" colspan="2">Gateway accounts</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {% for id in service.gateway_account_ids %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">
+            <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ id }}">{{id}}</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
 
   <div>
     <table class="govuk-table">
@@ -49,7 +64,6 @@
         <tr class="govuk-table__row">
           <th class="govuk-table__header" scope="col">Email</th>
           <th class="govuk-table__header" scope="col">Disabled</th>
-          <th class="govuk-table__header" scope="col">Login count</th>
         </tr>
       </thead>
       <tbody class="govuk-table__body">
@@ -59,7 +73,6 @@
               <a href="/users/{{ user.external_id }}" class="govuk-link govuk-link--no-visited-state">{{ user.email }}
             </td>
             <td class="govuk-table__cell">{{ user.disabled | string | capitalize }}</td>
-            <td class="govuk-table__cell">{{ user.login_counter }}</td>
           </tr>
         {% endfor %}
       </body>
