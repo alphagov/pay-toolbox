@@ -160,11 +160,11 @@
  }
 
 .transactions-filter__container {
-  display: flex; 
+  display: flex;
   flex-direction: row;
 }
 
-.transactions-filter__item { 
+.transactions-filter__item {
   flex-grow: 1;
   text-align: center;
   border-top: 1px solid $govuk-border-colour;
@@ -175,7 +175,7 @@
   cursor: pointer;
 }
 
-.transactions-filter__item.selected { 
+.transactions-filter__item.selected {
   border-bottom: 5px solid govuk-colour("blue");
 }
 
@@ -184,3 +184,6 @@
   text-decoration: none;
 }
 
+.scrollflow {
+  overflow-x: scroll;
+}
