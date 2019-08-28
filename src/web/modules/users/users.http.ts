@@ -7,6 +7,7 @@ import Validated from '../common/validated'
 
 import { formatErrorsForTemplate, ClientFormError } from '../common/validationErrorFormat'
 import { IOValidationError, RESTClientError } from '../../../lib/errors';
+import { Response, Request, NextFunction } from 'express';
 
 const truncate = function truncate(value: string, length: number): string {
   return `${value.substr(0, length)}...`
@@ -180,5 +181,15 @@ const resetUserSecondFactor = async function resetUserSecondFactor(req: any, res
   res.redirect(`/users/${id}`)
 }
 
+const searchPage = async function searchPage(req: Request, res: Response, next: NextFunction): Promise<void> {
+  res.render('users/search', { csrf: req.csrfToken() })
+}
+
+const search = async function search(req: Request, res: Response, next: NextFunction): Promise<void> {
+  const { email } = req.body
+  const user = await AdminUsers.findUser(email)
+  res.redirect(`/users/${user.external_id}`)
+}
+
 // @TODO(sfount) use individual wrapAsyncErrorHandler
-export default wrapAsyncErrorHandlers({ show, updatePhoneNumber, updatePhoneNumberForm, updateEmailForm, updateEmail, toggleUserEnabled, removeUserFromService, resetUserSecondFactor })
+export default wrapAsyncErrorHandlers({ show, updatePhoneNumber, updatePhoneNumberForm, updateEmailForm, updateEmail, toggleUserEnabled, removeUserFromService, resetUserSecondFactor, search, searchPage })

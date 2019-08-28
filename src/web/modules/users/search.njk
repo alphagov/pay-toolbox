@@ -1,0 +1,24 @@
+{% from "components/input/macro.njk" import govukInput %}
+{% from "components/button/macro.njk" import govukButton %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">GOV.UK Pay platform</span>
+  <h1 class="govuk-heading-m">Find a user</h1>
+
+  <form method="POST" action="/users/search">
+    {{ govukInput({
+      id: "email",
+      name: "email",
+      label: { text: "Email" }
+      })
+      }}
+
+    {{ govukButton({
+      text: "Search"
+      })
+      }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}
