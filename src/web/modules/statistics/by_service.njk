@@ -1,9 +1,10 @@
 {% from "components/table/macro.njk" import govukTable %}
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 
 {% block main %}
+  <span class="govuk-caption-m">GOV.UK Pay platform</span>
   <h1 class="govuk-heading-m">Statistics by service</h1>
-  
+
   {{ govukTable({
       firstCellIsHeader: false,
       head: [
