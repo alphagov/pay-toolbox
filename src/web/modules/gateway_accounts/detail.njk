@@ -1,5 +1,6 @@
 {% from "components/table/macro.njk" import govukTable %}
 {% from "components/button/macro.njk" import govukButton %}
+{% from "common/jsonDetails.njk" import json %}
 {% extends "layout/layout.njk" %}
 
 {% block main %}
@@ -123,8 +124,6 @@
     {% endif %}
   </div>
 
-  <div>
-    <pre><code>{{ account | dump('\t') }}</code></pre>
-    <pre><code>{{ services | dump('\t') }}</code></pre>
-  </div>
+  {{ json("Gateway account details source", account) }}
+  {{ json("Gateway account services source", services) }}
 {% endblock %}

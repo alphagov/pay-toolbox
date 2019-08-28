@@ -1,5 +1,7 @@
 {% from "components/button/macro.njk" import govukButton %}
-{% extends "layout/layout.njk" %} 
+{% from "common/jsonDetails.njk" import json %}
+
+{% extends "layout/layout.njk" %}
 
 {% block main %}
 <div class="govuk-panel govuk-panel--confirmation">
@@ -23,17 +25,16 @@
     <span class="govuk-warning-text__assistive">Warning</span>
     This Stripe account was created for a service, continue to create the GOV.UK Pay Gateway Account
   </strong>
- </div> 
- 
- {{ govukButton({ 
-    text: "Create Pay Live Gateway Account for " + response.business_name + "(" + service.name + ")", 
+ </div>
+
+ {{ govukButton({
+    text: "Create Pay Live Gateway Account for " + response.business_name + "(" + service.name + ")",
     href: "/gateway_accounts/create?service=" + systemLinkService + "&credentials=" + response.id
     })
     }}
   <br>
 {% endif %}
 
-<div> 
-  <pre><code>{{ response | dump('\t') }}</code></pre>
-</div>
+
+{{ json("Stripe response source", response) }}
 {% endblock %}
