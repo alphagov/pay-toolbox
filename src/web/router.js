@@ -77,6 +77,9 @@ router.get('/stripe/basic/create', auth.secured, stripe.basic)
 router.post('/stripe/basic/create', auth.secured, stripe.basicCreate)
 
 // @TODO(sfount) simple to integrate into table action - should be reconsidered for POST or PATCH
+router.get('/users/search', auth.secured, users.searchPage)
+router.post('/users/search', auth.secured, users.search)
+
 router.get('/users/:id', auth.secured, users.show)
 router.get('/users/:id/phone', auth.secured, users.updatePhoneNumberForm)
 router.post('/users/:id/phone', auth.secured, users.updatePhoneNumber)
