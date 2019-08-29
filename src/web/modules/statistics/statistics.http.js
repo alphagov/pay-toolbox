@@ -1,4 +1,4 @@
-const { Connector, AdminUsers } = require('./../../../lib/pay-request')
+const { Connector } = require('./../../../lib/pay-request')
 const DateFilter = require('./dateFilter.model')
 
 const { wrapAsyncErrorHandlers } = require('./../../../lib/routes')
@@ -43,15 +43,25 @@ const compareFilter = async function compareFilter(req, res) {
   })
 }
 
-// @TODO(sfount) route not complete - combine service details with gateway
-//               account performance report
 const byServices = async function byServices(req, res) {
-  const [ services, report ] = await Promise.all([
-    AdminUsers.services(),
+  const [ gatewayAccountsResponse, gatewayAccountReport ] = await Promise.all([
+    Connector.accounts(),
     Connector.gatewayAccountPerformanceReport()
   ])
+  const { accounts } = gatewayAccountsResponse
 
-  res.render('statistics/by_service', { stats: report, services })
+  const indexedAccounts = accounts.reduce((aggregate, account) => {
+    // eslint-disable-next-line no-param-reassign
+    aggregate[account.gateway_account_id] = account
+    return aggregate
+  }, {})
+
+  const report = Object.keys(gatewayAccountReport)
+    // eslint-disable-next-line arrow-body-style
+    .map((key) => {
+      return { ...gatewayAccountReport[key], ...indexedAccounts[key] }
+    })
+  res.render('statistics/by_service', { report })
 }
 
 const handlers = {
