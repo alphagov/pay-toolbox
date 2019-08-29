@@ -1,3 +1,5 @@
+{% from "common/json.njk" import json %}
+
 {% extends "layout/layout.njk" %}
 
 {% block main %}
@@ -43,5 +45,5 @@ A {{ account.type | upper }} Gateway account has been created through Admin User
 	{% endif %}
 </ul>
 
-<pre><code> {{ account | dump('\t') }}</code></pre>
+{{ json("Account details source", account) }}
 {% endblock %}

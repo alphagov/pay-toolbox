@@ -1,6 +1,7 @@
 {% from "components/button/macro.njk" import govukButton %}
 {% from "components/table/macro.njk" import govukTable %}
-{% extends "layout/layout.njk" %} 
+{% from "common/json.njk" import json %}
+{% extends "layout/layout.njk" %}
 
 {% block main %}
   <h1 class="govuk-heading-m">Manage API keys</h1>
@@ -14,7 +15,7 @@
   <div>
     <a href="/gateway_accounts/{{ gatewayAccountId }}" class="govuk-back-link">Back to gateway account</a>
   </div>
-  
+
   {% for token in tokens %}
     {{ govukTable({
     firstCellIsHeader: true,
@@ -35,9 +36,10 @@
         })
       }}
     </div>
+
+  {% else %}
+    <p class="govuk-body top-spacer">No API keys found for gateway account.</p>
   {% endfor %}
 
-  <div>
-    <pre><code>{{ tokens | dump('\t') }}</code></pre>
-  </div>
+  {{ json("API tokens source", tokens) }}
 {% endblock %}

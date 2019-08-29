@@ -1,8 +1,9 @@
-{% extends "layout/layout.njk" %} 
+{% from "common/json.njk" import json %}
+{% extends "layout/layout.njk" %}
 
 {% block main %}
   <h1 class="govuk-heading-m">Transaction Search Results</h1>
-  
+
   {% if events.length %}
   <p class="govuk-body">
   Found results for charge ID <b><code>{{ chargeId }}</code></b>
@@ -23,10 +24,10 @@
       {% for event in events %}
       <tr class="govuk-table__row">
         <td class="govuk-table__cell">{{ event.type }}</td>
-        <td class="govuk-table__cell">{{ event.state.status }}</td> 
-        <td class="govuk-table__cell">{{ event.state.finished }}</td> 
-        <td class="govuk-table__cell">{{ event.amount }}</td> 
-        <td class="govuk-table__cell">{{ event.updated | formatDate }}</td> 
+        <td class="govuk-table__cell">{{ event.state.status }}</td>
+        <td class="govuk-table__cell">{{ event.state.finished }}</td>
+        <td class="govuk-table__cell">{{ event.amount }}</td>
+        <td class="govuk-table__cell">{{ event.updated | formatDate }}</td>
       </tr>
       {% else %}
       <tr class="govuk-table__row">
@@ -36,7 +37,5 @@
     </tbody>
   </table>
 
-  <div>
-    <pre><code>{{ events | dump('\t') }}</code></pre>
-  </div>
+  {{ json("Events details source", events) }}
 {% endblock %}

@@ -1,4 +1,6 @@
 {% from "transactions/status.macro.njk" import status %}
+{% from "common/json.njk" import json %}
+
 {% extends "layout/layout.njk" %}
 
 {% block main %}
@@ -184,4 +186,5 @@
     </ul>
   </div>
 
+  {{ json("Transaction source", transaction) }}
 {% endblock %}

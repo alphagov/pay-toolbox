@@ -1,4 +1,6 @@
 {% from "components/button/macro.njk" import govukButton %}
+{% from "common/json.njk" import json %}
+
 {% extends "layout/layout.njk" %}
 
 {% block main %}
@@ -139,8 +141,8 @@
       href: "/services/" + serviceId + "/toggle_terminal_state_redirect"
       })
     }}
-  <div>
-    <pre><code>{{ service | dump('\t') }}</code></pre>
-    <pre><code>{{ users | dump('\t') }}</code></pre>
   </div>
+
+  {{ json("Service details source", service) }}
+  {{ json("Users details source", users) }}
 {% endblock %}

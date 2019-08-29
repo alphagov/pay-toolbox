@@ -1,5 +1,6 @@
 {% from "components/table/macro.njk" import govukTable %}
 {% from "components/summary-list/macro.njk" import govukSummaryList %}
+{% from "common/json.njk" import json %}
 {% extends "layout/layout.njk" %}
 
 {% block main %}
@@ -53,7 +54,6 @@
   {% endfor %}
 </dl>
 
-<div>
-  <pre><code>{{ payUser | dump('\t') }}</code></pre>
-</div>
+{{ json("User details source", payUser) }}
+
 {% endblock %}
