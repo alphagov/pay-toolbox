@@ -5,32 +5,13 @@ import { wrapAsyncErrorHandlers } from '../../../lib/routes'
 import { AdminUsers } from '../../../lib/pay-request'
 import Validated from '../common/validated'
 
-import { formatErrorsForTemplate, ClientFormError } from '../common/validationErrorFormat'
-import { IOValidationError, RESTClientError } from '../../../lib/errors';
 import { Response, Request, NextFunction } from 'express';
+import { formatErrorsForTemplate, ClientFormError } from '../common/validationErrorFormat'
+import { IOValidationError } from '../../../lib/errors';
 
-const truncate = function truncate(value: string, length: number): string {
-  return `${value.substr(0, length)}...`
-}
-
-// @TODO(sfount) move to template
-// eslint-disable-next-line arrow-body-style
-const formatServiceRoles = (user: any, serviceRoles: any): any => {
-  // eslint-disable-next-line arrow-body-style
-  return serviceRoles.map((role: any) => {
-    return {
-      key: { text: role.service.name },
-      value: { html: `<code>${role.service.external_id}</code` },
-      actions: { items: [ { href: `/users/${user.external_id }/service/${role.service.external_id}/delete`, text: 'Remove user' } ] }
-    }
-  })
-}
-
-// req: Request
-// res: Response
 const show = async function show(req: any, res: any): Promise<void> {
   const payUser = await AdminUsers.user(req.params.id)
-  const context: any = { payUser, format: { serviceRoles: formatServiceRoles }, messages: req.flash('info'), _csrf: req.csrfToken() }
+  const context: any = { payUser, messages: req.flash('info'), _csrf: req.csrfToken() }
 
   res.render('users/users.show.njk', context)
 }

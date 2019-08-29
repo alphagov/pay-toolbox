@@ -3,6 +3,7 @@
 {% extends "layout/layout.njk" %}
 
 {% block main %}
+  <span class="govuk-caption-m">{{ account.description or account.gateway_account_id }}</span>
   <h1 class="govuk-heading-m">Gateway account details</h1>
 
   {% if services.external_id %}
