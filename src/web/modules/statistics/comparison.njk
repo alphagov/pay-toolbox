@@ -1,17 +1,18 @@
 {% from "components/table/macro.njk" import govukTable %}
-{% extends "layout/layout.njk" %} 
+{% extends "layout/layout.njk" %}
 
 {% block main %}
+  <span class="govuk-caption-m">GOV.UK Pay platform</span>
   <h1 class="govuk-heading-m">Statistics</h1>
-  
-  <h4 class="govuk-heading-s">{{ date | formatDateLong }}</h4>
+
+  <p class="govuk-body">{{ date | formatDateLong }}</p>
   {{ govukTable({
       firstCellIsHeader: true,
       rows: stats
     })
   }}
-  
-  <h4 class="govuk-heading-s">{{ compareDate | formatDateLong }}</h4>
+
+  <p class="govuk-body">{{ compareDate | formatDateLong }}</p>
   {{ govukTable({
       firstCellIsHeader: true,
       rows: compareStats
