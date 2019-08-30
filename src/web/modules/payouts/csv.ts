@@ -14,6 +14,7 @@ export interface PayTransactionCSVEntity {
   payReference: string;
   transactionDate: Date;
   amount: number;
+  cardHolderName: string;
   fee: number;
   net: number;
   type: PaymentType;
@@ -43,6 +44,9 @@ export async function renderCSV(
   }, {
     label: 'Transaction Date',
     value: 'transactionDate'
+  }, {
+    label: 'Payment card holder name',
+    value: 'cardHolderName'
   }, {
     label: 'Amount',
     value: 'amount'
