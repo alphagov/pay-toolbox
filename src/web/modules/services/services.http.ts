@@ -20,6 +20,13 @@ const detail = async function detail(req: Request, res: Response): Promise<void>
     AdminUsers.service(serviceId),
     AdminUsers.serviceUsers(serviceId)
   ])
+
+  users.forEach((user: any) => {
+    const currentServicesRole = user.service_roles
+      .find((serviceRole: any) => serviceRole.service && serviceRole.service.external_id === serviceId)
+    user.role = currentServicesRole.role && currentServicesRole.role.name
+  })
+
   res.render('services/detail', {
     service, users, serviceId, messages
   })
