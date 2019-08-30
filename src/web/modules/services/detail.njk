@@ -59,12 +59,12 @@
     </table>
   </div>
 
-
   <div>
     <table class="govuk-table">
       <thead class="govuk-table__head">
         <tr class="govuk-table__row">
           <th class="govuk-table__header" scope="col">Email</th>
+          <th class="govuk-table__header" scope="col">Role</th>
           <th class="govuk-table__header" scope="col">Disabled</th>
         </tr>
       </thead>
@@ -74,6 +74,7 @@
             <td class="govuk-table__cell">
               <a href="/users/{{ user.external_id }}" class="govuk-link govuk-link--no-visited-state">{{ user.email }}
             </td>
+            <td class="govuk-table__cell">{{ user.role | capitalize }}</td>
             <td class="govuk-table__cell">{{ user.disabled | string | capitalize }}</td>
           </tr>
         {% endfor %}
