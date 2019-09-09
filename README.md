@@ -29,6 +29,14 @@ npm install
 npm run dev
 ```
 
+## Key runtime environment variables
+
+| Variable                 | Description                               |
+| ------------------------ |:----------------------------------------- |
+| `NODE_ENV`               | 
+| `STRIPE_ACCOUNT_API_KEY` | 
+| `https_proxy`            | 
+
 ## Development Goals/ Focus
 
   * Small files, each piece responsible for one thing
