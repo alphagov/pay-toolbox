@@ -30,6 +30,7 @@ const ledgerMethods = function ledgerMethods(instance) {
       override_account_id_restriction: true,
       display_size: pageSize,
       payment_states: externalStatusMap[currentStatus].join(','),
+      transaction_type: 'PAYMENT',
       ...account && { account_id: account }
     }
 
