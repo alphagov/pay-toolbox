@@ -109,8 +109,13 @@ class GatewayAccount extends Validated {
       description: this.description,
       type: this.isLive() ? 'live' : 'test',
       service_name: this.serviceName,
-      analytics_id: this.analyticsId,
-      requires_3ds: this.provider === 'stripe' ? 'true' : 'false'
+      analytics_id: this.analyticsId
+    }
+
+    if (this.isLive() && this.provider !== 'stripe') {
+      payload.requires_3ds = 'true'
+    } else {
+      payload.requires_3ds = 'false'
     }
 
     if (this.provider === 'stripe' && this.credentials) {
