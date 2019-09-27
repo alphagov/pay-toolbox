@@ -9,7 +9,7 @@ export interface GatewayAccountRequest {
 
   analytics_id: string;
 
-  requires_3ds: string;
+  requires_3ds?: string;
 
   credentials?: object;
 }
