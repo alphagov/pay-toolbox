@@ -1,10 +1,12 @@
 const logger = require('./logger')
 
+const { disableAuth } = require('./../config')
+
 // Simple method to ensure that all `req` objects passed in have
 // sufficient access headers to access secured routes. Any route that specifies
 // `secured` will be rejected without these headers.
 const secured = function secured(req, res, next) {
-  if (req.isAuthenticated()) {
+  if (req.isAuthenticated() || disableAuth) {
     next()
     return
   }
@@ -13,7 +15,7 @@ const secured = function secured(req, res, next) {
 }
 
 const administrative = function administrative(req, res, next) {
-  if (req.user.admin) {
+  if (req.user.admin || disableAuth) {
     next()
     return
   }
@@ -32,7 +34,7 @@ const unauthorised = function unauthorised(req, res) {
 }
 
 const revokeSession = function revokeSession(req, res) {
-  logger.info(`Revoking session for user ${req.user.username}`)
+  logger.info(`Revoking session for user ${req.user && req.user.username}`)
   req.logout()
   res.redirect('/')
 }

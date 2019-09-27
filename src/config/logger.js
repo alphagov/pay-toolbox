@@ -14,4 +14,4 @@ if (error) {
   throw new Error(`Invalid logging environment variables set ${error.message}`)
 }
 
-module.exports = { logger: validatedLoggingEnvironmentValues }
+module.exports = validatedLoggingEnvironmentValues
