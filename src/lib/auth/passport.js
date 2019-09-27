@@ -2,7 +2,6 @@
 const passport = require('passport')
 const HTTPSProxyAgent = require('https-proxy-agent')
 
-const config = require('./../../config')
 const { disableAuth } = require('./../../config')
 const { Strategy, githubAuthCredentials, handleGitHubOAuthSuccessResponse } = require('./github/strategy')
 

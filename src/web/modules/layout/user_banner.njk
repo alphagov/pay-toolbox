@@ -1,5 +1,6 @@
 <div class="user-profile">
   <div class="user-profile__container">
+  {% if not disableAuth %}
     <div class="user-profile__item">
       <img class="avatar" height="20" width="20" src="{{ user.avatarUrl }}">
     </div>
@@ -14,5 +15,8 @@
     <div class="user-profile__item right">
       <span><a class="govuk-link govuk-link--no-visited-state" href="/logout">Clear session</a></span>
     </div>
+  {% else %}
+    <div class="user-profile__item">(OAUTH disabled)</div>
+  {% endif %}
   </div>
 </div>

@@ -8,7 +8,7 @@ const cookieSession = require('cookie-session')
 const nunjucks = require('nunjucks')
 const csurf = require('csurf')
 
-const { common, server } = require('./../config')
+const { common, server, disableAuth } = require('./../config')
 const logger = require('./../lib/logger')
 const passport = require('../lib/auth/passport')
 
@@ -79,6 +79,7 @@ const configureClientSessions = function configureClientSessions(instance) {
 const configureAuth = function configureAuth(instance) {
   const exposeAuthenticatedUserToTemplate = (req, res, next) => {
     res.locals.user = req.user
+    res.locals.disableAuth = disableAuth
     next()
   }
 

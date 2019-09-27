@@ -11,4 +11,11 @@ const auth = require('./auth')
 // has been explitly set to not enable OAUTH
 const disableAuth = common.development && !auth.AUTH_GITHUB_ENABLED
 
-module.exports = { disableAuth, server, common, logger, services, auth }
+module.exports = {
+  disableAuth,
+  server,
+  common,
+  logger,
+  services,
+  auth
+}
