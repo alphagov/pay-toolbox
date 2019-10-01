@@ -17,4 +17,4 @@ if (error) {
   throw new Error(`Invalid server environment variables set ${error.message}`)
 }
 
-module.exports = { server: validatedServerEnvironmentValues }
+module.exports = validatedServerEnvironmentValues

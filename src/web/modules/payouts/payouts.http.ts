@@ -39,7 +39,7 @@ export async function csv(req: Request, res: Response, next: NextFunction): Prom
       account.stripe_account_id
     )
 
-    logger.info(`Report for [gatewayAccount=${req.params.gatewayAccountId}] generated for [payoutId=${payout.id}] authorised by ${req.user.username}`)
+    logger.info(`Report for [gatewayAccount=${req.params.gatewayAccountId}] generated for [payoutId=${payout.id}] authorised by ${req.user && req.user.username}`)
 
     res.set('Content-Disposition', `attachment; filename=GOVUK_PAY_PAYOUT_${toISODateString(payout.arrival_date)}.csv`)
     res.type('text/csv').send(csvOut)

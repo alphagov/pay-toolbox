@@ -7,4 +7,15 @@ const common = require('./common')
 const services = require('./services')
 const auth = require('./auth')
 
-module.exports = Object.assign({}, server, common, logger, services, auth)
+// allow requests through IFF node environment is set to development and the environment
+// has been explitly set to not enable OAUTH
+const disableAuth = common.development && !auth.AUTH_GITHUB_ENABLED
+
+module.exports = {
+  disableAuth,
+  server,
+  common,
+  logger,
+  services,
+  auth
+}

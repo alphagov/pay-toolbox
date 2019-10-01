@@ -21,4 +21,4 @@ if (error) {
   throw new Error(`Invalid connected services environment variables set ${error.message}`)
 }
 
-module.exports = { services: validatedConnectedServicesEnvironmentValues }
+module.exports = validatedConnectedServicesEnvironmentValues

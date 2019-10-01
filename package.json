@@ -13,7 +13,7 @@
     "dev": "tsc-watch --noClear --onSuccess \"./scripts/run-dev\"",
     "lint": "eslint src",
     "test": "npm run test:unit",
-    "test:unit": "mocha -r ts-node/register --recursive \"./src/**/*.spec.{js,ts}\"",
+    "test:unit": "AUTH_GITHUB_ENABLED=true mocha -r ts-node/register --recursive \"./src/**/*.spec.{js,ts}\"",
     "test:cypress": "./scripts/run-cypress",
     "build": "scripts/build && npm run build:typescript && npm run build:copy && npm run build:sass",
     "build:typescript": "tsc",
