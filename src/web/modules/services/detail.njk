@@ -29,6 +29,10 @@
         <td class="govuk-table__cell">{{service.name}}</td>
       </tr>
       <tr class="govuk-table__row">
+      <th class="govuk-table__header" scope="col">Organisation</th>
+        <td class="govuk-table__cell">{{(service.merchant_details.name or "(Not set)")}}</td>
+      </tr>
+      <tr class="govuk-table__row">
         <th class="govuk-table__header" scope="col">Go live status</th>
         <td class="govuk-table__cell">{{service.current_go_live_stage | upper }}</td>
       </tr>
