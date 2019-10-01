@@ -77,3 +77,7 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     next(error)
   }
 }
+
+export async function statistics(req: Request, res: Response, next: NextFunction): Promise<void> {
+  res.render('transactions/statistics')
+}
