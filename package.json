@@ -9,7 +9,7 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "start": "node dist/test_runner.js",
+    "start": "node dist/index.js",
     "dev": "tsc-watch --noClear --onSuccess \"./scripts/run-dev\"",
     "lint": "eslint src",
     "test": "npm run test:unit",
@@ -79,6 +79,7 @@
     "eslint-plugin-import": "2.17.3",
     "mocha": "6.1.4",
     "mockery": "2.1.0",
+    "nock": "11.3.5",
     "node-sass": "4.12.0",
     "nodemon": "1.19.1",
     "ts-node": "8.2.0",
