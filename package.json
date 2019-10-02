@@ -14,6 +14,7 @@
     "lint": "eslint src",
     "test": "npm run test:unit",
     "test:unit": "AUTH_GITHUB_ENABLED=true mocha -r ts-node/register --recursive \"./src/**/*.spec.{js,ts}\"",
+    "test:runner": "node dist/testRunner.js",
     "test:cypress": "./scripts/run-cypress",
     "build": "scripts/build && npm run build:typescript && npm run build:copy && npm run build:sass",
     "build:typescript": "tsc",
