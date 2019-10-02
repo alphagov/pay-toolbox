@@ -3,6 +3,15 @@
 {% block main %}
   <span class="govuk-caption-m">GOV.UK Pay platform</span>
   <h1 class="govuk-heading-m">Statistics</h1>
+  <div class="transactions-filter__container govuk-body">
+    {% for period in ["Today", "This week", "This month"] %}
+      <a
+        class="transactions-filter__item {% if selectedPeriod === period %}selected{% endif %} no-decoration"
+        href="/transactions/statistics/?period={{ period }}">
+        <span>{{ period | capitalize }}</span>
+      </a>
+    {% endfor %}
+  </div>
   <div class="govuk-body">
 
     <div class="govuk-grid-row">
@@ -11,8 +20,6 @@
           <h1>10</h1>
           <span>Payments</span>
         </div>
-        
-        
       </div>
       <div class="govuk-grid-column-one-half">
         <h1>£100</h1>
