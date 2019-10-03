@@ -9,6 +9,7 @@
       <tr class="govuk-table__row">
         <th class="govuk-table__header" scope="col">ID</th>
         <th class="govuk-table__header" scope="col">Name</th>
+        <th class="govuk-table__header" scope="col">Organisation</th>
         <th class="govuk-table__header" scope="col">Go live status</th>
       </tr>
     </thead>
@@ -17,6 +18,7 @@
       <tr class="govuk-table__row">
         <td class="govuk-table__cell">{{ service.id }}</td>
         <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="/services/{{ service.external_id }}">{{ service.name }}</a></td>
+        <td class="govuk-table__cell">{{ (service.merchant_details.name or "(Not set)") }}</td>
         <td class="govuk-table__cell">{{ service.current_go_live_stage }}</td>
       </tr>
       {% else %}
