@@ -47,7 +47,25 @@ const ledgerMethods = function ledgerMethods(instance) {
       .then(utilExtractData)
   }
 
-  return { transaction, transactions, events }
+  const statistics = function statistics(account, fromDate, toDate, override) {
+    const params = {
+      ...account && { account_id: account },
+      ...fromDate && { from_date: fromDate },
+      ...toDate && { to_date: toDate },
+      ...override && { override_account_id_restriction: true }
+    }
+
+    const query = Object.keys(params)
+      .map(key => `${key}=${params[key]}`)
+      .join('&')
+
+    return axiosInstance.get(`/v1/report/payments_by_state?${query}`)
+      .then(utilExtractData)
+  }
+
+  return {
+    transaction, transactions, events, statistics
+  }
 }
 
 module.exports = ledgerMethods

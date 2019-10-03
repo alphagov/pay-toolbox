@@ -1,13 +1,19 @@
 {% extends "layout/layout.njk" %}
 
 {% block main %}
-  <span class="govuk-caption-m">GOV.UK Pay platform</span>
+  <span class="govuk-caption-m">
+    {% if account %}
+      <span>{{ account.name }}</span>
+    {% else %}
+      <span>GOV.UK Pay platform</span>
+    {% endif %}
+  </span>
   <h1 class="govuk-heading-m">Statistics</h1>
   <div class="transactions-filter__container govuk-body">
     {% for period in ["Today", "This week", "This month"] %}
       <a
         class="transactions-filter__item {% if selectedPeriod === period %}selected{% endif %} no-decoration"
-        href="/transactions/statistics/?period={{ period }}">
+        href="/transactions/statistics/?period={{ period }}{{ "&account=" + accountId if accountId }}">
         <span>{{ period | capitalize }}</span>
       </a>
     {% endfor %}
@@ -17,34 +23,36 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-half">
         <div class = "center">
-          <h1>10</h1>
+          <h1>{{results.payments}}</h1>
           <span>Payments</span>
         </div>
       </div>
       <div class="govuk-grid-column-one-half">
-        <h1>£100</h1>
-        <span>Gross</span>
+        <div class = "center">
+          <h1>{{results.gross}}</h1>
+          <span>Gross</span>
+        </div>
       </div>
     </div>
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-third">
-        <h1>10</h1>
-        <span>Success</span>
+        <div class = "center">
+          <h1>{{results.success}}</h1>
+          <span>Success</span>
+        </div>
       </div>
       <div class="govuk-grid-column-one-third">
-        <h1>100</h1>
-        <span>Error</span>
+        <div class = "center">
+          <h1>{{results.error}}</h1>
+          <span>Error</span>
+        </div>
       </div>
       <div class="govuk-grid-column-one-third">
-        <h1>100</h1>
-        <span>In Progress</span>
+        <div class = "center">
+          <h1>{{results.in_progress}}</h1>
+          <span>In Progress</span>
+        </div>
       </div>
     </div>
-
-
-
-
-    
-    
   </div>
 {% endblock %}

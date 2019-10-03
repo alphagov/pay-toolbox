@@ -3,10 +3,14 @@
 /* eslint-disable import/prefer-default-export */
 import { Request, Response, NextFunction } from 'express'
 
+import { Moment } from 'moment'
+
 import { Transaction } from 'ledger'
 
 import { Ledger, Connector, AdminUsers } from '../../../lib/pay-request'
 import * as logger from '../../../lib/logger'
+
+let moment = require('moment');
 
 export async function searchPage(req: Request, res: Response): Promise<void> {
   res.render('transactions/search', { csrf: req.csrfToken() })
@@ -82,11 +86,52 @@ export async function statistics(req: Request, res: Response, next: NextFunction
   try {
     let account
     const accountId = req.query.account
+
+    if (req.query.account) {
+      account = await AdminUsers.gatewayAccountServices(accountId)
+    }
+
     const selectedPeriod: string = req.query.period || 'Today'
+
+    const dateInUTC = moment().utc()
+    let fromDate: string;
+    let toDate: string;
+    switch(selectedPeriod) {
+      case 'Today':
+        fromDate =  dateInUTC.clone().startOf('day').format()
+        toDate = dateInUTC.format()
+        break;
+      case 'This week':
+        fromDate = dateInUTC.clone().startOf('week').format() 
+        toDate = dateInUTC.format() 
+        break;
+      case 'This month':
+        fromDate = dateInUTC.clone().startOf('month').format()
+        toDate = dateInUTC.format()
+        break;
+    }
+    const override_account_id_restriction: boolean = !accountId
+
+    const response = await Ledger.statistics(accountId, fromDate, toDate, override_account_id_restriction)
+    
+    // Replace this with DB call
+    let payments: number = 0;
+    Object.keys(response).forEach(key => {
+      payments += response[key]
+    })
+
+    const results = {
+      payments: payments,
+      gross: "£100", // Currently hard-coded
+      success: response.success,
+      error: response.error,
+      in_progress: response.started
+    }
     res.render('transactions/statistics', {
       account,
       accountId,
-      selectedPeriod
+      selectedPeriod,
+      results
     })
   } catch (error) {
     next(error)
