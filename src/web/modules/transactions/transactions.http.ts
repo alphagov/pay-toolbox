@@ -103,8 +103,6 @@ export async function statistics(req: Request, res: Response, next: NextFunction
     const paymentsByState = await Ledger.getPaymentsByState(accountId, fromDate, toDate)
     const paymentStatistics = await Ledger.paymentStatistics(accountId, fromDate, toDate)
 
-    console.log(paymentStatistics)
-
     const results = {
       payments: paymentStatistics.count,
       gross: paymentStatistics.gross_amount,
