@@ -100,8 +100,6 @@ export async function statistics(req: Request, res: Response, next: NextFunction
     const fromDate: string = moment().utc().startOf(momentKey).format()
     const toDate: string = moment().utc().endOf(momentKey).format()
   
-    const response = await Ledger.statistics(accountId, fromDate, toDate)
-  
     const paymentsByState = await Ledger.getPaymentsByState(accountId, fromDate, toDate)
     const paymentStatistics = await Ledger.paymentStatistics(accountId, fromDate, toDate)
 
