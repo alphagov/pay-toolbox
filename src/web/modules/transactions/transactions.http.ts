@@ -3,8 +3,6 @@
 /* eslint-disable import/prefer-default-export */
 import { Request, Response, NextFunction } from 'express'
 
-import { Moment } from 'moment'
-
 import { Transaction } from 'ledger'
 
 import { Ledger, Connector, AdminUsers } from '../../../lib/pay-request'
@@ -91,26 +89,18 @@ export async function statistics(req: Request, res: Response, next: NextFunction
       account = await AdminUsers.gatewayAccountServices(accountId)
     }
 
-    const selectedPeriod: string = req.query.period || 'Today'
-
-    const dateInUTC = moment().utc()
-    let fromDate: string;
-    let toDate: string;
-    switch(selectedPeriod) {
-      case 'Today':
-        fromDate =  dateInUTC.clone().startOf('day').format()
-        toDate = dateInUTC.format()
-        break;
-      case 'This week':
-        fromDate = dateInUTC.clone().startOf('week').format() 
-        toDate = dateInUTC.format() 
-        break;
-      case 'This month':
-        fromDate = dateInUTC.clone().startOf('month').format()
-        toDate = dateInUTC.format()
-        break;
+    const periodKeyMap: {[key:string]: string} = {
+      today: 'day',
+      week: 'week',
+      month: 'month'
     }
 
+    const selectedPeriod: any = req.query.period || 'today'
+    const momentKey = periodKeyMap[selectedPeriod]
+
+    const fromDate: string = moment().utc().startOf(momentKey).format()
+    const toDate: string = moment().utc().endOf(momentKey).format()
+  
     const response = await Ledger.statistics(accountId, fromDate, toDate)
     
     // Replace this with DB call

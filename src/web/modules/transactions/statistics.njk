@@ -10,7 +10,7 @@
   </span>
   <h1 class="govuk-heading-m">Statistics</h1>
   <div class="transactions-filter__container govuk-body">
-    {% for period in ["Today", "This week", "This month"] %}
+    {% for period in ["today", "week", "month"] %}
       <a
         class="transactions-filter__item {% if selectedPeriod === period %}selected{% endif %} no-decoration"
         href="/transactions/statistics/?period={{ period }}{{ "&account=" + accountId if accountId }}">
