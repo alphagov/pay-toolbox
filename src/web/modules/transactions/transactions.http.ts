@@ -95,6 +95,7 @@ export async function statistics(req: Request, res: Response, next: NextFunction
       month: 'month'
     }
 
+<<<<<<< HEAD
     const selectedPeriod: any = req.query.period || 'today'
     const momentKey = periodKeyMap[selectedPeriod]
 
@@ -115,6 +116,19 @@ export async function statistics(req: Request, res: Response, next: NextFunction
       success: response.success,
       error: response.error,
       in_progress: response.started
+=======
+    const paymentsByState = await Ledger.getPaymentsByState(accountId, fromDate, toDate, override_account_id_restriction)
+    const paymentStatistics = await Ledger.paymentStatistics(accountId, fromDate, toDate, override_account_id_restriction)
+
+    console.log(paymentStatistics)
+
+    const results = {
+      payments: paymentStatistics.count,
+      gross: paymentStatistics.gross_amount,
+      success: paymentsByState.success,
+      error: paymentsByState.error,
+      in_progress: paymentsByState.started
+>>>>>>> BAU Payment count and gross return from Ledger call
     }
     res.render('transactions/statistics', {
       account,
