@@ -110,9 +110,8 @@ export async function statistics(req: Request, res: Response, next: NextFunction
         toDate = dateInUTC.format()
         break;
     }
-    const override_account_id_restriction: boolean = !accountId
 
-    const response = await Ledger.statistics(accountId, fromDate, toDate, override_account_id_restriction)
+    const response = await Ledger.statistics(accountId, fromDate, toDate)
     
     // Replace this with DB call
     let payments: number = 0;
@@ -121,7 +120,7 @@ export async function statistics(req: Request, res: Response, next: NextFunction
     })
 
     const results = {
-      payments: payments,
+      payments: payments, // Calculated by summing up
       gross: "£100", // Currently hard-coded
       success: response.success,
       error: response.error,

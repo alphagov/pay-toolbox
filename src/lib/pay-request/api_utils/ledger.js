@@ -47,12 +47,15 @@ const ledgerMethods = function ledgerMethods(instance) {
       .then(utilExtractData)
   }
 
-  const statistics = function statistics(account, fromDate, toDate, override) {
+  const statistics = function statistics(account, fromDate, toDate) {
     const params = {
       ...account && { account_id: account },
-      ...fromDate && { from_date: fromDate },
-      ...toDate && { to_date: toDate },
-      ...override && { override_account_id_restriction: true }
+      from_date: fromDate,
+      to_date: toDate
+    }
+
+    if (!account) {
+      params.override_account_id_restriction = true
     }
 
     const query = Object.keys(params)
