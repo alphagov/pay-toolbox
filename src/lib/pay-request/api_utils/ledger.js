@@ -47,11 +47,7 @@ const ledgerMethods = function ledgerMethods(instance) {
       .then(utilExtractData)
   }
 
-<<<<<<< HEAD
-  const statistics = function statistics(account, fromDate, toDate) {
-=======
-  const getPaymentsByState = function getPaymentsByState(account, fromDate, toDate, override) {
->>>>>>> BAU Payment count and gross return from Ledger call
+  const getPaymentsByState = function getPaymentsByState(account, fromDate, toDate) {
     const params = {
       ...account && { account_id: account },
       from_date: fromDate,
@@ -70,12 +66,15 @@ const ledgerMethods = function ledgerMethods(instance) {
       .then(utilExtractData)
   }
 
-  const paymentStatistics = function paymentStatistics(account, fromDate, toDate, override) {
+  const paymentStatistics = function paymentStatistics(account, fromDate, toDate) {
     const params = {
       ...account && { account_id: account },
       ...fromDate && { from_date: fromDate },
-      ...toDate && { to_date: toDate },
-      ...override && { override_account_id_restriction: true }
+      ...toDate && { to_date: toDate }
+    }
+
+    if (!account) {
+      params.override_account_id_restriction = true
     }
 
     const query = Object.keys(params)

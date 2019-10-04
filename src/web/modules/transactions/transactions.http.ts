@@ -94,8 +94,6 @@ export async function statistics(req: Request, res: Response, next: NextFunction
       week: 'week',
       month: 'month'
     }
-
-<<<<<<< HEAD
     const selectedPeriod: any = req.query.period || 'today'
     const momentKey = periodKeyMap[selectedPeriod]
 
@@ -103,22 +101,9 @@ export async function statistics(req: Request, res: Response, next: NextFunction
     const toDate: string = moment().utc().endOf(momentKey).format()
   
     const response = await Ledger.statistics(accountId, fromDate, toDate)
-    
-    // Replace this with DB call
-    let payments: number = 0;
-    Object.keys(response).forEach(key => {
-      payments += response[key]
-    })
-
-    const results = {
-      payments: payments, // Calculated by summing up
-      gross: "£100", // Currently hard-coded
-      success: response.success,
-      error: response.error,
-      in_progress: response.started
-=======
-    const paymentsByState = await Ledger.getPaymentsByState(accountId, fromDate, toDate, override_account_id_restriction)
-    const paymentStatistics = await Ledger.paymentStatistics(accountId, fromDate, toDate, override_account_id_restriction)
+  
+    const paymentsByState = await Ledger.getPaymentsByState(accountId, fromDate, toDate)
+    const paymentStatistics = await Ledger.paymentStatistics(accountId, fromDate, toDate)
 
     console.log(paymentStatistics)
 
@@ -128,7 +113,6 @@ export async function statistics(req: Request, res: Response, next: NextFunction
       success: paymentsByState.success,
       error: paymentsByState.error,
       in_progress: paymentsByState.started
->>>>>>> BAU Payment count and gross return from Ledger call
     }
     res.render('transactions/statistics', {
       account,
