@@ -118,6 +118,11 @@
       })
       }}
       {{ govukButton({
+        text: "View statistics",
+        href: "/transactions/statistics?account=" + gatewayAccountId
+      })
+      }}
+      {{ govukButton({
         text: "Update surcharge amounts",
         href: "/gateway_accounts/" + gatewayAccountId + "/surcharge"
       })

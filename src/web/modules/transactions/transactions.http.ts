@@ -8,6 +8,8 @@ import { Transaction } from 'ledger'
 import { Ledger, Connector, AdminUsers } from '../../../lib/pay-request'
 import * as logger from '../../../lib/logger'
 
+const moment = require('moment');
+
 export async function searchPage(req: Request, res: Response): Promise<void> {
   res.render('transactions/search', { csrf: req.csrfToken() })
 }
@@ -72,6 +74,52 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
       account,
       service,
       events
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const sum = (a: number, b: number) => a + b
+
+export async function statistics(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    let account
+    const accountId = req.query.account
+
+    if (req.query.account) {
+      account = await AdminUsers.gatewayAccountServices(accountId)
+    } else {
+      // @TODO(sfount) temporarily disable platform level queries - these aren't yet supported by Ledger
+      throw new Error('Platform statistics not supported by Ledger')
+    }
+
+    const periodKeyMap: {[key:string]: string} = {
+      today: 'day',
+      week: 'week',
+      month: 'month'
+    }
+    const selectedPeriod: any = req.query.period || 'today'
+    const momentKey = periodKeyMap[selectedPeriod]
+
+    const fromDate: string = moment().utc().startOf(momentKey).format()
+    const toDate: string = moment().utc().endOf(momentKey).format()
+
+    const paymentsByState = await Ledger.getPaymentsByState(accountId, fromDate, toDate)
+    const paymentStatistics = await Ledger.paymentStatistics(accountId, fromDate, toDate)
+
+    const results = {
+      payments: paymentStatistics.count,
+      gross: paymentStatistics.gross_amount,
+      success: paymentsByState.success,
+      error: paymentsByState.error,
+      in_progress: [paymentsByState.created, paymentsByState.started, paymentsByState.submitted, paymentsByState.capturable].reduce(sum, 0)
+    }
+    res.render('transactions/statistics', {
+      account,
+      accountId,
+      selectedPeriod,
+      results
     })
   } catch (error) {
     next(error)
