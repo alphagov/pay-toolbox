@@ -23,5 +23,7 @@ export default {
   apiKeys: http.apiKeys,
   deleteApiKey: http.deleteApiKey,
   surcharge: http.surcharge,
-  updateSurcharge: http.updateSurcharge
+  updateSurcharge: http.updateSurcharge,
+  emailBranding: http.emailBranding,
+  updateEmailBranding: http.updateEmailBranding
 }

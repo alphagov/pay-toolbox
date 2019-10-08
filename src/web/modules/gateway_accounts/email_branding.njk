@@ -1,0 +1,43 @@
+{% from "components/input/macro.njk" import govukInput %}
+{% from "components/button/macro.njk" import govukButton %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">Update gateway account</span>
+  <h1 class="govuk-heading-m">Email custom branding</h1>
+
+  <div>
+    <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Gateway account ({{ account.gateway_account_id }})</a>
+  </div>
+
+  <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/email_branding">
+    {{ govukInput({
+      id: "api_token",
+      name: "api_token",
+      label: { text: "Notify API key" },
+      autocomplete: "off"
+    })
+    }}
+    {{ govukInput({
+      id: "template_id",
+      name: "template_id",
+      label: { text: "Payment receipt template id" },
+      autocomplete: "off"
+    })
+    }}
+    {{ govukInput({
+      id: "refund_issued_template_id",
+      name: "refund_issued_template_id",
+      label: { text: "Refund issued template id" },
+      autocomplete: "off"
+    })
+    }}
+
+    {{ govukButton({
+    text: "Update email branding"
+    })
+    }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}

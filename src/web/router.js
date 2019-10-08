@@ -48,6 +48,8 @@ router.post('/gateway_accounts/create/confirm', auth.secured, gatewayAccounts.co
 
 router.get('/gateway_accounts/:id/surcharge', auth.secured, gatewayAccounts.surcharge)
 router.post('/gateway_accounts/:id/surcharge', auth.secured, gatewayAccounts.updateSurcharge)
+router.get('/gateway_accounts/:id/email_branding', auth.secured, gatewayAccounts.emailBranding)
+router.post('/gateway_accounts/:id/email_branding', auth.secured, gatewayAccounts.updateEmailBranding)
 
 router.get('/services', auth.secured, services.overview)
 router.get('/services/search', auth.secured, services.search)
