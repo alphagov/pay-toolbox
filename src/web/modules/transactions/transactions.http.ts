@@ -6,6 +6,9 @@ import { Request, Response, NextFunction } from 'express'
 import { Transaction } from 'ledger'
 
 import { Ledger, Connector, AdminUsers } from '../../../lib/pay-request'
+
+import { periodKey } from './selected.period'
+
 import * as logger from '../../../lib/logger'
 
 const moment = require('moment');
@@ -94,13 +97,8 @@ export async function statistics(req: Request, res: Response, next: NextFunction
       throw new Error('Platform statistics not supported by Ledger')
     }
 
-    const periodKeyMap: {[key:string]: string} = {
-      today: 'day',
-      week: 'week',
-      month: 'month'
-    }
     const selectedPeriod: any = req.query.period || 'today'
-    const momentKey = periodKeyMap[selectedPeriod]
+    const momentKey = periodKey(selectedPeriod)
 
     const fromDate: string = moment().utc().startOf(momentKey).format()
     const toDate: string = moment().utc().endOf(momentKey).format()
