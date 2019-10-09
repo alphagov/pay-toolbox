@@ -183,6 +183,24 @@ const updateSurcharge = async function updateSurcharge(req: Request, res: Respon
   res.redirect(`/gateway_accounts/${id}`)
 }
 
+const emailBranding = async function emailBranding(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
+  const account = await getAccount(id)
+
+  res.render('gateway_accounts/email_branding', { account, csrf: req.csrfToken() })
+}
+
+const updateEmailBranding = async function updateEmailBranding(req: Request, res: Response):
+Promise<void> {
+  const { id } = req.params
+  const notifySettings = req.body
+  delete notifySettings._csrf
+
+  await Connector.updateEmailBranding(id, notifySettings)
+  req.flash('info', 'Email custom branding successfully updated')
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
 export default {
   overview: wrapAsyncErrorHandler(overview),
   overviewDirectDebit: wrapAsyncErrorHandler(overviewDirectDebit),
@@ -193,5 +211,7 @@ export default {
   apiKeys: wrapAsyncErrorHandler(apiKeys),
   deleteApiKey: wrapAsyncErrorHandler(deleteApiKey),
   surcharge: wrapAsyncErrorHandler(surcharge),
-  updateSurcharge: wrapAsyncErrorHandler(updateSurcharge)
+  updateSurcharge: wrapAsyncErrorHandler(updateSurcharge),
+  emailBranding: wrapAsyncErrorHandler(emailBranding),
+  updateEmailBranding: wrapAsyncErrorHandler(updateEmailBranding)
 }

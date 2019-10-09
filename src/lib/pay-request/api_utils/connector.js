@@ -84,6 +84,15 @@ const connectorMethods = function connectorMethods(instance) {
     }
   }
 
+  const updateEmailBranding = async function updateEmailBranding(id, notifySettings) {
+    const url = `/v1/api/accounts/${id}`
+    await axiosInstance.patch(url, {
+      op: 'replace',
+      path: 'notify_settings',
+      value: notifySettings
+    })
+  }
+
   return {
     performanceReport,
     gatewayAccountPerformanceReport,
@@ -100,7 +109,8 @@ const connectorMethods = function connectorMethods(instance) {
     charge,
     refunds,
     getChargeByGatewayTransactionId,
-    updateCorporateSurcharge
+    updateCorporateSurcharge,
+    updateEmailBranding
   }
 }
 
