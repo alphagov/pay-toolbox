@@ -69,8 +69,8 @@ const ledgerMethods = function ledgerMethods(instance) {
   const paymentStatistics = function paymentStatistics(account, fromDate, toDate) {
     const params = {
       ...account && { account_id: account },
-      ...fromDate && { from_date: fromDate },
-      ...toDate && { to_date: toDate }
+      from_date: fromDate,
+      to_date: toDate
     }
 
     if (!account) {
