@@ -42,7 +42,7 @@
     "deep-diff": "1.0.2",
     "dotenv": "8.1.0",
     "express": "4.17.1",
-    "govuk-frontend": "2.13.0",
+    "govuk-frontend": "3.3.0",
     "helmet": "3.21.1",
     "https-proxy-agent": "3.0.0",
     "joi": "14.3.1",
