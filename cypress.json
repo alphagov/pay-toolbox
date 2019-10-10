@@ -2,7 +2,7 @@
   "baseUrl": "http://localhost:3000",
   "viewportHeight": 800,
   "viewportWidth": 1200,
-  "integrationFolder": "dist/tests/cypress/integration",
+  "integrationFolder": "src/tests/cypress/integration",
   "pluginsFile": "dist/tests/cypress/plugins",
   "supportFile": "dist/tests/cypress/support",
   "screenshotsFolder": "dist/tests/cypress/screenshots",

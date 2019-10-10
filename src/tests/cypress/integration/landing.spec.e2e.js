@@ -4,6 +4,6 @@ describe('Landing health check page', () => {
     cy.visit('/')
 
     cy.title().should('eq', 'Toolbox')
-    cy.get('.status-disconnected').should('have.length', 5)
+    cy.get('.status-disconnected').should('have.length', 6)
   })
 })
