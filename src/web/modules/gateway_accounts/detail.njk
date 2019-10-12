@@ -75,6 +75,18 @@
             <td class="govuk-table__cell">{{ account.toggle_3ds | string | capitalize }}</td>
           </tr>
       {% endif %}
+      {% if account.allow_apple_pay != undefined %}
+          <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="col">Apple Pay Enabled</th>
+            <td class="govuk-table__cell">{{ account.allow_apple_pay | string | capitalize }}</td>
+          </tr>
+      {% endif %}
+      {% if account.allow_google_pay != undefined %}
+          <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="col">Google Pay Enabled</th>
+            <td class="govuk-table__cell">{{ account.allow_google_pay | string | capitalize }}</td>
+          </tr>
+      {% endif %}
       {% if account.email_collection_mode != undefined %}
         <tr class="govuk-table__row">
           <th class="govuk-table__header" scope="col">Email collection mode</th>
