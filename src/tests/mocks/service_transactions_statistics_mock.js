@@ -1,7 +1,7 @@
 const nock = require('nock')
 const moment = require('moment')
 
-const { services } = require('./../../config')
+const { services } = require('../../config')
 
 nock(services.ADMINUSERS_URL + '/v1/api/services')
   .get('/list')
@@ -484,7 +484,7 @@ nock(services.ADMINUSERS_URL + '/v1/api')
 nock(services.LEDGER_URL + '/v1/report')
 .log(console.log)
 .get("/payments_by_state")
-.query(validateDate)
+.query(true)
 .reply(200, {
   "timedout": 1,
   "submitted": 2,
@@ -502,7 +502,7 @@ nock(services.LEDGER_URL + '/v1/report')
 nock(services.LEDGER_URL + '/v1/report')
   .log(console.log)
   .get('/payments')
-  .query(validateDate)
+  .query(true)
   .reply(200, {
     "count": 10,
     "gross_amount": 19000
@@ -538,7 +538,7 @@ nock(services.ADMINUSERS_URL + '/v1/api')
 nock(services.LEDGER_URL + '/v1/report')
 .log(console.log)
 .get("/payments_by_state")
-.query(validateDate)
+.query(true)
 .reply(200, {
   "timedout": 2,
   "submitted": 3,
@@ -556,7 +556,7 @@ nock(services.LEDGER_URL + '/v1/report')
 nock(services.LEDGER_URL + '/v1/report')
   .log(console.log)
   .get('/payments')
-  .query(validateDate)
+  .query(true)
   .reply(200, {
     "count": 48,
     "gross_amount": 20000
@@ -592,7 +592,7 @@ nock(services.ADMINUSERS_URL + '/v1/api')
 nock(services.LEDGER_URL + '/v1/report')
 .log(console.log)
 .get("/payments_by_state")
-.query(validateDate)
+.query(true)
 .reply(200, {
   "timedout": 10,
   "submitted": 30,
@@ -610,15 +610,8 @@ nock(services.LEDGER_URL + '/v1/report')
 nock(services.LEDGER_URL + '/v1/report')
   .log(console.log)
   .get('/payments')
-  .query(validateDate)
+  .query(true)
   .reply(200, {
     "count": 1000,
     "gross_amount": 400000
 })
-
-function validateDate(actualQueryObject) {
-  if (actualQueryObject["account_id"] != undefined && (moment(actualQueryObject["fromDate"]).format() != "Invalid date") && (moment(actualQueryObject["toDate"]).format() != "Invalid date")) {
-    return true
-  }
-  return false
-}
