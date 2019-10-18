@@ -43,11 +43,14 @@ const loggerMiddleware = function loggerMiddleware(
 }
 
 const supplementProductionInfo = format((info) => {
-  const productionContext = {
-    toolboxId: session.get(TOOLBOX_ID_KEY),
-    correlationId: session.get(CORRELATION_ID_KEY),
-    userId: session.get(AUTHENTICATED_USER_ID_KEY)
+  // LOGSTASH 675 versioning https://gds-way.cloudapps.digital/manuals/logging.html
+  const LOG_VERSION = 1
+  const productionContext: any = {
+    toolbox_id: session.get(TOOLBOX_ID_KEY),
+    correlation_id: session.get(CORRELATION_ID_KEY),
+    user_id: session.get(AUTHENTICATED_USER_ID_KEY)
   }
+  productionContext['@version'] = LOG_VERSION
   return Object.assign(info, productionContext)
 })
 
@@ -55,7 +58,7 @@ if (!config.common.development) {
   const productionTransport = new transports.Console({
     format: combine(
       supplementProductionInfo(),
-      timestamp({ format: 'HH:mm:ss' }),
+      timestamp({ format: 'YYYY-MM-DDTHH:mm:ss.sssZ', alias: '@timestamp' }),
       format.json()
     ),
     level: 'info'
