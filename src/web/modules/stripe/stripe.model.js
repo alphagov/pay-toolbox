@@ -46,7 +46,7 @@ class StripeAccount {
   }
 
   basicObject() {
-    return Object.assign({}, this)
+    return { ...this }
   }
 }
 

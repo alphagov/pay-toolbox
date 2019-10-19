@@ -53,7 +53,7 @@ const build = function build(params) {
 
 class StripeLegalEntity {
   constructor(body) {
-    const params = Object.assign({}, body)
+    const params = { ...body }
     const { error, value: model } = Joi.validate(params, schema, { allowUnknown: true })
 
     if (error) {
@@ -64,7 +64,7 @@ class StripeLegalEntity {
   }
 
   basicObject() {
-    return Object.assign({}, this)
+    return { ...this }
   }
 }
 

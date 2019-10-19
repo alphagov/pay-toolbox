@@ -7,7 +7,7 @@ const { wrapAsyncErrorHandlers } = require('../../../../lib/routes')
 const TransactionSearch = require('./transactionSearch.model')
 
 const search = async function search(req, res) {
-  const recovered = Object.assign({}, req.session.recovered)
+  const recovered = { ...req.session.recovered }
   delete req.session.recovered
   res.render('transactions/legacy/search', { messages: req.flash('error'), recovered, csrf: req.csrfToken() })
 }
