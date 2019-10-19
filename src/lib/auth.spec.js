@@ -34,8 +34,7 @@ describe('Authorisation middleware', () => {
   it('unauthorised HTTP route should reject with 403 given aunauthenticated request', () => {
     const send = chai.spy()
     const responseSpy = {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      status: code => ({ send })
+      status: () => ({ send })
     }
     const nextSpy = chai.spy()
 
