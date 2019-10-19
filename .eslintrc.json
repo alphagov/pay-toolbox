@@ -7,7 +7,7 @@
     "node": true,
     "mocha": true
   },
-  "extends": ["airbnb-base", "plugin:@typescript-eslint/recommended"],
+  "extends": ["airbnb-base"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
@@ -29,5 +29,12 @@
     "@typescript-eslint/camelcase": ["error", { "properties": "never" }],
     "@typescript-eslint/no-var-requires": "off",
     "import/no-unresolved": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "env": { "node": true },
+      "extends": ["plugin:@typescript-eslint/recommended"]
+    }
+  ]
 }
