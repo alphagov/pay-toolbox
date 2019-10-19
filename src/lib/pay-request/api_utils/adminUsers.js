@@ -2,7 +2,7 @@ const { EntityNotFoundError } = require('../../errors')
 
 const adminUsersMethods = function adminUsersMethods(instance) {
   const axiosInstance = instance || this
-  const utilExtractData = response => response.data
+  const utilExtractData = (response) => response.data
   const redactOtp = (service) => {
     // eslint-disable-next-line no-param-reassign
     delete service.otp_key
@@ -76,10 +76,10 @@ const adminUsersMethods = function adminUsersMethods(instance) {
 
   const removeUserFromService = function removeUserFromService(serviceId, userId) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const path = `/v1/api/services/${serviceId}/users/${userId}`
+    // const path = `/v1/api/services/${serviceId}/users/${userId}`
 
     // @TODO(sfount) make sure admin headers are correctly set to allow user to be removed
-    throw new Error('Remove user from service end point not configured')
+    throw new Error(`Remove user from service end point not configured [user=${userId}] [service=${serviceId}]`)
   }
 
   const resetUserSecondFactor = function resetUserSecondFactor() {
@@ -96,7 +96,7 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     const path = `/v1/api/services/${id}/users`
     return axiosInstance.get(path)
       .then(utilExtractData)
-      .then(users => users.map(redactOtp))
+      .then((users) => users.map(redactOtp))
   }
 
   const gatewayAccountServices = function gatewayAccountServices(id) {

@@ -4,7 +4,7 @@ const connectorMethods = function connectorMethods(instance) {
 
   // @TODO(sfount) extract and standardise this - there should be no need to
   // repeat this over and over
-  const utilExtractData = response => response.data
+  const utilExtractData = (response) => response.data
 
   const accounts = function accounts() {
     return axiosInstance.get('/v1/api/accounts').then(utilExtractData)
@@ -73,7 +73,7 @@ const connectorMethods = function connectorMethods(instance) {
   const updateCorporateSurcharge = async function updateCorporateSurcharge(id, surcharges) {
     const url = `/v1/api/accounts/${id}`
     const results = Object.keys(surcharges)
-      .filter(key => key !== '_csrf')
+      .filter((key) => key !== '_csrf')
 
     for (const key of results) {
       await axiosInstance.patch(url, {

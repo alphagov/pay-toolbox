@@ -10,7 +10,7 @@ const schema = {
 
 class StripeAddress {
   constructor(body) {
-    const params = Object.assign({}, body)
+    const params = { ...body }
     const { error, value: model } = Joi.validate(
       params,
       schema,
@@ -27,7 +27,7 @@ class StripeAddress {
   }
 
   basicObject() {
-    return Object.assign({}, this)
+    return { ...this }
   }
 }
 
