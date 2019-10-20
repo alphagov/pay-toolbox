@@ -19,6 +19,22 @@ export interface Service {
   };
 }
 
+interface Role {
+  name: string;
+  description: string;
+  // permissions: Permission[]
+}
+
+interface ServiceRole {
+  service: Service;
+  role: Role;
+}
+
+export interface User {
+  service_roles: ServiceRole[];
+  role?: string; // role alias if it has been parsed
+}
+
 export interface StripeAgreement {
   ip_address: string;
   agreement_time: string;

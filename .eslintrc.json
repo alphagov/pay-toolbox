@@ -24,17 +24,22 @@
     "prefer-promise-reject-errors": "error",
     "func-name-matching": ["error", "always"],
     "indent": "off",
-    "@typescript-eslint/indent": ["error", 2],
     "camelcase": "off",
-    "@typescript-eslint/camelcase": ["error", { "properties": "never" }],
-    "@typescript-eslint/no-var-requires": "off",
-    "import/no-unresolved": "off"
+    "import/no-unresolved": "off",
+    "import/prefer-default-export": "warn",
+    "no-param-reassign": "off"
   },
   "overrides": [
     {
       "files": ["**/*.ts"],
       "env": { "node": true },
-      "extends": ["plugin:@typescript-eslint/recommended"]
+      "extends": ["plugin:@typescript-eslint/recommended"],
+      "rules": {
+        "@typescript-eslint/indent": ["error", 2],
+        "@typescript-eslint/camelcase": ["error", { "properties": "never" }],
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/ban-ts-ignore": "warn"
+      }
     }
   ],
   "settings": {

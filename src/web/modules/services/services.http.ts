@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 
 import * as logger from '../../../lib/logger'
 import { AdminUsers } from '../../../lib/pay-request'
-import { Service } from '../../../lib/pay-request/types/adminUsers'
+import { Service, User } from '../../../lib/pay-request/types/adminUsers'
 import { wrapAsyncErrorHandler } from '../../../lib/routes'
 import { sanitiseCustomBrandingURL } from './branding'
 import GatewayAccountRequest from './gatewayAccountRequest.model'
@@ -18,12 +18,12 @@ const detail = async function detail(req: Request, res: Response): Promise<void>
 
   const [ service, users ] = await Promise.all([
     AdminUsers.service(serviceId),
-    AdminUsers.serviceUsers(serviceId)
+    AdminUsers.serviceUsers(serviceId) as User[]
   ])
 
-  users.forEach((user: any) => {
+  users.forEach((user) => {
     const currentServicesRole = user.service_roles
-      .find((serviceRole: any) => serviceRole.service && serviceRole.service.external_id === serviceId)
+      .find((serviceRole) => serviceRole.service && serviceRole.service.external_id === serviceId)
     user.role = currentServicesRole.role && currentServicesRole.role.name
   })
 
@@ -42,7 +42,11 @@ const branding = async function branding(req: Request, res: Response): Promise<v
 const updateBranding = async function updateBranding(req: Request, res: Response): Promise<void> {
   const { id } = req.params
 
-  await AdminUsers.updateServiceBranding(id, sanitiseCustomBrandingURL(req.body.image_url), sanitiseCustomBrandingURL(req.body.css_url))
+  await AdminUsers.updateServiceBranding(
+    id,
+    sanitiseCustomBrandingURL(req.body.image_url),
+    sanitiseCustomBrandingURL(req.body.css_url)
+  )
 
   logger.info(`Updated service branding for ${id}`)
   req.flash('info', `Service ${id} branding successfully replaced`)
