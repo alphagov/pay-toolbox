@@ -79,7 +79,7 @@ export async function renderCSV(
     value: 'payoutEstimatedArrival'
   } ]
 
-  const data = transactions.map(transaction => Object.assign(
+  const data = transactions.map((transaction) => Object.assign(
     transaction,
     {
       payoutStatus: payout.status && payout.status.toUpperCase(),
@@ -121,7 +121,7 @@ export async function renderPayoutListCSV(
     value: 'fileReference'
   } ]
 
-  const data = payouts.map(payout => Object.assign(
+  const data = payouts.map((payout) => Object.assign(
     payout,
     {
       amount: toCurrencyString(payout.amount / 100),
