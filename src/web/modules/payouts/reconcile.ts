@@ -41,7 +41,7 @@ const reconcileStripePayTransactions = async function reconcileStripePayTransact
   const reconciled: PayTransactionCSVEntity[] = []
 
   const legacyKeys = [ 'payment_refund' ]
-  const unknownKeys = Object.keys(grouped).filter(key => ![ 'payment', 'transfer', 'payout', ...legacyKeys ].includes(key))
+  const unknownKeys = Object.keys(grouped).filter((key) => ![ 'payment', 'transfer', 'payout', ...legacyKeys ].includes(key))
   if (unknownKeys.length) {
     throw new Error('Unable to exactly match Stripe payout to GOV.UK Pay transactions (unknown types)')
   }

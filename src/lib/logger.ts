@@ -78,7 +78,7 @@ if (config.common.development) {
   const developmentTransport = new transports.Console({
     level: 'debug',
     format: combine(
-      format(info => Object.assign(info, { toolboxId: session.get(TOOLBOX_ID_KEY) }))(),
+      format((info) => Object.assign(info, { toolboxId: session.get(TOOLBOX_ID_KEY) }))(),
       timestamp({ format: 'HH:mm:ss' }),
       format.colorize(),
       format.simple()

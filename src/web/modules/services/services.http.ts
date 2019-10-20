@@ -63,7 +63,7 @@ const linkAccounts = async function linkAccounts(req: Request, res: Response): P
   }
 
   if (req.session.recovered) {
-    context.recovered = Object.assign({}, req.session.recovered)
+    context.recovered = { ...req.session.recovered }
     delete req.session.recovered
   }
   res.render('services/link_accounts', context)

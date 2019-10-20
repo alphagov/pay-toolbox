@@ -2,6 +2,7 @@ import * as Stripe from 'stripe'
 import * as HTTPSProxyAgent from 'https-proxy-agent'
 
 import * as config from '../../../config'
+
 import logger = require('../../../lib/logger');
 
 const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY)
