@@ -5,7 +5,8 @@
     "commonjs": true,
     "es6": true,
     "node": true,
-    "mocha": true
+    "mocha": false,
+    "jest": true
   },
   "extends": ["airbnb-base"],
   "globals": {
