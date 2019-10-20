@@ -1,7 +1,8 @@
+/* eslint-disable max-classes-per-file */
 import { ValidationError as ClassValidatorError } from 'class-validator'
 import { AxiosError } from 'axios'
 
-class RequestError extends Error {
+export class RequestError extends Error {
   public name: string
 
   public constructor(message: string) {
@@ -11,7 +12,7 @@ class RequestError extends Error {
   }
 }
 
-class EntityNotFoundError extends RequestError {
+export class EntityNotFoundError extends RequestError {
   public data: { name: string; identifier: string }
 
   public constructor(name: string, identifier: string) {
@@ -22,7 +23,7 @@ class EntityNotFoundError extends RequestError {
 
 // wrap errors from other frameworks in a format that this service can report on
 // @FIXME(sfount) stack trace isn't respected
-class RESTClientError extends Error {
+export class RESTClientError extends Error {
   public name: string
 
   public data: AxiosError
@@ -39,7 +40,7 @@ class RESTClientError extends Error {
 }
 
 // expects to be passed a class-validator ValidationError object
-class IOValidationError extends Error {
+export class IOValidationError extends Error {
   public source: ClassValidatorError[]
 
   public constructor(validations: ClassValidatorError[]) {
@@ -49,7 +50,7 @@ class IOValidationError extends Error {
   }
 }
 
-class ValidationError extends Error {
+export class ValidationError extends Error {
   public name: string
 
   public constructor(message: string) {
@@ -57,8 +58,4 @@ class ValidationError extends Error {
     this.name = this.constructor.name
     Error.captureStackTrace(this, this.constructor)
   }
-}
-
-export {
-  EntityNotFoundError, RESTClientError, ValidationError, IOValidationError
 }
