@@ -8,7 +8,7 @@ import { Transaction } from 'ledger'
 import { Ledger, Connector, AdminUsers } from '../../../lib/pay-request'
 import * as logger from '../../../lib/logger'
 
-const moment = require('moment');
+const moment = require('moment')
 
 export async function searchPage(req: Request, res: Response): Promise<void> {
   res.render('transactions/search', { csrf: req.csrfToken() })
@@ -29,7 +29,6 @@ export async function search(req: Request, res: Response, next: NextFunction): P
 export enum PaymentListFilterStatus {
   'succeeded', 'failed', 'in-progress', 'all'
 }
-
 
 export async function list(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -94,7 +93,7 @@ export async function statistics(req: Request, res: Response, next: NextFunction
       throw new Error('Platform statistics not supported by Ledger')
     }
 
-    const periodKeyMap: {[key:string]: string} = {
+    const periodKeyMap: {[key: string]: string} = {
       today: 'day',
       week: 'week',
       month: 'month'
@@ -113,7 +112,7 @@ export async function statistics(req: Request, res: Response, next: NextFunction
       gross: paymentStatistics.gross_amount,
       success: paymentsByState.success,
       error: paymentsByState.error,
-      in_progress: [paymentsByState.created, paymentsByState.started, paymentsByState.submitted, paymentsByState.capturable].reduce(sum, 0)
+      in_progress: [ paymentsByState.created, paymentsByState.started, paymentsByState.submitted, paymentsByState.capturable ].reduce(sum, 0)
     }
     res.render('transactions/statistics', {
       account,

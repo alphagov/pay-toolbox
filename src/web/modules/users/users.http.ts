@@ -1,13 +1,15 @@
 // import { Request, Response, NextFunction } from 'express'
-import { IsString, IsPhoneNumber, IsMobilePhone, IsNotEmpty, IsEmail } from 'class-validator'
+import {
+  IsString, IsPhoneNumber, IsMobilePhone, IsNotEmpty, IsEmail
+} from 'class-validator'
 
+import { Response, Request, NextFunction } from 'express'
 import { wrapAsyncErrorHandlers } from '../../../lib/routes'
 import { AdminUsers } from '../../../lib/pay-request'
 import Validated from '../common/validated'
 
-import { Response, Request, NextFunction } from 'express';
 import { formatErrorsForTemplate, ClientFormError } from '../common/validationErrorFormat'
-import { IOValidationError } from '../../../lib/errors';
+import { IOValidationError } from '../../../lib/errors'
 
 const show = async function show(req: any, res: any): Promise<void> {
   const payUser = await AdminUsers.user(req.params.id)
@@ -93,7 +95,7 @@ class PhoneNumberRequest extends Validated {
 }
 
 const updateEmail = async function updateEmail(req: any, res: any, next: any): Promise<void> {
-  const id = req.params.id
+  const { id } = req.params
 
   try {
     const updateRequest = new EmailRequest(req.body)
@@ -116,7 +118,7 @@ const updateEmail = async function updateEmail(req: any, res: any, next: any): P
 }
 
 const updatePhoneNumber = async function updatePhoneNumber(req: any, res: any, next: any): Promise<void> {
-  const id = req.params.id
+  const { id } = req.params
 
   try {
     const updateRequest = new PhoneNumberRequest(req.body)
@@ -139,7 +141,7 @@ const updatePhoneNumber = async function updatePhoneNumber(req: any, res: any, n
 }
 
 const toggleUserEnabled = async function toggleUserEnabled(req: any, res: any, next: any): Promise<void> {
-  const id = req.params.id
+  const { id } = req.params
   const result = await AdminUsers.toggleUserEnabled(id)
 
   req.flash('info', 'Updated disabled status')
@@ -173,4 +175,6 @@ const search = async function search(req: Request, res: Response, next: NextFunc
 }
 
 // @TODO(sfount) use individual wrapAsyncErrorHandler
-export default wrapAsyncErrorHandlers({ show, updatePhoneNumber, updatePhoneNumberForm, updateEmailForm, updateEmail, toggleUserEnabled, removeUserFromService, resetUserSecondFactor, search, searchPage })
+export default wrapAsyncErrorHandlers({
+  show, updatePhoneNumber, updatePhoneNumberForm, updateEmailForm, updateEmail, toggleUserEnabled, removeUserFromService, resetUserSecondFactor, search, searchPage
+})
