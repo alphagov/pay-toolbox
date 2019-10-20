@@ -194,6 +194,7 @@ const updateEmailBranding = async function updateEmailBranding(req: Request, res
 Promise<void> {
   const { id } = req.params
   const notifySettings = req.body
+  // eslint-disable-next-line no-underscore-dangle
   delete notifySettings._csrf
 
   await Connector.updateEmailBranding(id, notifySettings)

@@ -7,7 +7,7 @@ import {
   ValidationError,
   IOValidationError
 } from '../../../lib/errors'
-import { formatErrorsForTemplate, ClientFormError } from '../common/validationErrorFormat'
+import { formatErrorsForTemplate } from '../common/validationErrorFormat'
 
 // @FIXME(sfount) util to build preserving queries - should be evalutated to scale
 const buildPreservedQuery = function buildPreservedQuery(body: { [key: string]: string }): string {
