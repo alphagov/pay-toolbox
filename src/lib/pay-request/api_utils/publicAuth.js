@@ -1,11 +1,11 @@
 const publicAuthMethods = function publicAuthMethods(instance) {
   const axiosInstance = instance || this
-  const utilExtractData = response => response.data
+  const utilExtractData = (response) => response.data
 
   const apiKeyTokens = function apiKeyTokens(id) {
     return axiosInstance.get(`/v1/frontend/auth/${id}`)
       .then(utilExtractData)
-      .then(data => data.tokens)
+      .then((data) => data.tokens)
   }
 
   const deleteApiToken = function deleteApiToken(accountId, tokenId) {

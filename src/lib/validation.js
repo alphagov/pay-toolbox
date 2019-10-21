@@ -11,7 +11,7 @@ const addModelIfValid = function addModelIfValid(target, source, modelName, mode
   } catch (e) {
     logger.debug(`${modelName.name} not added: ${e.message}`)
   }
-  return Object.assign({}, target)
+  return { ...target }
 }
 
 const stripEmpty = function stripEmpty(object) {

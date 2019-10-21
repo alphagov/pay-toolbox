@@ -4,7 +4,7 @@ const { toFormattedDate } = require('./../../../lib/format')
 
 const totalHealthyServices = function totalHealthyServices(serviceHealthCheckResults) {
   return serviceHealthCheckResults
-    .filter(healthCheckResult => healthCheckResult.healthCheckPassed)
+    .filter((healthCheckResult) => healthCheckResult.healthCheckPassed)
     .length
 }
 

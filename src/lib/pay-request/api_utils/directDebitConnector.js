@@ -1,6 +1,6 @@
 const directDebitConnectorMethods = function directDebitConnectorMethods(instance) {
   const axiosInstance = instance || this
-  const utilExtractData = response => response.data
+  const utilExtractData = (response) => response.data
 
   const accounts = function accounts() {
     return axiosInstance.get('/v1/api/accounts').then(utilExtractData)

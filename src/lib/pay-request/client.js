@@ -94,7 +94,7 @@ const buildPayBaseClient = function buildPayBaseClient(service) {
   }
 
   // tracking reponse times, default REST service logging
-  instance.interceptors.request.use(configureRequest, error => Promise.reject(error))
+  instance.interceptors.request.use(configureRequest, (error) => Promise.reject(error))
   instance.interceptors.response.use(
     logSuccessfulResponse.bind(instance),
     logFailureResponse.bind(instance)
@@ -102,7 +102,7 @@ const buildPayBaseClient = function buildPayBaseClient(service) {
 
   const apiUtilityMethods = (serviceApiMethodUtils[service.key]
     && serviceApiMethodUtils[service.key](instance)) || {}
-  return Object.assign({}, instance, apiUtilityMethods)
+  return { ...instance, ...apiUtilityMethods }
 }
 
 // @FIXME(sfount) only make clients if they are imported anywhere in the code

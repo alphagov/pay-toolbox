@@ -2,7 +2,7 @@ import { EntityNotFoundError } from '../../errors'
 
 const ledgerMethods = function ledgerMethods(instance) {
   const axiosInstance = instance || this
-  const utilExtractData = response => response.data
+  const utilExtractData = (response) => response.data
   const platformAdminQuery = 'override_account_id_restriction=true'
   const includeAllEventsQuery = 'include_all_events=true'
 
@@ -35,7 +35,7 @@ const ledgerMethods = function ledgerMethods(instance) {
     }
 
     const query = Object.keys(params)
-      .map(key => `${key}=${params[key]}`)
+      .map((key) => `${key}=${params[key]}`)
       .join('&')
 
     return axiosInstance.get(`/v1/transaction?${query}`)
@@ -59,7 +59,7 @@ const ledgerMethods = function ledgerMethods(instance) {
     }
 
     const query = Object.keys(params)
-      .map(key => `${key}=${params[key]}`)
+      .map((key) => `${key}=${params[key]}`)
       .join('&')
 
     return axiosInstance.get(`/v1/report/payments_by_state?${query}`)
@@ -78,7 +78,7 @@ const ledgerMethods = function ledgerMethods(instance) {
     }
 
     const query = Object.keys(params)
-      .map(key => `${key}=${params[key]}`)
+      .map((key) => `${key}=${params[key]}`)
       .join('&')
 
     return axiosInstance.get(`/v1/report/payments?${query}`)

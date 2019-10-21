@@ -10,7 +10,7 @@ const schema = {
 
 class Dob {
   constructor(body) {
-    const params = Object.assign({}, body)
+    const params = { ...body }
     const { error, value: model } = Joi.validate(
       params,
       schema,
@@ -25,7 +25,7 @@ class Dob {
   }
 
   basicObject() {
-    return Object.assign({}, this)
+    return { ...this }
   }
 }
 
