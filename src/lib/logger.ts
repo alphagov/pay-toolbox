@@ -15,7 +15,7 @@ import { createNamespace } from 'cls-hooked'
 
 import * as config from '../config'
 
-const { combine, timestamp, printf } = format
+const { combine, timestamp } = format
 
 const TOOLBOX_ID_KEY = 'toolbox_id'
 const CORRELATION_ID_KEY = 'correlation_id'
@@ -66,19 +66,13 @@ if (!config.common.development) {
   logger.add(productionTransport)
 }
 
-const payLogsFormatter = printf((log) => {
-  const id = session.get(TOOLBOX_ID_KEY)
-  const user = session.get(AUTHENTICATED_USER_ID_KEY)
-  return `${log.timestamp} [${id || '(none)'}] [${user || '(no_user)'}] ${log.level}: ${log.message}`
-})
-
 // coloursise and timestamp developer logs as these will probably be viewed
 // in a simple console (vs. in an already timestamped web viewer)
 if (config.common.development) {
   const developmentTransport = new transports.Console({
     level: 'debug',
     format: combine(
-      format(info => Object.assign(info, { toolboxId: session.get(TOOLBOX_ID_KEY) }))(),
+      format((info) => Object.assign(info, { toolboxId: session.get(TOOLBOX_ID_KEY) }))(),
       timestamp({ format: 'HH:mm:ss' }),
       format.colorize(),
       format.simple()
@@ -89,7 +83,7 @@ if (config.common.development) {
 
 // configure logger specifically for `Morgan` stream
 const morganStreamWriter = {
-  write: (message: string) => {
+  write: (message: string): void => {
     logger.info(message)
   }
 }

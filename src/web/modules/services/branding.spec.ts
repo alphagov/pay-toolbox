@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { expect } from 'chai'
 import { sanitiseCustomBrandingURL } from './branding'
 
@@ -12,7 +13,7 @@ describe('Custom branding utilities', () => {
     expect(sanitiseCustomBrandingURL(url)).to.equal(url)
   })
 
-  it('Just returns nothing if no values are passed, no preceding \/ added', () => {
+  it('Just returns nothing if no values are passed, no preceding / added', () => {
     const url = ''
     expect(sanitiseCustomBrandingURL(url)).to.equal('')
   })

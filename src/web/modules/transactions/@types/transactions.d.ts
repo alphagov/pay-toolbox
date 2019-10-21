@@ -51,7 +51,7 @@ declare module 'ledger' {
     language: string;
     return_url: string;
     email: string;
-    payment_provider: PaymentProvider,
+    payment_provider: PaymentProvider;
     created_date: string;
     card_details: CardDetails;
     delayed_capture: boolean;

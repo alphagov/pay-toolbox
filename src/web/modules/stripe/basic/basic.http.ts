@@ -95,7 +95,9 @@ const submitAccountCreate = async function submitAccountCreate(
       throw new CustomValidationError('Service has no organisation details set')
     }
 
-    const stripeAgreement: StripeAgreement = await AdminUsers.serviceStripeAgreement(systemLinkService)
+    const stripeAgreement: StripeAgreement = await AdminUsers.serviceStripeAgreement(
+      systemLinkService
+    )
 
     logger.info('Requesting new Stripe account from stripe API')
     const stripeAccount = await stripe.accounts.create({
