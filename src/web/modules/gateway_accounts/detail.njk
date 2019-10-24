@@ -55,6 +55,18 @@
         <th class="govuk-table__header" scope="col">Payment provider</th>
         <td class="govuk-table__cell">{{ account.payment_provider | capitalize }}</td>
       </tr>
+      {% if account.credentials and account.credentials.merchant_id %}
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">PSP merchant ID</th>
+        <td class="govuk-table__cell">{{ account.credentials.merchant_id }}</td>
+      </tr>
+      {% endif %}
+      {% if account.credentials and account.credentials.stripe_account_id %}
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Connected Stripe account</th>
+        <td class="govuk-table__cell">{{ account.credentials.stripe_account_id }}</td>
+      </tr>
+      {% endif %}
       <tr class="govuk-table__row">
         <th class="govuk-table__header" scope="col">Service</th>
         <td class="govuk-table__cell">{{ account.service_name }}</td>

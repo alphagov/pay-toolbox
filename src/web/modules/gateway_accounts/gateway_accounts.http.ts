@@ -120,7 +120,9 @@ const detail = async function detail(req: Request, res: Response): Promise<void>
   const { id } = req.params
   let services = {}
   const isDirectDebitID = id.match(/^DIRECT_DEBIT:/)
-  const readAccountMethod = isDirectDebitID ? DirectDebitConnector.account : Connector.account
+  const readAccountMethod = isDirectDebitID
+    ? DirectDebitConnector.account
+    : Connector.accountWithCredentials
 
   const account = await readAccountMethod(id)
 
