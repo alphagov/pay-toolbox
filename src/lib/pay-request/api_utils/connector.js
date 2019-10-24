@@ -14,6 +14,10 @@ const connectorMethods = function connectorMethods(instance) {
     return axiosInstance.get(`/v1/api/accounts/${id}`).then(utilExtractData)
   }
 
+  const accountWithCredentials = function accountWithCredentials(id) {
+    return axiosInstance.get(`/v1/frontend/accounts/${id}`).then(utilExtractData)
+  }
+
   const createAccount = function createAccount(accountDetails) {
     return axiosInstance.post('/v1/api/accounts', accountDetails).then(utilExtractData)
   }
@@ -98,6 +102,7 @@ const connectorMethods = function connectorMethods(instance) {
     gatewayAccountPerformanceReport,
     account,
     accounts,
+    accountWithCredentials,
     createAccount,
     searchTransactionsByChargeId,
     searchTransactionsByReference,
