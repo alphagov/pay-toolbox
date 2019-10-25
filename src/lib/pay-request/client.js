@@ -34,25 +34,25 @@ const configureRequest = function configureRequest(request) {
 
 const logSuccessfulResponse = function logSuccessfulResponse(response) {
   const logContext = {
-    service: this.metadata.serviceKey,
-    method: response.request.method,
-    url: response.config.url
+    pay_request_service: this.metadata.serviceKey,
+    pay_request_method: response.request.method,
+    pay_request_url: response.config.url
   }
 
   response.config.metadata.end = new Date()
   response.config.metadata.duration = response.config.metadata.end - response.config.metadata.start
   logContext.duration = response.config.metadata.duration
-  logger.info(`Pay request ${logContext.service} success from ${logContext.method} ${logContext.url}`, logContext)
+  logger.info(`Pay request ${logContext.pay_request_service} success from ${logContext.pay_request_method} ${logContext.pay_request_url}`, logContext)
   return response
 }
 
 const logFailureResponse = function logFailureResponse(error) {
   const code = (error.response && error.response.status) || error.code
   const logContext = {
-    service: this.metadata.serviceKey,
-    method: error.config.method,
-    url: error.config.url,
-    code
+    pay_request_service: this.metadata.serviceKey,
+    pay_request_method: error.config.method,
+    pay_request_url: error.config.url,
+    pay_request_code: code
   }
 
   // @TODO(sfount) review how errors are passed through axios stack, favour
@@ -61,7 +61,7 @@ const logFailureResponse = function logFailureResponse(error) {
   // eslint-disable-next-line no-param-reassign
   error.config.metadata.duration = error.config.metadata.end - error.config.metadata.start
   logContext.duration = error.config.metadata.duration
-  logger.warn(`Pay request ${logContext.service} failed from ${logContext.method} ${logContext.url}`, logContext)
+  logger.warn(`Pay request ${logContext.pay_request_service} failed from ${logContext.pay_request_method} ${logContext.pay_request_url}`, logContext)
   return Promise.reject(
     new RESTClientError(error, this.metadata.serviceKey, this.metadata.serviceName)
   )
