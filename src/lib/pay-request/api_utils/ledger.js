@@ -70,7 +70,8 @@ const ledgerMethods = function ledgerMethods(instance) {
     const params = {
       ...account && { account_id: account },
       ...fromDate && { from_date: fromDate },
-      ...toDate && { to_date: toDate }
+      ...toDate && { to_date: toDate },
+      override_from_date_validation: true
     }
 
     if (!account) {
@@ -81,7 +82,7 @@ const ledgerMethods = function ledgerMethods(instance) {
       .map((key) => `${key}=${params[key]}`)
       .join('&')
 
-    return axiosInstance.get(`/v1/report/payments?${query}`)
+    return axiosInstance.get(`/v1/report/transactions-summary?${query}`)
       .then(utilExtractData)
   }
 

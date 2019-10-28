@@ -105,8 +105,8 @@ export async function statistics(req: Request, res: Response, next: NextFunction
     const paymentStatistics = await Ledger.paymentStatistics(accountId, fromDate, toDate)
 
     const results = {
-      payments: paymentStatistics.count,
-      gross: paymentStatistics.gross_amount,
+      payments: paymentStatistics.payments.count,
+      gross: paymentStatistics.payments.gross_amount,
       success: paymentsByState.success,
       error: paymentsByState.error,
       in_progress: [
