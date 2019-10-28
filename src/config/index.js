@@ -5,6 +5,7 @@ const server = require('./server')
 const logger = require('./logger')
 const common = require('./common')
 const services = require('./services')
+const sentry = require('./sentry.js')
 const auth = require('./auth')
 
 // allow requests through IFF node environment is set to development and the environment
@@ -17,5 +18,6 @@ module.exports = {
   common,
   logger,
   services,
+  sentry,
   auth
 }
