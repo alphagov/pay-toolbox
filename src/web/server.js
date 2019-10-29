@@ -7,8 +7,14 @@ const flash = require('connect-flash')
 const cookieSession = require('cookie-session')
 const nunjucks = require('nunjucks')
 const csurf = require('csurf')
+const Sentry = require('@sentry/node')
 
-const { common, server, disableAuth } = require('./../config')
+const {
+  common,
+  server,
+  sentry: sentryConfig,
+  disableAuth
+} = require('./../config')
 const logger = require('./../lib/logger')
 const passport = require('../lib/auth/passport')
 
@@ -124,8 +130,31 @@ const configureErrorHandling = function configureErrorHandling(instance) {
   instance.use(errors.handleDefault)
 }
 
+const configureSentry = function configureSentry() {
+  Sentry.init({
+    dsn: sentryConfig.SENTRY_DSN,
+    environment: sentryConfig.ENVIRONMENT,
+      beforeSend(event) {
+        if (event.request) {
+          delete event.request // This can include sensitive data such as card numbers
+        }
+          return event
+      }
+  })
+}
+
+const configureSentryRequestHandler = function configureSentryRequestHandler(instance) {
+  instance.use(Sentry.Handlers.requestHandler())
+}
+
+const configureSentryErrorHandler = function configureSentryErrorHandler(instance) {
+  instance.use(Sentry.Handlers.errorHandler())
+}
+
 // order of configuration options important given the nature of Express Middleware
 const configure = [
+  configureSentry,
+  configureSentryRequestHandler,
   configureRequestParsing,
   configureClientSessions,
   configureAuth,
@@ -133,6 +162,7 @@ const configure = [
   configureServingPublicStaticFiles,
   configureTemplateRendering,
   configureRouting,
+  configureSentryErrorHandler,
   configureErrorHandling
 ]
 configure.map((config) => config(app))

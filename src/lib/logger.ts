@@ -13,6 +13,8 @@ import { createLogger, format, transports } from 'winston'
 //                after all methods in a call have ended
 import { createNamespace } from 'cls-hooked'
 
+import WinstonSentryTransport from './winstonSentryTransport'
+
 import * as config from '../config'
 
 const { combine, timestamp } = format
@@ -64,6 +66,13 @@ if (!config.common.development) {
     level: 'info'
   })
   logger.add(productionTransport)
+}
+
+if (!config.common.development) {
+  const sentryTransport = new WinstonSentryTransport({
+    level: 'error'
+  })
+  logger.add(sentryTransport)
 }
 
 // coloursise and timestamp developer logs as these will probably be viewed

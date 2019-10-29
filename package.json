@@ -31,6 +31,7 @@
   "license": "MIT",
   "homepage": "https://github.com/alphagov/pay-toolbox#readme",
   "dependencies": {
+    "@sentry/node": "5.7.1",
     "axios": "0.19.0",
     "body-parser": "1.19.0",
     "class-validator": "0.10.2",
@@ -54,7 +55,8 @@
     "passport": "0.4.0",
     "passport-github": "1.1.0",
     "stripe": "7.9.1",
-    "winston": "3.2.1"
+    "winston": "3.2.1",
+    "winston-transport": "4.3.0"
   },
   "devDependencies": {
     "@types/chai": "4.1.7",
