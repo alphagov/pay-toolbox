@@ -112,7 +112,7 @@ class GatewayAccount extends Validated {
       analytics_id: this.analyticsId
     }
 
-    if (this.isLive() && this.provider !== 'stripe') {
+    if (this.isLive()) {
       payload.requires_3ds = 'true'
     } else {
       payload.requires_3ds = 'false'
