@@ -22,16 +22,12 @@ A {{ account.type | upper }} Gateway account has been created through Admin User
 <ol class="govuk-list govuk-list--number">
 	<li>New {{ account.type }} {{ provider | capitalize }} account ({{ gatewayAccountIdDerived }}) record created</li>
 
-  <!-- @TODO(sfount) not a scalable pattern -->
-  {% if provider === 'stripe' %}
-  <li>(Stripe account) Set ‘requires_3ds’ on new account to ‘true’</li>
-  {% endif %}
-
   {% if linkedService %}
 	<li>(System Link) Service linked to new Gateway account ({{ gatewayAccountIdDerived }})</li>
 	{% endif %}
 
 	{% if isLive %}
+	<li>Set ‘requires_3ds’ to ‘true’ for live account</li>
 	<li>Service go live status updated to ‘LIVE’</li>
 	{% endif %}
 
