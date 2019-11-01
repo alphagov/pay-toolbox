@@ -81,10 +81,10 @@
           {% endif %}
         </td>
       </tr>
-      {% if account.toggle_3ds != undefined %}
+      {% if account.requires3ds != undefined %}
           <tr class="govuk-table__row">
             <th class="govuk-table__header" scope="col">3DS enabled</th>
-            <td class="govuk-table__cell">{{ account.toggle_3ds | string | capitalize }}</td>
+            <td class="govuk-table__cell">{{ account.requires3ds | string | capitalize }}</td>
           </tr>
       {% endif %}
       {% if account.allow_apple_pay != undefined %}
