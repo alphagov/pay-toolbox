@@ -6,13 +6,19 @@ const ledgerMethods = function ledgerMethods(instance) {
   const platformAdminQuery = 'override_account_id_restriction=true'
   const includeAllEventsQuery = 'include_all_events=true'
 
+  const handleNotFound = function handleNotFound(entityName, entityId) {
+    return (error) => {
+      if (error.data.response && error.data.response.status === 404) {
+        throw new EntityNotFoundError(entityName, entityId)
+      }
+      throw error
+    }
+  }
+
   const transaction = function transaction(id) {
     return axiosInstance.get(`/v1/transaction/${id}?${platformAdminQuery}`)
       .then(utilExtractData)
-      .catch((error) => {
-        if (error.data.response && error.data.response.status === 404) throw new EntityNotFoundError('Transaction', id)
-        throw error
-      })
+      .catch(handleNotFound('Transaction', id))
   }
 
   const transactions = async function transactions(account, currentPage, currentStatus) {

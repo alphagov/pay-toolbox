@@ -3,10 +3,20 @@ const { EntityNotFoundError } = require('../../errors')
 const adminUsersMethods = function adminUsersMethods(instance) {
   const axiosInstance = instance || this
   const utilExtractData = (response) => response.data
+
   const redactOtp = (service) => {
     // eslint-disable-next-line no-param-reassign
     delete service.otp_key
     return service
+  }
+
+  const handleNotFound = function handleNotFound(entityName, entityId) {
+    return (error) => {
+      if (error.data.response && error.data.response.status === 404) {
+        throw new EntityNotFoundError(entityName, entityId)
+      }
+      throw error
+    }
   }
 
   const findUser = function findUser(email) {
@@ -100,18 +110,15 @@ const adminUsersMethods = function adminUsersMethods(instance) {
   }
 
   const gatewayAccountServices = function gatewayAccountServices(id) {
-    return axiosInstance.get(`/v1/api/services?gatewayAccountId=${id}`).then(utilExtractData)
+    return axiosInstance.get(`/v1/api/services?gatewayAccountId=${id}`)
+      .then(utilExtractData)
+      .catch(handleNotFound('Services for gateway account ', id))
   }
 
   const serviceStripeAgreement = function serviceStripeAgreement(serviceExternalId) {
     return axiosInstance.get(`/v1/api/services/${serviceExternalId}/stripe-agreement`)
       .then(utilExtractData)
-      .catch((error) => {
-        if (error.data.response && error.data.response.status === 404) {
-          throw new EntityNotFoundError('Service Stripe agreement for service ', serviceExternalId)
-        }
-        throw error
-      })
+      .catch(handleNotFound('Service Stripe agreement for service ', serviceExternalId))
   }
 
   const updateServiceBranding = function updateServiceBranding(id, imageUrl, cssUrl) {
