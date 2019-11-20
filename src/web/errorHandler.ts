@@ -63,7 +63,7 @@ const handleDefault = function handleDefault(
   res: Response,
   next: NextFunction
 ): void {
-  logger.error('Unhandled error caught by middleware stack')
+  logger.warn('Unhandled error caught by middleware stack')
   logger.error(error.stack)
 
   if (res.headersSent) {
