@@ -3,7 +3,9 @@ import { Request, Response, NextFunction } from 'express'
 
 import * as logger from '../lib/logger'
 import * as config from '../config'
-import { EntityNotFoundError, RESTClientError, ValidationError } from '../lib/errors'
+import {
+  EntityNotFoundError, RESTClientError, ValidationError, NotImplementedError
+} from '../lib/errors'
 
 interface HttpError extends Error {
   code: string;
@@ -41,6 +43,12 @@ const handleRequestErrors = function handleRequestErrors(
   // generic entity failed to validate fields - format reponse
   if (error instanceof ValidationError) {
     res.status(400).render('common/error', { message: error.message })
+    return
+  }
+
+  if (error instanceof NotImplementedError) {
+    logger.warn(error.message)
+    res.status(501).render('common/error', { message: error.message })
     return
   }
 
