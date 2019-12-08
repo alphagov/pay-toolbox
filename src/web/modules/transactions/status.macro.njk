@@ -1,7 +1,7 @@
-{% macro status(state, final) %}
+{% macro status(state, final, refundedStatus, refundedAmount) %}
 {# @TODO(sfount) this map could be done a lot better with more time + standard definitions being used #}
 {% set success = ['success'] %}
-{% set failed = ['failed', 'cancelled', 'error'] %}
+{% set failed = ['failed', 'cancelled', 'timedout', 'error'] %}
 
 <strong
   class="govuk-tag
@@ -9,7 +9,14 @@
     {% if final and failed.includes(state) %} status-failed {% endif %}
     {% if not final %} status-in-progress {% endif %}
      status-tag">
-  {{ state | capitalize }}
+
+  {% if success.includes(state) and refundedStatus === 'full' %}
+  <span>Refunded</span>
+  {% elif success.includes(state) and refundedAmount > 0 %}
+  <span>Partial refund</span>
+  {% else %}
+  <span>{{ state | capitalize }}</span>
+  {% endif %}
 </strong>
 
 {% endmacro %}

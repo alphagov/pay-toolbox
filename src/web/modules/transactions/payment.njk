@@ -9,7 +9,12 @@
   <div class="status-inline-spacer">
   <span class="govuk-body-l status-amount">{{ (transaction.total_amount or transaction.amount) | currency }}</span>
 
-  {{ status(transaction.state.status, transaction.state.finished) }}
+  {{ status(
+    transaction.state.status,
+    transaction.state.finished,
+    transaction.refund_summary and transaction.refund_summary.status,
+    transaction.refund_summary and transaction.refund_summary.amount_submitted
+    ) }}
   </div>
 
   <div class="govuk-grid-row status-spacer payment-detail-row">
