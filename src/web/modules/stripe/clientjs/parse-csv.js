@@ -1,4 +1,3 @@
-/* global document, window */
 // quick simple tool for mapping CSV sheets rows into this forms fields
 // this should not replace human entry or checks
 const INPUT_ID = 'csv_entry'

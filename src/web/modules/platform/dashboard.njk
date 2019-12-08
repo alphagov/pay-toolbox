@@ -1,0 +1,9 @@
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">GOV.UK Platform</span>
+  <h1 class="govuk-heading-m">Dashboard</h1>
+  <div id="root"></div>
+
+  <script src="/public/{{manifest['browser.js']}}"></script>
+{% endblock %}

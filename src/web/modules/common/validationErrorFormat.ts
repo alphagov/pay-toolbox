@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { ValidationError } from 'class-validator'
 
 export interface ClientFormError {
