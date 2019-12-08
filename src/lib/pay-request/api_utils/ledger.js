@@ -21,7 +21,7 @@ const ledgerMethods = function ledgerMethods(instance) {
       .catch(handleNotFound('Transaction', id))
   }
 
-  const transactions = async function transactions(account, currentPage, currentStatus) {
+  const transactions = async function transactions(account, currentPage, currentStatus, filters) {
     const page = currentPage || 1
     const pageSize = 20
     const externalStatusMap = {
@@ -37,14 +37,12 @@ const ledgerMethods = function ledgerMethods(instance) {
       display_size: pageSize,
       payment_states: externalStatusMap[currentStatus].join(','),
       transaction_type: 'PAYMENT',
+      exact_reference_match: true,
+      ...filters,
       ...account && { account_id: account }
     }
 
-    const query = Object.keys(params)
-      .map((key) => `${key}=${params[key]}`)
-      .join('&')
-
-    return axiosInstance.get(`/v1/transaction?${query}`)
+    return axiosInstance.get('/v1/transaction', { params })
       .then(utilExtractData)
   }
 

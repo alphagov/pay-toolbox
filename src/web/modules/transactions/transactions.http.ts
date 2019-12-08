@@ -32,7 +32,8 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     let account
     const accountId = req.query.account
     const selectedStatus = req.query.status || PaymentListFilterStatus[PaymentListFilterStatus.all]
-    const response = await Ledger.transactions(accountId, req.query.page, selectedStatus)
+    const filters = { ...req.query.reference && { reference: req.query.reference } }
+    const response = await Ledger.transactions(accountId, req.query.page, selectedStatus, filters)
 
     if (req.query.account) {
       account = await AdminUsers.gatewayAccountServices(accountId)
@@ -41,6 +42,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     res.render('transactions/list', {
       transactions: response.results,
       selectedStatus,
+      filters,
       set: response,
       account,
       accountId
