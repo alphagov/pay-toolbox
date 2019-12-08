@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import * as Stripe from 'stripe'
+import Stripe from 'stripe'
 import * as HTTPSProxyAgent from 'https-proxy-agent'
 import * as _ from 'lodash'
 

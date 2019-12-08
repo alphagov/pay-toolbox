@@ -1,0 +1,62 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "env": {
+    "commonjs": true,
+    "es6": true,
+    "node": true,
+    "mocha": true
+  },
+  "extends": ["airbnb-base", "plugin:react/recommended"],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "semi": ["error", "never"],
+    "comma-dangle": ["error", "never"],
+    "array-bracket-spacing": ["error", "always"],
+    "no-multiple-empty-lines": ["error", { "max": 1 }],
+    "prefer-promise-reject-errors": "error",
+    "func-name-matching": ["error", "always"],
+    "indent": "off",
+    "camelcase": "off",
+    "import/no-unresolved": "off",
+    "import/prefer-default-export": "warn",
+    "no-param-reassign": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "env": { "node": true },
+      "extends": ["plugin:@typescript-eslint/recommended"],
+      "rules": {
+        "@typescript-eslint/indent": ["error", 2],
+        "@typescript-eslint/camelcase": ["error", { "properties": "never" }],
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/ban-ts-ignore": "warn"
+      }
+    }
+  ],
+  "settings": {
+    "import/extensions": [".js",".jsx",".ts",".tsx"],
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts",".tsx"]
+     },
+     "import/resolver": {
+         "node": {
+             "extensions": [".js",".jsx",".ts",".tsx"]
+         }
+     },
+     "react": {
+       "version": "detect"
+     }
+  }
+}

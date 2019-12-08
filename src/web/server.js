@@ -31,8 +31,8 @@ const {
 
 // @FIXME(sfount) errors should be thrown and this should be properly handled if
 //                there is no manifest etc.
-// eslint-disable-next-line import/no-unresolved
 const staticResourceManifest = require('./../public/manifest')
+const browserManifest = require('./../public/browser.manifest')
 
 const app = express()
 
@@ -102,7 +102,7 @@ const configureTemplateRendering = function configureTemplateRendering(instance)
   const templaterEnvironment = nunjucks.configure(templatePathRoots, templateRendererConfig)
 
   // make static manifest details available to all templates
-  templaterEnvironment.addGlobal('manifest', staticResourceManifest)
+  templaterEnvironment.addGlobal('manifest', { ...staticResourceManifest, ...browserManifest })
   templaterEnvironment.addFilter('formatDate', (date) => toFormattedDate(new Date(date)))
   templaterEnvironment.addFilter('formatDateLong', (date) => toFormattedDateLong(new Date(date)))
   templaterEnvironment.addFilter('unixDate', (timestamp) => toUnixDate(timestamp))

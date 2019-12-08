@@ -1,4 +1,4 @@
-import * as TransportStream from 'winston-transport'
+import TransportStream from 'winston-transport'
 import * as Sentry from '@sentry/node'
 
 export default class WinstonSentryTransport extends TransportStream {

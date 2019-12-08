@@ -30,5 +30,4 @@ const wrapAsyncErrorHandler = function wrapAsyncErrorHandler(handler: Handler): 
   return route(handler)
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export { wrapAsyncErrorHandlers, wrapAsyncErrorHandler }
