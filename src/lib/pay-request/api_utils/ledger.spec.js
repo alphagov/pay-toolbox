@@ -1,7 +1,5 @@
-const chai = require('chai')
-const ledger = require('./ledger')
-
 const sinon = require('sinon')
+const ledger = require('./ledger')
 
 describe('Ledger REST helper methods', () => {
   describe('Filters', () => {
@@ -13,7 +11,6 @@ describe('Ledger REST helper methods', () => {
       const filters = { reference: 'somereference' }
 
       instance.transactions(100, 1, 'all', filters)
-
 
       sinon.assert.calledWith(
         get,

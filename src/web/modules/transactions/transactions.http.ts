@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from 'express'
 import { Transaction } from 'ledger'
 
 import { Ledger, Connector, AdminUsers } from '../../../lib/pay-request'
+import { EntityNotFoundError } from '../../../lib/errors'
 
 const moment = require('moment')
 
@@ -11,20 +12,33 @@ export async function searchPage(req: Request, res: Response): Promise<void> {
   res.render('transactions/search', { csrf: req.csrfToken() })
 }
 
+// @TODO(sfount) move to `transaction.d.ts` -- resolve JavaScript/ TypeScript module issue
+export enum PaymentListFilterStatus {
+  'succeeded', 'failed', 'in-progress', 'all'
+}
+
 export async function search(req: Request, res: Response, next: NextFunction): Promise<void> {
   const id = req.body.id && req.body.id.trim()
 
   try {
-    // most basic search implementation - just forward to transactions route
+    await Ledger.transaction(id)
+
     res.redirect(`/transactions/${id}`)
   } catch (error) {
+    if (error instanceof EntityNotFoundError) {
+      const referenceSearch = await Ledger.transactionsByReference(id)
+
+      if (referenceSearch.results.length > 1) {
+        res.redirect(`/transactions?reference=${id}`)
+      } else if (referenceSearch.results.length === 1) {
+        res.redirect(`/transactions/${referenceSearch.results[0].transaction_id}`)
+      } else {
+        next(new EntityNotFoundError('Transaction search with criteria ', id))
+      }
+      return
+    }
     next(error)
   }
-}
-
-// @TODO(sfount) move to `transaction.d.ts` -- resolve JavaScript/ TypeScript module issue
-export enum PaymentListFilterStatus {
-  'succeeded', 'failed', 'in-progress', 'all'
 }
 
 export async function list(req: Request, res: Response, next: NextFunction): Promise<void> {
