@@ -173,7 +173,7 @@ const search = async function search(
   req: Request,
   res: Response
 ): Promise<void> {
-  const { email } = req.body
+  const email = req.body.email && req.body.email.trim()
   const user = await AdminUsers.findUser(email)
   res.redirect(`/users/${user.external_id}`)
 }

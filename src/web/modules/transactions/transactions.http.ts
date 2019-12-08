@@ -18,7 +18,7 @@ export enum PaymentListFilterStatus {
 }
 
 export async function search(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const { id } = req.body
+  const id = req.body.id && req.body.id.trim()
 
   try {
     await Ledger.transaction(id)
