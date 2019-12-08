@@ -3,7 +3,7 @@
 // @TODO(sfount) also extract and log the correlation ID sent from the nginx
 //               reverse proxy servers in production
 // import * as crypto from 'crypto'
-import * as crypto from 'crypto'
+import crypto from 'crypto'
 import { Request, Response, NextFunction } from 'express'
 import { createLogger, format, transports } from 'winston'
 
@@ -105,5 +105,4 @@ logger.stream = morganStreamWriter as any
 // @TODO(sfount) attaching object to logger could muddy API in future
 Object.assign(logger, { middleware: loggerMiddleware })
 
-// eslint-disable-next-line import/prefer-default-export
 export = logger

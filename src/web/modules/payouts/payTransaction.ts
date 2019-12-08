@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import * as Stripe from 'stripe'
 import * as _ from 'lodash'
 
