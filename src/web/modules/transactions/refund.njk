@@ -1,0 +1,108 @@
+{% from "common/json.njk" import json %}
+
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <h1 class="govuk-heading-m">Refund</h1>
+
+  {% if transaction.parent_transaction_id %}
+  <div class="govuk-body govuk-!-margin-bottom-4">
+    <a href="/transactions/{{ transaction.parent_transaction_id }}" class="govuk-back-link">Refunds payment {{ transaction.parent_transaction_id }}</a>
+  </div>
+  {% endif %}
+
+  <div class="status-inline-spacer">
+    <span class="govuk-body-l status-amount">{{ (transaction.total_amount or transaction.amount) | currency }}</span>
+  </div>
+
+  <div class="govuk-grid-row status-spacer payment-detail-row">
+    <div class="govuk-grid-column-one-quarter">
+      <span class="govuk-caption-m">Date</span>
+      <span class="govuk-body">{{ transaction.created_date | formatDate }}</span>
+    </div>
+  </div>
+
+  <div>
+    <h1 class="govuk-heading-s payment__header">Payment details</h1>
+    <table class="govuk-table">
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Status</span></th>
+          <td class="govuk-table__cell payment__cell">{{ transaction.state and transaction.state.status | capitalize }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Reference</span></th>
+          <td class="govuk-table__cell payment__cell">{{ transaction.reference }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Created date</span></th>
+          <td class="govuk-table__cell payment__cell">{{ transaction.created_date | formatDateLong }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Amount</span></th>
+          <td class="govuk-table__cell payment__cell">
+            <span>{{ (transaction.total_amount or transaction.amount) | currency }} </span>
+          </td>
+        </tr>
+    </table>
+  </div>
+
+
+  <div>
+    <h1 class="govuk-heading-s payment__header">Processing details</h1>
+    <table class="govuk-table">
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Gateway account</span></th>
+          <td class="govuk-table__cell payment__cell">
+            <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{transaction.gateway_account_id}}">{{ transaction.gateway_account_id }}
+          </td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Service</span></th>
+          <td class="govuk-table__cell payment__cell">
+          <a class="govuk-link govuk-link--no-visited-state" href="/services/{{service.external_id}}">{{ service.external_id }}
+          </td>
+        </tr>
+      </tobdy>
+    </table>
+  </div>
+
+  <div>
+    <h1 class="govuk-heading-s payment__header">Ledger events</h1>
+
+    <table class="govuk-table">
+          <tbody class="govuk-table__body">
+    {% for event in events %}
+
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">{{ event.event_type }}</td>
+          <td class="govuk-table__cell">{{ event.timestamp | formatDate}}</td>
+        </tr>
+
+        {% if event.data %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell" colspan="2">
+            <details class="govuk-details" data-module="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                  Event details
+                </span>
+              </summary>
+              <div class="govuk-details__text">
+                <pre><code>{{ event.data | dump('\t') }}</code></pre>
+              </div>
+            </details>
+          </td>
+        </tr>
+        {% endif %}
+    {% else %}
+      <!-- @TODO(sfount) use a row here -->
+      <div class="center bottom-spacer"><span class="govuk-caption-m">No events</span></div>
+    {% endfor %}
+    </tbody>
+    </table>
+  </div>
+
+  {{ json("Transaction source", transaction) }}
+{% endblock %}

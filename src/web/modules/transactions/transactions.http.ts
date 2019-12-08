@@ -91,7 +91,8 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
       relatedTransactions.push(...relatedResult.transactions)
     }
 
-    res.render('transactions/payment', {
+    const renderKey = transaction.transaction_type.toLowerCase()
+    res.render(`transactions/${renderKey}`, {
       transaction,
       relatedTransactions,
       account,
