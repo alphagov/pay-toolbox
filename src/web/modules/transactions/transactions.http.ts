@@ -71,6 +71,7 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     const transaction = await Ledger.transaction(req.params.id) as Transaction
     const account = await Connector.account(transaction.gateway_account_id)
     const service = await AdminUsers.gatewayAccountServices(transaction.gateway_account_id)
+    const relatedTransactions = []
 
     const transactionEvents = await Ledger.events(
       transaction.transaction_id,
@@ -81,8 +82,18 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
         event.data = Object.keys(event.data).length ? event.data : null
         return event
       })
+
+    if (transaction.refund_summary && transaction.refund_summary.amount_submitted !== 0) {
+      const relatedResult = await Ledger.relatedTransactions(
+        transaction.transaction_id,
+        transaction.gateway_account_id
+      )
+      relatedTransactions.push(...relatedResult.transactions)
+    }
+
     res.render('transactions/payment', {
       transaction,
+      relatedTransactions,
       account,
       service,
       events

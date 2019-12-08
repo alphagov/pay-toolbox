@@ -50,6 +50,13 @@ const ledgerMethods = function ledgerMethods(instance) {
   const transactionsByReference = async function transactionsByReference(reference, limit = 2) {
     return transactions(null, null, null, { reference, display_size: limit })
   }
+  const relatedTransactions = async function relatedTransactions(id, accountId) {
+    const params = {
+      gateway_account_id: accountId
+    }
+    return axiosInstance.get(`/v1/transaction/${id}/transaction`, { params })
+      .then(utilExtractData)
+  }
 
   const events = function events(transactionId, accountId) {
     return axiosInstance.get(`/v1/transaction/${transactionId}/event?gateway_account_id=${accountId}&${includeAllEventsQuery}`)
@@ -101,7 +108,8 @@ const ledgerMethods = function ledgerMethods(instance) {
     events,
     getPaymentsByState,
     paymentStatistics,
-    transactionsByReference
+    transactionsByReference,
+    relatedTransactions
   }
 }
 
