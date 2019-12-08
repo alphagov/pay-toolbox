@@ -12,9 +12,9 @@ export async function searchPage(req: Request, res: Response): Promise<void> {
 }
 
 export async function search(req: Request, res: Response, next: NextFunction): Promise<void> {
-  try {
-    const { id } = req.body
+  const id = req.body.id && req.body.id.trim()
 
+  try {
     // most basic search implementation - just forward to transactions route
     res.redirect(`/transactions/${id}`)
   } catch (error) {
