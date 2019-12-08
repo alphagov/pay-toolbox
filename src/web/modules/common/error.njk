@@ -1,10 +1,10 @@
-{% from "components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% extends "layout/layout.njk" %}
 
 {% block main %}
 {{ govukErrorSummary({
   titleText: "There is a problem",
   errorList: [ { text: message } ]
-  }) 
+  })
 }}
 {% endblock %}

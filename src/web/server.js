@@ -70,8 +70,8 @@ const configureRequestParsing = function configureRequestParsing(instance) {
 const configureServingPublicStaticFiles = function configureServingPublicStaticFiles(instance) {
   const cache = { maxage: '1y' }
   instance.use('/public', express.static(path.join(__dirname, '../public'), cache))
-  instance.use('/assets/fonts', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/assets/fonts'), cache))
-  instance.use('/images/favicon.ico', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/assets/images/', 'favicon.ico'), cache))
+  instance.use('/assets/fonts', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/govuk/assets/fonts'), cache))
+  instance.use('/images/favicon.ico', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/govuk/assets/images/', 'favicon.ico'), cache))
 }
 
 const configureClientSessions = function configureClientSessions(instance) {

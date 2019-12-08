@@ -1,5 +1,5 @@
 /*  @TODO(sfount) only import scss from frontend that is required */
-@import "node_modules/govuk-frontend/all";
+@import "node_modules/govuk-frontend/govuk/all";
 
 .success-summary {
   border-color: govuk-colour("green");
@@ -12,7 +12,7 @@
 .circle {
   width: 15px;
   height: 15px;
-  background-color: govuk-colour("grey-3");
+  background-color: govuk-colour("light-grey");
   border-radius: 50%;
   margin-right: 2px;
   display: inline-block;
