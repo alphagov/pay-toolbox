@@ -52,7 +52,14 @@
               <a class="govuk-link govuk-link--no-visited-state" href="/transactions/{{ payment.transaction_id }}">
                 {{ (payment.total_amount or payment.amount) | currency }}
               </a>
-          <td class="govuk-table__cell">{{ status(payment.state.status, payment.state.finished) }}</td>
+          <td class="govuk-table__cell">
+            {{ status(
+              payment.state.status,
+              payment.state.finished,
+              payment.refund_summary and payment.refund_summary.status,
+              payment.refund_summary and payment.refund_summary.amount_submitted
+              ) }}
+          </td>
           <td class="govuk-table__cell">
             <span class="govuk-caption-m">{{ payment.description | truncate(20) }}</span>
           </td>
