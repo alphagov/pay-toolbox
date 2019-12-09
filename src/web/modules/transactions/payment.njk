@@ -77,19 +77,19 @@
     </table>
   </div>
 
-{% if transaction.refund_summary.status %}
+{% if relatedTransactions.length %}
   <div>
     <h1 class="govuk-heading-s payment__header">Related transactions</h1>
     <table class="govuk-table">
       <tbody class="govuk-table__body">
-        {% for transaction in refunds %}
+        {% for transaction in relatedTransactions %}
         <tr class="govuk-table__row">
           <td class="govuk-table__cell payment__cell" scope="row">
-            <a class="govuk-link govuk-link--no-visited-state" href="/transactions/{{refund.transaction_id}}">{{ refund.transaction_id }}
+            <a class="govuk-link govuk-link--no-visited-state" href="/transactions/{{transaction.transaction_id}}">{{ transaction.transaction_id }}
           </td>
           <td class="govuk-table__cell payment__cell">
             <th class="govuk-table__cell payment__cell text-right" scope="row">
-              <span class="govuk-caption-m">{{ refund.date | formatDateLong }}</span>
+              <span class="govuk-caption-m">{{ transaction.created_date | formatDateLong }}</span>
             </th>
           </td>
         </tr>

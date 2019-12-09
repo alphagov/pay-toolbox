@@ -58,5 +58,6 @@ declare module 'ledger' {
     gateway_transaction_id: string;
     refund_summary: RefundSummary;
     transaction_id: string;
+    transaction_type: string;
   }
 }
