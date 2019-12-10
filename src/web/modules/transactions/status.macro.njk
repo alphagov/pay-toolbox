@@ -10,7 +10,10 @@
     {% if not final %} status-in-progress {% endif %}
      status-tag">
 
-  {% if success.includes(state) and refundedStatus === 'full' %}
+  {# 0p payments are supported and will be flagged as 'full' even though they are not refunded #}
+  {% set isFullyRefunded = success.includes(state) and refundedStatus === 'full' and refundedAmount > 0 %}
+
+  {% if isFullyRefunded %}
   <span>Refunded</span>
   {% elif success.includes(state) and refundedAmount > 0 %}
   <span>Partial refund</span>
