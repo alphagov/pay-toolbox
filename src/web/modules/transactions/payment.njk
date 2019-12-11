@@ -134,15 +134,28 @@
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Delayed capture</span></th>
           <td class="govuk-table__cell payment__cell">{{ transaction.delayed_capture | string | capitalize }}</td>
         </tr>
-      </tobdy>
+      </tbody>
     </table>
   </div>
 
   <div>
     <h1 class="govuk-heading-s payment__header">Metadata</h1>
 
-    {% if not transaction.metadata %}
-    <div class="center bottom-spacer"><span class="govuk-caption-m">No metadata</span></div>
+    {% if transaction.metadata %}
+      <table class="govuk-table">
+        <tbody class="govuk-table__body">
+          {% for key, value in transaction.metadata %}
+          <tr class="govuk-table__row">
+            <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">{{ key }}</span></th>
+            <td class="govuk-table__cell payment__cell">
+              <a class="govuk-link govuk-link--no-visited-state">{{ value }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="center bottom-spacer"><span class="govuk-caption-m">No metadata</span></div>
     {% endif %}
   </div>
 
