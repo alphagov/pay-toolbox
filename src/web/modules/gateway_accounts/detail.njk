@@ -99,6 +99,12 @@
             <td class="govuk-table__cell">{{ account.allow_google_pay | string | capitalize }}</td>
           </tr>
       {% endif %}
+      {% if account.block_prepaid_cards != undefined %}
+          <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="col">Block prepaid cards</th>
+            <td class="govuk-table__cell">{{ account.block_prepaid_cards | string | capitalize }}</td>
+          </tr>
+      {% endif %}
       {% if account.email_collection_mode != undefined %}
         <tr class="govuk-table__row">
           <th class="govuk-table__header" scope="col">Email collection mode</th>
