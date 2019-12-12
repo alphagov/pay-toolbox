@@ -116,7 +116,7 @@
           <dt class="govuk-summary-list__key">Blocked prepaid cards</dt>
           <dd class="govuk-summary-list__value">{{ account.block_prepaid_cards | string | capitalize }}</dd>
           <dd class="govuk-summary-list__actions">
-            <a class="govuk-link" href="#">
+            <a type="submit" class="govuk-link" href="/gateway_accounts/{{account.gateway_account_id}}/block_prepaid_cards/toggle">
               Toggle<span class="govuk-visually-hidden"> blocked prepaid cards</span>
             </a>
           </dd>

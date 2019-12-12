@@ -204,6 +204,17 @@ Promise<void> {
   res.redirect(`/gateway_accounts/${id}`)
 }
 
+const toggleBlockPrepaidCards = async function toggleBlockPrepaidCards(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { id } = req.params
+  await Connector.toggleBlockPrepaidCards(id)
+
+  req.flash('info', 'Toggled block prepaid cards flag')
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
 export default {
   overview: wrapAsyncErrorHandler(overview),
   overviewDirectDebit: wrapAsyncErrorHandler(overviewDirectDebit),
@@ -216,5 +227,6 @@ export default {
   surcharge: wrapAsyncErrorHandler(surcharge),
   updateSurcharge: wrapAsyncErrorHandler(updateSurcharge),
   emailBranding: wrapAsyncErrorHandler(emailBranding),
-  updateEmailBranding: wrapAsyncErrorHandler(updateEmailBranding)
+  updateEmailBranding: wrapAsyncErrorHandler(updateEmailBranding),
+  toggleBlockPrepaidCards: wrapAsyncErrorHandler(toggleBlockPrepaidCards)
 }
