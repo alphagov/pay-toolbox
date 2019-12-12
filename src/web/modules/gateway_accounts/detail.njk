@@ -23,16 +23,19 @@
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">ID</dt>
       <dd class="govuk-summary-list__value">{{ account.gateway_account_id }}</dd>
+      <dd class="govuk-summary-list__actions"></dd>
     </div>
     {% if account.gateway_account_external_id %}
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Gateway account external ID</dt>
         <dd class="govuk-summary-list__value">{{ account.gateway_account_external_id }}</dd>
+        <dd class="govuk-summary-list__actions"></dd>
       </div>
     {% endif %}
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Type</dt>
       <dd class="govuk-summary-list__value">{{ account.type | capitalize }}</dd>
+      <dd class="govuk-summary-list__actions"></dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Description</dt>
@@ -43,32 +46,38 @@
         <i>(None set)</i>
         {% endif %}
       </dd>
+      <dd class="govuk-summary-list__actions"></dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Payment method</dt>
         <dd class="govuk-summary-list__value">
             {% if account.payment_method %} {{ account.payment_method }}  {% else %} CARD {% endif %}
         </dd>
+        <dd class="govuk-summary-list__actions"></dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Payment provider</dt>
       <dd class="govuk-summary-list__value">{{ account.payment_provider | capitalize }}</dd>
+      <dd class="govuk-summary-list__actions"></dd>
     </div>
     {% if account.credentials and account.credentials.merchant_id %}
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">PSP merchant ID</dt>
       <dd class="govuk-summary-list__value">{{ account.credentials.merchant_id }}</dd>
+      <dd class="govuk-summary-list__actions"></dd>
     </div>
     {% endif %}
     {% if account.credentials and account.credentials.stripe_account_id %}
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Connected Stripe account</dt>
       <dd class="govuk-summary-list__value">{{ account.credentials.stripe_account_id }}</dd>
+      <dd class="govuk-summary-list__actions"></dd>
     </div>
     {% endif %}
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Service</dt>
       <dd class="govuk-summary-list__value">{{ account.service_name }}</dd>
+      <dd class="govuk-summary-list__actions"></dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Analytics</dt>
@@ -79,29 +88,45 @@
         <i>(None set)</i>
         {% endif %}
       </dd>
+      <dd class="govuk-summary-list__actions"></dd>
     </div>
     {% if account.requires3ds != undefined %}
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">3DS enabled</dt>
           <dd class="govuk-summary-list__value">{{ account.requires3ds | string | capitalize }}</dd>
+          <dd class="govuk-summary-list__actions"></dd>
         </div>
     {% endif %}
     {% if account.allow_apple_pay != undefined %}
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">Apple Pay enabled</dt>
           <dd class="govuk-summary-list__value">{{ account.allow_apple_pay | string | capitalize }}</dd>
+          <dd class="govuk-summary-list__actions"></dd>
         </div>
     {% endif %}
     {% if account.allow_google_pay != undefined %}
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">Google Pay enabled</dt>
           <dd class="govuk-summary-list__value">{{ account.allow_google_pay | string | capitalize }}</dd>
+          <dd class="govuk-summary-list__actions"></dd>
         </div>
     {% endif %}
+    {% if account.block_prepaid_cards != undefined %}
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">Blocked prepaid cards</dt>
+          <dd class="govuk-summary-list__value">{{ account.block_prepaid_cards | string | capitalize }}</dd>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="#">
+              Toggle<span class="govuk-visually-hidden"> blocked prepaid cards</span>
+            </a>
+          </dd>
+        </div>
+      {% endif %}
     {% if account.email_collection_mode != undefined %}
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Email collection mode</dt>
         <dd class="govuk-summary-list__value">{{ account.email_collection_mode }}</dd>
+        <dd class="govuk-summary-list__actions"></dd>
       </div>
     {% endif %}
     {% if account.email_notifications != undefined %}
@@ -109,11 +134,13 @@
         <dt class="govuk-summary-list__key">Payment confirmation email</dt>
         <dd class="govuk-summary-list__value">{{ 'Enabled' if (account.email_notifications.PAYMENT_CONFIRMED
           and account.email_notifications.PAYMENT_CONFIRMED.enabled) else 'Disabled' }}</dd>
+        <dd class="govuk-summary-list__actions"></dd>
       </div>
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Refund issued email</dt>
         <dd class="govuk-summary-list__value">{{ 'Enabled' if (account.email_notifications.REFUND_ISSUED
           and account.email_notifications.REFUND_ISSUED.enabled) else 'Disabled' }}</dd>
+        <dd class="govuk-summary-list__actions"></dd>
       </div>
     {% endif %}
   </dl>
