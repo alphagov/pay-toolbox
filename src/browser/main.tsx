@@ -4,12 +4,44 @@ import React from 'react'
 import { render } from 'react-dom'
 
 import ResizeObserver from '@juggle/resize-observer'
+import { BackgroundColorProperty } from 'csstype'
 
-class EventCard extends React.Component {
+interface CardProfile {
+  colour: BackgroundColorProperty
+}
+
+const SuccessProfile: CardProfile = {
+  colour: '#00703c'
+}
+
+const FailureProfile: CardProfile = {
+  colour: '#d4351c'
+}
+
+// @TODO(sfount) question if standard cards should be dark grey or white
+const DefaultProfile: CardProfile = {
+  colour: '#626a6e'
+}
+
+interface EventCardProps {
+  profile: CardProfile
+}
+
+class EventCard extends React.Component<EventCardProps, {}> {
   render() {
     return (
-      <div className="dashboard-card govuk-!-margin-bottom-2">
-        <p className="govuk-body">govuk-grid-column-one-half dashboard-card</p>
+      <div className="event-card govuk-!-margin-bottom-2" style={{ backgroundColor: this.props.profile.colour }}>
+        <div style={{ textAlign: 'right', width: '100%' }}>
+          <span className="govuk-body-s" style={{ color: '#ffffffcc' }}>Send money to prisoners</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <div style={{ marginRight: 10, paddingBottom: 5 }}>
+            <img src="https://dashboard.stripe.com/favicon.ico" style={{ width: 35, height: 35, display: 'block' }} />
+          </div>
+          <div>
+          <span className="govuk-body-l" style={{ color: 'white' }}><strong>£45.00</strong></span>
+          </div>
+        </div>
       </div>
     )
   }
@@ -91,15 +123,14 @@ class Dashboard extends React.Component<{}, DashboardState> {
     return (
       <div>
         <div className="govuk-grid-row govuk-body govuk-!-margin-bottom-4">
-          <div style={{ maxHeight: this.state.statsHeight, overflow: 'scroll' }} className="govuk-grid-column-one-half">
-          <EventCard />
-          <EventCard />
-          <EventCard />
-          <EventCard />
-          <EventCard />
-          <EventCard />
-          <EventCard />
-          <EventCard />
+          {/* @TODO(sfount) bottom shadow (without factoring in column padding) is needed for parity */}
+          <div style={{ maxHeight: this.state.statsHeight, overflowY: 'scroll' }} className="govuk-grid-column-one-half">
+          <EventCard profile={SuccessProfile} />
+          <EventCard profile={FailureProfile} />
+          <EventCard profile={DefaultProfile} />
+          <EventCard profile={DefaultProfile} />
+          <EventCard profile={DefaultProfile} />
+          <EventCard profile={DefaultProfile} />
           </div>
           <div className="govuk-grid-column-one-half">
             <StatsPanel watch={this.setWatchObserver} />
