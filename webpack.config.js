@@ -17,10 +17,16 @@ const browser = {
   },
   devtool: 'source-map',
   module: {
-    rules: [ {
-      test: /\.tsx?$/,
-      loader: 'ts-loader'
-    } ]
+    rules: [
+      {
+        test: /\.tsx?$/,
+        loader: 'ts-loader'
+      },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: [ 'url-loader' ]
+      }
+    ]
   },
 
   // allow react to be served separately, allowing page bundles to stay small
