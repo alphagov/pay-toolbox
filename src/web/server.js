@@ -156,7 +156,7 @@ const configure = [
   configureRequestParsing,
   configureClientSessions,
   configureAuth,
-  configureSecureHeaders,
+  // configureSecureHeaders,
   configureServingPublicStaticFiles,
   configureTemplateRendering,
   configureRouting,
