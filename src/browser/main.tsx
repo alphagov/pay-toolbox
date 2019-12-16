@@ -1,10 +1,14 @@
 /* global ResizeObserver */
-import React from 'react'
+import React, { ReactComponentElement } from 'react'
 // import { hydrate } from 'react-dom'
 import { render } from 'react-dom'
 
 import ResizeObserver from '@juggle/resize-observer'
 import { BackgroundColorProperty } from 'csstype'
+
+import VisaIcon from './assets/card_visa.svg'
+import WorldpayLogo from './assets/psp_worldpay.jpg'
+import StripeLogo from './assets/psp_stripe.jpg'
 
 interface CardProfile {
   colour: BackgroundColorProperty
@@ -36,7 +40,7 @@ class EventCard extends React.Component<EventCardProps, {}> {
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <div style={{ marginRight: 10, paddingBottom: 5 }}>
-            <img src="https://dashboard.stripe.com/favicon.ico" style={{ width: 35, height: 35, display: 'block' }} />
+            <img src={StripeLogo}style={{ width: 35, height: 35, display: 'block', borderRadius: 3 }} />
           </div>
           <div>
           <span className="govuk-body-l" style={{ color: 'white' }}><strong>£45.00</strong></span>
