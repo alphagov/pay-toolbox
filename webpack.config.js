@@ -23,12 +23,8 @@ const browser = {
         loader: 'ts-loader'
       },
       {
-        test: /\.(png|jpg|gif)$/,
+        test: /\.(png|svg|jpg|gif)$/,
         use: [ 'url-loader' ]
-      },
-      {
-        test: /\.svg$/,
-        use: ['@svgr/webpack']
       }
     ]
   },

@@ -1,49 +1,82 @@
 /* global ResizeObserver */
-import React, { ReactComponentElement } from 'react'
+import React, { ReactComponentElement, ReactSVG } from 'react'
 // import { hydrate } from 'react-dom'
 import { render } from 'react-dom'
 
 import ResizeObserver from '@juggle/resize-observer'
-import { BackgroundColorProperty } from 'csstype'
+import { BackgroundColorProperty, ColorProperty } from 'csstype'
 
 import VisaIcon from './assets/card_visa.svg'
+import MastercardIcon from './assets/card_mastercard.svg'
+import AmexIcon from './assets/card_amex.svg'
+import UnknownIcon from './assets/card_unknown.svg'
+
 import WorldpayLogo from './assets/psp_worldpay.jpg'
 import StripeLogo from './assets/psp_stripe.jpg'
+import BarclaysLogo from './assets/psp_barclays.jpg'
+
+import StatusFailureIcon from './assets/status_failure.svg'
+import StatusSuccessIcon from './assets/status_success.svg'
+
+import SVG from 'react-inlinesvg'
 
 interface CardProfile {
-  colour: BackgroundColorProperty
+  backgroundColour: BackgroundColorProperty
+  colour: ColorProperty
 }
 
 const SuccessProfile: CardProfile = {
-  colour: '#00703c'
+  backgroundColour: '#00703c',
+  colour: '#ffffff'
 }
 
 const FailureProfile: CardProfile = {
-  colour: '#d4351c'
+  backgroundColour: '#d4351c',
+  colour: '#ffffff'
 }
 
 // @TODO(sfount) question if standard cards should be dark grey or white
 const DefaultProfile: CardProfile = {
-  colour: '#626a6e'
+  backgroundColour: '#ffffff',
+  colour: '#000000'
 }
 
 interface EventCardProps {
-  profile: CardProfile
+  profile: CardProfile,
+  TMPicon: string
 }
+
+interface CardIconProps {
+  icon: string
+}
+const CardIcon = (props: CardIconProps) => (
+  <div style={{ marginRight: 5 }}>
+    <SVG src={props.icon} width={50} height={50} />
+  </div>
+)
+
+interface CardImageProps {
+  image: string
+}
+const CardImage = (props: CardImageProps) => (
+  <div style={{ marginRight: 10, paddingBottom: 5 }}>
+    <img src={props.image}style={{ width: 35, height: 35, display: 'block', borderRadius: 3 }} />
+  </div>
+)
+
 
 class EventCard extends React.Component<EventCardProps, {}> {
   render() {
     return (
-      <div className="event-card govuk-!-margin-bottom-2" style={{ backgroundColor: this.props.profile.colour }}>
+      <div className="event-card govuk-!-margin-bottom-2" style={{ backgroundColor: this.props.profile.backgroundColour }}>
         <div style={{ textAlign: 'right', width: '100%' }}>
-          <span className="govuk-body-s" style={{ color: '#ffffffcc' }}>Send money to prisoners</span>
+          <span className="govuk-body-s" style={{ color: this.props.profile.colour, opacity: 0.7 }}>Send money to prisoners</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <div style={{ marginRight: 10, paddingBottom: 5 }}>
-            <img src={StripeLogo}style={{ width: 35, height: 35, display: 'block', borderRadius: 3 }} />
-          </div>
+          <CardIcon icon={this.props.TMPicon} />
+          {/* <CardImage image={WorldpayLogo} /> */}
           <div>
-          <span className="govuk-body-l" style={{ color: 'white' }}><strong>£45.00</strong></span>
+          <span className="govuk-body-l" style={{ color: this.props.profile.colour }}><strong>£45.00</strong></span>
           </div>
         </div>
       </div>
@@ -129,12 +162,15 @@ class Dashboard extends React.Component<{}, DashboardState> {
         <div className="govuk-grid-row govuk-body govuk-!-margin-bottom-4">
           {/* @TODO(sfount) bottom shadow (without factoring in column padding) is needed for parity */}
           <div style={{ maxHeight: this.state.statsHeight, overflowY: 'scroll' }} className="govuk-grid-column-one-half">
-          <EventCard profile={SuccessProfile} />
-          <EventCard profile={FailureProfile} />
-          <EventCard profile={DefaultProfile} />
-          <EventCard profile={DefaultProfile} />
-          <EventCard profile={DefaultProfile} />
-          <EventCard profile={DefaultProfile} />
+          <EventCard profile={SuccessProfile} TMPicon={StatusSuccessIcon} />
+          <EventCard profile={FailureProfile} TMPicon={StatusFailureIcon} />
+          <EventCard profile={DefaultProfile} TMPicon={UnknownIcon} />
+          <EventCard profile={DefaultProfile} TMPicon={MastercardIcon} />
+          <EventCard profile={DefaultProfile} TMPicon={AmexIcon} />
+          <EventCard profile={DefaultProfile} TMPicon={VisaIcon} />
+          <EventCard profile={DefaultProfile} TMPicon={VisaIcon} />
+          <EventCard profile={DefaultProfile} TMPicon={VisaIcon} />
+          <EventCard profile={DefaultProfile} TMPicon={VisaIcon} />
           </div>
           <div className="govuk-grid-column-one-half">
             <StatsPanel watch={this.setWatchObserver} />
