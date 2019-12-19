@@ -19,6 +19,7 @@ import StatusFailureIcon from './assets/status_failure.svg'
 import StatusSuccessIcon from './assets/status_success.svg'
 
 import SVG from 'react-inlinesvg'
+import { Profile } from 'passport'
 
 interface CardProfile {
   backgroundColour: BackgroundColorProperty
@@ -41,9 +42,22 @@ const DefaultProfile: CardProfile = {
   colour: '#000000'
 }
 
+interface Event {
+  amount: number,
+  gateway_account_id: number,
+  event_type: string,
+  resource_external_id: string,
+  event_date: string,
+  payment_provider: string,
+  type: string,
+  service_name?: string,
+  card_brand?: string
+}
+
 interface EventCardProps {
-  profile: CardProfile,
-  TMPicon: string
+  // profile: CardProfile,
+  // TMPicon: string
+  event: Event
 }
 
 interface CardIconProps {
@@ -67,16 +81,56 @@ const CardImage = (props: CardImageProps) => (
 
 class EventCard extends React.Component<EventCardProps, {}> {
   render() {
+    const profileMap: { [key: string]: CardProfile } = {
+      'PAYMENT_DETAILS_ENTERED': DefaultProfile,
+      'GATEWAY_ERROR_DURING_AUTHORISATION': FailureProfile,
+      'AUTHORISATION_SUCCEEDED': SuccessProfile,
+      'PAYMENT_CREATED': DefaultProfile
+    }
+
+    const paymentTypeMap: { [key: string]: string } = {
+      'visa': VisaIcon,
+      'mastercard': MastercardIcon,
+      'amex': AmexIcon
+    }
+
+    const providerLogoMap: { [key: string]: string } = {
+      'worldpay': WorldpayLogo,
+      'stripe': StripeLogo,
+      'epdq': BarclaysLogo,
+      'smartpay': BarclaysLogo
+    }
+
+    const profile = profileMap[this.props.event.event_type]
+    const paymentTypeIcon = paymentTypeMap[this.props.event.card_brand] || UnknownIcon
+    const paymentProviderIcon = providerLogoMap[this.props.event.payment_provider]
+
+    let icon: JSX.Element
+
+    switch (this.props.event.event_type) {
+      case 'PAYMENT_DETAILS_ENTERED':
+        icon = <CardIcon icon={paymentTypeIcon} />
+        break
+      case 'GATEWAY_ERROR_DURING_AUTHORISATION':
+        icon = <CardIcon icon={StatusFailureIcon} />
+        break
+      case 'AUTHORISATION_SUCCEEDED':
+        icon = <CardIcon icon={StatusSuccessIcon} />
+        break
+      case 'PAYMENT_CREATED':
+        icon = <CardImage image={paymentProviderIcon} />
+      break
+    }
+
     return (
-      <div className="event-card govuk-!-margin-bottom-2" style={{ backgroundColor: this.props.profile.backgroundColour }}>
+      <div className="event-card govuk-!-margin-bottom-2" style={{ backgroundColor: profile.backgroundColour }}>
         <div style={{ textAlign: 'right', width: '100%' }}>
-          <span className="govuk-body-s" style={{ color: this.props.profile.colour, opacity: 0.7 }}>Send money to prisoners</span>
+          <span className="govuk-body-s" style={{ color: profile.colour, opacity: 0.7 }}>Send money to prisoners</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <CardIcon icon={this.props.TMPicon} />
-          {/* <CardImage image={WorldpayLogo} /> */}
+          {icon}
           <div>
-          <span className="govuk-body-l" style={{ color: this.props.profile.colour }}><strong>£45.00</strong></span>
+          <span className="govuk-body-l" style={{ color: profile.colour }}><strong>£45.00</strong></span>
           </div>
         </div>
       </div>
@@ -157,20 +211,85 @@ class Dashboard extends React.Component<{}, DashboardState> {
   }
 
   render() {
+    const completedEvent: Event = {
+      gateway_account_id: 136,
+      service_name: 'Send money to prisoners',
+      event_type: 'AUTHORISATION_SUCCEEDED',
+      type: 'PAYMENT',
+      amount: 4500,
+      resource_external_id: 'someid',
+      event_date: '2019-08-08',
+      payment_provider: 'stripe'
+    }
+
+    const failedEvent: Event = {
+      event_type: 'GATEWAY_ERROR_DURING_AUTHORISATION',
+      type: 'PAYMENT',
+      gateway_account_id: 136,
+      service_name: 'Send money to prisoners',
+      amount: 4500,
+      resource_external_id: 'someid',
+      event_date: '2019-08-08',
+      payment_provider: 'stripe'
+    }
+
+    const detailsEnteredEventVisa: Event = {
+      event_type: 'PAYMENT_DETAILS_ENTERED',
+      type: 'PAYMENT',
+      gateway_account_id: 136,
+      service_name: 'Send money to prisoners',
+      amount: 4500,
+      resource_external_id: 'someid',
+      event_date: '2019-08-08',
+      payment_provider: 'stripe',
+      card_brand: 'visa'
+    }
+
+    const detailsEnteredEventMastercard: Event = {
+      event_type: 'PAYMENT_DETAILS_ENTERED',
+      type: 'PAYMENT',
+      gateway_account_id: 136,
+      service_name: 'Send money to prisoners',
+      amount: 4500,
+      resource_external_id: 'someid',
+      event_date: '2019-08-08',
+      payment_provider: 'stripe',
+      card_brand: 'mastercard'
+    }
+
+    const createdEventStripe: Event = {
+      gateway_account_id: 136,
+      service_name: 'Send money to prisoners',
+      event_type: 'PAYMENT_CREATED',
+      type: 'PAYMENT',
+      payment_provider: 'stripe',
+      amount: 4500,
+      resource_external_id: 'someid',
+      event_date: '2019-08-08'
+    }
+
+    const createdEventWorldpay: Event = {
+      gateway_account_id: 136,
+      service_name: 'Send money to prisoners',
+      event_type: 'PAYMENT_CREATED',
+      type: 'PAYMENT',
+      payment_provider: 'worldpay',
+      amount: 4500,
+      resource_external_id: 'someid',
+      event_date: '2019-08-08'
+
+    }
     return (
       <div>
         <div className="govuk-grid-row govuk-body govuk-!-margin-bottom-4">
           {/* @TODO(sfount) bottom shadow (without factoring in column padding) is needed for parity */}
           <div style={{ maxHeight: this.state.statsHeight, overflowY: 'scroll' }} className="govuk-grid-column-one-half">
-          <EventCard profile={SuccessProfile} TMPicon={StatusSuccessIcon} />
-          <EventCard profile={FailureProfile} TMPicon={StatusFailureIcon} />
-          <EventCard profile={DefaultProfile} TMPicon={UnknownIcon} />
-          <EventCard profile={DefaultProfile} TMPicon={MastercardIcon} />
-          <EventCard profile={DefaultProfile} TMPicon={AmexIcon} />
-          <EventCard profile={DefaultProfile} TMPicon={VisaIcon} />
-          <EventCard profile={DefaultProfile} TMPicon={VisaIcon} />
-          <EventCard profile={DefaultProfile} TMPicon={VisaIcon} />
-          <EventCard profile={DefaultProfile} TMPicon={VisaIcon} />
+          <EventCard event={createdEventStripe} />
+          <EventCard event={createdEventWorldpay} />
+          <EventCard event={detailsEnteredEventVisa} />
+          <EventCard event={detailsEnteredEventMastercard} />
+          <EventCard event={completedEvent} />
+          <EventCard event={failedEvent} />
           </div>
           <div className="govuk-grid-column-one-half">
             <StatsPanel watch={this.setWatchObserver} />
