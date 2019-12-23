@@ -17,7 +17,15 @@ import WinstonSentryTransport from './winstonSentryTransport'
 
 import * as config from '../config'
 
-const { combine, timestamp } = format
+const { govUkPayLoggingFormat } = require('@govuk-pay/pay-js-commons').logging
+
+const {
+  combine,
+  timestamp,
+  json,
+  splat,
+  prettyPrint
+} = format
 
 const TOOLBOX_ID_KEY = 'toolbox_id'
 const CORRELATION_ID_KEY = 'correlation_id'
@@ -46,13 +54,11 @@ const loggerMiddleware = function loggerMiddleware(
 
 const supplementProductionInfo = format((info) => {
   // LOGSTASH 675 versioning https://gds-way.cloudapps.digital/manuals/logging.html
-  const LOG_VERSION = 1
   const productionContext: any = {
     toolbox_id: session.get(TOOLBOX_ID_KEY),
-    correlation_id: session.get(CORRELATION_ID_KEY),
+    x_request_id: session.get(CORRELATION_ID_KEY),
     user_id: session.get(AUTHENTICATED_USER_ID_KEY)
   }
-  productionContext['@version'] = LOG_VERSION
   return Object.assign(info, productionContext)
 })
 
@@ -60,8 +66,10 @@ if (!config.common.development) {
   const productionTransport = new transports.Console({
     format: combine(
       supplementProductionInfo(),
-      timestamp({ format: 'YYYY-MM-DDTHH:mm:ss.sssZ', alias: '@timestamp' }),
-      format.json()
+      splat(),
+      prettyPrint(),
+      govUkPayLoggingFormat({ container: 'toolbox', environment: process.env.ENVIRONMENT }),
+      json()
     ),
     level: 'info'
   })
@@ -89,18 +97,6 @@ if (config.common.development) {
   })
   logger.add(developmentTransport)
 }
-
-// configure logger specifically for `Morgan` stream
-const morganStreamWriter = {
-  write: (message: string): void => {
-    logger.info(message)
-  }
-}
-
-// Morgan -> Winston stream types aren't well defined - this can be typed strictly when these
-// are specified
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-logger.stream = morganStreamWriter as any
 
 // @TODO(sfount) attaching object to logger could muddy API in future
 Object.assign(logger, { middleware: loggerMiddleware })

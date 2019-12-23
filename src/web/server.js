@@ -2,7 +2,6 @@ const path = require('path')
 const express = require('express')
 const helmet = require('helmet')
 const bodyParser = require('body-parser')
-const morgan = require('morgan')
 const flash = require('connect-flash')
 const cookieSession = require('cookie-session')
 const nunjucks = require('nunjucks')
@@ -16,6 +15,7 @@ const {
   disableAuth
 } = require('./../config')
 const logger = require('./../lib/logger')
+const requestLoggingMiddleware = require('../lib/requestLoggingMiddleware')
 const passport = require('../lib/auth/passport')
 
 const errors = require('./errorHandler')
@@ -113,12 +113,10 @@ const configureTemplateRendering = function configureTemplateRendering(instance)
 }
 
 const configureRouting = function configureRouting(instance) {
-  const httpRequestLoggingFormat = common.development ? 'dev' : 'short'
-
   // logger middleware included after flash and body parsing middleware as they
   // alter the call stack (it should ideally be placed just before routes)
   instance.use(logger.middleware)
-  instance.use(morgan(httpRequestLoggingFormat, { stream: logger.stream }))
+  instance.use(requestLoggingMiddleware)
 
   instance.use('/', router)
   instance.use(errors.handleNotFound)
