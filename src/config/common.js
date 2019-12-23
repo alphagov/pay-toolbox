@@ -4,7 +4,8 @@
 const Joi = require('joi')
 
 const expectedCommonEnvironmentValues = {
-  NODE_ENV: Joi.string().valid([ 'development', 'production', 'staging', 'test' ]).required()
+  NODE_ENV: Joi.string().valid([ 'development', 'production', 'staging', 'test' ]).required(),
+  ENVIRONMENT: Joi.string()
 }
 
 const { error, value: validatedCommonEnvironmentValues } = Joi.validate(

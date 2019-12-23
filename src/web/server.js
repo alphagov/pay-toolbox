@@ -131,7 +131,7 @@ const configureErrorHandling = function configureErrorHandling(instance) {
 const configureSentry = function configureSentry() {
   Sentry.init({
     dsn: sentryConfig.SENTRY_DSN,
-    environment: sentryConfig.ENVIRONMENT,
+    environment: common.ENVIRONMENT,
       beforeSend(event) {
         if (event.request) {
           delete event.request // This can include sensitive data such as card numbers

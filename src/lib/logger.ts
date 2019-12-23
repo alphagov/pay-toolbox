@@ -68,7 +68,7 @@ if (!config.common.development) {
       supplementProductionInfo(),
       splat(),
       prettyPrint(),
-      govUkPayLoggingFormat({ container: 'toolbox', environment: process.env.ENVIRONMENT }),
+      govUkPayLoggingFormat({ container: 'toolbox', environment: config.common.ENVIRONMENT }),
       json()
     ),
     level: 'info'
