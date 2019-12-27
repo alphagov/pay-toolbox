@@ -116,7 +116,7 @@ const configureRouting = function configureRouting(instance) {
   // logger middleware included after flash and body parsing middleware as they
   // alter the call stack (it should ideally be placed just before routes)
   instance.use(logger.middleware)
-  instance.use(requestLoggingMiddleware)
+  instance.use(requestLoggingMiddleware())
 
   instance.use('/', router)
   instance.use(errors.handleNotFound)
