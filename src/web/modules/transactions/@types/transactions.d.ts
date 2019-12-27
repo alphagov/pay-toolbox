@@ -60,4 +60,18 @@ declare module 'ledger' {
     transaction_id: string;
     transaction_type: string;
   }
+
+  // @FIXME(sfount) gateway account id should be a number
+  export interface Event {
+    amount: number,
+    gateway_account_id: string,
+    event_type: string,
+    resource_external_id: string,
+    event_date: string,
+    payment_provider: string,
+    type: string,
+    service_name?: string,
+    card_brand?: string
+  }
 }
+

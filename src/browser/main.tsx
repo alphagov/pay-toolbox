@@ -1,11 +1,13 @@
 /* global ResizeObserver */
-import React, { ReactComponentElement, ReactSVG } from 'react'
+import React from 'react'
+
 // import { hydrate } from 'react-dom'
 import { render } from 'react-dom'
 
 import ResizeObserver from '@juggle/resize-observer'
 import { BackgroundColorProperty, ColorProperty } from 'csstype'
 
+import { TestChart } from './Chart'
 import VisaIcon from './assets/card_visa.svg'
 import MastercardIcon from './assets/card_mastercard.svg'
 import AmexIcon from './assets/card_amex.svg'
@@ -19,7 +21,8 @@ import StatusFailureIcon from './assets/status_failure.svg'
 import StatusSuccessIcon from './assets/status_success.svg'
 
 import SVG from 'react-inlinesvg'
-import { Profile } from 'passport'
+
+import { Event } from 'ledger'
 
 interface CardProfile {
   backgroundColour: BackgroundColorProperty
@@ -42,18 +45,6 @@ const DefaultProfile: CardProfile = {
   colour: '#000000'
 }
 
-interface Event {
-  amount: number,
-  gateway_account_id: number,
-  event_type: string,
-  resource_external_id: string,
-  event_date: string,
-  payment_provider: string,
-  type: string,
-  service_name?: string,
-  card_brand?: string
-}
-
 interface EventCardProps {
   // profile: CardProfile,
   // TMPicon: string
@@ -65,7 +56,7 @@ interface CardIconProps {
 }
 const CardIcon = (props: CardIconProps) => (
   <div style={{ marginRight: 5 }}>
-    <SVG src={props.icon} width={50} height={50} />
+    <SVG src={props.icon} width={35} height={35} />
   </div>
 )
 
@@ -187,14 +178,16 @@ class StatsPanel extends React.Component<StatsPanelProps, {}> {
 }
 
 interface DashboardState {
-  statsHeight: number
+  statsHeight: number,
+  events: Event[]
 }
 
 class Dashboard extends React.Component<{}, DashboardState> {
   constructor(props: {}) {
     super(props)
     this.state = {
-      statsHeight: 0
+      statsHeight: 0,
+      events: []
     }
     this.setWatchObserver = this.setWatchObserver.bind(this)
   }
@@ -211,85 +204,19 @@ class Dashboard extends React.Component<{}, DashboardState> {
   }
 
   render() {
-    const completedEvent: Event = {
-      gateway_account_id: 136,
-      service_name: 'Send money to prisoners',
-      event_type: 'AUTHORISATION_SUCCEEDED',
-      type: 'PAYMENT',
-      amount: 4500,
-      resource_external_id: 'someid',
-      event_date: '2019-08-08',
-      payment_provider: 'stripe'
-    }
-
-    const failedEvent: Event = {
-      event_type: 'GATEWAY_ERROR_DURING_AUTHORISATION',
-      type: 'PAYMENT',
-      gateway_account_id: 136,
-      service_name: 'Send money to prisoners',
-      amount: 4500,
-      resource_external_id: 'someid',
-      event_date: '2019-08-08',
-      payment_provider: 'stripe'
-    }
-
-    const detailsEnteredEventVisa: Event = {
-      event_type: 'PAYMENT_DETAILS_ENTERED',
-      type: 'PAYMENT',
-      gateway_account_id: 136,
-      service_name: 'Send money to prisoners',
-      amount: 4500,
-      resource_external_id: 'someid',
-      event_date: '2019-08-08',
-      payment_provider: 'stripe',
-      card_brand: 'visa'
-    }
-
-    const detailsEnteredEventMastercard: Event = {
-      event_type: 'PAYMENT_DETAILS_ENTERED',
-      type: 'PAYMENT',
-      gateway_account_id: 136,
-      service_name: 'Send money to prisoners',
-      amount: 4500,
-      resource_external_id: 'someid',
-      event_date: '2019-08-08',
-      payment_provider: 'stripe',
-      card_brand: 'mastercard'
-    }
-
-    const createdEventStripe: Event = {
-      gateway_account_id: 136,
-      service_name: 'Send money to prisoners',
-      event_type: 'PAYMENT_CREATED',
-      type: 'PAYMENT',
-      payment_provider: 'stripe',
-      amount: 4500,
-      resource_external_id: 'someid',
-      event_date: '2019-08-08'
-    }
-
-    const createdEventWorldpay: Event = {
-      gateway_account_id: 136,
-      service_name: 'Send money to prisoners',
-      event_type: 'PAYMENT_CREATED',
-      type: 'PAYMENT',
-      payment_provider: 'worldpay',
-      amount: 4500,
-      resource_external_id: 'someid',
-      event_date: '2019-08-08'
-
-    }
+    // @TODO(sfount) prop key should be the events id (which will actually come from the ledger resource)
+    const events = this.state.events.map((event, index) => {
+      return (
+        <EventCard key={index} event={event} />
+      )
+    })
     return (
       <div>
         <div className="govuk-grid-row govuk-body govuk-!-margin-bottom-4">
           {/* @TODO(sfount) bottom shadow (without factoring in column padding) is needed for parity */}
-          <div style={{ maxHeight: this.state.statsHeight, overflowY: 'scroll' }} className="govuk-grid-column-one-half">
-          <EventCard event={createdEventStripe} />
-          <EventCard event={createdEventWorldpay} />
-          <EventCard event={detailsEnteredEventVisa} />
-          <EventCard event={detailsEnteredEventMastercard} />
-          <EventCard event={completedEvent} />
-          <EventCard event={failedEvent} />
+          {/* Non-zero min-height to maintain width without content (a loading or syncing icon should be used) */}
+          <div style={{ maxHeight: this.state.statsHeight, overflowY: 'scroll', minHeight: 5 }} className="govuk-grid-column-one-half">
+            {events}
           </div>
           <div className="govuk-grid-column-one-half">
             <StatsPanel watch={this.setWatchObserver} />
@@ -299,7 +226,10 @@ class Dashboard extends React.Component<{}, DashboardState> {
           <div className="govuk-grid-column-full">
             <div className="dashboard-card">
               <span className="govuk-caption-xl">Friday 13th December 2019</span>
-              <p className="govuk-body">Daily graph of payment volume, compared with last week</p>
+              <div className="govuk-body" style={{ height: 280 }}>
+                {/* <DailyVolumeChart /> */}
+                <TestChart />
+              </div>
             </div>
           </div>
         </div>
@@ -321,3 +251,72 @@ class App extends React.Component {
 const element = document.getElementById('root')
 // hydrate(app, element)
 render(<App />, element)
+
+  // const completedEvent: Event = {
+  //   gateway_account_id: '136',
+  //   service_name: 'Send money to prisoners',
+  //   event_type: 'AUTHORISATION_SUCCEEDED',
+  //   type: 'PAYMENT',
+  //   amount: 4500,
+  //   resource_external_id: 'someid',
+  //   event_date: '2019-08-08',
+  //   payment_provider: 'stripe'
+  // }
+
+  // const failedEvent: Event = {
+  //   event_type: 'GATEWAY_ERROR_DURING_AUTHORISATION',
+  //   type: 'PAYMENT',
+  //   gateway_account_id: '136',
+  //   service_name: 'Send money to prisoners',
+  //   amount: 4500,
+  //   resource_external_id: 'someid',
+  //   event_date: '2019-08-08',
+  //   payment_provider: 'stripe'
+  // }
+
+  // const detailsEnteredEventVisa: Event = {
+  //   event_type: 'PAYMENT_DETAILS_ENTERED',
+  //   type: 'PAYMENT',
+  //   gateway_account_id: '136',
+  //   service_name: 'Send money to prisoners',
+  //   amount: 4500,
+  //   resource_external_id: 'someid',
+  //   event_date: '2019-08-08',
+  //   payment_provider: 'stripe',
+  //   card_brand: 'visa'
+  // }
+
+  // const detailsEnteredEventMastercard: Event = {
+  //   event_type: 'PAYMENT_DETAILS_ENTERED',
+  //   type: 'PAYMENT',
+  //   gateway_account_id: '136',
+  //   service_name: 'Send money to prisoners',
+  //   amount: 4500,
+  //   resource_external_id: 'someid',
+  //   event_date: '2019-08-08',
+  //   payment_provider: 'stripe',
+  //   card_brand: 'mastercard'
+  // }
+
+  // const createdEventStripe: Event = {
+  //   gateway_account_id: '136',
+  //   service_name: 'Send money to prisoners',
+  //   event_type: 'PAYMENT_CREATED',
+  //   type: 'PAYMENT',
+  //   payment_provider: 'stripe',
+  //   amount: 4500,
+  //   resource_external_id: 'someid',
+  //   event_date: '2019-08-08'
+  // }
+
+  // const createdEventWorldpay: Event = {
+  //   gateway_account_id: '136',
+  //   service_name: 'Send money to prisoners',
+  //   event_type: 'PAYMENT_CREATED',
+  //   type: 'PAYMENT',
+  //   payment_provider: 'worldpay',
+  //   amount: 4500,
+  //   resource_external_id: 'someid',
+  //   event_date: '2019-08-08'
+
+  // }
