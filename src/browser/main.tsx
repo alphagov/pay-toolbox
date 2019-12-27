@@ -3,9 +3,11 @@ import React, { ReactComponentElement, ReactSVG } from 'react'
 // import { hydrate } from 'react-dom'
 import { render } from 'react-dom'
 
+
 import ResizeObserver from '@juggle/resize-observer'
 import { BackgroundColorProperty, ColorProperty } from 'csstype'
 
+import { DailyVolumeChart, TestChart } from './Chart'
 import VisaIcon from './assets/card_visa.svg'
 import MastercardIcon from './assets/card_mastercard.svg'
 import AmexIcon from './assets/card_amex.svg'
@@ -19,7 +21,6 @@ import StatusFailureIcon from './assets/status_failure.svg'
 import StatusSuccessIcon from './assets/status_success.svg'
 
 import SVG from 'react-inlinesvg'
-import { Profile } from 'passport'
 
 interface CardProfile {
   backgroundColour: BackgroundColorProperty
@@ -65,7 +66,7 @@ interface CardIconProps {
 }
 const CardIcon = (props: CardIconProps) => (
   <div style={{ marginRight: 5 }}>
-    <SVG src={props.icon} width={50} height={50} />
+    <SVG src={props.icon} width={35} height={35} />
   </div>
 )
 
@@ -299,7 +300,10 @@ class Dashboard extends React.Component<{}, DashboardState> {
           <div className="govuk-grid-column-full">
             <div className="dashboard-card">
               <span className="govuk-caption-xl">Friday 13th December 2019</span>
-              <p className="govuk-body">Daily graph of payment volume, compared with last week</p>
+              <div className="govuk-body" style={{ height: 280 }}>
+                {/* <DailyVolumeChart /> */}
+                <TestChart />
+              </div>
             </div>
           </div>
         </div>
