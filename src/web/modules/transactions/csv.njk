@@ -28,7 +28,7 @@
         </label>
         <select class="govuk-select" id="month" name="month">
           {% for month in months %}
-          <option value="{{$index}}">{{ month }}</option>
+          <option value="{{loop.index0}}">{{ month }}</option>
           {% endfor %}
         </select>
       </div>
@@ -38,13 +38,14 @@
         </label>
         <select class="govuk-select" id="year" name="year">
           {% for year in years %}
-          <option value="{{$year}}">{{ year }}</option>
+          <option value="{{year}}">{{ year }}</option>
           {% endfor %}
         </select>
       </div>
       <button type="submit" class="govuk-button" data-module="govuk-button">
         Download transactions
       </button>
+      <input type="hidden" name="account" value="{{ account.id }}">
       <input type="hidden" name="_csrf" value="{{ csrf }}">
     </form>
   </div>

@@ -160,8 +160,48 @@ export async function csvPage(req: Request, res: Response, next: NextFunction): 
   const years = []
   const totalNumberOfYears = 5
 
+  let account
+  const accountId = req.query.account
+
+  if (req.query.account) {
+    account = await AdminUsers.gatewayAccountServices(accountId)
+  }
+
   // eslint-disable-next-line no-plusplus
   for (let i = 0; i < totalNumberOfYears; i++) years.push(now.year() - i)
 
-  res.render('transactions/csv', { months: moment.months(), years, csrf: req.csrfToken() })
+  res.render('transactions/csv', {
+    account,
+    years,
+    months: moment.months(),
+    csrf: req.csrfToken()
+  })
+}
+
+export async function csv(req: Request, res: Response, next: NextFunction): Promise<void> {
+  const { account, month, year } = req.body
+  const baseDate = moment()
+
+  baseDate.set('year', year)
+  baseDate.set('month', month)
+
+  const filters = {
+    from_date: baseDate.startOf('month').toISOString(),
+    to_date: baseDate.endOf('month').toISOString(),
+    display_size: 100000
+  }
+
+  try {
+    let accountDetails
+    if (account) {
+      accountDetails = await AdminUsers.gatewayAccountServices(account)
+    }
+    const result = await Ledger.transactions(account, null, null, filters, true)
+    const accountName = accountDetails ? accountDetails.name : 'GOV.UK Platform'
+    res.set('Content-Type', 'text/csv')
+    res.set('Content-Disposition', `attachment; filename="${accountName} ${moment.months()[month]} ${year}.csv"`)
+    res.status(200).send(result)
+  } catch (error) {
+    next(error)
+  }
 }

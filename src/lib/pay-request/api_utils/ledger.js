@@ -21,7 +21,13 @@ const ledgerMethods = function ledgerMethods(instance) {
       .catch(handleNotFound('Transaction', id))
   }
 
-  const transactions = async function transactions(account, currentPage, currentStatus, filters) {
+  const transactions = async function transactions(
+    account,
+    currentPage,
+    currentStatus,
+    filters,
+    fetchAsCSV = false
+  ) {
     const page = currentPage || 1
     const pageSize = 20
     const externalStatusMap = {
@@ -43,7 +49,12 @@ const ledgerMethods = function ledgerMethods(instance) {
       ...account && { account_id: account }
     }
 
-    return axiosInstance.get('/v1/transaction', { params })
+    const headers = fetchAsCSV ? {
+      Accept: 'text/csv',
+      'Content-Type': 'text/csv'
+    } : null
+
+    return axiosInstance.get('/v1/transaction', { params, ...headers && { headers } })
       .then(utilExtractData)
   }
 
