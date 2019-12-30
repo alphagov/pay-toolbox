@@ -96,6 +96,7 @@ router.get('/users/:id/2FA/reset', auth.secured, users.resetUserSecondFactor)
 router.get('/transactions/search', auth.secured, transactions.searchPage)
 router.post('/transactions/search', auth.secured, transactions.search)
 router.get('/transactions/statistics', auth.secured, transactions.statistics)
+router.get('/transactions/csv', auth.secured, transactions.csvPage)
 router.get('/transactions/:id', auth.secured, transactions.show)
 router.get('/transactions/:id/parity', auth.secured, parity.validateLedgerTransaction)
 

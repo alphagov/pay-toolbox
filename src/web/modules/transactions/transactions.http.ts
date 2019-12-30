@@ -126,3 +126,14 @@ export async function statistics(req: Request, res: Response, next: NextFunction
     next(error)
   }
 }
+
+export async function csvPage(req: Request, res: Response, next: NextFunction): Promise<void> {
+  const now = moment()
+  const years = []
+  const totalNumberOfYears = 5
+
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < totalNumberOfYears; i++) years.push(now.year() - i)
+
+  res.render('transactions/csv', { months: moment.months(), years, csrf: req.csrfToken() })
+}
