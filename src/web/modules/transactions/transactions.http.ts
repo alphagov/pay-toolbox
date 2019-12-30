@@ -5,6 +5,7 @@ import { Transaction } from 'ledger'
 
 import { Ledger, Connector, AdminUsers } from '../../../lib/pay-request'
 import { EntityNotFoundError } from '../../../lib/errors'
+import * as logger from '../../../lib/logger'
 
 const moment = require('moment')
 
@@ -163,19 +164,23 @@ export async function csvPage(req: Request, res: Response, next: NextFunction): 
   let account
   const accountId = req.query.account
 
-  if (req.query.account) {
-    account = await AdminUsers.gatewayAccountServices(accountId)
+  try {
+    if (req.query.account) {
+      account = await AdminUsers.gatewayAccountServices(accountId)
+    }
+
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < totalNumberOfYears; i++) years.push(now.year() - i)
+
+    res.render('transactions/csv', {
+      account,
+      years,
+      months: moment.months(),
+      csrf: req.csrfToken()
+    })
+  } catch (error) {
+    next(error)
   }
-
-  // eslint-disable-next-line no-plusplus
-  for (let i = 0; i < totalNumberOfYears; i++) years.push(now.year() - i)
-
-  res.render('transactions/csv', {
-    account,
-    years,
-    months: moment.months(),
-    csrf: req.csrfToken()
-  })
 }
 
 export async function csv(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -196,10 +201,21 @@ export async function csv(req: Request, res: Response, next: NextFunction): Prom
     if (account) {
       accountDetails = await AdminUsers.gatewayAccountServices(account)
     }
+    const metricStart = Date.now()
     const result = await Ledger.transactions(account, null, null, filters, true)
+    const metricEnd = Date.now()
     const accountName = accountDetails ? accountDetails.name : 'GOV.UK Platform'
     res.set('Content-Type', 'text/csv')
     res.set('Content-Disposition', `attachment; filename="${accountName} ${moment.months()[month]} ${year}.csv"`)
+
+    const numberOfLines = result.split('\n').length
+
+    logger.info(`Transaction CSV downloaded for ${accountName}`, {
+      gateway_account: account,
+      gateway_account_name: accountName,
+      csv_rows: numberOfLines,
+      time_taken: metricEnd - metricStart
+    })
     res.status(200).send(result)
   } catch (error) {
     next(error)
