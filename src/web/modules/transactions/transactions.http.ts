@@ -173,6 +173,7 @@ export async function csvPage(req: Request, res: Response, next: NextFunction): 
     for (let i = 0; i < totalNumberOfYears; i++) years.push(now.year() - i)
 
     res.render('transactions/csv', {
+      accountId,
       account,
       years,
       months: moment.months(),
