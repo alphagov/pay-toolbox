@@ -1,0 +1,52 @@
+{% from "transactions/status.macro.njk" import status %}
+
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">
+    {% if account %}
+      <span>{{ account.name }}</span>
+    {% else %}
+      <span>GOV.UK Pay platform</span>
+    {% endif %}
+  </span>
+
+  <h1 class="govuk-heading-m">Transaction CSV report</h1>
+
+  <div>
+    <p class="govuk-body">
+      Download a monthly list of transactions for this account. These reports will be exactly as users see them through the admin tool. This will also support additional filters.
+    </p>
+  </div>
+
+  <div>
+    <!-- @TODO(sfount) lists could be populated with JS so that months are shown for selected year -->
+    <form method="post" action="/transactions/csv">
+      <div class="govuk-form-group">
+        <label class="govuk-label" for="month">
+          Month
+        </label>
+        <select class="govuk-select" id="month" name="month">
+          {% for month in months %}
+          <option value="{{loop.index0}}">{{ month }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="govuk-form-group">
+        <label class="govuk-label" for="year">
+          Year
+        </label>
+        <select class="govuk-select" id="year" name="year">
+          {% for year in years %}
+          <option value="{{year}}">{{ year }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="govuk-button" data-module="govuk-button">
+        Download transactions
+      </button>
+      <input type="hidden" name="account" value="{{ account.id }}">
+      <input type="hidden" name="_csrf" value="{{ csrf }}">
+    </form>
+  </div>
+{% endblock %}
