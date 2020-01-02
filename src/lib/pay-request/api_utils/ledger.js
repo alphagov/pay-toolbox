@@ -92,8 +92,32 @@ const ledgerMethods = function ledgerMethods(instance) {
       .then(utilExtractData)
   }
 
+  const paymentVolumesByHour = function paymentVolumesByHour(fromDate, toDate) {
+    const params = {
+      from_date: fromDate,
+      to_date: toDate
+    }
+    return axiosInstance.get('/v1/report/transactions-by-hour', {params })
+      .then(utilExtractData)
+  }
+
+  const paymentVolumesAggregate = function paymentVolumesAggregate(fromDate, toDate) {
+    const params = {
+      from_date: fromDate,
+      to_date: toDate
+    }
+    return axiosInstance.get('/v1/report/performance-report', {params })
+      .then(utilExtractData)
+  }
+
   return {
-    transaction, transactions, events, getPaymentsByState, paymentStatistics
+    transaction,
+    transactions,
+    events,
+    getPaymentsByState,
+    paymentStatistics,
+    paymentVolumesByHour,
+    paymentVolumesAggregate
   }
 }
 
