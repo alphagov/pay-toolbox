@@ -24,6 +24,11 @@ import SVG from 'react-inlinesvg'
 
 import { Event } from 'ledger'
 
+import moment from 'moment'
+import { Serie } from '@nivo/line'
+
+import { json } from './VolumeByHour/parser'
+
 interface CardProfile {
   backgroundColour: BackgroundColorProperty
   colour: ColorProperty
@@ -179,17 +184,32 @@ class StatsPanel extends React.Component<StatsPanelProps, {}> {
 
 interface DashboardState {
   statsHeight: number,
-  events: Event[]
+  events: Event[],
+  date: moment.Moment,
+  compareDate: moment.Moment,
+  transactionVolumesByHour: Serie[],
+  compareGraphs: boolean
 }
 
 class Dashboard extends React.Component<{}, DashboardState> {
   constructor(props: {}) {
     super(props)
+
+    const now = moment()
     this.state = {
       statsHeight: 0,
-      events: []
+      events: [],
+      date: now,
+      compareDate: moment(now).subtract(14, 'days'),
+      compareGraphs: true,
+      // better for animation
+      // transactionVolumesByHour: json([], now)
+      // better without animation
+      transactionVolumesByHour: []
     }
     this.setWatchObserver = this.setWatchObserver.bind(this)
+
+    this.fetchTransactionVolumesByHour()
   }
 
   setWatchObserver(element: Element) {
@@ -203,6 +223,26 @@ class Dashboard extends React.Component<{}, DashboardState> {
     resizeObserver.observe(element)
   }
 
+  async fetchTransactionVolumesByHour() {
+    const response = await fetch(
+      `/api/platform/timeseries?date=${this.state.date.utc().format()}`
+    )
+    const data = await response.json()
+
+    let compareData = []
+    if (this.state.compareGraphs) {
+      const compareResponse = await fetch(
+        `/api/platform/timeseries?date=${this.state.compareDate.utc().format()}`
+      )
+      compareData = await compareResponse.json()
+    }
+
+    this.setState({
+      transactionVolumesByHour: json(data, this.state.date, compareData, this.state.compareGraphs)
+
+    })
+  }
+
   render() {
     // @TODO(sfount) prop key should be the events id (which will actually come from the ledger resource)
     const events = this.state.events.map((event, index) => {
@@ -210,6 +250,9 @@ class Dashboard extends React.Component<{}, DashboardState> {
         <EventCard key={index} event={event} />
       )
     })
+    const compareGraphString = this.state.compareGraphs ?
+      ` (${this.state.compareDate.format('dddd Do MMMM YYYY')})` :
+      ''
     return (
       <div>
         <div className="govuk-grid-row govuk-body govuk-!-margin-bottom-4">
@@ -225,10 +268,13 @@ class Dashboard extends React.Component<{}, DashboardState> {
         <div className="govuk-grid-row">
           <div className="govuk-grid-column-full">
             <div className="dashboard-card">
-              <span className="govuk-caption-xl">Friday 13th December 2019</span>
+              <span className="govuk-caption-xl">
+                {this.state.date.format('dddd Do MMMM YYYY')}
+                {compareGraphString}
+              </span>
               <div className="govuk-body" style={{ height: 280 }}>
                 {/* <DailyVolumeChart /> */}
-                <TestChart />
+                <TestChart data={this.state.transactionVolumesByHour} />
               </div>
             </div>
           </div>
