@@ -85,7 +85,7 @@ export function json(reportResult: TimeseriesPoint[], baseDate: moment.Moment, c
     series.push({
       'id': 'Comparison payments',
       'data': timedata(comparePadded, 'all_payments'),
-      'color': '#b1b4b6'
+      'color': '#b1b4b64d'
     })
   }
 

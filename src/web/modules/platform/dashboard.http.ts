@@ -27,3 +27,21 @@ export async function timeseries(req: Request, res: Response, next: NextFunction
     next(error)
   }
 }
+
+
+// @FIXME(sfount) support state flag to differentiate all vs. successful
+export async function aggregate(req: Request, res: Response, next: NextFunction): Promise<void> {
+  const { date } = req.query
+
+  try {
+    const baseDate = moment(date)
+
+    const result = await Ledger.paymentVolumesAggregate(
+      baseDate.utc().startOf('day').format(),
+      baseDate.utc().endOf('day').format()
+    )
+    res.status(200).json(result)
+  } catch (error) {
+    next(error)
+  }
+}

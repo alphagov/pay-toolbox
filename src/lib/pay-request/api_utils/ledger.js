@@ -101,13 +101,23 @@ const ledgerMethods = function ledgerMethods(instance) {
       .then(utilExtractData)
   }
 
+  const paymentVolumesAggregate = function paymentVolumesAggregate(fromDate, toDate) {
+    const params = {
+      from_date: fromDate,
+      to_date: toDate
+    }
+    return axiosInstance.get('/v1/report/performance-report', {params })
+      .then(utilExtractData)
+  }
+
   return {
     transaction,
     transactions,
     events,
     getPaymentsByState,
     paymentStatistics,
-    paymentVolumesByHour
+    paymentVolumesByHour,
+    paymentVolumesAggregate
   }
 }
 
