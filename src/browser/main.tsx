@@ -29,6 +29,8 @@ import { Serie } from '@nivo/line'
 
 import { json } from './VolumeByHour/parser'
 
+import { useSpring, animated } from 'react-spring'
+
 interface CardProfile {
   backgroundColour: BackgroundColorProperty
   colour: ColorProperty
@@ -145,7 +147,26 @@ const currencyFormatter = new Intl.NumberFormat('en-GB', {
   currency: 'GBP'
 })
 
-const numberFormatter = new Intl.NumberFormat('en-GB')
+const numberFormatter = new Intl.NumberFormat('en-GB', {
+  maximumFractionDigits: 0
+})
+
+interface ValueSpringProps {
+  value: number,
+  formatter: Intl.NumberFormat
+}
+
+const ValueSpring = (props: ValueSpringProps) => {
+  const springProps = useSpring({
+    value: props.value
+  })
+
+  return (
+    <animated.span>
+      {springProps.value.interpolate((x) => props.formatter.format(x))}
+    </animated.span>
+  )
+}
 
 class StatsPanel extends React.Component<StatsPanelProps, {}> {
   constructor(props: StatsPanelProps) {
@@ -161,11 +182,19 @@ class StatsPanel extends React.Component<StatsPanelProps, {}> {
       <div ref={this.setPanelRef} className="dashboard-card">
         <span className="govuk-caption-xl">Payments</span>
         <h1 className="govuk-heading-xl">
-          {numberFormatter.format(this.props.completed.total_volume)}
+          <ValueSpring
+            value={this.props.completed.total_volume}
+            formatter={numberFormatter}
+          />
+          {/* {numberFormatter.format(this.props.completed.total_volume)} */}
         </h1>
         <span className="govuk-caption-xl">Gross volume</span>
         <h1 className="govuk-heading-xl">
-          {currencyFormatter.format(this.props.completed.total_amount / 100)}
+          <ValueSpring
+            value={this.props.completed.total_amount / 100}
+            formatter={currencyFormatter}
+          />
+          {/* {currencyFormatter.format(this.props.completed.total_amount / 100)} */}
         </h1>
 
         <table className="stats-table">
@@ -175,19 +204,38 @@ class StatsPanel extends React.Component<StatsPanelProps, {}> {
               <th scope="row" className="stats-cell">
                 <span className="govuk-caption-m">All payments</span>
               </th>
-              <td className="stats-cell">{numberFormatter.format(this.props.all.total_volume)}</td>
+              <td className="stats-cell" style={{ minWidth: 130 }}>
+                <ValueSpring
+                  value={this.props.all.total_volume}
+                  formatter={numberFormatter}
+                />
+                {/* {numberFormatter.format(this.props.all.total_volume)} */}
+              </td>
             </tr>
             <tr className="govuk-table__row">
               <th scope="row" className="stats-cell">
                 <span className="govuk-caption-m">All payments gross volume</span>
               </th>
-              <td className="stats-cell">{currencyFormatter.format(this.props.all.total_amount / 100)}</td>
+              <td className="stats-cell" style={{ minWidth: 130 }}>
+                <ValueSpring
+                  value={this.props.all.total_amount / 100}
+                  formatter={currencyFormatter}
+                />
+                {/* {currencyFormatter.format(this.props.all.total_amount / 100)} */}
+              </td>
             </tr>
             <tr className="govuk-table__row">
               <th scope="row" className="stats-cell">
                 <span className="govuk-caption-m">Completion rate</span>
               </th>
-              <td className="stats-cell">{completionRate}%</td>
+              <td className="stats-cell" style={{ minWidth: 130 }}>
+                <ValueSpring
+                  value={completionRate}
+                  formatter={numberFormatter}
+                />
+                %
+                {/* {completionRate}% */}
+              </td>
             </tr>
           </tbody>
         </table>
