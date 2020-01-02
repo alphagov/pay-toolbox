@@ -98,6 +98,7 @@
     "react": "16.12.0",
     "react-dom": "16.12.0",
     "react-inlinesvg": "^1.2.0",
+    "react-spring": "^8.0.27",
     "source-map-loader": "^0.2.4",
     "ts-loader": "6.2.1",
     "ts-node": "8.5.4",

@@ -71,6 +71,7 @@ declare module 'ledger' {
     type: string,
     service_name?: string,
     card_brand?: string
+    timestamp?: number
   }
 }
 
