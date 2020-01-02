@@ -92,9 +92,9 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     throw new NotImplementedError(`Remove user from service end point not configured [user=${userId}] [service=${serviceId}]`)
   }
 
-  const resetUserSecondFactor = function resetUserSecondFactor() {
-    // @TODO(sfount) configure new OTP source and reset secondFactor = SMS
-    throw new NotImplementedError('Reset second factor end point not configured')
+  const resetUserSecondFactor = function resetUserSecondFactor(id) {
+    const path = `/v1/api/users/${id}/reset-second-factor`
+    return axiosInstance.post(path).then(utilExtractData)
   }
 
   const services = function services() {
