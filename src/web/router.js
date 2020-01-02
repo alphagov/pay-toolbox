@@ -107,6 +107,9 @@ router.get('/transactions', auth.secured, transactions.list)
 router.get('/platform/dashboard', auth.secured, platform.dashboard)
 router.get('/platform/dashboard/live', auth.secured, platform.live)
 
+router.get('/api/platform/timeseries', auth.secured, platform.timeseries)
+router.get('/api/platform/aggregate', auth.secured, platform.aggregate)
+
 router.get('/logout', auth.secured, auth.revokeSession)
 
 router.get('/healthcheck', healthcheck.response)

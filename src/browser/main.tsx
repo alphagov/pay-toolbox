@@ -24,6 +24,11 @@ import SVG from 'react-inlinesvg'
 
 import { Event } from 'ledger'
 
+import moment from 'moment'
+import { Serie } from '@nivo/line'
+
+import { json } from './VolumeByHour/parser'
+
 interface CardProfile {
   backgroundColour: BackgroundColorProperty
   colour: ColorProperty
@@ -130,8 +135,17 @@ class EventCard extends React.Component<EventCardProps, {}> {
 }
 
 interface StatsPanelProps {
-  watch: CallableFunction
+  watch: CallableFunction,
+  completed: DailyVolumeReport,
+  all: DailyVolumeReport
 }
+
+const currencyFormatter = new Intl.NumberFormat('en-GB', {
+  style: 'currency',
+  currency: 'GBP'
+})
+
+const numberFormatter = new Intl.NumberFormat('en-GB')
 
 class StatsPanel extends React.Component<StatsPanelProps, {}> {
   constructor(props: StatsPanelProps) {
@@ -142,12 +156,17 @@ class StatsPanel extends React.Component<StatsPanelProps, {}> {
     this.props.watch(element)
   }
   render() {
+    const completionRate = this.props.all.total_volume ? (this.props.completed.total_volume / this.props.all.total_volume) * 100 : 0
     return (
       <div ref={this.setPanelRef} className="dashboard-card">
         <span className="govuk-caption-xl">Payments</span>
-        <h1 className="govuk-heading-xl">32,450</h1>
+        <h1 className="govuk-heading-xl">
+          {numberFormatter.format(this.props.completed.total_volume)}
+        </h1>
         <span className="govuk-caption-xl">Gross volume</span>
-        <h1 className="govuk-heading-xl">£506,000</h1>
+        <h1 className="govuk-heading-xl">
+          {currencyFormatter.format(this.props.completed.total_amount / 100)}
+        </h1>
 
         <table className="stats-table">
 
@@ -156,19 +175,19 @@ class StatsPanel extends React.Component<StatsPanelProps, {}> {
               <th scope="row" className="stats-cell">
                 <span className="govuk-caption-m">All payments</span>
               </th>
-              <td className="stats-cell">43,450</td>
+              <td className="stats-cell">{numberFormatter.format(this.props.all.total_volume)}</td>
             </tr>
             <tr className="govuk-table__row">
               <th scope="row" className="stats-cell">
                 <span className="govuk-caption-m">All payments gross volume</span>
               </th>
-              <td className="stats-cell">£750,000</td>
+              <td className="stats-cell">{currencyFormatter.format(this.props.all.total_amount / 100)}</td>
             </tr>
             <tr className="govuk-table__row">
               <th scope="row" className="stats-cell">
                 <span className="govuk-caption-m">Completion rate</span>
               </th>
-              <td className="stats-cell">83%</td>
+              <td className="stats-cell">{completionRate}%</td>
             </tr>
           </tbody>
         </table>
@@ -177,19 +196,52 @@ class StatsPanel extends React.Component<StatsPanelProps, {}> {
   }
 }
 
+interface DailyVolumeReport {
+  total_volume: number,
+  total_amount: number,
+  average_amount: number
+}
+
 interface DashboardState {
   statsHeight: number,
-  events: Event[]
+  events: Event[],
+  date: moment.Moment,
+  compareDate: moment.Moment,
+  compareGraphs: boolean,
+  transactionVolumesByHour: Serie[],
+  aggregateCompletedVolumes: DailyVolumeReport,
+  aggregateAllVolumes: DailyVolumeReport
 }
 
 class Dashboard extends React.Component<{}, DashboardState> {
   constructor(props: {}) {
     super(props)
+
+    const now = moment()
+
+    const zeroed: DailyVolumeReport ={
+      total_amount: 0,
+      total_volume: 0,
+      average_amount: 0
+    }
+
     this.state = {
       statsHeight: 0,
-      events: []
+      events: [],
+      date: now,
+      compareDate: moment(now).subtract(14, 'days'),
+      compareGraphs: true,
+      // better for animation
+      // transactionVolumesByHour: json([], now)
+      // better without animation
+      transactionVolumesByHour: [],
+      aggregateAllVolumes: zeroed,
+      aggregateCompletedVolumes: zeroed
     }
     this.setWatchObserver = this.setWatchObserver.bind(this)
+
+    this.fetchTransactionVolumesByHour()
+    this.fetchAggregateVolumes()
   }
 
   setWatchObserver(element: Element) {
@@ -203,6 +255,45 @@ class Dashboard extends React.Component<{}, DashboardState> {
     resizeObserver.observe(element)
   }
 
+  async fetchTransactionVolumesByHour() {
+    const response = await fetch(
+      `/api/platform/timeseries?date=${this.state.date.utc().format()}`
+    )
+    const data = await response.json()
+
+    let compareData = []
+    if (this.state.compareGraphs) {
+      const compareResponse = await fetch(
+        `/api/platform/timeseries?date=${this.state.compareDate.utc().format()}`
+      )
+      compareData = await compareResponse.json()
+    }
+
+    this.setState({
+      transactionVolumesByHour: json(data, this.state.date, compareData, this.state.compareGraphs)
+
+    })
+  }
+
+  async fetchAggregateVolumes() {
+    const completedResponse = await fetch(
+      `/api/platform/aggregate?date=${this.state.date.utc().format()}`
+    )
+    const completedData = await completedResponse.json()
+
+    // @FIXME(sfount) do these at the same time
+    // @FIXME(sfount) add the state flag to this query
+    const allResponse = await fetch(
+      `/api/platform/aggregate?date=${this.state.date.utc().format()}`
+    )
+    const allData = await allResponse.json()
+
+    this.setState({
+      aggregateCompletedVolumes: completedData,
+      aggregateAllVolumes: allData
+    })
+  }
+
   render() {
     // @TODO(sfount) prop key should be the events id (which will actually come from the ledger resource)
     const events = this.state.events.map((event, index) => {
@@ -210,6 +301,9 @@ class Dashboard extends React.Component<{}, DashboardState> {
         <EventCard key={index} event={event} />
       )
     })
+    const compareGraphString = this.state.compareGraphs ?
+      ` (${this.state.compareDate.format('dddd Do MMMM YYYY')})` :
+      ''
     return (
       <div>
         <div className="govuk-grid-row govuk-body govuk-!-margin-bottom-4">
@@ -219,16 +313,23 @@ class Dashboard extends React.Component<{}, DashboardState> {
             {events}
           </div>
           <div className="govuk-grid-column-one-half">
-            <StatsPanel watch={this.setWatchObserver} />
+            <StatsPanel
+              completed={this.state.aggregateCompletedVolumes}
+              all={this.state.aggregateAllVolumes}
+              watch={this.setWatchObserver}
+            />
           </div>
         </div>
         <div className="govuk-grid-row">
           <div className="govuk-grid-column-full">
             <div className="dashboard-card">
-              <span className="govuk-caption-xl">Friday 13th December 2019</span>
+              <span className="govuk-caption-xl">
+                {this.state.date.format('dddd Do MMMM YYYY')}
+                <i>{compareGraphString}</i>
+              </span>
               <div className="govuk-body" style={{ height: 280 }}>
                 {/* <DailyVolumeChart /> */}
-                <TestChart />
+                <TestChart data={this.state.transactionVolumesByHour} />
               </div>
             </div>
           </div>
