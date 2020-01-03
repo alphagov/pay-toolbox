@@ -99,7 +99,7 @@ class EventCard extends React.Component<EventCardProps, {}> {
       'smartpay': BarclaysLogo
     }
 
-    const profile = profileMap[this.props.event.event_type]
+    const profile = profileMap[this.props.event.event_type] || DefaultProfile
     const paymentTypeIcon = paymentTypeMap[this.props.event.card_brand] || UnknownIcon
     const paymentProviderIcon = providerLogoMap[this.props.event.payment_provider]
 
@@ -123,12 +123,16 @@ class EventCard extends React.Component<EventCardProps, {}> {
     return (
       <div className="event-card govuk-!-margin-bottom-2" style={{ backgroundColor: profile.backgroundColour }}>
         <div style={{ textAlign: 'right', width: '100%' }}>
-          <span className="govuk-body-s" style={{ color: profile.colour, opacity: 0.7 }}>Send money to prisoners</span>
+          <span className="govuk-body-s" style={{ color: profile.colour, opacity: 0.7 }}>
+            {this.props.event.service_name}
+          </span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           {icon}
           <div>
-          <span className="govuk-body-l" style={{ color: profile.colour }}><strong>£45.00</strong></span>
+          <span className="govuk-body-l" style={{ color: profile.colour }}><strong>
+            {currencyFormatter.format(this.props.event.amount / 100)}
+          </strong></span>
           </div>
         </div>
       </div>
@@ -250,6 +254,10 @@ interface DailyVolumeReport {
   average_amount: number
 }
 
+interface DashboardProps {
+  tickInterval: number
+}
+
 interface DashboardState {
   statsHeight: number,
   events: Event[],
@@ -258,11 +266,17 @@ interface DashboardState {
   compareGraphs: boolean,
   transactionVolumesByHour: Serie[],
   aggregateCompletedVolumes: DailyVolumeReport,
-  aggregateAllVolumes: DailyVolumeReport
+  aggregateAllVolumes: DailyVolumeReport,
+  queuedEvents: Event[],
+  activeEvents: Event[],
+  lastFetchedEvents?: moment.Moment,
+  tick?: number
 }
 
-class Dashboard extends React.Component<{}, DashboardState> {
-  constructor(props: {}) {
+class Dashboard extends React.Component<DashboardProps, DashboardState> {
+  interval?: NodeJS.Timeout
+
+  constructor(props: DashboardProps) {
     super(props)
 
     const now = moment()
@@ -284,12 +298,59 @@ class Dashboard extends React.Component<{}, DashboardState> {
       // better without animation
       transactionVolumesByHour: [],
       aggregateAllVolumes: zeroed,
-      aggregateCompletedVolumes: zeroed
+      aggregateCompletedVolumes: zeroed,
+      queuedEvents: [],
+      activeEvents: []
     }
     this.setWatchObserver = this.setWatchObserver.bind(this)
 
+    this.init()
+  }
+
+  async init() {
+    // also get or accept (passed down through props) list of services for me to map gateway accounts to
     this.fetchTransactionVolumesByHour()
-    this.fetchAggregateVolumes()
+    await this.fetchAggregateVolumes()
+    this.fetchEventTicker()
+
+    this.setState({
+      tick: Date.now()
+    })
+    this.interval = setInterval(() => {
+      if (Date.now() - this.state.tick > (this.props.tickInterval * 1000)) {
+        this.setState({
+          tick: Date.now()
+        })
+        this.fetchEventTicker()
+      }
+      this.processQueuedEvents(Date.now())
+    }, 100)
+  }
+
+  processQueuedEvents(timestamp: number) {
+    const cursor = timestamp - (this.props.tickInterval * 3000)
+    const filtered: Event[] = []
+    const staging: Event[] = []
+
+    const optimisticCompletedVolume = 0
+    const optimisticCompletedAmount = 0
+    const allCompletedVolume = 0
+    const allCompletedAmount = 0
+    // const staging = this.state.queuedEvents.filter((event) => event.timestamp < cursor)
+
+    this.state.queuedEvents.forEach((event) => {
+      if (event.timestamp < cursor) {
+        staging.push(event)
+      } else {
+        filtered.push(event)
+      }
+    })
+
+    this.setState({
+      queuedEvents: filtered,
+      activeEvents: this.state.activeEvents.concat(staging),
+
+    })
   }
 
   setWatchObserver(element: Element) {
@@ -324,8 +385,9 @@ class Dashboard extends React.Component<{}, DashboardState> {
   }
 
   async fetchAggregateVolumes() {
+    const timestamp = moment()
     const completedResponse = await fetch(
-      `/api/platform/aggregate?date=${this.state.date.utc().format()}`
+      `/api/platform/aggregate?date=${this.state.date.utc().format()}&state=SUCCESS`
     )
     const completedData = await completedResponse.json()
 
@@ -338,13 +400,53 @@ class Dashboard extends React.Component<{}, DashboardState> {
 
     this.setState({
       aggregateCompletedVolumes: completedData,
-      aggregateAllVolumes: allData
+      aggregateAllVolumes: allData,
+      ...!this.state.lastFetchedEvents && {
+        lastFetchedEvents: timestamp
+      }
     })
+  }
+
+  async fetchEventTicker() {
+    const supportedEvents = [
+      'PAYMENT_DETAILS_ENTERED',
+      'GATEWAY_ERROR_DURING_AUTHORISATION',
+      'AUTHORISATION_SUCCEEDED',
+      'PAYMENT_CREATED'
+    ]
+    const timestamp = moment()
+    console.log(`Fetching events from ${this.state.lastFetchedEvents.utc()}`)
+    const response = await fetch(
+      `/api/platform/ticker?since=${this.state.lastFetchedEvents.utc().format()}`
+    )
+    const data = await response.json()
+
+    // 1. ensure this is ordered by event date
+    // 2. filter by only events that this consumer cares about
+    // 3. add service name etc.
+    // @FIXME(sfount) amount should come from ledger
+    const parsed = data
+      .filter((event: Event) => {
+        return supportedEvents.includes(event.event_type)
+      })
+      .map((event: Event) => {
+        event.amount = 10000
+        event.service_name = 'some service'
+        event.timestamp = moment(event.event_date).unix()
+        return event
+      })
+
+    this.setState({
+      lastFetchedEvents: timestamp,
+      queuedEvents: this.state.queuedEvents.concat(parsed)
+    })
+    console.log('got events', data)
   }
 
   render() {
     // @TODO(sfount) prop key should be the events id (which will actually come from the ledger resource)
-    const events = this.state.events.map((event, index) => {
+    // @FIXME(sfount) move event iteration + handling to another component
+    const events = this.state.activeEvents.map((event, index) => {
       return (
         <EventCard key={index} event={event} />
       )
@@ -391,7 +493,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <Dashboard />
+        <Dashboard tickInterval={5} />
       </div>
     )
   }

@@ -106,6 +106,7 @@ router.get('/platform/dashboard/live', auth.secured, platform.live)
 
 router.get('/api/platform/timeseries', auth.secured, platform.timeseries)
 router.get('/api/platform/aggregate', auth.secured, platform.aggregate)
+router.get('/api/platform/ticker', auth.secured, platform.ticker)
 
 router.get('/logout', auth.secured, auth.revokeSession)
 
