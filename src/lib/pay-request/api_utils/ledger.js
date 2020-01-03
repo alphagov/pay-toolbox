@@ -43,7 +43,7 @@ const ledgerMethods = function ledgerMethods(instance) {
       override_account_id_restriction: true,
       display_size: pageSize,
       payment_states: states.join(','),
-      transaction_type: 'PAYMENT',
+      transaction_type: fetchAsCSV ? '' : 'PAYMENT',
       exact_reference_match: true,
       ...filters,
       ...account && { account_id: account }
