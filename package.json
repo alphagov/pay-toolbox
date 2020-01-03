@@ -13,7 +13,7 @@
     "dev": "tsc-watch --noClear --onSuccess \"./scripts/run-dev\"",
     "lint": "eslint \"src/**/*.{js,ts}\"",
     "test": "npm run test:unit",
-    "test:unit": "AUTH_GITHUB_ENABLED=true mocha -r ts-node/register --recursive \"./src/**/*.spec.{js,ts}\"",
+    "test:unit": "AUTH_GITHUB_ENABLED=true mocha -r ts-node/register -r dotenv/config --recursive \"./src/**/*.spec.{js,ts}\" dotenv_config_path=src/tests/.env",
     "test:cypress": "./scripts/run-cypress",
     "build": "scripts/build && npm run build:typescript && npm run build:copy && npm run build:sass",
     "build:typescript": "tsc",
