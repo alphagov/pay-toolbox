@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 
 import moment from 'moment'
-import { Ledger } from './../../../lib/pay-request'
+import { Ledger, AdminUsers } from './../../../lib/pay-request'
 
 export function dashboard(req: Request, res: Response): void {
   res.render('platform/dashboard')
@@ -56,6 +56,26 @@ export async function ticker(req: Request, res: Response, next: NextFunction): P
       date.utc().format()
     )
     res.status(200).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export async function services(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const services = await AdminUsers.services()
+
+    const index = services.reduce((aggregate: any, service: any) => {
+      const mapped = {
+        ...aggregate,
+        ...service.gateway_account_ids.reduce((aggregate: any, account: any) => {
+          aggregate[account] = service.service_name.en
+          return aggregate
+        }, {})
+      }
+      return mapped
+    }, {})
+    res.status(200).json(index)
   } catch (error) {
     next(error)
   }

@@ -1,5 +1,5 @@
 /* global ResizeObserver */
-import React from 'react'
+import React, { Props } from 'react'
 
 // import { hydrate } from 'react-dom'
 import { render } from 'react-dom'
@@ -29,7 +29,7 @@ import { Serie } from '@nivo/line'
 
 import { json } from './VolumeByHour/parser'
 
-import { useSpring, animated } from 'react-spring'
+import { useSpring, animated, useTransition } from 'react-spring'
 
 interface CardProfile {
   backgroundColour: BackgroundColorProperty
@@ -62,7 +62,7 @@ interface CardIconProps {
   icon: string
 }
 const CardIcon = (props: CardIconProps) => (
-  <div style={{ marginRight: 5 }}>
+  <div style={{ marginRight: 10 }}>
     <SVG src={props.icon} width={35} height={35} />
   </div>
 )
@@ -80,16 +80,22 @@ const CardImage = (props: CardImageProps) => (
 class EventCard extends React.Component<EventCardProps, {}> {
   render() {
     const profileMap: { [key: string]: CardProfile } = {
+      'PAYMENT_CREATED': DefaultProfile,
       'PAYMENT_DETAILS_ENTERED': DefaultProfile,
-      'GATEWAY_ERROR_DURING_AUTHORISATION': FailureProfile,
-      'AUTHORISATION_SUCCEEDED': SuccessProfile,
-      'PAYMENT_CREATED': DefaultProfile
+      ...eventsSuccess.reduce((aggregate: any, event) => {
+        aggregate[event] = SuccessProfile
+        return aggregate
+      }, {}),
+      ...eventsErrored.reduce((aggregate: any, event) => {
+        aggregate[event] = FailureProfile
+        return aggregate
+      }, {})
     }
 
     const paymentTypeMap: { [key: string]: string } = {
       'visa': VisaIcon,
-      'mastercard': MastercardIcon,
-      'amex': AmexIcon
+      'master-card': MastercardIcon,
+      'american-express': AmexIcon
     }
 
     const providerLogoMap: { [key: string]: string } = {
@@ -103,39 +109,56 @@ class EventCard extends React.Component<EventCardProps, {}> {
     const paymentTypeIcon = paymentTypeMap[this.props.event.card_brand] || UnknownIcon
     const paymentProviderIcon = providerLogoMap[this.props.event.payment_provider]
 
-    let icon: JSX.Element
+    let statusIcon: string
 
-    switch (this.props.event.event_type) {
-      case 'PAYMENT_DETAILS_ENTERED':
-        icon = <CardIcon icon={paymentTypeIcon} />
-        break
-      case 'GATEWAY_ERROR_DURING_AUTHORISATION':
-        icon = <CardIcon icon={StatusFailureIcon} />
-        break
-      case 'AUTHORISATION_SUCCEEDED':
-        icon = <CardIcon icon={StatusSuccessIcon} />
-        break
-      case 'PAYMENT_CREATED':
-        icon = <CardImage image={paymentProviderIcon} />
-      break
+    if (this.props.event.event_type === 'PAYMENT_DETAILS_ENTERED') {
+      statusIcon = paymentTypeIcon
+    } else if (eventsSuccess.includes(this.props.event.event_type)) {
+      statusIcon = StatusSuccessIcon
+    } else {
+      statusIcon = StatusFailureIcon
     }
 
+    let icon: JSX.Element
+
+    if (this.props.event.event_type === 'PAYMENT_CREATED') {
+      icon = <CardImage image={paymentProviderIcon} />
+    } else {
+      icon = <CardIcon icon={statusIcon} />
+    }
+    // switch (this.props.event.event_type) {
+    //   case 'PAYMENT_DETAILS_ENTERED':
+    //     icon = <CardIcon icon={paymentTypeIcon} />
+    //     break
+    //   case 'ERROR_GATEWAY':
+    //     icon = <CardIcon icon={StatusFailureIcon} />
+    //     break
+    //   case 'AUTHORISATION_SUCCEEDED':
+    //     icon = <CardIcon icon={StatusSuccessIcon} />
+    //     break
+    //   case 'PAYMENT_CREATED':
+    //     icon = <CardImage image={paymentProviderIcon} />
+    //   break
+    // }
+
     return (
-      <div className="event-card govuk-!-margin-bottom-2" style={{ backgroundColor: profile.backgroundColour }}>
-        <div style={{ textAlign: 'right', width: '100%' }}>
-          <span className="govuk-body-s" style={{ color: profile.colour, opacity: 0.7 }}>
-            {this.props.event.service_name}
-          </span>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          {icon}
-          <div>
-          <span className="govuk-body-l" style={{ color: profile.colour }}><strong>
-            {currencyFormatter.format(this.props.event.amount / 100)}
-          </strong></span>
+      <OpacitySpring>
+        <div className="event-card govuk-!-margin-bottom-2" style={{ backgroundColor: profile.backgroundColour }}>
+          <div style={{ textAlign: 'right', width: '100%' }}>
+            <span className="govuk-body-s" style={{ color: profile.colour, opacity: 0.7 }}>
+              {this.props.event.service_name}
+            </span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            {icon}
+            <div>
+            <span className="govuk-body-l" style={{ color: profile.colour }}><strong>
+              {currencyFormatter.format(this.props.event.amount / 100)}
+            </strong></span>
+            </div>
           </div>
         </div>
-      </div>
+      </OpacitySpring>
     )
   }
 }
@@ -170,6 +193,22 @@ const ValueSpring = (props: ValueSpringProps) => {
       {springProps.value.interpolate((x) => props.formatter.format(x))}
     </animated.span>
   )
+}
+
+// this top level method has to be any type right now as of
+// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20356
+const OpacitySpring: any = (divProps: any) => {
+  const transitions = useTransition(true, null, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 1 }
+  })
+
+  return transitions.map(({ item, key, props }) => (
+    <animated.div key={key} style={props}>
+      {divProps.children}
+    </animated.div>
+  ))
 }
 
 class StatsPanel extends React.Component<StatsPanelProps, {}> {
@@ -269,9 +308,35 @@ interface DashboardState {
   aggregateAllVolumes: DailyVolumeReport,
   queuedEvents: Event[],
   activeEvents: Event[],
+  services: {[key: string]: string},
   lastFetchedEvents?: moment.Moment,
   tick?: number
 }
+
+const cachedSuccess: {[ key: string]: boolean} = {}
+
+const eventsSuccess = [
+  'CAPTURE_CONFIRMED',
+  'CAPTURE_SUBMITTED',
+  'USER_APPROVED_FOR_CAPTURE',
+  'SERVICE_APPROVED_FOR_CAPTRUE'
+]
+
+const eventsErrored = [
+  'GATEWAY_ERROR_DURING_AUTHORISATION',
+  'GATEWAY_TIMEOUT_DURING_AUTHORISATION',
+  'UNEXPECTED_GATEWAY_ERROR_DURING_AUTHORISATION',
+  'CAPTURE_ERRORED',
+  'CAPTURE_ABANDONED_AFTER_TOO_MANY_RETRIES'
+]
+const supportedEvents = [
+  'PAYMENT_CREATED',
+  'PAYMENT_DETAILS_ENTERED',
+  ...eventsSuccess,
+  ...eventsErrored
+]
+
+const MAX_ACTIVE_TICKER_EVENTS = 10
 
 class Dashboard extends React.Component<DashboardProps, DashboardState> {
   interval?: NodeJS.Timeout
@@ -279,6 +344,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
   constructor(props: DashboardProps) {
     super(props)
 
+    // const now = moment().subtract(1, 'days')
     const now = moment()
 
     const zeroed: DailyVolumeReport ={
@@ -300,7 +366,8 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
       aggregateAllVolumes: zeroed,
       aggregateCompletedVolumes: zeroed,
       queuedEvents: [],
-      activeEvents: []
+      activeEvents: [],
+      services: {}
     }
     this.setWatchObserver = this.setWatchObserver.bind(this)
 
@@ -311,6 +378,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     // also get or accept (passed down through props) list of services for me to map gateway accounts to
     this.fetchTransactionVolumesByHour()
     await this.fetchAggregateVolumes()
+    await this.fetchServiceInfo()
     this.fetchEventTicker()
 
     this.setState({
@@ -332,25 +400,72 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     const filtered: Event[] = []
     const staging: Event[] = []
 
-    const optimisticCompletedVolume = 0
-    const optimisticCompletedAmount = 0
-    const allCompletedVolume = 0
-    const allCompletedAmount = 0
+    let optimisticCompletedVolume = 0
+    let optimisticCompletedAmount = 0
+    let allCompletedVolume = 0
+    let allCompletedAmount = 0
     // const staging = this.state.queuedEvents.filter((event) => event.timestamp < cursor)
 
+    // @FIXME(sfount) don't go through ALL queued events - they are ordered by date, just do until the critera no longer matches
+    // @TODO(sfount) consider what this looks like for pushed events from a pub/ sub
     this.state.queuedEvents.forEach((event) => {
       if (event.timestamp < cursor) {
-        staging.push(event)
+
+        // @TODO(sfount) one of success final states
+
+        if (eventsSuccess.includes(event.event_type)) {
+          if (!cachedSuccess[event.resource_external_id]) {
+            cachedSuccess[event.resource_external_id] = true
+            optimisticCompletedAmount += event.amount
+            optimisticCompletedVolume += 1
+          }
+        }
+
+        if (event.event_type === 'PAYMENT_CREATED') {
+          allCompletedAmount += event.amount
+          allCompletedVolume += 1
+        }
+        staging.unshift(event)
       } else {
         filtered.push(event)
       }
     })
 
-    this.setState({
-      queuedEvents: filtered,
-      activeEvents: this.state.activeEvents.concat(staging),
+    if (
+      optimisticCompletedAmount ||
+      optimisticCompletedVolume ||
+      allCompletedAmount ||
+      allCompletedVolume ||
+      staging.length
+    ) {
 
-    })
+      // update [0] for errored payments
+      // update [1] for successful
+      // update [2] for successful and created
+      const updated = [ ...this.state.transactionVolumesByHour ]
+
+      // @FIXME(sfount) glitch with receiving the same batch of events twice
+      this.setState({
+        queuedEvents: filtered,
+        activeEvents: [
+          ...this.state.activeEvents,
+          ...staging
+        ].slice(-MAX_ACTIVE_TICKER_EVENTS),
+        aggregateCompletedVolumes: {
+          ...this.state.aggregateCompletedVolumes,
+          total_amount: this.state.aggregateCompletedVolumes.total_amount + optimisticCompletedAmount,
+          total_volume: this.state.aggregateCompletedVolumes.total_volume + optimisticCompletedVolume
+        },
+        aggregateAllVolumes: {
+          ...this.state.aggregateAllVolumes,
+          total_amount: this.state.aggregateAllVolumes.total_amount + allCompletedAmount,
+          total_volume: this.state.aggregateAllVolumes.total_volume + allCompletedVolume
+        },
+        transactionVolumesByHour: [
+          ...this.state.transactionVolumesByHour
+        ]
+      })
+    }
   }
 
   setWatchObserver(element: Element) {
@@ -407,18 +522,13 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     })
   }
 
+  // @FIXME(sfount) only call .json() if the ok === true
   async fetchEventTicker() {
-    const supportedEvents = [
-      'PAYMENT_DETAILS_ENTERED',
-      'GATEWAY_ERROR_DURING_AUTHORISATION',
-      'AUTHORISATION_SUCCEEDED',
-      'PAYMENT_CREATED'
-    ]
-    const timestamp = moment()
     console.log(`Fetching events from ${this.state.lastFetchedEvents.utc()}`)
     const response = await fetch(
       `/api/platform/ticker?since=${this.state.lastFetchedEvents.utc().format()}`
     )
+    const timestamp = moment()
     const data = await response.json()
 
     // 1. ensure this is ordered by event date
@@ -429,28 +539,47 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
       .filter((event: Event) => {
         return supportedEvents.includes(event.event_type)
       })
+      .filter((event: Event) => {
+        return !cachedSuccess[event.resource_external_id]
+      })
       .map((event: Event) => {
-        event.amount = 10000
-        event.service_name = 'some service'
+        event.service_name = this.state.services[event.gateway_account_id]
         event.timestamp = moment(event.event_date).unix()
+
         return event
       })
 
+    const resources = parsed.map((event: Event) => event.resource_external_id)
+    // IQ200 - remove duplicated if they are all success events
+    const unique = parsed.filter((v: Event, i: number) => !eventsSuccess.includes(v.event_type) || resources.indexOf(v.resource_external_id) === i)
+
     this.setState({
       lastFetchedEvents: timestamp,
-      queuedEvents: this.state.queuedEvents.concat(parsed)
+      queuedEvents: this.state.queuedEvents.concat(unique)
     })
     console.log('got events', data)
   }
 
+  // @FIXME(sfount) this should be passed in through props using SSR
+  async fetchServiceInfo() {
+    const response = await fetch('/api/platform/services')
+    const data = await response.json()
+
+    this.setState({
+      services: data
+    })
+  }
+
   render() {
+    console.log('rendering mdude')
     // @TODO(sfount) prop key should be the events id (which will actually come from the ledger resource)
     // @FIXME(sfount) move event iteration + handling to another component
+    // const sorted = [...this.state.activeEvents].reverse()
     const events = this.state.activeEvents.map((event, index) => {
       return (
         <EventCard key={index} event={event} />
       )
-    })
+    }).reverse()
     const compareGraphString = this.state.compareGraphs ?
       ` (${this.state.compareDate.format('dddd Do MMMM YYYY')})` :
       ''
@@ -459,7 +588,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         <div className="govuk-grid-row govuk-body govuk-!-margin-bottom-4">
           {/* @TODO(sfount) bottom shadow (without factoring in column padding) is needed for parity */}
           {/* Non-zero min-height to maintain width without content (a loading or syncing icon should be used) */}
-          <div style={{ maxHeight: this.state.statsHeight, overflowY: 'scroll', minHeight: 5 }} className="govuk-grid-column-one-half">
+          <div style={{ maxHeight: this.state.statsHeight, overflowY: 'hidden', minHeight: 5 }} className="govuk-grid-column-one-half">
             {events}
           </div>
           <div className="govuk-grid-column-one-half">
