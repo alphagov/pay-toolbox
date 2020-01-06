@@ -17,7 +17,7 @@ interface TestChartProps {
 }
 
 export const TestChart = (props: TestChartProps) => <ResponsiveLine
-  animate={false}
+  animate={true}
   isInteractive={false}
   data={props.data}
   xScale={{ type: 'time', format: '%Y-%m-%dT%H:%M:%S.000000Z', precision: 'hour' }}
@@ -25,7 +25,8 @@ export const TestChart = (props: TestChartProps) => <ResponsiveLine
   margin={{ top: 10, right: 30, bottom: 60, left: 30 }}
   yScale={{
     type: 'linear',
-    stacked: false
+    stacked: false,
+    min: 0
   }}
   theme={theme}
   colors={d => d.color}
