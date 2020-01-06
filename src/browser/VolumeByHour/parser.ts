@@ -13,7 +13,7 @@ export interface TimeseriesPoint {
 }
 
 // assuming we're always only dealing with one day
-const padTimes = function padTimes(timeseries: TimeseriesPoint[], baseDate: moment.Moment) {
+const padTimes = function padTimes(timeseries: TimeseriesPoint[], baseDate: moment.Moment, padFuture: boolean = false) {
   const ordered: TimeseriesPoint[] = []
 
   const index = timeseries.reduce((aggregate: any, point) => {
@@ -21,6 +21,8 @@ const padTimes = function padTimes(timeseries: TimeseriesPoint[], baseDate: mome
     aggregate[date.hour()] = point
     return aggregate
   }, {})
+
+  const processingHour = moment().hour()
 
   for(let i = 0; i < 24; i++) {
     if(!index[i]) {
@@ -36,7 +38,12 @@ const padTimes = function padTimes(timeseries: TimeseriesPoint[], baseDate: mome
         total_amount: 0,
         fee: 0
       }
-      ordered.push(emptyset)
+
+      // only pad with empty if we want to pad the future (comparison in the past vs. live now)
+      // @TODO(sfount) configuration option for padding everything (Stripe pads everything)
+      if (i <= processingHour || padFuture) {
+        ordered.push(emptyset)
+      }
     } else {
       // override for comparison dates
       const date = moment(baseDate)
@@ -59,9 +66,9 @@ function timedata(data: TimeseriesPoint[], key: string) {
   })
 }
 
-export function json(reportResult: TimeseriesPoint[], baseDate: moment.Moment, compareReportResult: TimeseriesPoint[] = [], includeComparison: boolean = false): Serie[] {
+export function json(reportResult: TimeseriesPoint[], baseDate: moment.Moment, compareReportResult: TimeseriesPoint[] = [], includeComparison: boolean = false, comparisonDate: moment.Moment): Serie[] {
   const padded = padTimes(reportResult, baseDate)
-  const comparePadded = padTimes(compareReportResult, baseDate)
+  const comparePadded = padTimes(compareReportResult, baseDate, true)
 
   const series = [
     {
@@ -75,7 +82,7 @@ export function json(reportResult: TimeseriesPoint[], baseDate: moment.Moment, c
       'color': '#00703c'
     },
     {
-      'id': 'Total payments',
+      'id': 'All payments',
       'data': timedata(padded, 'all_payments'),
       'color': '#1d70b8'
     }
@@ -83,7 +90,7 @@ export function json(reportResult: TimeseriesPoint[], baseDate: moment.Moment, c
 
   if (includeComparison) {
     series.push({
-      'id': 'Comparison payments',
+      'id': comparisonDate ? comparisonDate.format('dddd Do MMMM YYYY') : 'Comparison payments',
       'data': timedata(comparePadded, 'all_payments'),
       'color': '#b1b4b64d'
     })

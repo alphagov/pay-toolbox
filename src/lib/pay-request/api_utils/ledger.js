@@ -112,9 +112,10 @@ const ledgerMethods = function ledgerMethods(instance) {
       .then(utilExtractData)
   }
 
-  const eventTicker = function eventTicker(fromDate) {
+  const eventTicker = function eventTicker(fromDate, toDate) {
     const params = {
-      from_date: fromDate
+      from_date: fromDate,
+      to_date: toDate
     }
     return axiosInstance.get('/v1/event/ticker', { params })
       .then(utilExtractData)
