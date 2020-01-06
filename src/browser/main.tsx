@@ -16,6 +16,7 @@ import UnknownIcon from './assets/card_unknown.svg'
 import WorldpayLogo from './assets/psp_worldpay.jpg'
 import StripeLogo from './assets/psp_stripe.jpg'
 import BarclaysLogo from './assets/psp_barclays.jpg'
+import SandboxLogo from './assets/psp_sandbox.png'
 
 import StatusFailureIcon from './assets/status_failure.svg'
 import StatusSuccessIcon from './assets/status_success.svg'
@@ -27,7 +28,7 @@ import { Event } from 'ledger'
 import moment from 'moment'
 import { Serie } from '@nivo/line'
 
-import { json } from './VolumeByHour/parser'
+import { json, TimeseriesPoint } from './VolumeByHour/parser'
 
 import { useSpring, animated, useTransition } from 'react-spring'
 
@@ -72,7 +73,7 @@ interface CardImageProps {
 }
 const CardImage = (props: CardImageProps) => (
   <div style={{ marginRight: 10, paddingBottom: 5 }}>
-    <img src={props.image}style={{ width: 35, height: 35, display: 'block', borderRadius: 3 }} />
+    <img src={props.image} style={{ width: 35, height: 35, display: 'block', borderRadius: 3 }} />
   </div>
 )
 
@@ -99,10 +100,11 @@ class EventCard extends React.Component<EventCardProps, {}> {
     }
 
     const providerLogoMap: { [key: string]: string } = {
-      'worldpay': WorldpayLogo,
-      'stripe': StripeLogo,
-      'epdq': BarclaysLogo,
-      'smartpay': BarclaysLogo
+      '"worldpay"': WorldpayLogo,
+      '"stripe"': StripeLogo,
+      '"epdq"': BarclaysLogo,
+      '"smartpay"': BarclaysLogo,
+      '"sandbox"': SandboxLogo
     }
 
     const profile = profileMap[this.props.event.event_type] || DefaultProfile
@@ -126,20 +128,6 @@ class EventCard extends React.Component<EventCardProps, {}> {
     } else {
       icon = <CardIcon icon={statusIcon} />
     }
-    // switch (this.props.event.event_type) {
-    //   case 'PAYMENT_DETAILS_ENTERED':
-    //     icon = <CardIcon icon={paymentTypeIcon} />
-    //     break
-    //   case 'ERROR_GATEWAY':
-    //     icon = <CardIcon icon={StatusFailureIcon} />
-    //     break
-    //   case 'AUTHORISATION_SUCCEEDED':
-    //     icon = <CardIcon icon={StatusSuccessIcon} />
-    //     break
-    //   case 'PAYMENT_CREATED':
-    //     icon = <CardImage image={paymentProviderIcon} />
-    //   break
-    // }
 
     return (
       <OpacitySpring>
@@ -313,7 +301,36 @@ interface DashboardState {
   // tick?: number
 }
 
+interface AggregateSyncCache {
+  aggregateAllVolumes: DailyVolumeReport,
+  aggregateCompletedVolumes: DailyVolumeReport,
+  transactionVolumesByHourPatch: TimeseriesPoint[]
+}
+
+interface AggregateVolumesResponse {
+  timeFetched?: moment.Moment,
+  aggregateAllVolumes: DailyVolumeReport,
+  aggregateCompletedVolumes: DailyVolumeReport
+}
+
+interface TransactionVolumesByHourResponse {
+  data: TimeseriesPoint[],
+  compareData: TimeseriesPoint[]
+}
+
 const cachedSuccess: {[ key: string]: boolean} = {}
+
+interface AggregateSyncProgress {
+  timestamp: number,
+  inProgress: boolean,
+  cache: AggregateSyncCache
+}
+
+const aggregateSync: AggregateSyncProgress = {
+  timestamp: null,
+  inProgress: false,
+  cache: null
+}
 
 const eventsSuccess = [
   'CAPTURE_CONFIRMED',
@@ -351,6 +368,7 @@ let tick: number = null
 let aggregateTick: number = null
 
 const aggregateSyncFrequency = 30 * 60 * 1000
+// const aggregateSyncFrequency = 20 * 1000
 
 function calculateComparisonDate(date: moment.Moment): moment.Moment {
   const comparison = date.clone()
@@ -361,6 +379,8 @@ function calculateComparisonDate(date: moment.Moment): moment.Moment {
     comparison.add(1, 'week')
   }
   comparison.set('day', date.get('day'))
+
+  // comparison.subtract(1, 'day')
   // comparison.set('')
   return comparison
 }
@@ -371,7 +391,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
   constructor(props: DashboardProps) {
     super(props)
 
-    // const now = moment().subtract(2, 'days')
+    // const now = moment().subtract(4, 'days')
     const now = moment()
 
     const zeroed: DailyVolumeReport ={
@@ -387,7 +407,7 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
       compareDate: calculateComparisonDate(now),
       compareGraphs: true,
       // better for animation
-      // transactionVolumesByHour: json([], now)
+      // transactionVolumesByHour: json([], now, [], false, null),
       // better without animation
       transactionVolumesByHour: [],
       aggregateAllVolumes: zeroed,
@@ -403,8 +423,12 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
   async init() {
     // also get or accept (passed down through props) list of services for me to map gateway accounts to
-    this.fetchTransactionVolumesByHour()
-    await this.fetchAggregateVolumes()
+    const volumesByHour = await this.fetchTransactionVolumesByHour(null, null, this.state.compareGraphs)
+    this.setTransactionVolumeByHour(volumesByHour)
+
+    const volumes = await this.fetchAggregateVolumes()
+    this.setAggregateVolumes(volumes)
+
     await this.fetchServiceInfo()
     this.fetchEventTicker(
       moment().utc().subtract(3, 'minutes'),
@@ -425,7 +449,6 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
       const millsecondsSincePreviousFetch = Date.now() - this.state.lastFetchedEvents.valueOf()
 
       if (Date.now() - aggregateTick > aggregateSyncFrequency) {
-        console.log('aggregate sync')
         // 1. fetch aggregate volumes for 5 seconds ago (1 props.tickInterval)
         // 2. fetch transaction volumes by hour for this hour and the last hour (ovverride for 5 seconds ago)
         // 3. set a flag to indicate that in 5 seconds the numbers should be overriden with what we got here
@@ -433,6 +456,57 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
         // 3. set a timeout for props.tickInterval and just have that set (maybe easiest within this closure)
         // OR
         // 3. set a flag that will now run within this loop and only set aggregateTick once that's complete and the values have been updated
+
+        // actual idea:
+        // set aggregateSyncCache to the upper (toDate) timestamp used for each of the queries
+        // IFF that timestamp is set AND the tick - the process cursor goes over it partially update to the fetched data
+
+
+        // IF we haven't already started fetching the aggregate sync
+        if (!aggregateSync.inProgress) {
+          const fetchTime = moment(Date.now() - this.props.tickInterval * 1000).utc()
+          console.log('Aggregate sync triggered - new request, polling for aggregate details', fetchTime.format('YYYY-MM-DDTHH:mm:ss.SSSSSS'))
+          aggregateSync.inProgress = true
+          aggregateSync.timestamp = fetchTime.valueOf()
+          Promise.all([
+            this.fetchAggregateVolumes(fetchTime),
+            this.fetchTransactionVolumesByHour(fetchTime.hour() - 2, fetchTime.hour() - 1, false)
+          ])
+            .then(([ volumes, volumesByHour ]) => {
+              console.log('Aggregate sync completed fetching data', moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSSSSS'))
+              aggregateSync.cache = {
+                aggregateAllVolumes: volumes.aggregateAllVolumes,
+                aggregateCompletedVolumes: volumes.aggregateCompletedVolumes,
+                transactionVolumesByHourPatch: volumesByHour.data
+              }
+            })
+        } else {
+
+          // We've already got the cache - set this appropriately when the timestamp is ready
+          if (Date.now() - (this.props.tickInterval * 1000 * 2) > aggregateSync.timestamp) {
+            console.log('Determined I should now be fitting in the aggregate info, setting and resetting', moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSSSSS'), aggregateSync)
+
+            const stagingTransactionVolumesByHour  = [ ...this.state.transactionVolumesByHour ]
+            aggregateSync.cache.transactionVolumesByHourPatch.forEach((hourSegment: TimeseriesPoint) => {
+              console.log('updating the hour', hourSegment)
+              const date = moment(hourSegment.timestamp)
+              const index = date.hour()
+              stagingTransactionVolumesByHour[0].data[index].y = hourSegment.errored_payments
+              stagingTransactionVolumesByHour[1].data[index].y = hourSegment.completed_payments
+              stagingTransactionVolumesByHour[2].data[index].y = hourSegment.all_payments
+            })
+            this.setState({
+              aggregateAllVolumes: aggregateSync.cache.aggregateAllVolumes,
+              aggregateCompletedVolumes: aggregateSync.cache.aggregateCompletedVolumes,
+              transactionVolumesByHour: stagingTransactionVolumesByHour
+            })
+
+            aggregateSync.inProgress = false
+            aggregateSync.cache = null
+            aggregateSync.timestamp = null
+            aggregateTick = Date.now()
+          }
+        }
       }
 
       if (millsecondsSincePreviousFetch > (this.props.tickInterval * 1000 * 2)) {
@@ -576,30 +650,40 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     resizeObserver.observe(element)
   }
 
-  async fetchTransactionVolumesByHour() {
+  async fetchTransactionVolumesByHour(fromHour?: number, toHour?: number, compare: boolean = false): Promise<TransactionVolumesByHourResponse> {
+    const query = `/api/platform/timeseries?date=${this.state.date.utc().format()}`
+    const limit = fromHour && toHour ?
+      `&fromHour=${fromHour}&toHour=${toHour}` :
+      ''
     const response = await fetch(
-      `/api/platform/timeseries?date=${this.state.date.utc().format()}`
+      `${query}${limit}`
     )
     const data = await response.json()
 
     let compareData = []
-    if (this.state.compareGraphs) {
+    if (compare) {
       const compareResponse = await fetch(
         `/api/platform/timeseries?date=${this.state.compareDate.utc().format()}`
       )
       compareData = await compareResponse.json()
     }
 
-    this.setState({
-      transactionVolumesByHour: json(data, this.state.date, compareData, this.state.compareGraphs, this.state.compareDate)
+    return {
+      data, compareData
+    }
+  }
 
+  setTransactionVolumeByHour(response: TransactionVolumesByHourResponse) {
+    this.setState({
+      transactionVolumesByHour: json(response.data, this.state.date, response.compareData, this.state.compareGraphs, this.state.compareDate)
     })
   }
 
-  async fetchAggregateVolumes() {
+  async fetchAggregateVolumes(limitTime?: moment.Moment): Promise<AggregateVolumesResponse> {
     const timestamp = moment()
+    const limit = limitTime ? `&limit=${limitTime.format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z` : ''
     const completedResponse = await fetch(
-      `/api/platform/aggregate?date=${this.state.date.utc().format()}&state=SUCCESS`
+      `/api/platform/aggregate?date=${this.state.date.utc().format()}&state=SUCCESS${limit}`
     )
     const completedData = await completedResponse.json()
 
@@ -610,11 +694,20 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     )
     const allData = await allResponse.json()
 
-    this.setState({
-      aggregateCompletedVolumes: completedData,
+    return {
+      timeFetched: timestamp,
       aggregateAllVolumes: allData,
+      aggregateCompletedVolumes: completedData
+    }
+  }
+
+  setAggregateVolumes(response: AggregateVolumesResponse) {
+    const timeFetched = response.timeFetched || moment()
+    this.setState({
+      aggregateCompletedVolumes: response.aggregateCompletedVolumes,
+      aggregateAllVolumes: response.aggregateAllVolumes,
       ...!this.state.lastFetchedEvents && {
-        lastFetchedEvents: timestamp.utc()
+        lastFetchedEvents: timeFetched.utc()
       }
     })
   }
@@ -624,10 +717,10 @@ class Dashboard extends React.Component<DashboardProps, DashboardState> {
     const fromDateString = `${fromDate.format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
     const toDateString = `${toDate.format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
 
-    console.log('Requesting events from', this.state.lastFetchedEvents.format(), 'to', toDate.format(), 'now(', moment().utc().format(), ')')
-    console.log('Event window size (s)', this.state.lastFetchedEvents.diff(toDate, 'seconds'))
-    console.log('From date diff (s)', this.state.lastFetchedEvents.diff(moment(), 'seconds'))
-    console.log('To date diff (s)', toDate.diff(moment(), 'seconds'))
+    // console.log('Requesting events from', this.state.lastFetchedEvents.format(), 'to', toDate.format(), 'now(', moment().utc().format(), ')')
+    // console.log('Event window size (s)', this.state.lastFetchedEvents.diff(toDate, 'seconds'))
+    // console.log('From date diff (s)', this.state.lastFetchedEvents.diff(moment(), 'seconds'))
+    // console.log('To date diff (s)', toDate.diff(moment(), 'seconds'))
 
     const response = await fetch(
       `/api/platform/ticker?from=${fromDateString}&to=${toDateString}`
