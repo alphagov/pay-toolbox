@@ -70,6 +70,9 @@ export function json(reportResult: TimeseriesPoint[], baseDate: moment.Moment, c
   const padded = padTimes(reportResult, baseDate)
   const comparePadded = padTimes(compareReportResult, baseDate, true)
 
+  console.log('original data', reportResult)
+  console.log('padded data', padded)
+
   const series = [
     {
       'id': 'Errored payments',

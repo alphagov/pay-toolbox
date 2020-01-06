@@ -11,16 +11,29 @@ export function live(req: Request, res: Response): void {
   res.render('platform/live')
 }
 
+function formatISODate(moment: moment.Moment): string {
+  return `${moment.format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
+}
+
 // API
 export async function timeseries(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const { date } = req.query
+  // hours expects an array of 0 indexed hours
+  const { date, fromHour, toHour } = req.query
 
   try {
     const baseDate = moment(date)
 
+    const fromDate = fromHour ?
+      baseDate.clone().utc().set('hour', fromHour).startOf('hour') :
+      baseDate.clone().utc().startOf('day')
+
+    const toDate = toHour ?
+      baseDate.clone().utc().set('hour', toHour).endOf('hour') :
+      baseDate.clone().utc().endOf('day')
+
     const result = await Ledger.paymentVolumesByHour(
-      baseDate.utc().startOf('day').format(),
-      baseDate.utc().endOf('day').format()
+      formatISODate(fromDate),
+      formatISODate(toDate)
     )
     res.status(200).json(result)
   } catch (error) {
@@ -31,14 +44,20 @@ export async function timeseries(req: Request, res: Response, next: NextFunction
 
 // @FIXME(sfount) support state flag to differentiate all vs. successful
 export async function aggregate(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const { date, state } = req.query
+  // limit expects an upper limit for the date provided - this can be to millisecond amount
+  // this should be an ISO formatted string that can be parsed by ZonedDateTime
+  const { date, state, limit } = req.query
 
   try {
     const baseDate = moment(date)
 
+    const toDate = limit && limit.length ?
+      limit :
+      baseDate.utc().endOf('day').format()
+
     const result = await Ledger.paymentVolumesAggregate(
       baseDate.utc().startOf('day').format(),
-      baseDate.utc().endOf('day').format(),
+      toDate,
       state
     )
     res.status(200).json(result)
