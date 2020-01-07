@@ -1,0 +1,62 @@
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">
+    <span>GOV.UK Pay platform</span>
+  </span>
+
+  <h1 class="govuk-heading-m">Transaction CSV report</h1>
+
+  <div>
+    <p class="govuk-body">
+      Download a monthly list of the volume of successful transactions for all accounts between the selected dates inclusive (e.g. January-February returns 2 months).
+    </p>
+  </div>
+
+  <div>
+    <form method="post" action="/statistics/services">
+      <div class="govuk-form-group">
+        <label class="govuk-label" for="month">
+          From:
+        </label>
+        <select class="govuk-select" id="month" name="from_month">
+          {% for month in months %}
+          <option value="{{loop.index0}}">{{ month }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="govuk-form-group">
+        <label class="govuk-label" for="year">
+        </label>
+        <select class="govuk-select" id="year" name="from_year">
+          {% for year in years %}
+          <option value="{{year}}">{{ year }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="govuk-form-group">
+      <label class="govuk-label" for="month">
+          To:
+        </label>
+        <select class="govuk-select" id="month" name="to_month">
+          {% for month in months %}
+          <option value="{{loop.index0}}">{{ month }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="govuk-form-group">
+        <label class="govuk-label" for="year">
+        </label>
+        <select class="govuk-select" id="from_year" name="to_year">
+          {% for year in years %}
+          <option value="{{year}}">{{ year }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="govuk-button" data-module="govuk-button">
+        Download transactions
+      </button>
+      <input type="hidden" name="_csrf" value="{{ csrf }}">
+    </form>
+  </div>
+{% endblock %}

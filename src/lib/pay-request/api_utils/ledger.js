@@ -113,6 +113,19 @@ const ledgerMethods = function ledgerMethods(instance) {
     return axiosInstance.get(`/v1/report/transactions-summary?${query}`)
       .then(utilExtractData)
   }
+  const gatewayMonthlyPerformanceReport = function gatewayMonthlyPerformanceReport(fromDate, toDate) {
+    const params = {
+      from_date: fromDate,
+      to_date: toDate
+    }
+
+    const query = Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join('&')
+
+    return axiosInstance.get(`/v1/report/gateway-performance-report?${query}`)
+      .then(utilExtractData)
+  }
 
   const paymentVolumesByHour = function paymentVolumesByHour(fromDate, toDate) {
     const params = {
@@ -153,7 +166,8 @@ const ledgerMethods = function ledgerMethods(instance) {
     relatedTransactions,
     paymentVolumesByHour,
     paymentVolumesAggregate,
-    eventTicker
+    eventTicker,
+    gatewayMonthlyPerformanceReport
   }
 }
 
