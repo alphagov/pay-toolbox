@@ -6,7 +6,7 @@ const ManifestPlugin = require('webpack-manifest-plugin')
 /** @type WebpackConfig */
 const browser = {
   entry: {
-    browser: './src/browser/main.tsx'
+    browser: './browser/src/main.tsx'
   },
   output: {
     path: `${__dirname}/dist/public`,
