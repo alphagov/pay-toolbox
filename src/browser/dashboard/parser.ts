@@ -66,7 +66,7 @@ function timedata(data: TimeseriesPoint[], key: string) {
   })
 }
 
-export function json(reportResult: TimeseriesPoint[], baseDate: moment.Moment, compareReportResult: TimeseriesPoint[] = [], includeComparison: boolean = false, comparisonDate: moment.Moment): Serie[] {
+export function jsonToChartData(reportResult: TimeseriesPoint[], baseDate: moment.Moment, compareReportResult: TimeseriesPoint[] = [], includeComparison: boolean = false, comparisonDate: moment.Moment): Serie[] {
   const padded = padTimes(reportResult, baseDate)
   const comparePadded = padTimes(compareReportResult, baseDate, true)
 
