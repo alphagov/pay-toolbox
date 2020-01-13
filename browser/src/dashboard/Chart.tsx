@@ -1,6 +1,5 @@
 import React from 'react'
 import { ResponsiveLine, Serie } from '@nivo/line'
-import { ResponsiveStream } from '@nivo/stream'
 
 const theme = {
   background: "#FFFFFF",
@@ -12,11 +11,11 @@ const theme = {
   grid: {}
 }
 
-interface TestChartProps {
+interface VolumesByHourChart {
   data: Serie[]
 }
 
-export const TestChart = (props: TestChartProps) => <ResponsiveLine
+export const VolumesByHourChart = (props: VolumesByHourChart) => <ResponsiveLine
   animate={true}
   isInteractive={false}
   data={props.data}
