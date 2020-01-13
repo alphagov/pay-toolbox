@@ -10,7 +10,7 @@ describe('Stripe Account model', () => {
         org_name: 'org_name',
         org_ip_address: 'org_ip_address',
         org_statement_descriptor: 'org_statement_descriptor',
-        org_phone_number: 'org_phone_number'
+        org_phone_number: '01234567890'
       })
       expect(stripeAccount1).to.be.an('object')
     }).to.not.throw()
@@ -22,7 +22,7 @@ describe('Stripe Account model', () => {
       org_name: 'org_name',
       org_ip_address: 'org_ip_address',
       org_statement_descriptor: 'org_statement_descriptor',
-      org_phone_number: 'org_phone_number',
+      org_phone_number: '01234567890',
       bank_account_number: '12345678'
     })
     expect(stripeAccount2).to.not.have.property('external_account')
@@ -34,7 +34,7 @@ describe('Stripe Account model', () => {
       org_name: 'org_name',
       org_ip_address: 'org_ip_address',
       org_statement_descriptor: 'org_statement_descriptor',
-      org_phone_number: 'org_phone_number',
+      org_phone_number: '01234567890',
       bank_account_number: '12345678',
       bank_account_sort_code: '123456'
     })
@@ -48,7 +48,7 @@ describe('Stripe Account model', () => {
       org_name: 'org_name',
       org_ip_address: 'org_ip_address',
       org_statement_descriptor: 'org_statement_descriptor',
-      org_phone_number: 'org_phone_number',
+      org_phone_number: '01234567890',
       bank_account_number: '12345678',
       bank_account_sort_code: '123456',
       person_dob_year: 2018,
@@ -69,7 +69,7 @@ describe('Stripe Account model', () => {
       org_name: 'org_name',
       org_ip_address: 'org_ip_address',
       org_statement_descriptor: 'org_statement_descriptor',
-      org_phone_number: 'org_phone_number',
+      org_phone_number: '01234567890',
       bank_account_number: '12345678',
       bank_account_sort_code: '123456',
       person_dob_year: 2018,
@@ -85,5 +85,29 @@ describe('Stripe Account model', () => {
     expect(stripeAccount5).to.have.property('legal_entity')
     expect(stripeAccount5).to.have.property('external_account')
     expect(stripeAccount5.legal_entity).to.have.property('personal_address')
+  })
+  it('handles support phone already in international format', () => {
+    expect(() => {
+      const stripeAccount6 = new StripeAccount({
+        org_id: 'org_id',
+        org_name: 'org_name',
+        org_ip_address: 'org_ip_address',
+        org_statement_descriptor: 'org_statement_descriptor',
+        org_phone_number: '+441234567890'
+      })
+      expect(stripeAccount6.support_phone).to.equal('+441234567890')
+    }).to.not.throw()
+  })
+  it('converts domestic GB number to international format', () => {
+    expect(() => {
+      const stripeAccount7 = new StripeAccount({
+        org_id: 'org_id',
+        org_name: 'org_name',
+        org_ip_address: 'org_ip_address',
+        org_statement_descriptor: 'org_statement_descriptor',
+        org_phone_number: '01234567890'
+      })
+      expect(stripeAccount7.support_phone).to.equal('+441234567890')
+    }).to.not.throw()
   })
 })

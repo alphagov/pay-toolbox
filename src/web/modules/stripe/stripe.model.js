@@ -1,4 +1,6 @@
 const Joi = require('joi')
+const { PhoneNumberFormat } = require('google-libphonenumber')
+const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance()
 
 const { ValidationError } = require('./../../../lib/errors')
 const { addModelIfValid, stripEmpty } = require('./../../../lib/validation')
@@ -14,6 +16,15 @@ const schema = {
   org_phone_number: Joi.string().required()
 }
 
+const toE164InternationalFormat = function toE164InternationalFormat(rawNumber) {
+  if (rawNumber) {
+    const phoneNumber = phoneUtil.parse(rawNumber, 'GB')
+    return phoneUtil.format(phoneNumber, PhoneNumberFormat.E164)
+  }
+
+  return ''
+}
+
 const build = function build(params) {
   const core = {
     type: 'custom',
@@ -25,7 +36,7 @@ const build = function build(params) {
     },
     payout_statement_descriptor: params.org_statement_descriptor,
     statement_descriptor: params.org_statement_descriptor,
-    support_phone: params.org_phone_number
+    support_phone: toE164InternationalFormat(params.org_phone_number)
   }
 
   let withSubModels = addModelIfValid(core, params, StripeLegalEntity, 'legal_entity')
