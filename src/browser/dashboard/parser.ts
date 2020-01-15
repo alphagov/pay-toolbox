@@ -2,14 +2,14 @@ import moment from 'moment'
 import { Serie } from '@nivo/line'
 
 export interface TimeseriesPoint {
-  "timestamp": string;
-  "all_payments": number;
-  "errored_payments": number;
-  "completed_payments": number;
-  "amount": number;
-  "net_amount": number;
-  "total_amount": number;
-  "fee": number;
+  timestamp: string
+  all_payments: number
+  errored_payments: number
+  completed_payments: number
+  amount: number
+  net_amount: number
+  total_amount: number
+  fee: number
 }
 
 // assuming we're always only dealing with one day
@@ -66,12 +66,15 @@ function timedata(data: TimeseriesPoint[], key: string) {
   })
 }
 
-export function jsonToChartData(reportResult: TimeseriesPoint[], baseDate: moment.Moment, compareReportResult: TimeseriesPoint[] = [], includeComparison: boolean = false, comparisonDate: moment.Moment): Serie[] {
+export function jsonToChartData(
+  reportResult: TimeseriesPoint[],
+  baseDate: moment.Moment,
+  compareReportResult: TimeseriesPoint[] = [],
+  includeComparison: boolean = false,
+  comparisonDate: moment.Moment
+): Serie[] {
   const padded = padTimes(reportResult, baseDate)
   const comparePadded = padTimes(compareReportResult, baseDate, true)
-
-  console.log('original data', reportResult)
-  console.log('padded data', padded)
 
   const series = [
     {

@@ -1,7 +1,7 @@
 
 import React from 'react'
 
-import { DailyVolumeReport } from './Dashboard'
+import { DailyVolumeReport } from './ledgerResource'
 
 import { numberFormatter, currencyFormatter } from './format'
 import { ValueSpring } from './Spring'
