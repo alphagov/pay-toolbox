@@ -49,4 +49,35 @@
       <input type="hidden" name="_csrf" value="{{ csrf }}">
     </form>
   </div>
+
+
+  <div>
+  <form method="post" action="/transactions/csv/stream">
+      <div class="govuk-form-group">
+        <label class="govuk-label" for="month">
+          Month
+        </label>
+        <select class="govuk-select" id="month" name="month">
+          {% for month in months %}
+          <option value="{{loop.index0}}">{{ month }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="govuk-form-group">
+        <label class="govuk-label" for="year">
+          Year
+        </label>
+        <select class="govuk-select" id="year" name="year">
+          {% for year in years %}
+          <option value="{{year}}">{{ year }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="govuk-button" data-module="govuk-button">
+        Stream transactions
+      </button>
+      <input type="hidden" name="account" value="{{ accountId }}">
+      <input type="hidden" name="_csrf" value="{{ csrf }}">
+    </form>
+  </div>
 {% endblock %}
