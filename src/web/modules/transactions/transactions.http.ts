@@ -9,10 +9,11 @@ import { EntityNotFoundError } from '../../../lib/errors'
 import * as logger from '../../../lib/logger'
 
 const process = require('process')
+const url = require('url')
 const https = require('https')
 const moment = require('moment')
 
-const { common } = require('./../../../config')
+const { common, services } = require('./../../../config')
 
 if (common.development) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
@@ -282,13 +283,17 @@ export async function streamCsv(req: Request, res: Response, next: NextFunction)
     res.write('')
 
     const metricStart = Date.now()
-    const request = https.request({
-      hostname: 'localhost',
-      path: `/v1/transaction?${query}`,
+    const target = `${services.LEDGER_URL}/v1/transaction?${query}`
+    const parsed = url.parse(target)
+    const options = {
+      path: `${parsed.pathname}${parsed.search}`,
+      host: parsed.hostname,
+      port: parsed.port,
       method: 'GET',
-      port: 9007,
       headers
-    }, (response: any) => {
+    }
+
+    const request = https.request(options, (response: any) => {
       let count = 0
 
       response.on('data', (chunk: ArrayBuffer) => {
