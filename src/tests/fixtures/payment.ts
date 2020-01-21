@@ -43,7 +43,8 @@ const transaction: Transaction = {
     amount_available: 0,
     amount_submitted: 0
   },
-  transaction_id: 'rs7l0c6ka8b0hr2ho7omkpo6ot'
+  transaction_id: 'rs7l0c6ka8b0hr2ho7omkpo6ot',
+  transaction_type: 'PAYMENT'
 }
 
 export default transaction

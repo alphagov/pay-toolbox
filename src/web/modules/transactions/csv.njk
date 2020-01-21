@@ -1,0 +1,108 @@
+{% from "transactions/status.macro.njk" import status %}
+
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">
+    {% if account %}
+      <span>{{ account.name }}</span>
+    {% else %}
+      <span>GOV.UK Pay platform</span>
+    {% endif %}
+  </span>
+
+  <h1 class="govuk-heading-m">Transaction CSV report</h1>
+
+  <div>
+    <p class="govuk-body">
+      Download a monthly list of transactions for this account. These reports will be exactly as users see them through the admin tool. This will also support additional filters.
+    </p>
+  </div>
+
+  <div>
+    <!-- @TODO(sfount) lists could be populated with JS so that months are shown for selected year -->
+    <form method="post" action="/transactions/csv">
+      <div class="govuk-form-group">
+        <label class="govuk-label" for="month">
+          Month
+        </label>
+        <select class="govuk-select" id="month" name="month">
+          {% for month in months %}
+          <option value="{{loop.index0}}">{{ month }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="govuk-form-group">
+        <label class="govuk-label" for="year">
+          Year
+        </label>
+        <select class="govuk-select" id="year" name="year">
+          {% for year in years %}
+          <option value="{{year}}">{{ year }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="govuk-button" data-module="govuk-button">
+        Download transactions
+      </button>
+      <input type="hidden" name="account" value="{{ accountId }}">
+      <input type="hidden" name="_csrf" value="{{ csrf }}">
+    </form>
+  </div>
+
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+
+  <div>
+  <p class="govuk-body">
+      Proposed streaming proxy interface into Ledger paginated CSV.
+  </p>
+  <form method="post" action="/transactions/csv/stream">
+      <div class="govuk-form-group">
+        <label class="govuk-label" for="month">
+          Month
+        </label>
+        <select class="govuk-select" id="month" name="month">
+          {% for month in months %}
+          <option value="{{loop.index0}}">{{ month }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="govuk-form-group">
+        <label class="govuk-label" for="year">
+          Year
+        </label>
+        <select class="govuk-select" id="year" name="year">
+          {% for year in years %}
+          <option value="{{year}}">{{ year }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset">
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            <h1 class="govuk-fieldset__heading">
+              Report options
+            </h1>
+          </legend>
+          <div class="govuk-checkboxes govuk-checkboxes--small">
+            <div class="govuk-checkboxes__item">
+              <input class="govuk-checkboxes__input" id="includeYear" name="includeYear" type="checkbox" value="true">
+              <label class="govuk-label govuk-checkboxes__label" for="includeYear">
+                Include transactions from entire year
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- @TODO(sfount) move this button to the form -->
+      <button type="submit" class="govuk-button" data-module="govuk-button">
+        Stream transactions
+      </button>
+      <input type="hidden" name="account" value="{{ accountId }}">
+      <input type="hidden" name="_csrf" value="{{ csrf }}">
+    </form>
+  </div>
+{% endblock %}

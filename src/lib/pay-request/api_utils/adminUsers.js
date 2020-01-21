@@ -1,4 +1,4 @@
-const { EntityNotFoundError } = require('../../errors')
+const { EntityNotFoundError, NotImplementedError } = require('../../errors')
 
 const adminUsersMethods = function adminUsersMethods(instance) {
   const axiosInstance = instance || this
@@ -89,12 +89,12 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     // const path = `/v1/api/services/${serviceId}/users/${userId}`
 
     // @TODO(sfount) make sure admin headers are correctly set to allow user to be removed
-    throw new Error(`Remove user from service end point not configured [user=${userId}] [service=${serviceId}]`)
+    throw new NotImplementedError(`Remove user from service end point not configured [user=${userId}] [service=${serviceId}]`)
   }
 
-  const resetUserSecondFactor = function resetUserSecondFactor() {
-    // @TODO(sfount) configure new OTP source and reset secondFactor = SMS
-    throw new Error('Reset second factor end point not configured')
+  const resetUserSecondFactor = function resetUserSecondFactor(id) {
+    const path = `/v1/api/users/${id}/reset-second-factor`
+    return axiosInstance.post(path).then(utilExtractData)
   }
 
   const services = function services() {

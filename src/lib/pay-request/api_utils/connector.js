@@ -97,6 +97,16 @@ const connectorMethods = function connectorMethods(instance) {
     })
   }
 
+  const toggleBlockPrepaidCards = async function toggleBlockPrepaidCards(id) {
+    const gatewayAccount = await account(id)
+    const url = `/v1/api/accounts/${id}`
+    await axiosInstance.patch(url, {
+      op: 'replace',
+      path: 'block_prepaid_cards',
+      value: !gatewayAccount.block_prepaid_cards
+    })
+  }
+
   return {
     performanceReport,
     gatewayAccountPerformanceReport,
@@ -115,7 +125,8 @@ const connectorMethods = function connectorMethods(instance) {
     refunds,
     getChargeByGatewayTransactionId,
     updateCorporateSurcharge,
-    updateEmailBranding
+    updateEmailBranding,
+    toggleBlockPrepaidCards
   }
 }
 

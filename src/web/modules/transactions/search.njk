@@ -1,5 +1,5 @@
-{% from "components/input/macro.njk" import govukInput %}
-{% from "components/button/macro.njk" import govukButton %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {% extends "layout/layout.njk" %}
 
 {% block main %}
@@ -10,7 +10,7 @@
     {{ govukInput({
       id: "id",
       name: "id",
-      hint: { text: "Ledger transaction external resource ID." },
+      hint: { text: "GOV.UK Pay external ID or payment reference" },
       label: { text: "Search" }
       })
       }}

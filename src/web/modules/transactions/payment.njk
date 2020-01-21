@@ -9,7 +9,12 @@
   <div class="status-inline-spacer">
   <span class="govuk-body-l status-amount">{{ (transaction.total_amount or transaction.amount) | currency }}</span>
 
-  {{ status(transaction.state.status, transaction.state.finished) }}
+  {{ status(
+    transaction.state.status,
+    transaction.state.finished,
+    transaction.refund_summary and transaction.refund_summary.status,
+    transaction.refund_summary and transaction.refund_summary.amount_submitted
+    ) }}
   </div>
 
   <div class="govuk-grid-row status-spacer payment-detail-row">
@@ -77,19 +82,19 @@
     </table>
   </div>
 
-{% if transaction.refund_summary.status %}
+{% if relatedTransactions.length %}
   <div>
     <h1 class="govuk-heading-s payment__header">Related transactions</h1>
     <table class="govuk-table">
       <tbody class="govuk-table__body">
-        {% for transaction in refunds %}
+        {% for transaction in relatedTransactions %}
         <tr class="govuk-table__row">
           <td class="govuk-table__cell payment__cell" scope="row">
-            <a class="govuk-link govuk-link--no-visited-state" href="/transactions/{{refund.transaction_id}}">{{ refund.transaction_id }}
+            <a class="govuk-link govuk-link--no-visited-state" href="/transactions/{{transaction.transaction_id}}">{{ transaction.transaction_id }}
           </td>
           <td class="govuk-table__cell payment__cell">
             <th class="govuk-table__cell payment__cell text-right" scope="row">
-              <span class="govuk-caption-m">{{ refund.date | formatDateLong }}</span>
+              <span class="govuk-caption-m">{{ transaction.created_date | formatDateLong }}</span>
             </th>
           </td>
         </tr>
@@ -129,15 +134,28 @@
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Delayed capture</span></th>
           <td class="govuk-table__cell payment__cell">{{ transaction.delayed_capture | string | capitalize }}</td>
         </tr>
-      </tobdy>
+      </tbody>
     </table>
   </div>
 
   <div>
     <h1 class="govuk-heading-s payment__header">Metadata</h1>
 
-    {% if not transaction.metadata %}
-    <div class="center bottom-spacer"><span class="govuk-caption-m">No metadata</span></div>
+    {% if transaction.metadata %}
+      <table class="govuk-table">
+        <tbody class="govuk-table__body">
+          {% for key, value in transaction.metadata %}
+          <tr class="govuk-table__row">
+            <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">{{ key }}</span></th>
+            <td class="govuk-table__cell payment__cell">
+              <a class="govuk-link govuk-link--no-visited-state">{{ value }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="center bottom-spacer"><span class="govuk-caption-m">No metadata</span></div>
     {% endif %}
   </div>
 

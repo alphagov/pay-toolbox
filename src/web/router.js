@@ -45,7 +45,7 @@ router.get('/gateway_accounts/:id/api_keys', auth.secured, gatewayAccounts.apiKe
 router.get('/gateway_accounts/:accountId/api_keys/:tokenId/delete', auth.secured, gatewayAccounts.deleteApiKey)
 router.post('/gateway_accounts/create', auth.secured, gatewayAccounts.writeAccount.http, gatewayAccounts.writeAccount.exceptions)
 router.post('/gateway_accounts/create/confirm', auth.secured, gatewayAccounts.confirm.http, gatewayAccounts.confirm.exceptions)
-
+router.get('/gateway_accounts/:id/block_prepaid_cards/toggle', auth.secured, gatewayAccounts.toggleBlockPrepaidCards)
 router.get('/gateway_accounts/:id/surcharge', auth.secured, gatewayAccounts.surcharge)
 router.post('/gateway_accounts/:id/surcharge', auth.secured, gatewayAccounts.updateSurcharge)
 router.get('/gateway_accounts/:id/email_branding', auth.secured, gatewayAccounts.emailBranding)
@@ -96,6 +96,9 @@ router.get('/users/:id/2FA/reset', auth.secured, users.resetUserSecondFactor)
 router.get('/transactions/search', auth.secured, transactions.searchPage)
 router.post('/transactions/search', auth.secured, transactions.search)
 router.get('/transactions/statistics', auth.secured, transactions.statistics)
+router.get('/transactions/csv', auth.secured, transactions.csvPage)
+router.post('/transactions/csv', auth.secured, transactions.csv)
+router.post('/transactions/csv/stream', auth.secured, transactions.streamCsv)
 router.get('/transactions/:id', auth.secured, transactions.show)
 router.get('/transactions/:id/parity', auth.secured, parity.validateLedgerTransaction)
 

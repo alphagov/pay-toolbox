@@ -21,7 +21,13 @@ const ledgerMethods = function ledgerMethods(instance) {
       .catch(handleNotFound('Transaction', id))
   }
 
-  const transactions = async function transactions(account, currentPage, currentStatus) {
+  const transactions = async function transactions(
+    account,
+    currentPage,
+    currentStatus,
+    filters,
+    fetchAsCSV = false
+  ) {
     const page = currentPage || 1
     const pageSize = 20
     const externalStatusMap = {
@@ -30,21 +36,36 @@ const ledgerMethods = function ledgerMethods(instance) {
       failed: [ 'declined', 'timedout', 'cancelled', 'error' ],
       'in-progress': [ 'created', 'started', 'submitted', 'capturable' ]
     }
+    const states = currentStatus ? externalStatusMap[currentStatus] : externalStatusMap.all
 
     const params = {
       page,
       override_account_id_restriction: true,
       display_size: pageSize,
-      payment_states: externalStatusMap[currentStatus].join(','),
-      transaction_type: 'PAYMENT',
+      payment_states: states.join(','),
+      transaction_type: fetchAsCSV ? '' : 'PAYMENT',
+      exact_reference_match: true,
+      ...filters,
       ...account && { account_id: account }
     }
 
-    const query = Object.keys(params)
-      .map((key) => `${key}=${params[key]}`)
-      .join('&')
+    const headers = fetchAsCSV ? {
+      Accept: 'text/csv',
+      'Content-Type': 'text/csv'
+    } : null
 
-    return axiosInstance.get(`/v1/transaction?${query}`)
+    return axiosInstance.get('/v1/transaction', { params, ...headers && { headers } })
+      .then(utilExtractData)
+  }
+
+  const transactionsByReference = async function transactionsByReference(reference, limit = 2) {
+    return transactions(null, null, null, { reference, display_size: limit })
+  }
+  const relatedTransactions = async function relatedTransactions(id, accountId) {
+    const params = {
+      gateway_account_id: accountId
+    }
+    return axiosInstance.get(`/v1/transaction/${id}/transaction`, { params })
       .then(utilExtractData)
   }
 
@@ -129,7 +150,9 @@ const ledgerMethods = function ledgerMethods(instance) {
     paymentStatistics,
     paymentVolumesByHour,
     paymentVolumesAggregate,
-    eventTicker
+    eventTicker,
+    transactionsByReference,
+    relatedTransactions
   }
 }
 

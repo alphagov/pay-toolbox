@@ -2,7 +2,6 @@ const path = require('path')
 const express = require('express')
 const helmet = require('helmet')
 const bodyParser = require('body-parser')
-const morgan = require('morgan')
 const flash = require('connect-flash')
 const cookieSession = require('cookie-session')
 const nunjucks = require('nunjucks')
@@ -16,6 +15,7 @@ const {
   disableAuth
 } = require('./../config')
 const logger = require('./../lib/logger')
+const requestLoggingMiddleware = require('../lib/requestLoggingMiddleware')
 const passport = require('../lib/auth/passport')
 
 const errors = require('./errorHandler')
@@ -70,8 +70,8 @@ const configureRequestParsing = function configureRequestParsing(instance) {
 const configureServingPublicStaticFiles = function configureServingPublicStaticFiles(instance) {
   const cache = { maxage: '1y' }
   instance.use('/public', express.static(path.join(__dirname, '../public'), cache))
-  instance.use('/assets/fonts', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/assets/fonts'), cache))
-  instance.use('/images/favicon.ico', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/assets/images/', 'favicon.ico'), cache))
+  instance.use('/assets/fonts', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/govuk/assets/fonts'), cache))
+  instance.use('/images/favicon.ico', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/govuk/assets/images/', 'favicon.ico'), cache))
 }
 
 const configureClientSessions = function configureClientSessions(instance) {
@@ -113,12 +113,10 @@ const configureTemplateRendering = function configureTemplateRendering(instance)
 }
 
 const configureRouting = function configureRouting(instance) {
-  const httpRequestLoggingFormat = common.development ? 'dev' : 'short'
-
   // logger middleware included after flash and body parsing middleware as they
   // alter the call stack (it should ideally be placed just before routes)
   instance.use(logger.middleware)
-  instance.use(morgan(httpRequestLoggingFormat, { stream: logger.stream }))
+  instance.use(requestLoggingMiddleware())
 
   instance.use('/', router)
   instance.use(errors.handleNotFound)
@@ -133,7 +131,7 @@ const configureErrorHandling = function configureErrorHandling(instance) {
 const configureSentry = function configureSentry() {
   Sentry.init({
     dsn: sentryConfig.SENTRY_DSN,
-    environment: sentryConfig.ENVIRONMENT,
+    environment: common.ENVIRONMENT,
       beforeSend(event) {
         if (event.request) {
           delete event.request // This can include sensitive data such as card numbers

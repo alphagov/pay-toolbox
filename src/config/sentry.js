@@ -1,8 +1,7 @@
 const Joi = require('joi')
 
 const expectedSentryEnvironmentValues = {
-  SENTRY_DSN: Joi.string(),
-  ENVIRONMENT: Joi.string()
+  SENTRY_DSN: Joi.string()
 }
 
 const { error, value: validatedSentryEnvironmentValues } = Joi.validate(
