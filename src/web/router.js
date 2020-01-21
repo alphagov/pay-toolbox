@@ -98,6 +98,7 @@ router.post('/transactions/search', auth.secured, transactions.search)
 router.get('/transactions/statistics', auth.secured, transactions.statistics)
 router.get('/transactions/csv', auth.secured, transactions.csvPage)
 router.post('/transactions/csv', auth.secured, transactions.csv)
+router.post('/transactions/csv/stream', auth.secured, transactions.streamCsv)
 router.get('/transactions/:id', auth.secured, transactions.show)
 router.get('/transactions/:id/parity', auth.secured, parity.validateLedgerTransaction)
 

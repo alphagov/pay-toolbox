@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Request, Response, NextFunction } from 'express'
 
 import { Transaction } from 'ledger'
@@ -7,7 +8,15 @@ import { Ledger, Connector, AdminUsers } from '../../../lib/pay-request'
 import { EntityNotFoundError } from '../../../lib/errors'
 import * as logger from '../../../lib/logger'
 
+const process = require('process')
+const https = require('https')
 const moment = require('moment')
+
+const { common } = require('./../../../config')
+
+if (common.development) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
+}
 
 export async function searchPage(req: Request, res: Response): Promise<void> {
   res.render('transactions/search', { csrf: req.csrfToken() })
@@ -218,6 +227,91 @@ export async function csv(req: Request, res: Response, next: NextFunction): Prom
       time_taken: metricEnd - metricStart
     })
     res.status(200).send(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export async function streamCsv(req: Request, res: Response, next: NextFunction): Promise<void> {
+  const {
+    account,
+    month,
+    year,
+    includeYear
+  } = req.body
+  const baseDate = moment()
+  const periodCode = includeYear ? 'year' : 'month'
+
+  baseDate.set('year', year)
+  baseDate.set('month', month)
+
+  const filters = {
+    from_date: baseDate.startOf(periodCode).toISOString(),
+    to_date: baseDate.endOf(periodCode).toISOString(),
+    display_size: 100000
+  }
+
+  const params: any = {
+    override_account_id_restriction: true,
+    payment_states: '',
+    exact_reference_match: true,
+    ...filters,
+    ...account && { account_id: account }
+  }
+
+  const headers = {
+    Accept: 'text/csv',
+    'Content-Type': 'text/csv'
+  }
+
+  let accountDetails
+  try {
+    if (account) {
+      accountDetails = await AdminUsers.gatewayAccountServices(account)
+    }
+
+    const accountName = accountDetails ? accountDetails.name : 'GOV.UK Platform'
+    res.set('Content-Type', 'text/csv')
+    res.set('Content-Disposition', `attachment; filename="${accountName} ${includeYear ? '' : moment.months()[month]} ${year}.csv"`)
+
+    const query = Object.keys(params)
+      .map((key: string) => `${key}=${params[key]}`)
+      .join('&')
+
+    // immediately inform browser of file -- expect ~10s of Ledger database query for 50,000 rows
+    res.write('')
+
+    const metricStart = Date.now()
+    const request = https.request({
+      hostname: 'localhost',
+      path: `/v1/transaction?${query}`,
+      method: 'GET',
+      port: 9007,
+      headers
+    }, (response: any) => {
+      let count = 0
+
+      response.on('data', (chunk: ArrayBuffer) => {
+        count += 1
+        res.write(chunk)
+      })
+
+      response.on('end', () => {
+        const metricEnd = Date.now()
+        logger.info('Completed file stream', {
+          account,
+          number_of_chunks: count,
+          time_taken: metricEnd - metricStart
+        })
+        res.end()
+      })
+    })
+
+    request.on('error', (error: Error) => {
+      throw new Error(`Streaming transaction CSV attachment failed ${error.message}`)
+    })
+
+    request.end()
   } catch (error) {
     next(error)
   }
