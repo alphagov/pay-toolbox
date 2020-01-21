@@ -50,8 +50,13 @@
     </form>
   </div>
 
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
 
   <div>
+  <p class="govuk-body">
+      Proposed streaming proxy interface into Ledger paginated CSV.
+  </p>
   <form method="post" action="/transactions/csv/stream">
       <div class="govuk-form-group">
         <label class="govuk-label" for="month">
@@ -73,6 +78,26 @@
           {% endfor %}
         </select>
       </div>
+
+      <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset">
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            <h1 class="govuk-fieldset__heading">
+              Report options
+            </h1>
+          </legend>
+          <div class="govuk-checkboxes govuk-checkboxes--small">
+            <div class="govuk-checkboxes__item">
+              <input class="govuk-checkboxes__input" id="includeYear" name="includeYear" type="checkbox" value="true">
+              <label class="govuk-label govuk-checkboxes__label" for="includeYear">
+                Include transactions from entire year
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- @TODO(sfount) move this button to the form -->
       <button type="submit" class="govuk-button" data-module="govuk-button">
         Stream transactions
       </button>
