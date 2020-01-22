@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express'
 
-import * as logger from '../../../lib/logger'
+import logger from '../../../lib/logger'
 
 import {
   Connector, DirectDebitConnector, AdminUsers, PublicAuth

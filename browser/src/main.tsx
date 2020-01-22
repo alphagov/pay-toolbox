@@ -5,7 +5,7 @@ import { render } from 'react-dom'
 
 import { Dashboard } from './dashboard/Dashboard'
 
-class App extends React.Compdonent {
+class App extends React.Component {
   render() {
     return (
       <div>

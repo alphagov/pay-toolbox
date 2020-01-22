@@ -1,5 +1,5 @@
 import { parseAsync } from 'json2csv'
-import * as Stripe from 'stripe'
+import Stripe from 'stripe'
 
 import { toCurrencyString, toISODateString } from '../../../lib/format'
 

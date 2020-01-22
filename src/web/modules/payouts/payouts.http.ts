@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 
-import * as logger from '../../../lib/logger'
+import logger from '../../../lib/logger'
 import { AdminUsers, Connector } from '../../../lib/pay-request'
 import { toISODateString } from '../../../lib/format'
 

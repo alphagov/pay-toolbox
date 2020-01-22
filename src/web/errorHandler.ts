@@ -1,7 +1,7 @@
 // handle common service errors thrown by HTTP request handlers
 import { Request, Response, NextFunction } from 'express'
 
-import * as logger from '../lib/logger'
+import logger from '../lib/logger'
 import * as config from '../config'
 import {
   EntityNotFoundError, RESTClientError, ValidationError, NotImplementedError

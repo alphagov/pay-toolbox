@@ -1,5 +1,5 @@
-import * as Stripe from 'stripe'
-import * as _ from 'lodash'
+import Stripe from 'stripe'
+import _ from 'lodash'
 
 import { PayTransactionCSVEntity, PaymentType } from './csv'
 import { Connector } from '../../../lib/pay-request'
