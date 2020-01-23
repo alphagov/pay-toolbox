@@ -201,38 +201,52 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
     // @TODO(sfount) don't go through ALL queued events - they are ordered by date, just do until the critera no longer matches
     this.state.queuedEvents.forEach((event) => {
-      if (event.timestamp - cursor < 0) {
-        if (eventsActiveSuccess.includes(event.event_type)) {
-          if (!cachedSuccess[event.resource_external_id]) {
-            cachedSuccess[event.resource_external_id] = true
-            stagingAggregateCompletedVolumes.total_amount += event.amount
-            stagingAggregateCompletedVolumes.total_volume += 1
-            updateStagingGraphNode(stagingTransactionVolumesByHour, event, 1)
+      // @TODO(sfount) somehow duplicated events can be added here when the browser tab has moved away -- make sure they aren't added
+      // but the reasoning behind why they're added should be looked into
+      // event is just ignored and hopefully forever removed if it's already in the list
+      if (
+        !this.state.activeEvents.map((event: Event) => event.key)
+          .concat(staging.map((event: Event) => event.key))
+          .includes(event.key)
+      ) {
+        if (event.timestamp - cursor < 0) {
+          if (eventsActiveSuccess.includes(event.event_type)) {
+            if (!cachedSuccess[event.resource_external_id]) {
+              cachedSuccess[event.resource_external_id] = true
+              stagingAggregateCompletedVolumes.total_amount += event.amount
+              stagingAggregateCompletedVolumes.total_volume += 1
+              updateStagingGraphNode(stagingTransactionVolumesByHour, event, 1)
+            }
           }
-        }
 
-        if (event.event_type === 'PAYMENT_CREATED') {
-          stagingAggregateAllVolumes.total_amount += event.amount
-          stagingAggregateAllVolumes.total_volume += 1
-          updateStagingGraphNode(stagingTransactionVolumesByHour, event, 2)
-        }
+          if (event.event_type === 'PAYMENT_CREATED') {
+            stagingAggregateAllVolumes.total_amount += event.amount
+            stagingAggregateAllVolumes.total_volume += 1
+            updateStagingGraphNode(stagingTransactionVolumesByHour, event, 2)
+          }
 
-        if (eventsErrored.includes(event.event_type)) {
-          updateStagingGraphNode(stagingTransactionVolumesByHour, event, 0)
+          if (eventsErrored.includes(event.event_type)) {
+            updateStagingGraphNode(stagingTransactionVolumesByHour, event, 0)
+          }
+          staging.push(event)
+        } else {
+          filtered.push(event)
         }
-        staging.unshift(event)
       } else {
-        filtered.push(event)
+        console.log('ignoring event that was already staged', event.key)
       }
     })
 
     if (staging.length) {
       this.setState({
         queuedEvents: filtered,
+        // @FIXME(sfount) stale events getting stuck seem to be from this step - what if events weren't reverse and sliced?
+        // pushed into staging by default, pick from 0 ... limit
+        // if an event is out of date here it stays at the top of the array and never gets moved, where should dps be removed?
         activeEvents: [
+          ...staging.reverse(),
           ...this.state.activeEvents,
-          ...staging
-        ].slice(-MAX_ACTIVE_TICKER_EVENTS),
+        ].slice(0, MAX_ACTIVE_TICKER_EVENTS),
         aggregateCompletedVolumes: stagingAggregateCompletedVolumes,
         aggregateAllVolumes: stagingAggregateAllVolumes,
         transactionVolumesByHour: stagingTransactionVolumesByHour
@@ -276,7 +290,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         queuedEvents: this.state.queuedEvents.concat(response.events)
       },
       ...response.events.length && response.historicFetch && {
-        activeEvents: this.state.activeEvents.concat(response.events.reverse())
+        activeEvents: this.state.activeEvents.concat(response.events.reverse().slice(-MAX_ACTIVE_TICKER_EVENTS))
       }
     })
   }

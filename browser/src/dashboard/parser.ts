@@ -97,7 +97,7 @@ export function jsonToChartData(
   if (includeComparison) {
     series.push({
       'id': comparisonDate ? comparisonDate.format('dddd Do MMMM YYYY') : 'Comparison payments',
-      'data': timedata(comparePadded, 'all_payments'),
+      'data': timedata(comparePadded, 'completed_payments'),
       'color': '#b1b4b64d'
     })
   }

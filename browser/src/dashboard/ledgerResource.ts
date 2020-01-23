@@ -104,6 +104,8 @@ export async function fetchEventTicker(fromDate: moment.Moment, toDate: moment.M
       .map((event: Event) => {
         event.service_name = services[event.gateway_account_id]
         event.timestamp = moment(event.event_date).valueOf()
+        event.historic = historicFetch
+        event.key = event.resource_external_id + event.timestamp + event.event_type + event.historic
 
         return event
       })
