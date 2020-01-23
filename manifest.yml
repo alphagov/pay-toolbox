@@ -1,38 +1,32 @@
 ---
 applications:
-  - name: toolbox
-    buildpack: nodejs_buildpack
-    health-check-type: http
-    health-check-http-endpoint: '/healthcheck'
-    health-check-invocation-timeout: 5
-    memory: 1G
-    disk_quota: 1G
-    command: npm start
-    env:
-      NODE_ENV: production
-      http_proxy: ((http_proxy_url))
-      HTTP_PROXY: ((http_proxy_url))
-      HTTP_PROXY_HOST: ((http_proxy_host))
-      HTTP_PROXY_PORT: ((http_proxy_port))
-      https_proxy: ((http_proxy_url))
-      HTTPS_PROXY: ((http_proxy_url))
-      HTTPS_PROXY_HOST: ((http_proxy_host))
-      HTTPS_PROXY_PORT: ((http_proxy_port))
-      HTTP_PROXY_ENABLED: ((http_proxy_enabled))
-      NO_PROXY: ((http_no_proxy))
-      ADMINUSERS_URL: http://adminusers-((space)).apps.internal:8080
-      CONNECTOR_URL: http://card-connector-((space)).apps.internal:8080 
-      DIRECT_DEBIT_CONNECTOR_URL: http://directdebit-connector-((space)).apps.internal:8080
-      PRODUCTS_URL: http://products-((space)).apps.internal:8080
-      PUBLIC_AUTH_URL: http://publicauth-((space)).apps.internal:8080
-      LEDGER_URL: http://ledger-((space)).apps.internal:8080
-      DISABLE_REQUEST_LOGGING: ((toolbox_disable_request_logging))
-      COOKIE_SESSION_ENCRYPTION_SECRET: ((toolbox_cookie_session_encryption_secret))
-      SENTRY_DSN: ((toolbox_sentry_dsn))
-      AUTH_GITHUB_ENABLED: ((toolbox_auth_github_enabled))
-      AUTH_GITHUB_TEAM_ID: ((toolbox_auth_github_team_id))
-      AUTH_GITHUB_ADMIN_TEAM_ID: ((toolbox_auth_github_admin_team_id))
-      AUTH_GITHUB_CLIENT_ID: ((toolbox_auth_github_client_id))
-      AUTH_GITHUB_CLIENT_SECRET: ((toolbox_auth_github_client_secret))
-      STRIPE_ACCOUNT_API_KEY: ((toolbox_stripe_account_api_key))
-       
+- name: toolbox
+  buildpacks:
+  - https://github.com/cloudfoundry/nodejs-buildpack.git#v1.7.9
+  health-check-type: http
+  health-check-http-endpoint: '/healthcheck'
+  health-check-invocation-timeout: 5
+  memory: ((memory))
+  disk_quota: ((disk_quota))
+  command: npm start
+  env:
+    NODE_ENV: production
+    ENVIRONMENT: ((space))
+    ADMINUSERS_URL: ((adminusers_url))
+    CONNECTOR_URL: ((card_connector_url))
+    DIRECT_DEBIT_CONNECTOR_URL: ((direct_debit_connector_url))
+    PRODUCTS_URL: ((products_url))
+    PUBLIC_AUTH_URL: ((publicauth_url))
+    LEDGER_URL: ((ledger_url))
+
+    DISABLE_REQUEST_LOGGING: ((toolbox_disable_request_logging))
+    COOKIE_SESSION_ENCRYPTION_SECRET: ((toolbox_cookie_session_encryption_secret))
+    SENTRY_DSN: ((toolbox_sentry_dsn))
+    AUTH_GITHUB_ENABLED: ((toolbox_auth_github_enabled))
+    AUTH_GITHUB_TEAM_ID: ((toolbox_auth_github_team_id))
+    AUTH_GITHUB_ADMIN_TEAM_ID: ((toolbox_auth_github_admin_team_id))
+    AUTH_GITHUB_CLIENT_ID: ((toolbox_auth_github_client_id))
+    AUTH_GITHUB_CLIENT_SECRET: ((toolbox_auth_github_client_secret))
+    STRIPE_ACCOUNT_API_KEY: ((toolbox_stripe_account_api_key))
+  routes:
+  - route: ((toolbox_url))
