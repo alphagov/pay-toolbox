@@ -39,8 +39,6 @@ const padTimes = function padTimes(timeseries: TimeseriesPoint[], baseDate: mome
         fee: 0
       }
 
-      // only pad with empty if we want to pad the future (comparison in the past vs. live now)
-      // @TODO(sfount) configuration option for padding everything (Stripe pads everything)
       if (i <= processingHour || padFuture) {
         ordered.push(emptyset)
       }

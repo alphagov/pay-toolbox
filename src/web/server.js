@@ -49,7 +49,8 @@ const configureSecureHeaders = function configureSecureHeaders(instance) {
   instance.use(helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: [ '\'self\'' ],
-      imgSrc: [ '*.githubusercontent.com', '\'self\'' ]
+      imgSrc: [ '*.githubusercontent.com', '\'self\'', 'data:' ],
+      styleSrc: [ '\'self\'', '\'unsafe-inline\'' ]
     }
   }))
 
@@ -158,7 +159,7 @@ const configure = [
   configureRequestParsing,
   configureClientSessions,
   configureAuth,
-  // configureSecureHeaders,
+  configureSecureHeaders,
   configureServingPublicStaticFiles,
   configureTemplateRendering,
   configureRouting,

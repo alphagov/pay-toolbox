@@ -1,4 +1,4 @@
-import React, { Props } from 'react'
+import React from 'react'
 
 import moment from 'moment'
 
@@ -17,10 +17,6 @@ interface ChartVolumePanelProps {
 export class ChartVolumePanel extends React.Component<ChartVolumePanelProps, {}> {
 
   render() {
-    const compareGraphString = this.props.compareGraphs ?
-      ` (${this.props.compareDate.format('dddd Do MMMM YYYY')})` :
-      ''
-
     return (
       <div className="dashboard-card">
         <span className="govuk-caption-xl">

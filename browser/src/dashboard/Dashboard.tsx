@@ -111,7 +111,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
     await fetchServiceInfo()
     const eventTicker = await fetchEventTicker(
-      moment().utc().subtract(3, 'minutes'),
+      moment().utc().subtract(1, 'minutes'),
       moment().utc(),
       true,
       this.state.lastFetchedEvents
@@ -165,13 +165,11 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         })
     } else {
 
-      // We've already got the cache - set this appropriately when the timestamp is ready
       if (Date.now() - (this.props.tickInterval * 1000 * 2) > aggregateSync.timestamp) {
         const stagingTransactionVolumesByHour  = [ ...this.state.transactionVolumesByHour ]
         aggregateSync.cache.transactionVolumesByHourPatch.forEach((hourSegment: TimeseriesPoint) => {
           const date = moment(hourSegment.timestamp)
           const index = date.hour()
-          // @TODO(sfount) this might not exist if no payments have come through - that case should be handled
           stagingTransactionVolumesByHour[0].data[index].y = hourSegment.errored_payments
           stagingTransactionVolumesByHour[1].data[index].y = hourSegment.completed_payments
           stagingTransactionVolumesByHour[2].data[index].y = hourSegment.all_payments
@@ -201,9 +199,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
 
     // @TODO(sfount) don't go through ALL queued events - they are ordered by date, just do until the critera no longer matches
     this.state.queuedEvents.forEach((event) => {
-      // @TODO(sfount) somehow duplicated events can be added here when the browser tab has moved away -- make sure they aren't added
-      // but the reasoning behind why they're added should be looked into
-      // event is just ignored and hopefully forever removed if it's already in the list
+      // @TODO(sfount) somehow duplicated events can be added here when the browser tab isn't focussed
       if (
         !this.state.activeEvents.map((event: Event) => event.key)
           .concat(staging.map((event: Event) => event.key))
@@ -240,9 +236,6 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
     if (staging.length) {
       this.setState({
         queuedEvents: filtered,
-        // @FIXME(sfount) stale events getting stuck seem to be from this step - what if events weren't reverse and sliced?
-        // pushed into staging by default, pick from 0 ... limit
-        // if an event is out of date here it stays at the top of the array and never gets moved, where should dps be removed?
         activeEvents: [
           ...staging.reverse(),
           ...this.state.activeEvents,
@@ -290,7 +283,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         queuedEvents: this.state.queuedEvents.concat(response.events)
       },
       ...response.events.length && response.historicFetch && {
-        activeEvents: this.state.activeEvents.concat(response.events.reverse().slice(-MAX_ACTIVE_TICKER_EVENTS))
+        activeEvents: this.state.activeEvents.concat(response.events.slice(-MAX_ACTIVE_TICKER_EVENTS))
       }
     })
   }

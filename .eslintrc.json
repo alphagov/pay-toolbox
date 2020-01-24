@@ -27,7 +27,8 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "no-unused-vars": "off"
+        "no-unused-vars": "off",
+        "require-atomic-updates": "off"
     },
     "settings": {
         "react": {

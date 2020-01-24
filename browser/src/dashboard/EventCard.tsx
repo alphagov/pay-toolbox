@@ -1,4 +1,4 @@
-import React, { Props } from 'react'
+import React from 'react'
 
 import { Event } from 'ledger'
 

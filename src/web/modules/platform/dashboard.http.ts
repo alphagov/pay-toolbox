@@ -15,9 +15,7 @@ function formatISODate(moment: moment.Moment): string {
   return `${moment.format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
 }
 
-// API
 export async function timeseries(req: Request, res: Response, next: NextFunction): Promise<void> {
-  // hours expects an array of 0 indexed hours
   const { date, fromHour, toHour } = req.query
 
   try {
@@ -42,7 +40,6 @@ export async function timeseries(req: Request, res: Response, next: NextFunction
 }
 
 
-// @FIXME(sfount) support state flag to differentiate all vs. successful
 export async function aggregate(req: Request, res: Response, next: NextFunction): Promise<void> {
   // limit expects an upper limit for the date provided - this can be to millisecond amount
   // this should be an ISO formatted string that can be parsed by ZonedDateTime
