@@ -127,7 +127,6 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
     const millsecondsSincePreviousFetch = Date.now() - this.state.lastFetchedEvents.valueOf()
 
     if (Date.now() - aggregateTick > aggregateSyncFrequency) {
-      // see sync commit for explanation (should probably be removed)
       this.aggregateSync()
     }
 
