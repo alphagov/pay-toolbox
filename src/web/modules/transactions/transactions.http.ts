@@ -6,7 +6,7 @@ import { Transaction } from 'ledger'
 
 import { Ledger, Connector, AdminUsers } from '../../../lib/pay-request'
 import { EntityNotFoundError } from '../../../lib/errors'
-import * as logger from '../../../lib/logger'
+import logger from '../../../lib/logger'
 
 const process = require('process')
 const url = require('url')

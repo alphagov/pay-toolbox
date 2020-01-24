@@ -29,9 +29,7 @@ export const VolumesByHourChart = (props: VolumesByHourChart) => <ResponsiveLine
   }}
   theme={theme}
   colors={d => d.color}
-  // axisLeft={{ legend: 'linear scale', legendOffset: 12 }}
   axisBottom={{ format: '%H:%M', tickValues: 'every 2 hours' }}
-  // curve={}
   enablePointLabel={false}
   enablePoints={false}
   useMesh={true}
@@ -46,7 +44,6 @@ export const VolumesByHourChart = (props: VolumesByHourChart) => <ResponsiveLine
       anchor: 'bottom',
       direction: 'row',
       justify: false,
-      // translateX: 100,
       translateY: 60,
       itemsSpacing: 20,
       itemDirection: 'left-to-right',

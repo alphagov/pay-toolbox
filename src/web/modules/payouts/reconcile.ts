@@ -1,8 +1,8 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 import Stripe from 'stripe'
-import * as HTTPSProxyAgent from 'https-proxy-agent'
-import * as _ from 'lodash'
+import HTTPSProxyAgent from 'https-proxy-agent'
+import _ from 'lodash'
 
 import * as config from '../../../config'
 import { renderCSV, PayTransactionCSVEntity, PaymentType } from './csv'
