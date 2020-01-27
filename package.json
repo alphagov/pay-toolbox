@@ -16,6 +16,7 @@
     "test:unit": "AUTH_GITHUB_ENABLED=true mocha -r ts-node/register -r dotenv/config --recursive \"./src/**/*.spec.{js,ts}\" dotenv_config_path=src/tests/.env",
     "test:cypress": "./scripts/run-cypress",
     "build": "scripts/build && npm run build:typescript && npm run build:copy && npm run build:sass",
+    "compile": "npm run build",
     "build:typescript": "tsc",
     "build:sass": "scripts/compile-assets",
     "build:copy": "copyfiles --up 1 src/**/*.njk dist/",
