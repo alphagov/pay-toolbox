@@ -115,6 +115,7 @@ const connectorMethods = function connectorMethods(instance) {
       path: 'allow_moto',
       value: !gatewayAccount.allow_moto
     })
+    return !gatewayAccount.allow_moto
   }
 
   return {

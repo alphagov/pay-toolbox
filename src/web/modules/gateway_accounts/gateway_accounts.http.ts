@@ -221,9 +221,9 @@ const toggleMotoPayments = async function toggleMotoPayments(
   res: Response
 ): Promise<void> {
   const gatewayAccountId = req.params.id
-  await Connector.toggleMotoPayments(gatewayAccountId)
+  const motoPaymentsEnabled = await Connector.toggleMotoPayments(gatewayAccountId)
 
-  req.flash('info', 'Updated allow_moto')
+  req.flash('info', `MOTO payments ${motoPaymentsEnabled ? 'enabled' : 'disabled'}`)
   res.redirect(`/gateway_accounts/${gatewayAccountId}`)
 }
 
