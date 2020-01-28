@@ -193,6 +193,15 @@
       })
       }}
     {% endif %}
+    {% if account.allow_moto === true %}
+      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/moto_payments">
+        {{ govukButton({
+          text: "Disable MOTO payments"
+          })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    {% endif %}
   </div>
 
 {% if account.allow_moto === false %}
