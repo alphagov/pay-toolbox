@@ -107,6 +107,16 @@ const connectorMethods = function connectorMethods(instance) {
     })
   }
 
+  const updateMotoPayments = async function updateMotoPayments(id) {
+    const gatewayAccount = await account(id)
+    const url = `/v1/api/accounts/${gatewayAccount.gateway_account_id}`
+    await axiosInstance.patch(url, {
+      op: 'replace',
+      path: 'allow_moto',
+      value: !gatewayAccount.allow_moto
+    })
+  }
+
   return {
     performanceReport,
     gatewayAccountPerformanceReport,
@@ -126,7 +136,8 @@ const connectorMethods = function connectorMethods(instance) {
     getChargeByGatewayTransactionId,
     updateCorporateSurcharge,
     updateEmailBranding,
-    toggleBlockPrepaidCards
+    toggleBlockPrepaidCards,
+    updateMotoPayments
   }
 }
 
