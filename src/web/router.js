@@ -50,6 +50,7 @@ router.get('/gateway_accounts/:id/surcharge', auth.secured, gatewayAccounts.surc
 router.post('/gateway_accounts/:id/surcharge', auth.secured, gatewayAccounts.updateSurcharge)
 router.get('/gateway_accounts/:id/email_branding', auth.secured, gatewayAccounts.emailBranding)
 router.post('/gateway_accounts/:id/email_branding', auth.secured, gatewayAccounts.updateEmailBranding)
+router.post('/gateway_accounts/:id/toggle_moto_payments', auth.secured, gatewayAccounts.toggleMotoPayments)
 
 router.get('/services', auth.secured, services.overview)
 router.get('/services/search', auth.secured, services.search)

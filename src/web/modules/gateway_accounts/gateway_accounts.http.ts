@@ -136,7 +136,8 @@ const detail = async function detail(req: Request, res: Response): Promise<void>
     account,
     gatewayAccountId: id,
     services,
-    messages: req.flash('info')
+    messages: req.flash('info'),
+    csrf: req.csrfToken()
   })
 }
 
@@ -215,6 +216,17 @@ const toggleBlockPrepaidCards = async function toggleBlockPrepaidCards(
   res.redirect(`/gateway_accounts/${id}`)
 }
 
+const toggleMotoPayments = async function toggleMotoPayments(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const gatewayAccountId = req.params.id
+  const motoPaymentsEnabled = await Connector.toggleMotoPayments(gatewayAccountId)
+
+  req.flash('info', `MOTO payments ${motoPaymentsEnabled ? 'enabled' : 'disabled'}`)
+  res.redirect(`/gateway_accounts/${gatewayAccountId}`)
+}
+
 export default {
   overview: wrapAsyncErrorHandler(overview),
   overviewDirectDebit: wrapAsyncErrorHandler(overviewDirectDebit),
@@ -228,5 +240,6 @@ export default {
   updateSurcharge: wrapAsyncErrorHandler(updateSurcharge),
   emailBranding: wrapAsyncErrorHandler(emailBranding),
   updateEmailBranding: wrapAsyncErrorHandler(updateEmailBranding),
-  toggleBlockPrepaidCards: wrapAsyncErrorHandler(toggleBlockPrepaidCards)
+  toggleBlockPrepaidCards: wrapAsyncErrorHandler(toggleBlockPrepaidCards),
+  toggleMotoPayments: wrapAsyncErrorHandler(toggleMotoPayments)
 }

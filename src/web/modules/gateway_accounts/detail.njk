@@ -188,6 +188,36 @@
     {% endif %}
   </div>
 
+  {% if account.allow_moto === false %}
+    <div>
+      <h1 class="govuk-heading-s">Enable MOTO payments</h1>
+      <p class="govuk-body">Please ensure the service has passed PCI requirements before enabling MOTO payments.</p>
+      <p class="govuk-body">MOTO payments allow services to create payments that bypass security. MOTO payments have no 3DS checks and billing addresses aren't required. This is inherently insecure.</p>
+      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_moto_payments">
+        {{ govukButton({
+          text: "Enable MOTO payments",
+          classes: "govuk-button--warning"
+          })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    </div>
+  {% endif %}
+
+  {% if account.allow_moto === true %}
+    <div>
+      <h1 class="govuk-heading-s">MOTO payments are enabled</h1>
+      <p class="govuk-body">MOTO payments allow services to create payments that bypass security. MOTO payments have no 3DS checks and billing addresses aren't required. This is inherently insecure.</p>
+      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_moto_payments">
+        {{ govukButton({
+          text: "Disable MOTO payments"
+          })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    </div>
+  {% endif %}
+
   {{ json("Gateway account details source", account) }}
   {{ json("Gateway account services source", services) }}
 {% endblock %}

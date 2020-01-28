@@ -26,5 +26,6 @@ export default {
   updateSurcharge: http.updateSurcharge,
   emailBranding: http.emailBranding,
   updateEmailBranding: http.updateEmailBranding,
-  toggleBlockPrepaidCards: http.toggleBlockPrepaidCards
+  toggleBlockPrepaidCards: http.toggleBlockPrepaidCards,
+  toggleMotoPayments: http.toggleMotoPayments
 }
