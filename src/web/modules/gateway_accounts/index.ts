@@ -27,5 +27,5 @@ export default {
   emailBranding: http.emailBranding,
   updateEmailBranding: http.updateEmailBranding,
   toggleBlockPrepaidCards: http.toggleBlockPrepaidCards,
-  motoPayments: http.motoPayments
+  toggleMotoPayments: http.toggleMotoPayments
 }

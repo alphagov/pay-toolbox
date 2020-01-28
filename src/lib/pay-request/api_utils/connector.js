@@ -107,7 +107,7 @@ const connectorMethods = function connectorMethods(instance) {
     })
   }
 
-  const updateMotoPayments = async function updateMotoPayments(id) {
+  const toggleMotoPayments = async function toggleMotoPayments(id) {
     const gatewayAccount = await account(id)
     const url = `/v1/api/accounts/${gatewayAccount.gateway_account_id}`
     await axiosInstance.patch(url, {
@@ -137,7 +137,7 @@ const connectorMethods = function connectorMethods(instance) {
     updateCorporateSurcharge,
     updateEmailBranding,
     toggleBlockPrepaidCards,
-    updateMotoPayments
+    toggleMotoPayments
   }
 }
 

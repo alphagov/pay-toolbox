@@ -216,12 +216,12 @@ const toggleBlockPrepaidCards = async function toggleBlockPrepaidCards(
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-const motoPayments = async function motoPayments(
+const toggleMotoPayments = async function toggleMotoPayments(
   req: Request,
   res: Response
 ): Promise<void> {
   const gatewayAccountId = req.params.id
-  await Connector.updateMotoPayments(gatewayAccountId)
+  await Connector.toggleMotoPayments(gatewayAccountId)
 
   req.flash('info', 'Updated allow_moto')
   res.redirect(`/gateway_accounts/${gatewayAccountId}`)
@@ -241,5 +241,5 @@ export default {
   emailBranding: wrapAsyncErrorHandler(emailBranding),
   updateEmailBranding: wrapAsyncErrorHandler(updateEmailBranding),
   toggleBlockPrepaidCards: wrapAsyncErrorHandler(toggleBlockPrepaidCards),
-  motoPayments: wrapAsyncErrorHandler(motoPayments)
+  toggleMotoPayments: wrapAsyncErrorHandler(toggleMotoPayments)
 }
