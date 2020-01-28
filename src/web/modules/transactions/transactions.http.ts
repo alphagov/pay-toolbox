@@ -283,7 +283,7 @@ export async function streamCsv(req: Request, res: Response, next: NextFunction)
     res.write('')
 
     const metricStart = Date.now()
-    const target = `${services.LEDGER_URL}/v1/transaction?${query}`
+    const target = `${services.LEDGER_URL}/v1/transaction/stream?${query}`
     const parsed = url.parse(target)
     const options = {
       path: `${parsed.pathname}${parsed.search}`,
