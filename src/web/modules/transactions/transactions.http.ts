@@ -194,48 +194,9 @@ export async function csvPage(req: Request, res: Response, next: NextFunction): 
   }
 }
 
-export async function csv(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const { account, month, year } = req.body
-  const baseDate = moment()
-
-  baseDate.set('year', year)
-  baseDate.set('month', month)
-
-  const filters = {
-    from_date: baseDate.startOf('month').toISOString(),
-    to_date: baseDate.endOf('month').toISOString(),
-    display_size: 100000
-  }
-
-  try {
-    let accountDetails
-    if (account) {
-      accountDetails = await AdminUsers.gatewayAccountServices(account)
-    }
-    const metricStart = Date.now()
-    const result = await Ledger.transactions(account, null, null, filters, true)
-    const metricEnd = Date.now()
-    const accountName = accountDetails ? accountDetails.name : 'GOV.UK Platform'
-    res.set('Content-Type', 'text/csv')
-    res.set('Content-Disposition', `attachment; filename="${accountName} ${moment.months()[month]} ${year}.csv"`)
-
-    const numberOfLines = result.split('\n').length
-
-    logger.info(`Transaction CSV downloaded for ${accountName}`, {
-      gateway_account: account,
-      gateway_account_name: accountName,
-      csv_rows: numberOfLines,
-      time_taken: metricEnd - metricStart
-    })
-    res.status(200).send(result)
-  } catch (error) {
-    next(error)
-  }
-}
-
 export async function streamCsv(req: Request, res: Response, next: NextFunction): Promise<void> {
   const {
-    account,
+    accountId,
     month,
     year,
     includeYear
@@ -252,26 +213,31 @@ export async function streamCsv(req: Request, res: Response, next: NextFunction)
     display_size: 100000
   }
 
-  const params: any = {
-    override_account_id_restriction: true,
-    payment_states: '',
-    exact_reference_match: true,
-    ...filters,
-    ...account && { account_id: account }
-  }
-
   const headers = {
     Accept: 'text/csv',
     'Content-Type': 'text/csv'
   }
 
-  let accountDetails
+  let serviceDetails
+  let gatewayAccountDetails
   try {
-    if (account) {
-      accountDetails = await AdminUsers.gatewayAccountServices(account)
+    if (accountId) {
+      serviceDetails = await AdminUsers.gatewayAccountServices(accountId)
+      gatewayAccountDetails = await Connector.account(accountId)
     }
 
-    const accountName = accountDetails ? accountDetails.name : 'GOV.UK Platform'
+    const feeHeaders = gatewayAccountDetails && gatewayAccountDetails.payment_provider === 'stripe'
+
+    const params: any = {
+      override_account_id_restriction: true,
+      payment_states: '',
+      exact_reference_match: true,
+      ...filters,
+      ...accountId && { account_id: accountId },
+      ...feeHeaders && { fee_headers: feeHeaders }
+    }
+
+    const accountName = serviceDetails ? serviceDetails.name : 'GOV.UK Platform'
     res.set('Content-Type', 'text/csv')
     res.set('Content-Disposition', `attachment; filename="${accountName} ${includeYear ? '' : moment.months()[month]} ${year}.csv"`)
 
@@ -283,7 +249,7 @@ export async function streamCsv(req: Request, res: Response, next: NextFunction)
     res.write('')
 
     const metricStart = Date.now()
-    const target = `${services.LEDGER_URL}/v1/transaction/stream?${query}`
+    const target = `${services.LEDGER_URL}/v1/transaction?${query}`
     const parsed = url.parse(target)
     const options = {
       path: `${parsed.pathname}${parsed.search}`,
@@ -304,7 +270,7 @@ export async function streamCsv(req: Request, res: Response, next: NextFunction)
       response.on('end', () => {
         const metricEnd = Date.now()
         logger.info('Completed file stream', {
-          account,
+          accountId,
           number_of_chunks: count,
           time_taken: metricEnd - metricStart
         })

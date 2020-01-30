@@ -20,4 +20,6 @@ export interface GatewayAccount {
   type: string;
 
   service_name: string;
+
+  payment_provider: string;
 }
