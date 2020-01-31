@@ -12,8 +12,6 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "esModuleInterop": true
-    // "noEmitOnError": true,
-    // "noFallthroughCasesInSwitch": true
   },
   "include": [
     "./src/**/*"

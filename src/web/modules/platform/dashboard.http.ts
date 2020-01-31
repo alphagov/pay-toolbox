@@ -81,8 +81,8 @@ export async function services(req: Request, res: Response, next: NextFunction):
     const index = services.reduce((aggregate: any, service: any) => {
       const mapped = {
         ...aggregate,
-        ...service.gateway_account_ids.reduce((aggregate: any, account: any) => {
-          aggregate[account] = service.service_name.en
+        ...service.gateway_account_ids.reduce((aggregate: any, accountId: string) => {
+          aggregate[accountId] = service.service_name.en
           return aggregate
         }, {})
       }
