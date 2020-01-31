@@ -1,5 +1,5 @@
 import { parseAsync } from 'json2csv'
-import * as Stripe from 'stripe'
+import Stripe from 'stripe'
 
 import { toCurrencyString, toISODateString } from '../../../lib/format'
 
@@ -8,7 +8,6 @@ export enum PaymentType {
   REFUND = 'REFUND'
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export interface PayTransactionCSVEntity {
   payId: string;
   payReference: string;
@@ -27,7 +26,6 @@ export interface PayTransactionCSVEntity {
   payoutStatementDescriptor?: string;
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export async function renderCSV(
   transactions: PayTransactionCSVEntity[],
   payout: Stripe.payouts.IPayout

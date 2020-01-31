@@ -1,5 +1,5 @@
-import * as Stripe from 'stripe'
-import * as HTTPSProxyAgent from 'https-proxy-agent'
+import Stripe from 'stripe'
+import HTTPSProxyAgent from 'https-proxy-agent'
 
 import * as config from '../../../config'
 
@@ -53,7 +53,6 @@ const all = async function all(
   return transactions
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export async function getTransactionsForPayout(
   stripeAccountId: string,
   payout: Stripe.payouts.IPayout

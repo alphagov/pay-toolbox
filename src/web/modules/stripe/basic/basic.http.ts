@@ -1,8 +1,8 @@
-import * as Stripe from 'stripe'
-import * as HTTPSProxyAgent from 'https-proxy-agent'
+import Stripe from 'stripe'
+import HTTPSProxyAgent from 'https-proxy-agent'
 import { Request, Response } from 'express'
 
-import * as logger from '../../../../lib/logger'
+import logger from '../../../../lib/logger'
 import * as config from '../../../../config'
 import { AdminUsers } from '../../../../lib/pay-request'
 import { ValidationError as CustomValidationError, IOValidationError } from '../../../../lib/errors'

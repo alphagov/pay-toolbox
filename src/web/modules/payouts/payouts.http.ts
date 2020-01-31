@@ -1,13 +1,12 @@
 import { Request, Response, NextFunction } from 'express'
 
-import * as logger from '../../../lib/logger'
+import logger from '../../../lib/logger'
 import { AdminUsers, Connector } from '../../../lib/pay-request'
 import { toISODateString } from '../../../lib/format'
 
 import { getPayoutsForAccount, buildPayoutCSVReport, getPayout } from './reconcile'
 import { renderPayoutListCSV } from './csv'
 
-// eslint-disable-next-line import/prefer-default-export
 export async function show(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { startingAfter, endingBefore } = req.query

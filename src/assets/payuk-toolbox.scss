@@ -191,3 +191,32 @@
 .scrollflow {
   overflow-x: scroll;
 }
+
+.dashboard-card {
+  background-color: white;
+  padding: 15px;
+  border-radius: 3px;
+
+  box-shadow: 0 7px 14px 0 rgba(60,66,87, 0.12), 0 3px 6px 0 rgba(0,0,0, 0.12);
+}
+
+.stats-cell {
+  @extend .govuk-table__cell;
+  border-bottom: 0;
+  padding: 5px 20px 5px 0;
+}
+
+.stats-table {
+  @extend .govuk-table;
+  margin-bottom: 0px;
+}
+
+.event-card {
+  background-color: white;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-radius: 3px;
+  box-shadow: 0 7px 14px 0 rgba(60,66,87, 0.12), 0 3px 6px 0 rgba(0,0,0, 0.12);
+}

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 
-import * as logger from '../../../lib/logger'
+import logger from '../../../lib/logger'
 import { AdminUsers } from '../../../lib/pay-request'
 import { Service, User } from '../../../lib/pay-request/types/adminUsers'
 import { wrapAsyncErrorHandler } from '../../../lib/routes'

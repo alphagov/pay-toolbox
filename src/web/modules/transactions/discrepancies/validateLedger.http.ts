@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { Request, Response, NextFunction } from 'express'
 import { Transaction } from 'ledger'
 import { diff } from 'deep-diff'

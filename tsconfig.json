@@ -2,16 +2,21 @@
   "compilerOptions": {
     "outDir": "./dist",
     "allowJs": true,
-    "target": "ES6",
+    "target": "es2017",
     "strict": true,
     "module": "commonjs",
     "moduleResolution": "node",
+    "jsx": "react",
     "experimentalDecorators": true,
     "strictNullChecks": false,
     "allowSyntheticDefaultImports": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "esModuleInterop": true
   },
   "include": [
     "./src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }

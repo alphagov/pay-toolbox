@@ -17,9 +17,9 @@ const stripe = require('./modules/stripe')
 const payouts = require('./modules/payouts/payouts.http')
 const transactions = require('./modules/transactions/transactions.http')
 const parity = require('./modules/transactions/discrepancies/validateLedger.http')
+const platform = require('./modules/platform/dashboard.http')
 
 // @TODO(sfount) remove `default`s on update to import export syntax
-// eslint-disable-next-line import/no-unresolved
 const users = require('./modules/users/users.http').default
 
 const router = express.Router()
@@ -103,6 +103,14 @@ router.get('/transactions/:id', auth.secured, transactions.show)
 router.get('/transactions/:id/parity', auth.secured, parity.validateLedgerTransaction)
 
 router.get('/transactions', auth.secured, transactions.list)
+
+router.get('/platform/dashboard', auth.secured, platform.dashboard)
+router.get('/platform/dashboard/live', auth.secured, platform.live)
+
+router.get('/api/platform/timeseries', auth.secured, platform.timeseries)
+router.get('/api/platform/aggregate', auth.secured, platform.aggregate)
+router.get('/api/platform/ticker', auth.secured, platform.ticker)
+router.get('/api/platform/services', auth.secured, platform.services)
 
 router.get('/logout', auth.secured, auth.revokeSession)
 

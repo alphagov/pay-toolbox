@@ -1,6 +1,6 @@
-import * as morgan from 'morgan'
+import morgan from 'morgan'
 import { RequestHandler } from 'express-serve-static-core'
-import * as logger from './logger'
+import logger from './logger'
 
 const { format } = require('@govuk-pay/pay-js-commons').logging.requestLogFormat('x-request-id')
 
