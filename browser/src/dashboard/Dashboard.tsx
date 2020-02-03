@@ -3,7 +3,7 @@ import React from 'react'
 import moment from 'moment'
 
 import ResizeObserver from '@juggle/resize-observer'
-import { Serie } from '@nivo/line'
+import { Serie, Datum } from '@nivo/line'
 
 import { Event } from 'ledger'
 import { StatsPanel } from './StatsPanel'
@@ -168,10 +168,10 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         const stagingTransactionVolumesByHour  = [ ...this.state.transactionVolumesByHour ]
         aggregateSync.cache.transactionVolumesByHourPatch.forEach((hourSegment: TimeseriesPoint) => {
           const date = moment(hourSegment.timestamp)
-          const index = date.hour()
-          stagingTransactionVolumesByHour[0].data[index].y = hourSegment.errored_payments
-          stagingTransactionVolumesByHour[1].data[index].y = hourSegment.completed_payments
-          stagingTransactionVolumesByHour[2].data[index].y = hourSegment.all_payments
+
+          updateAggregateGraphNode(stagingTransactionVolumesByHour, date, 0, hourSegment.errored_payments)
+          updateAggregateGraphNode(stagingTransactionVolumesByHour, date, 1, hourSegment.completed_payments)
+          updateAggregateGraphNode(stagingTransactionVolumesByHour, date, 2, hourSegment.all_payments)
         })
         this.setState({
           aggregateAllVolumes: aggregateSync.cache.aggregateAllVolumes,
@@ -179,6 +179,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
           transactionVolumesByHour: stagingTransactionVolumesByHour
         })
 
+        console.log('Aggregate sync process completed at', Date.now())
         aggregateSync.inProgress = false
         aggregateSync.cache = null
         aggregateSync.timestamp = null
@@ -324,6 +325,16 @@ function updateStagingGraphNode(transactionVolumesByHour: Serie[], event: Event,
   const point = transactionVolumesByHour[pointIndex].data[index] || { x: `${moment(event.timestamp).format('YYYY-MM-DDTHH')}:00:00.000000Z`, y: 0 }
   const currentValue = point.y as number
   transactionVolumesByHour[pointIndex].data[index] = { ...point, y: currentValue + 1}
+}
+
+function updateAggregateGraphNode(transactionVolumesByHour: Serie[],timestamp: moment.Moment, pointIndex: number, pointValue: number) {
+  const hourIndex = timestamp.hour()
+  const defaultPoint: Datum = { x: `${timestamp.format('YYYY-MM-DDTHH')}:00:00.000000Z` }
+
+  transactionVolumesByHour[pointIndex].data[hourIndex] = {
+    ...transactionVolumesByHour[pointIndex].data[hourIndex] || defaultPoint,
+    y: pointValue
+  }
 }
 
 function calculateComparisonDate(date: moment.Moment): moment.Moment {
