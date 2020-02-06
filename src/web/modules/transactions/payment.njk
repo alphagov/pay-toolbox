@@ -134,6 +134,10 @@
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Delayed capture</span></th>
           <td class="govuk-table__cell payment__cell">{{ transaction.delayed_capture | string | capitalize }}</td>
         </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">MOTO</span></th>
+          <td class="govuk-table__cell payment__cell">{{ transaction.moto | string | capitalize }}</td>
+        </tr>
       </tbody>
     </table>
   </div>
