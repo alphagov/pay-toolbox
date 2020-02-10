@@ -1,0 +1,39 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+<div class="govuk-grid-row">
+  <form clas="govuk-clearfix" method="GET" action="/gateway_accounts" novalidate>
+    <div class="govuk-grid-column-one-third inputs-less-margin">
+      {{ govukInput({
+        id: "id",
+        name: "id",
+        label: { text: "Account ID" },
+        value: filters.id,
+        attributes: {
+          autocomplete: 'off'
+        }
+      })
+    }}
+    </div>
+
+    <div class="govuk-grid-column-one-third inputs-less-margin">
+      {{ govukSelect({
+        id: "moto-enabled",
+        name: "moto_enabled",
+        label: { text: "MOTO enabled" },
+        items: motoEnabledOptions
+      })
+    }}
+    </div>
+
+    <div class="govuk-grid-column-one-third inputs-less-margin"></div>
+
+    <div class="govuk-grid-column-full inputs-less-margin">
+      {{ govukButton({
+        text: "Filter"
+      })
+    }}
+    </div>
+  </form>
+</div>
