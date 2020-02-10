@@ -93,12 +93,13 @@ const ledgerMethods = function ledgerMethods(instance) {
       .then(utilExtractData)
   }
 
-  const paymentStatistics = function paymentStatistics(account, fromDate, toDate) {
+  const paymentStatistics = function paymentStatistics(account, fromDate, toDate, include_moto_statistics) {
     const params = {
       ...account && { account_id: account },
       ...fromDate && { from_date: fromDate },
       ...toDate && { to_date: toDate },
-      override_from_date_validation: true
+      override_from_date_validation: true,
+      include_moto_statistics: include_moto_statistics
     }
 
     if (!account) {

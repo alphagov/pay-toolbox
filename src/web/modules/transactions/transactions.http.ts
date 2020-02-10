@@ -140,12 +140,19 @@ export async function statistics(req: Request, res: Response, next: NextFunction
     const fromDate: string = moment().utc().startOf(momentKey).format()
     const toDate: string = moment().utc().endOf(momentKey).format()
 
+    const gateway_account = await Connector.account(accountId);
+    const include_moto_statistics = gateway_account.allow_moto;
+
     const paymentsByState = await Ledger.getPaymentsByState(accountId, fromDate, toDate)
-    const paymentStatistics = await Ledger.paymentStatistics(accountId, fromDate, toDate)
+    const paymentStatistics = await Ledger.paymentStatistics(accountId, fromDate, toDate, include_moto_statistics)
 
     const results = {
+      include_moto_statistics: include_moto_statistics,
       payments: paymentStatistics.payments.count,
       gross: paymentStatistics.payments.gross_amount,
+      motoPayments: paymentStatistics.moto_payments.count,
+      refunds: paymentStatistics.refunds.count,
+      netIncome: paymentStatistics.net_income,
       success: paymentsByState.success,
       error: paymentsByState.error,
       in_progress: [
@@ -155,6 +162,7 @@ export async function statistics(req: Request, res: Response, next: NextFunction
         paymentsByState.capturable
       ].reduce(sum, 0)
     }
+
     res.render('transactions/statistics', {
       account,
       accountId,
