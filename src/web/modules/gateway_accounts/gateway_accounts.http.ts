@@ -46,6 +46,7 @@ const overview = async function overview(req: Request, res: Response): Promise<v
 
   const motoEnabledOptions = getOptionalFlagSelectOptions(filters.moto_enabled)
   res.render('gateway_accounts/overview', {
+    card: true,
     accounts,
     messages: req.flash('info'),
     motoEnabledOptions,
