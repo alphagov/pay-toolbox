@@ -33,5 +33,3 @@ applications:
     AUTH_GITHUB_CLIENT_ID: ((toolbox_auth_github_client_id))
     AUTH_GITHUB_CLIENT_SECRET: ((toolbox_auth_github_client_secret))
     STRIPE_ACCOUNT_API_KEY: ((toolbox_stripe_account_api_key))
-  routes:
-  - route: ((toolbox_url))
