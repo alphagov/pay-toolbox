@@ -4,11 +4,14 @@
   <span class="govuk-caption-m">GOV.UK Pay platform</span>
   <h1 class="govuk-heading-m">Gateway accounts</h1>
 
-  {% include "gateway_accounts/filter.njk" %}
+  {% if card %}
+    {% include "gateway_accounts/filter.njk" %}
 
-  <h3 class="govuk-heading-s govuk-!-font-weight-regular govuk-!-margin-top-3">
-    {{total}} accounts
-  </h3>
+    <h3 class="govuk-heading-s govuk-!-font-weight-regular govuk-!-margin-top-3">
+      {{total}}
+      accounts
+    </h3>
+  {% endif %}
 
   <table class="govuk-table">
     <thead class="govuk-table__head">
@@ -21,21 +24,21 @@
     </thead>
     <tbody class="govuk-table__body">
       {% for account in accounts | sort(true, false, 'gateway_account_id') %}
-      <tr class="govuk-table__row">
-        <td class="govuk-table__cell">
-          {{ account.gateway_account_id }}
-        </td>
-        <td class="govuk-table__cell">{{ account.payment_provider | capitalize }}</td>
-        <td class="govuk-table__cell">
-          <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ account.gateway_account_external_id or account.gateway_account_id }}">
-            {{ (account.service_name or "(No name set)") | truncate(30) }}</td>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">
+            {{ account.gateway_account_id }}
+          </td>
+          <td class="govuk-table__cell">{{ account.payment_provider | capitalize }}</td>
+          <td class="govuk-table__cell">
+            <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ account.gateway_account_external_id or account.gateway_account_id }}">
+              {{ (account.service_name or "(No name set)") | truncate(30) }}</td>
           </a>
-        <td class="govuk-table__cell">{{ account.type | capitalize }}</td>
-      </tr>
+          <td class="govuk-table__cell">{{ account.type | capitalize }}</td>
+        </tr>
       {% else %}
-      <tr class="govuk-table__row">
-        <td class="govuk-table__cell" colspan="5">No gateway accounts listed.</td>
-      </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell" colspan="5">No gateway accounts listed.</td>
+        </tr>
       {% endfor %}
     </tbody>
   </table>
