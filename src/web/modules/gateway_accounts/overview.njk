@@ -4,6 +4,12 @@
   <span class="govuk-caption-m">GOV.UK Pay platform</span>
   <h1 class="govuk-heading-m">Gateway accounts</h1>
 
+  {% include "gateway_accounts/filter.njk" %}
+
+  <h3 class="govuk-heading-s govuk-!-font-weight-regular govuk-!-margin-top-3">
+    {{total}} accounts
+  </h3>
+
   <table class="govuk-table">
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">

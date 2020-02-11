@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express'
+import { parse } from 'qs'
 
 import logger from '../../../lib/logger'
 
@@ -14,9 +15,43 @@ import DirectDebitGatewayAccount from '../../../lib/pay-request/types/directDebi
 import { GatewayAccount as CardGatewayAccount } from '../../../lib/pay-request/types/connector'
 import { ClientFormError } from '../common/validationErrorFormat'
 
+const getOptionalFlagSelectOptions = function (value: string) {
+  return [
+    {
+      value: null,
+      text: 'All',
+      selected: value === null
+    },
+    {
+      value: true,
+      text: 'Yes',
+      selected: value === 'true'
+    },
+    {
+      value: false,
+      text: 'No',
+      selected: value === 'false'
+    }
+  ]
+}
+
 const overview = async function overview(req: Request, res: Response): Promise<void> {
-  const { accounts } = await Connector.accounts()
-  res.render('gateway_accounts/overview', { accounts, messages: req.flash('info') })
+  const filters = parse(req.query)
+  const params = {
+    accountIds: filters.id,
+    moto_enabled: filters.moto_enabled
+  }
+
+  const { accounts } = await Connector.accounts(params)
+
+  const motoEnabledOptions = getOptionalFlagSelectOptions(filters.moto_enabled)
+  res.render('gateway_accounts/overview', {
+    accounts,
+    messages: req.flash('info'),
+    motoEnabledOptions,
+    filters,
+    total: accounts.length.toLocaleString()
+  })
 }
 
 const overviewDirectDebit = async function overviewDirectDebit(
@@ -194,7 +229,7 @@ const emailBranding = async function emailBranding(req: Request, res: Response):
 }
 
 const updateEmailBranding = async function updateEmailBranding(req: Request, res: Response):
-Promise<void> {
+  Promise<void> {
   const { id } = req.params
   const notifySettings = req.body
   // eslint-disable-next-line no-underscore-dangle

@@ -1,4 +1,6 @@
 /* eslint-disable no-restricted-syntax, no-await-in-loop */
+const lodash = require('lodash')
+
 const connectorMethods = function connectorMethods(instance) {
   const axiosInstance = instance || this
 
@@ -6,8 +8,9 @@ const connectorMethods = function connectorMethods(instance) {
   // repeat this over and over
   const utilExtractData = (response) => response.data
 
-  const accounts = function accounts() {
-    return axiosInstance.get('/v1/api/accounts').then(utilExtractData)
+  const accounts = function accounts(params) {
+    params = lodash.omitBy(params, lodash.isEmpty)
+    return axiosInstance.get('/v1/api/accounts', {params}).then(utilExtractData)
   }
 
   const account = function account(id) {
