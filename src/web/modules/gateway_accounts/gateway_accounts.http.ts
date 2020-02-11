@@ -14,42 +14,66 @@ import { Service } from '../../../lib/pay-request/types/adminUsers'
 import DirectDebitGatewayAccount from '../../../lib/pay-request/types/directDebitConnector'
 import { GatewayAccount as CardGatewayAccount } from '../../../lib/pay-request/types/connector'
 import { ClientFormError } from '../common/validationErrorFormat'
-
-const getOptionalFlagSelectOptions = function (value: string) {
-  return [
-    {
-      value: null,
-      text: 'All',
-      selected: value === null
-    },
-    {
-      value: true,
-      text: 'Yes',
-      selected: value === 'true'
-    },
-    {
-      value: false,
-      text: 'No',
-      selected: value === 'false'
-    }
-  ]
-}
+import { getSelectOptions, getEnabledDisabledSelectOptions } from '../common/selectOptions'
 
 const overview = async function overview(req: Request, res: Response): Promise<void> {
   const filters = parse(req.query)
   const params = {
     accountIds: filters.id,
+    type: filters.type,
+    payment_provider: filters.payment_provider,
+    requires_3ds: filters.requires_3ds,
+    apple_pay_enabled: filters.apple_pay_enabled,
+    google_pay_enabled: filters.google_pay_enabled,
     moto_enabled: filters.moto_enabled
   }
 
   const { accounts } = await Connector.accounts(params)
 
-  const motoEnabledOptions = getOptionalFlagSelectOptions(filters.moto_enabled)
+  const typeOptions = getSelectOptions(filters.type, [
+    {
+      text: 'Live',
+      value: 'live'
+    },
+    {
+      text: 'Test',
+      value: 'test'
+    }
+  ])
+
+  const paymentProviderOptions = getSelectOptions(filters.payment_provider, [
+    {
+      text: 'Sandbox',
+      value: 'sandbox'
+    },
+    {
+      text: 'Worldpay',
+      value: 'worldpay'
+    },
+    {
+      text: 'Smartpay',
+      value: 'smartpay'
+    },
+    {
+      text: 'ePDQ',
+      value: 'epdq'
+    },
+    {
+      text: 'Stripe',
+      value: 'stripe'
+    }
+  ])
+
   res.render('gateway_accounts/overview', {
     card: true,
     accounts,
     messages: req.flash('info'),
-    motoEnabledOptions,
+    typeOptions,
+    paymentProviderOptions,
+    requires3dsOptions: getEnabledDisabledSelectOptions(filters.requires_3ds),
+    applePayEnabledOptions: getEnabledDisabledSelectOptions(filters.apple_pay_enabled),
+    googlePayEnabledOptions: getEnabledDisabledSelectOptions(filters.google_pay_enabled),
+    motoEnabledOptions: getEnabledDisabledSelectOptions(filters.moto_enabled),
     filters,
     total: accounts.length.toLocaleString()
   })
