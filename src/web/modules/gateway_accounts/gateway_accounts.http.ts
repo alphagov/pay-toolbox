@@ -16,6 +16,43 @@ import { GatewayAccount as CardGatewayAccount } from '../../../lib/pay-request/t
 import { ClientFormError } from '../common/validationErrorFormat'
 import { getSelectOptions, getEnabledDisabledSelectOptions } from '../common/selectOptions'
 
+type GatewayAccountFilters = {
+  type: string;
+  payment_provider: string;
+  requires_3ds: string;
+  apple_pay_enabled: string;
+  google_pay_enabled: string;
+  moto_enabled: string;
+}
+
+function getBooleanFlagDescription(value: string) {
+  return value === 'true' ? 'enabled': 'disabled'
+}
+
+function describeFilters(filters: GatewayAccountFilters) {
+  let description = ''
+  if (filters.type) {
+    description += ` with type <strong>${filters.type}</strong>`
+  }
+  if (filters.payment_provider) {
+    description += ` with provider <strong>${filters.payment_provider}</strong>`
+  }
+  if (filters.requires_3ds) {
+    description += ` with 3D Secure <strong>${getBooleanFlagDescription(filters.requires_3ds)}</strong>`
+  }
+  if (filters.apple_pay_enabled) {
+    description += ` with Apple pay <strong>${getBooleanFlagDescription(filters.apple_pay_enabled)}</strong>`
+  }
+  if (filters.google_pay_enabled) {
+    description += ` with Google pay <strong>${getBooleanFlagDescription(filters.google_pay_enabled)}</strong>`
+  }
+  if (filters.moto_enabled) {
+    description += ` with MOTO <strong>${getBooleanFlagDescription(filters.moto_enabled)}</strong>`
+  }
+
+  return description;
+}
+
 const overview = async function overview(req: Request, res: Response): Promise<void> {
   const filters = parse(req.query)
   const params = {
@@ -75,7 +112,8 @@ const overview = async function overview(req: Request, res: Response): Promise<v
     googlePayEnabledOptions: getEnabledDisabledSelectOptions(filters.google_pay_enabled),
     motoEnabledOptions: getEnabledDisabledSelectOptions(filters.moto_enabled),
     filters,
-    total: accounts.length.toLocaleString()
+    total: accounts.length.toLocaleString(),
+    filtersDescription: describeFilters(filters)
   })
 }
 
