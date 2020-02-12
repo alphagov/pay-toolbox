@@ -19,7 +19,6 @@ import { getSelectOptions, getEnabledDisabledSelectOptions } from '../common/sel
 const overview = async function overview(req: Request, res: Response): Promise<void> {
   const filters = parse(req.query)
   const params = {
-    accountIds: filters.id,
     type: filters.type,
     payment_provider: filters.payment_provider,
     requires_3ds: filters.requires_3ds,

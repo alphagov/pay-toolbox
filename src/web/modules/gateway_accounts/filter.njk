@@ -4,18 +4,6 @@
 
 <div class="filter govuk-grid-row">
   <form clas="govuk-clearfix" method="GET" action="/gateway_accounts" novalidate="novalidate">
-    <div class="govuk-grid-column-one-third inputs-less-margin">
-      {{ govukInput({
-        id: "id",
-        name: "id",
-        label: { text: "Account ID" },
-        value: filters.id,
-        attributes: {
-          autocomplete: 'off'
-        }
-      })
-    }}
-    </div>
 
     <div class="govuk-grid-column-one-third inputs-less-margin">
       {{ govukSelect({
@@ -37,7 +25,7 @@
     }}
     </div>
 
-    <div class="govuk-grid-column-one-quarter inputs-less-margin">
+    <div class="govuk-grid-column-one-third inputs-less-margin">
       {{ govukSelect({
         id: "requires-3ds",
         name: "requires_3ds",
@@ -47,7 +35,7 @@
     }}
     </div>
 
-    <div class="govuk-grid-column-one-quarter inputs-less-margin">
+    <div class="govuk-grid-column-one-third inputs-less-margin">
       {{ govukSelect({
         id: "apple-pay-enabled",
         name: "apple_pay_enabled",
@@ -57,7 +45,7 @@
     }}
     </div>
 
-    <div class="govuk-grid-column-one-quarter inputs-less-margin">
+    <div class="govuk-grid-column-one-third inputs-less-margin">
       {{ govukSelect({
         id: "google-pay-enabled",
         name: "google_pay_enabled",
@@ -67,7 +55,7 @@
     }}
     </div>
 
-    <div class="govuk-grid-column-one-quarter inputs-less-margin">
+    <div class="govuk-grid-column-one-third inputs-less-margin">
       {{ govukSelect({
         id: "moto-enabled",
         name: "moto_enabled",
