@@ -10,7 +10,23 @@
         id: "type",
         name: "type",
         label: { text: "Type" },
-        items: typeOptions
+        items: [
+          {
+            text: 'All',
+            value: null,
+            selected: filters.type === null
+          },
+          {
+            text: 'Live',
+            value: 'live',
+            selected: filters.type === 'live'
+          },
+          {
+            text: 'Test',
+            value: 'test',
+            selected: filters.type === 'test'
+          }
+        ]
       })
     }}
     </div>
@@ -20,7 +36,38 @@
         id: "payment-provider",
         name: "payment_provider",
         label: { text: "Provider" },
-        items: paymentProviderOptions
+        items: [
+          {
+            text: 'All',
+            value: null,
+            selected: filters.payment_provider === null
+          },
+          {
+            text: 'Sandbox',
+            value: 'sandbox',
+            selected: filters.payment_provider === 'sandbox'
+          },
+          {
+            text: 'Worldpay',
+            value: 'worldpay',
+            selected: filters.payment_provider === 'worldpay'
+          },
+          {
+            text: 'Smartpay',
+            value: 'smartpay',
+            selected: filters.payment_provider === 'smartpay'
+          },
+          {
+            text: 'ePDQ',
+            value: 'epdq',
+            selected: filters.payment_provider === 'epdq'
+          },
+          {
+            text: 'Stripe',
+            value: 'stripe',
+            selected: filters.payment_provider === 'stripe'
+          }
+        ]
       })
     }}
     </div>
@@ -30,7 +77,23 @@
         id: "requires-3ds",
         name: "requires_3ds",
         label: { text: "3D Secure" },
-        items: requires3dsOptions
+        items: [
+          {
+            text: 'All',
+            value: null,
+            selected: filters.requires_3ds === null
+          },
+          {
+            text: 'Enabled',
+            value: 'true',
+            selected: filters.requires_3ds === 'true'
+          },
+          {
+            text: 'Disabled',
+            value: 'false',
+            selected: filters.requires_3ds === 'false'
+          }
+        ]
       })
     }}
     </div>
@@ -40,7 +103,23 @@
         id: "apple-pay-enabled",
         name: "apple_pay_enabled",
         label: { text: "Apple pay" },
-        items: applePayEnabledOptions
+        items: [
+          {
+            text: 'All',
+            value: null,
+            selected: filters.apple_pay_enabled === null
+          },
+          {
+            text: 'Enabled',
+            value: 'true',
+            selected: filters.apple_pay_enabled === 'true'
+          },
+          {
+            text: 'Disabled',
+            value: 'false',
+            selected: filters.apple_pay_enabled === 'false'
+          }
+        ]
       })
     }}
     </div>
@@ -50,7 +129,23 @@
         id: "google-pay-enabled",
         name: "google_pay_enabled",
         label: { text: "Google pay" },
-        items: googlePayEnabledOptions
+        items: [
+          {
+            text: 'All',
+            value: null,
+            selected: filters.google_pay_enabled === null
+          },
+          {
+            text: 'Enabled',
+            value: 'true',
+            selected: filters.google_pay_enabled === 'true'
+          },
+          {
+            text: 'Disabled',
+            value: 'false',
+            selected: filters.google_pay_enabled === 'false'
+          }
+        ]
       })
     }}
     </div>
@@ -60,7 +155,23 @@
         id: "moto-enabled",
         name: "moto_enabled",
         label: { text: "MOTO" },
-        items: motoEnabledOptions
+        items: [
+          {
+            text: 'All',
+            value: null,
+            selected: filters.moto_enabled === null
+          },
+          {
+            text: 'Enabled',
+            value: 'true',
+            selected: filters.moto_enabled === 'true'
+          },
+          {
+            text: 'Disabled',
+            value: 'false',
+            selected: filters.moto_enabled === 'false'
+          }
+        ]
       })
     }}
     </div>
