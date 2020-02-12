@@ -2,8 +2,8 @@
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-<div class="govuk-grid-row">
-  <form clas="govuk-clearfix" method="GET" action="/gateway_accounts" novalidate>
+<div class="filter govuk-grid-row">
+  <form clas="govuk-clearfix" method="GET" action="/gateway_accounts" novalidate="novalidate">
     <div class="govuk-grid-column-one-third inputs-less-margin">
       {{ govukInput({
         id: "id",
@@ -19,9 +19,59 @@
 
     <div class="govuk-grid-column-one-third inputs-less-margin">
       {{ govukSelect({
+        id: "type",
+        name: "type",
+        label: { text: "Type" },
+        items: typeOptions
+      })
+    }}
+    </div>
+
+    <div class="govuk-grid-column-one-third inputs-less-margin">
+      {{ govukSelect({
+        id: "payment-provider",
+        name: "payment_provider",
+        label: { text: "Provider" },
+        items: paymentProviderOptions
+      })
+    }}
+    </div>
+
+    <div class="govuk-grid-column-one-quarter inputs-less-margin">
+      {{ govukSelect({
+        id: "requires-3ds",
+        name: "requires_3ds",
+        label: { text: "3D Secure" },
+        items: requires3dsOptions
+      })
+    }}
+    </div>
+
+    <div class="govuk-grid-column-one-quarter inputs-less-margin">
+      {{ govukSelect({
+        id: "apple-pay-enabled",
+        name: "apple_pay_enabled",
+        label: { text: "Apple pay" },
+        items: applePayEnabledOptions
+      })
+    }}
+    </div>
+
+    <div class="govuk-grid-column-one-quarter inputs-less-margin">
+      {{ govukSelect({
+        id: "google-pay-enabled",
+        name: "google_pay_enabled",
+        label: { text: "Google pay" },
+        items: googlePayEnabledOptions
+      })
+    }}
+    </div>
+
+    <div class="govuk-grid-column-one-quarter inputs-less-margin">
+      {{ govukSelect({
         id: "moto-enabled",
         name: "moto_enabled",
-        label: { text: "MOTO enabled" },
+        label: { text: "MOTO" },
         items: motoEnabledOptions
       })
     }}
