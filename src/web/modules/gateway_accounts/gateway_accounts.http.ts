@@ -14,7 +14,6 @@ import { Service } from '../../../lib/pay-request/types/adminUsers'
 import DirectDebitGatewayAccount from '../../../lib/pay-request/types/directDebitConnector'
 import { GatewayAccount as CardGatewayAccount } from '../../../lib/pay-request/types/connector'
 import { ClientFormError } from '../common/validationErrorFormat'
-import { getSelectOptions, getEnabledDisabledSelectOptions } from '../common/selectOptions'
 
 const overview = async function overview(req: Request, res: Response): Promise<void> {
   const filters = parse(req.query)
@@ -29,50 +28,10 @@ const overview = async function overview(req: Request, res: Response): Promise<v
 
   const { accounts } = await Connector.accounts(params)
 
-  const typeOptions = getSelectOptions(filters.type, [
-    {
-      text: 'Live',
-      value: 'live'
-    },
-    {
-      text: 'Test',
-      value: 'test'
-    }
-  ])
-
-  const paymentProviderOptions = getSelectOptions(filters.payment_provider, [
-    {
-      text: 'Sandbox',
-      value: 'sandbox'
-    },
-    {
-      text: 'Worldpay',
-      value: 'worldpay'
-    },
-    {
-      text: 'Smartpay',
-      value: 'smartpay'
-    },
-    {
-      text: 'ePDQ',
-      value: 'epdq'
-    },
-    {
-      text: 'Stripe',
-      value: 'stripe'
-    }
-  ])
-
   res.render('gateway_accounts/overview', {
     card: true,
     accounts,
     messages: req.flash('info'),
-    typeOptions,
-    paymentProviderOptions,
-    requires3dsOptions: getEnabledDisabledSelectOptions(filters.requires_3ds),
-    applePayEnabledOptions: getEnabledDisabledSelectOptions(filters.apple_pay_enabled),
-    googlePayEnabledOptions: getEnabledDisabledSelectOptions(filters.google_pay_enabled),
-    motoEnabledOptions: getEnabledDisabledSelectOptions(filters.moto_enabled),
     filters,
     total: accounts.length.toLocaleString()
   })
