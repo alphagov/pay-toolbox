@@ -8,7 +8,7 @@
       <span>GOV.UK Pay platform</span>
     {% endif %}
   </span>
-  <h1 class="govuk-heading-m">Statistics</h1>
+  <h1 class="govuk-heading-m">Payments</h1>
   <div class="transactions-filter__container govuk-body">
     {% for period in ["today", "week", "month"] %}
       <a
@@ -19,21 +19,6 @@
     {% endfor %}
   </div>
   <div class="govuk-body">
-
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-one-half">
-        <div class = "center">
-          <h1>{{results.payments}}</h1>
-          <span>Total Payments</span>
-        </div>
-      </div>
-      <div class="govuk-grid-column-one-half">
-        <div class = "center">
-          <h1>{{results.gross | currency}}</h1>
-          <span>Gross</span>
-        </div>
-      </div>
-    </div>
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-third">
         <div class = "center">
@@ -53,6 +38,55 @@
           <span>In Progress</span>
         </div>
       </div>
+    </div>
+
+    <div class="govuk-!-margin-top-9">
+      <table class="govuk-table">
+        <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="col"></th>
+            <th class="govuk-table__header govuk-table__header--numeric" scope="col"></th>
+          </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+          <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="row">Payments</th>
+            <td class="govuk-table__cell govuk-table__cell--numeric">{{results.payments}}</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="row">Total amount</th>
+            <td class="govuk-table__cell govuk-table__cell--numeric">{{results.gross | currency}}</td>
+          </tr>
+       
+          <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="row">Refunds</th>
+            <td class="govuk-table__cell govuk-table__cell--numeric">{{results.refunds}}</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="row">Net income</th>
+            <td class="govuk-table__cell govuk-table__cell--numeric">{{results.netIncome | currency}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      {% if results.include_moto_statistics %}
+      <h2 class="govuk-heading-m">Additional statistics</h2>
+
+      <table class="govuk-table">
+        <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="col"></th>
+            <th class="govuk-table__header govuk-table__header--numeric" scope="col"></th>
+          </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+              <th class="govuk-table__header" scope="row">Moto payments</th>
+              <td class="govuk-table__cell govuk-table__cell--numeric">{{results.motoPayments}}</td>
+            </tr>
+        </tbody>
+      </table>
+      {% endif %}
     </div>
   </div>
 {% endblock %}
