@@ -165,6 +165,18 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
 
+  const toggleExperimentalFeaturesEnabledFlag = async function toggleExperimentalFeaturesEnabledFlag(serviceId) {
+    const path = `v1/api/services/${serviceId}`
+    const targetService = await service(serviceId)
+
+    const payload = {
+      op: 'replace',
+      path: 'experimental_features_enabled',
+      value: !targetService.experimental_features_enabled
+    }
+    return axiosInstance.patch(path, payload).then(utilExtractData)
+  }
+
   return {
     user,
     findUser,
@@ -181,7 +193,8 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     toggleUserEnabled,
     removeUserFromService,
     resetUserSecondFactor,
-    toggleTerminalStateRedirectFlag
+    toggleTerminalStateRedirectFlag,
+    toggleExperimentalFeaturesEnabledFlag
   }
 }
 

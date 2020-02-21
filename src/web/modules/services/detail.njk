@@ -40,6 +40,10 @@
         <th class="govuk-table__header" scope="col">Redirect to service on terminal state</th>
         <td class="govuk-table__cell">{{service.redirect_to_service_immediately_on_terminal_state | string | capitalize }}</td>
       </tr>
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Experimental features are enabled</th>
+        <td class="govuk-table__cell">{{service.experimental_features_enabled | string | capitalize }}</td>
+      </tr>
     </tbody>
   </table>
   </div>
@@ -144,6 +148,17 @@
       text: "Toggle redirect to service on terminal state flag",
       classes: "govuk-button--warning",
       href: "/services/" + serviceId + "/toggle_terminal_state_redirect"
+      })
+    }}
+  </div>
+
+  <div>
+    <h1 class="govuk-heading-s">Toggle experimental features enabled flag</h1>
+    <p class="govuk-body">Enabling this flag for a service will opt the service into any features checking for this flag to be set on the service.</p>
+    <p class="govuk-body">This flag should only be enabled while the service is testing functionality that will not be made available to all users/ services initially.</p>
+    {{ govukButton({
+      text: "Toggle experimental features flag",
+      href: "/services/" + serviceId + "/toggle_experimental_features_enabled"
       })
     }}
   </div>

@@ -110,6 +110,20 @@ const toggleTerminalStateRedirectFlag = async function toggleTerminalStateRedire
   res.redirect(`/services/${serviceId}`)
 }
 
+const toggleExperimentalFeaturesEnabledFlag = async function toggleExperimentalFeaturesEnabledFlag(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const serviceId = req.params.id
+
+  const serviceResult = await AdminUsers.toggleExperimentalFeaturesEnabledFlag(serviceId)
+  const { experimental_features_enabled: state } = serviceResult
+  logger.info(`Toggled experimental features enabled flag to ${state} for service ${serviceId}`, { externalId: serviceId })
+
+  req.flash('info', `Experimental features enabled flag set to ${state} for service`)
+  res.redirect(`/services/${serviceId}`)
+}
+
 export default {
   overview: wrapAsyncErrorHandler(overview),
   detail: wrapAsyncErrorHandler(detail),
@@ -119,5 +133,6 @@ export default {
   updateLinkAccounts: wrapAsyncErrorHandler(updateLinkAccounts),
   search: wrapAsyncErrorHandler(search),
   searchRequest: wrapAsyncErrorHandler(searchRequest),
-  toggleTerminalStateRedirectFlag: wrapAsyncErrorHandler(toggleTerminalStateRedirectFlag)
+  toggleTerminalStateRedirectFlag: wrapAsyncErrorHandler(toggleTerminalStateRedirectFlag),
+  toggleExperimentalFeaturesEnabledFlag: wrapAsyncErrorHandler(toggleExperimentalFeaturesEnabledFlag)
 }

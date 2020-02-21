@@ -61,6 +61,7 @@ router.post('/services/:id/branding', auth.secured, auth.administrative, service
 router.get('/services/:id/link_accounts', auth.secured, auth.administrative, services.linkAccounts, services.detail.exceptions)
 router.post('/services/:id/link_accounts', auth.secured, auth.administrative, services.updateLinkAccounts.http, services.updateLinkAccounts.exceptions)
 router.get('/services/:id/toggle_terminal_state_redirect', auth.secured, services.toggleTerminalStateRedirectFlag)
+router.get('/services/:id/toggle_experimental_features_enabled', auth.secured, services.toggleExperimentalFeaturesEnabled)
 
 router.get('/services/:serviceId/gateway_account/:gatewayAccountId/payouts', auth.secured, payouts.show)
 router.get('/services/:serviceId/gateway_account/:gatewayAccountId/payouts/csv', auth.secured, payouts.listPayoutsCsv)
