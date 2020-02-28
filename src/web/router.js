@@ -108,10 +108,10 @@ router.get('/transactions', auth.secured, transactions.list)
 router.get('/platform/dashboard', auth.secured, platform.dashboard)
 router.get('/platform/dashboard/live', platform.live)
 
-router.get('/api/platform/timeseries', auth.secured, platform.timeseries)
-router.get('/api/platform/aggregate', auth.secured, platform.aggregate)
-router.get('/api/platform/ticker', auth.secured, platform.ticker)
-router.get('/api/platform/services', auth.secured, platform.services)
+router.get('/api/platform/timeseries', platform.timeseries)
+router.get('/api/platform/aggregate', platform.aggregate)
+router.get('/api/platform/ticker', platform.ticker)
+router.get('/api/platform/services', platform.services)
 
 router.get('/logout', auth.secured, auth.revokeSession)
 
