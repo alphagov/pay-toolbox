@@ -115,11 +115,7 @@
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">Blocked prepaid cards</dt>
           <dd class="govuk-summary-list__value">{{ account.block_prepaid_cards | string | capitalize }}</dd>
-          <dd class="govuk-summary-list__actions">
-            <a type="submit" class="govuk-link" href="/gateway_accounts/{{account.gateway_account_id}}/block_prepaid_cards/toggle">
-              Toggle<span class="govuk-visually-hidden"> blocked prepaid cards</span>
-            </a>
-          </dd>
+          <dd class="govuk-summary-list__actions"></dd>
         </div>
       {% endif %}
     {% if account.email_collection_mode != undefined %}
@@ -185,7 +181,7 @@
         href: "/gateway_accounts/" + gatewayAccountId + "/email_branding"
       })
       }}
-    {% endif %}
+   {% endif %}
   </div>
 
   {% if account.allow_moto === false %}
@@ -215,6 +211,33 @@
         }}
         <input type="hidden" name="_csrf" value="{{ csrf }}">
       </form>
+    </div>
+  {% endif %}
+
+  {% if account.block_prepaid_cards === true %}
+    <div>
+      <h1 class="govuk-heading-s">Allow prepaid cards</h1>
+      <p class="govuk-body">Prepaid cards are currently blocked on this service, users cannot use them to make payments.<p>
+      <p class="govuk-body">Allowing prepaid cards could potentially mean that more fraudulent users can access the service.<p>
+        {{ govukButton({
+          text: "Allow prepaid cards",
+          href: "/gateway_accounts/" + gatewayAccountId + "/block_prepaid_cards/toggle"
+          })
+        }}
+    </div>
+  {% endif %}
+
+  {% if account.block_prepaid_cards === false %}
+    <div>
+      <h1 class="govuk-heading-s">Block prepaid cards</h1>
+      <p class="govuk-body">Prepaid cards are allowed on this service, users can make payments using them.<p>
+      <p class="govuk-body">Blocking prepaid cards will mean that some users that only have access to them will no longer be able to use the service.<p>
+        {{ govukButton({
+          text: "Block prepaid cards",
+          classes: "govuk-button--warning",
+          href: "/gateway_accounts/" + gatewayAccountId + "/block_prepaid_cards/toggle"
+          })
+        }}
     </div>
   {% endif %}
 
