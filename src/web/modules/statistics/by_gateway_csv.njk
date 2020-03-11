@@ -1,3 +1,5 @@
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
 {% extends "layout/layout.njk" %}
 
 {% block main %}
@@ -5,54 +7,34 @@
     <span>GOV.UK Pay platform</span>
   </span>
 
-  <h1 class="govuk-heading-m">Transaction CSV report</h1>
+  <h1 class="govuk-heading-m">Transaction volume by service</h1>
 
   <div>
     <p class="govuk-body">
-      Download a monthly list of the volume of successful transactions for all accounts between the selected dates inclusive (e.g. January-February returns 2 months).
+      Download a list of successful transaction volumes by service and month. This report will only include data from live accounts.
     </p>
   </div>
 
   <div>
     <form method="post" action="/statistics/services">
-      <div class="govuk-form-group">
-        <label class="govuk-label" for="month">
-          From:
-        </label>
-        <select class="govuk-select" id="month" name="from_month">
-          {% for month in months %}
-          <option value="{{loop.index0}}">{{ month }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="govuk-form-group">
-        <label class="govuk-label" for="year">
-        </label>
-        <select class="govuk-select" id="year" name="from_year">
-          {% for year in years %}
-          <option value="{{year}}">{{ year }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="govuk-form-group">
-      <label class="govuk-label" for="month">
-          To:
-        </label>
-        <select class="govuk-select" id="month" name="to_month">
-          {% for month in months %}
-          <option value="{{loop.index0}}">{{ month }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="govuk-form-group">
-        <label class="govuk-label" for="year">
-        </label>
-        <select class="govuk-select" id="from_year" name="to_year">
-          {% for year in years %}
-          <option value="{{year}}">{{ year }}</option>
-          {% endfor %}
-        </select>
-      </div>
+      {{ govukCheckboxes({
+        idPrefix: "options",
+        name: "options",
+        classes: "govuk-checkboxes--small",
+        fieldset: {
+          legend: {
+            text: "Options",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--s"
+          }
+        },
+        items: [
+          {
+            value: "all",
+            text: "Report on transactions from the begining of GOV.UK Pay"
+          }
+        ]
+      }) }}
       <button type="submit" class="govuk-button" data-module="govuk-button">
         Download transactions
       </button>

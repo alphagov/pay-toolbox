@@ -6,7 +6,7 @@ const DateFilter = require('./dateFilter.model')
 const { wrapAsyncErrorHandlers } = require('./../../../lib/routes')
 const { formatStatsAsTableRows } = require('./statistics.utils.js')
 
-const { ValidationError } = require('../../../lib/errors')
+const startOfGovUkPay = moment.utc().month(8).year(2016)
 
 const overview = async function overview(req, res) {
   const report = await Connector.performanceReport()
@@ -48,97 +48,105 @@ const compareFilter = async function compareFilter(req, res) {
 }
 
 const csvServices = async function csvServices(req, res) {
-  const now = moment().startOf('year')
-  const interimYear = moment().year('2015').startOf('year')
-  const years = []
-
-  while (interimYear.isSameOrBefore(now)) {
-    years.push(interimYear.format('Y'))
-    interimYear.add(1, 'year')
-  }
-
-  res.render('statistics/by_gateway_csv', {
-    years,
-    months: moment.months(),
-    csrf: req.csrfToken()
-  })
+  res.render('statistics/by_gateway_csv', { csrf: req.csrfToken() })
 }
 
 const byServices = async function byServices(req, res, next) {
-  const fromDate = moment().utc().month(req.body.from_month).year(req.body.from_year).startOf('month')
-  const toDate = moment().utc().month(req.body.to_month).year(req.body.to_year).endOf('month')
+  const { options } = req.body
+  const fromDate = options === 'all' ? startOfGovUkPay : moment.utc().startOf('month')
+  const toDate = moment.utc().endOf('month')
 
   try {
-    if (fromDate.isAfter(toDate)) {
-      throw new ValidationError('From date cannot be later than to date')
-    }
-
-    const [ gatewayAccountsResponse, gatewayAccountReport, services ] = await Promise.all([
-      Connector.accounts(),
-      Ledger.gatewayMonthlyPerformanceReport(fromDate.format(), toDate.format()),
-      AdminUsers.services()
-    ])
+    const [ gatewayAccountsResponse, services ] = await Promise.all([ Connector.accounts(), AdminUsers.services() ])
     const { accounts } = gatewayAccountsResponse
 
-    // Generate all the months in between the selected dates
-    const interim = fromDate.clone() // Perhaps remove and just use fromDate
-    const yearMonthValues = [ interim.format('YYYY-MM') ]
+    // Generate all months between from and to date
+    const compareDate = fromDate.clone()
+    const yearMonthValues = [ compareDate.format('YYYY-MM') ]
 
-    while (!(interim.format('M') === toDate.format('M') && interim.format('Y') === toDate.format('Y'))) {
-      interim.add(1, 'month')
-      yearMonthValues.push(interim.format('YYYY-MM'))
-    }
+    const fields = [{
+      label: 'GOV.UK Pay account ID',
+      value: 'gateway_account_id'
+    }, {
+      label: 'Service name',
+      value: 'service_name'
+    }, {
+      label: 'GOV.UK Pay internal description',
+      value: 'description'
+    }, {
+      label: 'Organisation name',
+      value: 'organisation_name'
+    }, {
+      label: 'Payment service provider',
+      value: 'payment_provider'
+    }, {
+      label: 'Service created date',
+      value: 'created_at'
+    }]
 
-    // Get all live gateway accounts from Connector but needs service_name from Adminusers
-    const liveGatewayAccounts = accounts
-    .filter((account) => account.type === 'live')
-    .map((account) => ({
-        gateway_account_id: account.gateway_account_id,
-        service_name: '',
-        description: account.description
-      }))
-    .map((account) => {
-      for (let i = 0; i < services.length; i += 1) {
-        const service = services[i]
-        if (service.gateway_account_ids.includes(account.gateway_account_id.toString())) {
-          account.service_name = service.name
-          break
-        }
-      }
-      return account
+    do {
+      const key = compareDate.format('YYYY-MM')
+      yearMonthValues.push(key)
+      fields.push({ label: key, value: key })
+      compareDate.add(1, 'month')
+    } while (compareDate.isBefore(toDate))
+
+    let serviceNameMap = {}
+    services.forEach((service) => {
+      Object.assign(
+        serviceNameMap,
+        service.gateway_account_ids.reduce((aggregate, accountId) => {
+          aggregate[accountId] = {
+            service: service.service_name && service.service_name.en,
+            organisation: service.merchant_details && service.merchant_details.name
+          }
+          return aggregate
+        }, {})
+      )
     })
 
-    // Generate blank report
+    const liveGatewayAccounts = accounts
+      .filter((account) => account.type === 'live')
+      .map((account) => {
+        account.service_name = serviceNameMap[account.gateway_account_id] && serviceNameMap[account.gateway_account_id].service || account.service_name
+        account.organisation_name = serviceNameMap[account.gateway_account_id] && serviceNameMap[account.gateway_account_id].organisation || ''
+        return account
+      })
+
+    const parser = new Parser({ fields })
+    res.set('Content-Type', 'text/csv')
+    res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_platform_transactions_by_service_month_${fromDate.format('YYYY-MM')}_${toDate.format('YYYY-MM')}.csv"`)
+    res.write(parser.getHeader())
+
+    const gatewayAccountReport = await Ledger.gatewayMonthlyPerformanceReport(fromDate.format(), toDate.format())
+
+    // default 0 amounts for all months and all gateway accounts
     const report_schema = liveGatewayAccounts
     .map((gatewayAccount) => yearMonthValues
-    .reduce((aggregate, month) => {
+      .reduce((aggregate, month) => {
         aggregate[month] = 0
         return aggregate
         }, {
-          gatewayAccountId: gatewayAccount.gateway_account_id,
+          gateway_account_id: gatewayAccount.gateway_account_id,
           service_name: gatewayAccount.service_name,
-          description: gatewayAccount.description
-        }))
+          description: gatewayAccount.description,
+          organisation_name: gatewayAccount.organisation_name,
+          payment_provider: gatewayAccount.payment_provider
+        })
+    )
 
     const completedReport = report_schema.map((emptyMonthlyReport) => {
-      for (let i = 0; i < gatewayAccountReport.length; i += 1) {
-        if (gatewayAccountReport[i].gateway_account_id === emptyMonthlyReport.gatewayAccountId) {
-          const monthAsString = (gatewayAccountReport[i].month).toString()
-          const month = monthAsString.length === 2 ? monthAsString : `0${monthAsString}`
-          const yearMonthValue = `${gatewayAccountReport[i].year}-${month}`
-          emptyMonthlyReport[yearMonthValue] = gatewayAccountReport[i].total_volume
+      for (let i = 0; i < gatewayAccountReport.length; i++) {
+        if (gatewayAccountReport[i].gateway_account_id === emptyMonthlyReport.gateway_account_id) {
+          const date = moment().utc().year(gatewayAccountReport[i].year).month(gatewayAccountReport[i].month)
+          emptyMonthlyReport[date.format('YYYY-MM')] = gatewayAccountReport[i].total_volume
         }
       }
       return emptyMonthlyReport
     })
+    res.write(`\n${parser.processData(completedReport)}`)
 
-    const fields = Object.keys(completedReport[0])
-    const json2csvParser = new Parser({ fields })
-    const csv = json2csvParser.parse(completedReport)
-
-    res.set('Content-Type', 'text/csv')
-    res.set('Content-Disposition', 'attachment; filename="year.csv"')
-    res.status(200).send(csv)
+    res.end()
   } catch (error) {
     next(error)
   }

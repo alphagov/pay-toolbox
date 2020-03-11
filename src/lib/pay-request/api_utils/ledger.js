@@ -85,11 +85,7 @@ const ledgerMethods = function ledgerMethods(instance) {
       params.override_account_id_restriction = true
     }
 
-    const query = Object.keys(params)
-      .map((key) => `${key}=${params[key]}`)
-      .join('&')
-
-    return axiosInstance.get(`/v1/report/payments_by_state?${query}`)
+    return axiosInstance.get('/v1/report/payments_by_state', { params })
       .then(utilExtractData)
   }
 
@@ -106,11 +102,7 @@ const ledgerMethods = function ledgerMethods(instance) {
       params.override_account_id_restriction = true
     }
 
-    const query = Object.keys(params)
-      .map((key) => `${key}=${params[key]}`)
-      .join('&')
-
-    return axiosInstance.get(`/v1/report/transactions-summary?${query}`)
+    return axiosInstance.get('/v1/report/transactions-summary', { params })
       .then(utilExtractData)
   }
   const gatewayMonthlyPerformanceReport = function gatewayMonthlyPerformanceReport(fromDate, toDate) {
@@ -119,11 +111,7 @@ const ledgerMethods = function ledgerMethods(instance) {
       to_date: toDate
     }
 
-    const query = Object.keys(params)
-      .map((key) => `${key}=${params[key]}`)
-      .join('&')
-
-    return axiosInstance.get(`/v1/report/gateway-performance-report?${query}`)
+    return axiosInstance.get('/v1/report/gateway-performance-report', { params })
       .then(utilExtractData)
   }
 
