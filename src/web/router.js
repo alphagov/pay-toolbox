@@ -35,7 +35,8 @@ router.get('/statistics/filter/date', auth.secured, statistics.dateFilterRequest
 router.post('/statistics/filter/date', auth.secured, statistics.dateFilter)
 router.get('/statistics/compare/date', auth.secured, statistics.compareFilterRequest)
 router.post('/statistics/compare/date', auth.secured, statistics.compareFilter)
-router.get('/statistics/services', auth.secured, statistics.byServices)
+router.get('/statistics/services', auth.secured, statistics.csvServices)
+router.post('/statistics/services', auth.secured, statistics.byServices)
 
 router.get('/gateway_accounts', auth.secured, gatewayAccounts.overview)
 router.get('/gateway_accounts/direct_debit', auth.secured, gatewayAccounts.overviewDirectDebit)

@@ -1,0 +1,44 @@
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">
+    <span>GOV.UK Pay platform</span>
+  </span>
+
+  <h1 class="govuk-heading-m">Transaction volume by service</h1>
+
+  <div>
+    <p class="govuk-body">
+      Download a list of successful transaction volumes by service and month. This report will only include data from live accounts.
+    </p>
+  </div>
+
+  <div>
+    <form method="post" action="/statistics/services">
+      {{ govukCheckboxes({
+        idPrefix: "options",
+        name: "options",
+        classes: "govuk-checkboxes--small",
+        fieldset: {
+          legend: {
+            text: "Options",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--s"
+          }
+        },
+        items: [
+          {
+            value: "all",
+            text: "Report on transactions from the begining of GOV.UK Pay"
+          }
+        ]
+      }) }}
+      <button type="submit" class="govuk-button" data-module="govuk-button">
+        Download transactions
+      </button>
+      <input type="hidden" name="_csrf" value="{{ csrf }}">
+    </form>
+  </div>
+{% endblock %}
