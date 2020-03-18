@@ -117,9 +117,10 @@ const byServices = async function byServices(req, res, next) {
     res.set('Content-Type', 'text/csv')
     res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_platform_transactions_by_service_month_${fromDate.format('YYYY-MM')}_${toDate.format('YYYY-MM')}.csv"`)
     res.write(parser.getHeader())
+    res.flush()
 
     const gatewayAccountReport = await Ledger.gatewayMonthlyPerformanceReport(fromDate.format(), toDate.format())
-
+  
     // default 0 amounts for all months and all gateway accounts
     const report_schema = liveGatewayAccounts
     .map((gatewayAccount) => yearMonthValues
@@ -138,7 +139,8 @@ const byServices = async function byServices(req, res, next) {
     const completedReport = report_schema.map((emptyMonthlyReport) => {
       for (let i = 0; i < gatewayAccountReport.length; i++) {
         if (gatewayAccountReport[i].gateway_account_id === emptyMonthlyReport.gateway_account_id) {
-          const date = moment().utc().year(gatewayAccountReport[i].year).month(gatewayAccountReport[i].month)
+          const zeroIndexedMonth = Number(gatewayAccountReport[i].month) - 1
+          const date = moment().utc().year(gatewayAccountReport[i].year).month(zeroIndexedMonth)
           emptyMonthlyReport[date.format('YYYY-MM')] = gatewayAccountReport[i].total_volume
         }
       }
