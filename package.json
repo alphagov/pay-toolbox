@@ -85,7 +85,7 @@
     "@types/react": "16.9.15",
     "@types/react-dom": "16.9.4",
     "@types/stripe": "6.25.8",
-    "@types/webpack": "4.41.0",
+    "@types/webpack": "4.41.8",
     "@types/webpack-manifest-plugin": "2.1.0",
     "@types/webpack-node-externals": "1.7.0",
     "@typescript-eslint/eslint-plugin": "2.10.0",
