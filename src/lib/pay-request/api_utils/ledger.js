@@ -144,6 +144,12 @@ const ledgerMethods = function ledgerMethods(instance) {
       .then(utilExtractData)
   }
 
+  const transactionByGatewayTransactionId = function transactionByGatewayTransactionId(id, paymentProvider) {
+    return axiosInstance.get(`/v1/transaction/gateway-transaction/${id}?payment_provider=${paymentProvider}`)
+      .then(utilExtractData)
+      .catch(handleNotFound('Transaction', id))
+  }
+
   return {
     transaction,
     transactions,
@@ -155,7 +161,8 @@ const ledgerMethods = function ledgerMethods(instance) {
     paymentVolumesByHour,
     paymentVolumesAggregate,
     eventTicker,
-    gatewayMonthlyPerformanceReport
+    gatewayMonthlyPerformanceReport,
+    transactionByGatewayTransactionId
   }
 }
 

@@ -2,7 +2,7 @@ import Stripe from 'stripe'
 import _ from 'lodash'
 
 import { PayTransactionCSVEntity, PaymentType } from './csv'
-import { Connector } from '../../../lib/pay-request'
+import { Ledger } from '../../../lib/pay-request'
 
 export const STRIPE_FEES_FEATURE_TURNED_ON = 1556823600
 
@@ -15,7 +15,7 @@ const legacyPayPayment = async function legacyPayPayment(
   const stripeChargeId = transferToAccount.source_transaction
 
   // @TODO(sfount) will throw 404, handle this error for a better message
-  return Connector.getChargeByGatewayTransactionId(stripeChargeId)
+  return Ledger.transactionByGatewayTransactionId(stripeChargeId, 'stripe')
 }
 
 const payPayment = async function payPayment(
@@ -26,7 +26,7 @@ const payPayment = async function payPayment(
   // @ts-ignore
   const transferFromPlatform = payment.source.source_transfer
   const payId = transferFromPlatform.transfer_group
-  return Connector.charge(gatewayAccountId, payId)
+  return Ledger.transaction(payId)
 }
 
 const legacyPayRefund = async function legacyPayRefund(
@@ -36,7 +36,7 @@ const legacyPayRefund = async function legacyPayRefund(
   // @ts-ignore
   const originalCharge = refund.source.charge
   const stripeChargeId = originalCharge.source_transfer.source_transaction
-  return Connector.getChargeByGatewayTransactionId(stripeChargeId)
+  return Ledger.transactionByGatewayTransactionId(stripeChargeId, 'stripe')
 }
 
 const payRefund = async function payRefund(
@@ -46,7 +46,7 @@ const payRefund = async function payRefund(
 ): Promise<any> {
   // @ts-ignore
   const payId = refund.source.transfer_group
-  return Connector.charge(gatewayAccountId, payId)
+  return Ledger.transaction(payId)
 }
 
 export async function reconcilePayment(
@@ -59,7 +59,7 @@ export async function reconcilePayment(
     : await payPayment(payment, gatewayAccountId)
 
   return {
-    payId: payCharge.charge_id,
+    payId: payCharge.transaction_id,
     payReference: payCharge.reference,
     type: PaymentType.PAYMENT,
     transactionDate: new Date(payCharge.created_date),
@@ -81,25 +81,25 @@ export async function reconcileRefund(
     ? await legacyPayRefund(refund)
     : await payRefund(refund, gatewayAccountId)
 
-  const refunds = await Connector.refunds(gatewayAccountId, payCharge.charge_id)
+  const refunds = await Ledger.relatedTransactions(payCharge.transaction_id, gatewayAccountId)
 
   // @TODO(sfount) matching on amount and ~time won't work scalably,
   //               the transfer ID should be recorded by Connector during capture as the refund
   //               and transfer are entirely separate processes
   const indexed = _.groupBy(
     // eslint-disable-next-line no-underscore-dangle
-    _.filter(refunds._embedded.refunds, [ 'status', 'success' ]),
+    _.filter(refunds.transactions, [ 'state.status', 'success' ]),
     'amount'
   )
   const match = indexed[Math.abs(refund.amount)]
 
   if (match.length !== 1) {
-    throw new Error(`Unable to process refunds for payment ${payCharge.charge_id} (unknown number of matches)`)
+    throw new Error(`Unable to process refunds for payment ${payCharge.transaction_id} (unknown number of matches)`)
   }
   const matchedPayRefund = match.pop()
 
   return {
-    payId: matchedPayRefund.refund_id,
+    payId: matchedPayRefund.transaction_id,
     payReference: payCharge.reference,
     type: PaymentType.REFUND,
     transactionDate: new Date(matchedPayRefund.created_date),
@@ -107,7 +107,7 @@ export async function reconcileRefund(
     cardHolderName: payCharge.card_details && payCharge.card_details.cardholder_name,
     fee: 0,
     net: matchedPayRefund.amount,
-    refundForPayId: refunds.payment_id,
+    refundForPayId: refunds.parent_transaction_id,
     // @ts-ignore
     gatewayId: refund.source.id
   }
