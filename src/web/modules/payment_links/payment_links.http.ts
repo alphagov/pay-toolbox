@@ -12,20 +12,20 @@ function indexPaymentLinksByType(paymentLink: any): any {
 
 export async function list(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    let account
+    let service
     const { accountId } = req.params
 
     const paymentLinksRepsonse = await Products.paymentLinksByGatewayAccount(accountId)
     const paymentLinks = paymentLinksRepsonse
-      .filter((link: any) => !(link.type === 'PROTOTYPE'))
+      .filter((link: any) => link.type === 'ADHOC')
       .map(indexPaymentLinksByType)
 
     if (accountId) {
-      account = await AdminUsers.gatewayAccountServices(accountId)
+      service = await AdminUsers.gatewayAccountServices(accountId)
     }
 
     res.render('payment_links/overview', {
-      account, paymentLinks
+      service, paymentLinks
     })
   } catch (error) {
     next(error)
