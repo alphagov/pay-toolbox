@@ -1,5 +1,5 @@
 {% from "transactions/status.macro.njk" import status %}
-
+{% from "common/json.njk" import json %}
 {% extends "layout/layout.njk" %}
 
 {% block main %}
@@ -61,4 +61,6 @@
       </tbody>
     </table>
   </div>
+
+  {{ json("Payment links list source", paymentLinks) }}
 {% endblock %}
