@@ -1,0 +1,64 @@
+{% from "transactions/status.macro.njk" import status %}
+
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">
+    {% if account %}
+      <span>{{ account.name }}</span>
+    {% else %}
+      <span>GOV.UK Pay platform</span>
+    {% endif %}
+  </span>
+
+  <h1 class="govuk-heading-m">Payment links</h1>
+
+  {% if filters.reference %}
+  <div class="govuk-body">
+    <span>Filtered by reference</span>
+    <span><strong class="govuk-tag">{{ filters.reference }}</strong></span>
+  </div>
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+  {% endif %}
+
+  <div>
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col">ID</th>
+          <th class="govuk-table__header" scope="col">Name</th>
+          <th class="govuk-table__header" scope="col">Type</th>
+          <th class="govuk-table__header" scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {% for link in paymentLinks %}
+        <tr class="govuk-table__row" onclick="local.href='/transactions'">
+          <td class="govuk-table__cell">
+            <span class="govuk-caption-m">{{ link.external_id | truncate(6) }}</span>
+          </td>
+          <td class="govuk-table__cell">
+            <span>{{ link.name or "(No name)" }}</span>
+          </td>
+          <td class="govuk-table__cell">
+            <span>{{ link.type }}</span>
+          </td>
+          <td class="govuk-table__cell">
+            <strong class="govuk-tag">{{ link.status }}</strong>
+          </td>
+        </tr>
+        <tr class="govuk-table__row" onclick="local.href='/transactions'">
+          <td class="govuk-table__cell" colspan="4">
+            <a class="govuk-link govuk-link--no-visited-state" href="{{ link._indexedLinks.friendly or link._indexedLinks.pay }}">
+                {{ link._indexedLinks.friendly or link._indexedLinks.pay }}
+              </a>
+        </tr>
+        {% else %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell center" colspan="4"><span><i>No payment links found.</i></span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
