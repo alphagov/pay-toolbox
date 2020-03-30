@@ -18,6 +18,7 @@ const payouts = require('./modules/payouts/payouts.http')
 const transactions = require('./modules/transactions/transactions.http')
 const parity = require('./modules/transactions/discrepancies/validateLedger.http')
 const platform = require('./modules/platform/dashboard.http')
+const paymentLinks = require('./modules/payment_links/payment_links.http')
 
 // @TODO(sfount) remove `default`s on update to import export syntax
 const users = require('./modules/users/users.http').default
@@ -52,6 +53,8 @@ router.post('/gateway_accounts/:id/surcharge', auth.secured, gatewayAccounts.upd
 router.get('/gateway_accounts/:id/email_branding', auth.secured, gatewayAccounts.emailBranding)
 router.post('/gateway_accounts/:id/email_branding', auth.secured, gatewayAccounts.updateEmailBranding)
 router.post('/gateway_accounts/:id/toggle_moto_payments', auth.secured, gatewayAccounts.toggleMotoPayments)
+
+router.get('/gateway_accounts/:accountId/payment_links', auth.secured, paymentLinks.list)
 
 router.get('/services', auth.secured, services.overview)
 router.get('/services/search', auth.secured, services.search)
