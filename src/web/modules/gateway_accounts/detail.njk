@@ -162,6 +162,11 @@
       })
       }}
       {{ govukButton({
+        text: "View payment links",
+        href: "/gateway_accounts/" + gatewayAccountId + "/payment_links"
+      })
+      }}
+      {{ govukButton({
       text: "Download transaction CSV reports",
       href: "/transactions/csv?account=" + gatewayAccountId
       })
