@@ -109,6 +109,8 @@ router.get('/transactions/:id/parity', auth.secured, parity.validateLedgerTransa
 
 router.get('/transactions', auth.secured, transactions.list)
 
+router.get('/payment_links', auth.secured, paymentLinks.list)
+
 router.get('/platform/dashboard', auth.secured, platform.dashboard)
 router.get('/platform/dashboard/live', platform.live)
 

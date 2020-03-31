@@ -1,3 +1,5 @@
+const moment = require('moment')
+
 const currencyFormatter = new Intl.NumberFormat('en-GB', {
   style: 'currency',
   currency: 'GBP'
@@ -40,10 +42,15 @@ const toISODateString = function toISODateString(timestamp) {
   return date.toISOString().split('T')[0]
 }
 
+const toFormattedDateSince = function toFormattedDateSince(date) {
+  return moment(date).fromNow()
+}
+
 module.exports = {
   toFormattedDate,
   toCurrencyString,
   toFormattedDateLong,
   toUnixDate,
-  toISODateString
+  toISODateString,
+  toFormattedDateSince
 }
