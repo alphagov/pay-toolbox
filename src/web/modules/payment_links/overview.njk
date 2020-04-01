@@ -43,7 +43,7 @@
           {% if not accountId %}
           <tr class="govuk-table__row">
             <td class="govuk-table__cell" colspan="4">
-              <strong class="govuk-!-margin-right-2">{{ serviceGatewayAccountIndex[group.key] }}</strong>  <a class="govuk-link govuk-link--no-visited-state" href="/transactions?account_id={{ group.key }}">Transactions</a>
+              <strong class="govuk-!-margin-right-2">{{ serviceGatewayAccountIndex[group.key] }}</strong>  <a class="govuk-link govuk-link--no-visited-state" href="/transactions?account={{ group.key }}">Transactions</a>
             </td>
           </tr>
           {% endif %}
