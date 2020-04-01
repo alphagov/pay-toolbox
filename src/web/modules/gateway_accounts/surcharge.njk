@@ -1,7 +1,8 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-
 {% extends "layout/layout.njk" %}
+
+{% set isTestData = account and not (account.type === "live") %}
 
 {% block main %}
   <span class="govuk-caption-m">{{service.name}} ({{ account.gateway_account_id }})</span>
