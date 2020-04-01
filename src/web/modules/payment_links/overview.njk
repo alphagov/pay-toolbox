@@ -20,6 +20,20 @@
     </div>
   {% endif %}
 
+  {% if filterLiveAccounts %}
+  <div class="govuk-body">
+    <p class="govuk-body">
+      <span>Filtering to only show payment links from live gateway accounts</span>
+    </p>
+    <p class="govuk-body">
+      <a class="govuk-link govuk-link--no-visited-state" href="?live=false">
+        Show payment links from all accounts
+      </a>
+    </p>
+  </div>
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+  {% endif %}
+
   <div>
     <table class="govuk-table">
       <thead class="govuk-table__head">

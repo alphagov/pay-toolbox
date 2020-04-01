@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { Request, Response, NextFunction } from 'express'
-import { Products, AdminUsers } from '../../../lib/pay-request'
+import { Products, AdminUsers, Connector } from '../../../lib/pay-request'
 
 function indexPaymentLinksByType(paymentLink: any): any {
   const index = paymentLink.product._links.reduce((aggregate: any, linkDetails: any) => {
@@ -13,9 +13,13 @@ function indexPaymentLinksByType(paymentLink: any): any {
 
 export async function list(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    let serviceRequest, paymentLinksRequest
+    let serviceRequest, paymentLinksRequest, liveAccountsRequest
     const { accountId } = req.params
     const sort = req.query.sort || 'last_payment_date'
+    const live = req.query.live === undefined ? true : req.query.live && req.query.live !== "false"
+
+    // we're only going to filter live gateway accounts if we're at the whole platform level
+    const filterLiveAccounts = live && !accountId
 
     if (accountId) {
       serviceRequest = AdminUsers.gatewayAccountServices(accountId)
@@ -23,9 +27,17 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     } else {
       serviceRequest = AdminUsers.services()
     }
+
+    if (filterLiveAccounts) {
+      liveAccountsRequest = Connector.accounts({ type: 'live' })
+        .then((response: any) => response.accounts)
+    } else {
+      liveAccountsRequest = Promise.resolve([])
+    }
+
     paymentLinksRequest = Products.paymentLinksWithUsage(accountId)
 
-    const [serviceResponse, paymentLinksResponse] = await Promise.all([serviceRequest, paymentLinksRequest])
+    const [serviceResponse, paymentLinksResponse, liveAccountsResponse] = await Promise.all([serviceRequest, paymentLinksRequest, liveAccountsRequest])
 
     const serviceGatewayAccountIndex = serviceResponse
       .reduce((aggregate: any, service: any) => {
@@ -35,7 +47,12 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
         return aggregate
       }, {})
 
-    const paymentLinks = paymentLinksResponse.map(indexPaymentLinksByType)
+    const liveAccounts = liveAccountsResponse.map((account: any) => account.gateway_account_id)
+
+    const paymentLinks = paymentLinksResponse
+      .map(indexPaymentLinksByType)
+      .filter((link: any) => !filterLiveAccounts || liveAccounts.includes(link.product.gateway_account_id))
+
     const groupedLinks = _.groupBy(paymentLinks, 'product.gateway_account_id')
     const orderedGroups = _.orderBy(
       Object.keys(groupedLinks)
@@ -53,7 +70,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     )
 
     res.render('payment_links/overview', {
-      groupedPaymentLinks: orderedGroups, accountId, serviceGatewayAccountIndex, sort
+      groupedPaymentLinks: orderedGroups, accountId, serviceGatewayAccountIndex, sort, filterLiveAccounts
     })
   } catch (error) {
     next(error)
