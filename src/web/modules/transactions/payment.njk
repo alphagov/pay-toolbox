@@ -1,7 +1,8 @@
 {% from "transactions/status.macro.njk" import status %}
 {% from "common/json.njk" import json %}
-
 {% extends "layout/layout.njk" %}
+
+{% set isTestData = not transaction.live %}
 
 {% block main %}
   <h1 class="govuk-heading-m">Payment</h1>

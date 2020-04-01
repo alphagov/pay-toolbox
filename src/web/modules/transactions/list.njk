@@ -2,6 +2,8 @@
 
 {% extends "layout/layout.njk" %}
 
+{% set isTestData = account and not account.live %}
+
 {% block main %}
   <span class="govuk-caption-m">
     {% if account %}
