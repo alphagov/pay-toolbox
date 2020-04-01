@@ -14,6 +14,15 @@ import { Service } from '../../../lib/pay-request/types/adminUsers'
 import DirectDebitGatewayAccount from '../../../lib/pay-request/types/directDebitConnector'
 import { GatewayAccount as CardGatewayAccount } from '../../../lib/pay-request/types/connector'
 import { ClientFormError } from '../common/validationErrorFormat'
+import * as config from '../../../config'
+import Stripe from 'stripe'
+import HTTPSProxyAgent from 'https-proxy-agent'
+
+const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY)
+stripe.setApiVersion('2018-09-24')
+
+// @ts-ignore
+if (config.server.HTTPS_PROXY) stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
 
 const overview = async function overview(req: Request, res: Response): Promise<void> {
   const filters = parse(req.query)
@@ -247,6 +256,46 @@ const toggleMotoPayments = async function toggleMotoPayments(
   res.redirect(`/gateway_accounts/${gatewayAccountId}`)
 }
 
+const updateStripeStatementDescriptorPage = async function updateStripeStatementDescriptorPage(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { id } = req.params
+  const account = await getAccount(id)
+
+  res.render('gateway_accounts/stripe_statement_descriptor', { account, csrf: req.csrfToken() })
+}
+
+const updateStripeStatementDescriptor = async function updateStripeStatementDescriptor(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { statement_descriptor } = req.body
+  const { id } = req.params
+  const account = await Connector.accountWithCredentials(id)
+
+  if (!statement_descriptor) {
+    throw new Error('Cannot update empty state descriptor')
+  }
+
+  // @ts-ignore
+  const updateParams = {
+    settings: {
+      payments: {
+        statement_descriptor
+      }
+    }
+  }
+  await stripe.accounts.update(
+    account.credentials.stripe_account_id,
+    // @ts-ignore
+    updateParams
+  )
+  req.flash('info', `Statement descriptor updated to [${statement_descriptor}]`)
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
+
 export default {
   overview: wrapAsyncErrorHandler(overview),
   overviewDirectDebit: wrapAsyncErrorHandler(overviewDirectDebit),
@@ -261,5 +310,8 @@ export default {
   emailBranding: wrapAsyncErrorHandler(emailBranding),
   updateEmailBranding: wrapAsyncErrorHandler(updateEmailBranding),
   toggleBlockPrepaidCards: wrapAsyncErrorHandler(toggleBlockPrepaidCards),
-  toggleMotoPayments: wrapAsyncErrorHandler(toggleMotoPayments)
+  toggleMotoPayments: wrapAsyncErrorHandler(toggleMotoPayments),
+  updateStripeStatementDescriptorPage: wrapAsyncErrorHandler(updateStripeStatementDescriptorPage),
+  updateStripeStatementDescriptor: wrapAsyncErrorHandler(updateStripeStatementDescriptor)
+
 }

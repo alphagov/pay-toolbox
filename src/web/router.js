@@ -53,6 +53,8 @@ router.post('/gateway_accounts/:id/surcharge', auth.secured, gatewayAccounts.upd
 router.get('/gateway_accounts/:id/email_branding', auth.secured, gatewayAccounts.emailBranding)
 router.post('/gateway_accounts/:id/email_branding', auth.secured, gatewayAccounts.updateEmailBranding)
 router.post('/gateway_accounts/:id/toggle_moto_payments', auth.secured, gatewayAccounts.toggleMotoPayments)
+router.get('/gateway_accounts/:id/stripe_statement_descriptor', auth.secured, gatewayAccounts.updateStripeStatementDescriptorPage)
+router.post('/gateway_accounts/:id/stripe_statement_descriptor', auth.secured, gatewayAccounts.updateStripeStatementDescriptor)
 
 router.get('/gateway_accounts/:accountId/payment_links', auth.secured, paymentLinks.list)
 router.get('/gateway_accounts/:accountId/payment_links/csv', auth.secured, paymentLinks.listCSV)
