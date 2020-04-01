@@ -26,7 +26,8 @@ const {
   toFormattedDate,
   toFormattedDateLong,
   toCurrencyString,
-  toUnixDate
+  toUnixDate,
+  toFormattedDateSince
 } = require('./../lib/format')
 
 // @FIXME(sfount) errors should be thrown and this should be properly handled if
@@ -106,6 +107,7 @@ const configureTemplateRendering = function configureTemplateRendering(instance)
   templaterEnvironment.addGlobal('manifest', { ...staticResourceManifest, ...browserManifest })
   templaterEnvironment.addFilter('formatDate', (date) => toFormattedDate(new Date(date)))
   templaterEnvironment.addFilter('formatDateLong', (date) => toFormattedDateLong(new Date(date)))
+  templaterEnvironment.addFilter('formatDateSince', (date) => toFormattedDateSince(new Date(date)))
   templaterEnvironment.addFilter('unixDate', (timestamp) => toUnixDate(timestamp))
   templaterEnvironment.addFilter('currency', (currencyInPence) => toCurrencyString(currencyInPence / 100))
   templaterEnvironment.addFilter('isObject', (value) => typeof value === 'object')

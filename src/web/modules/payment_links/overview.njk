@@ -2,61 +2,83 @@
 {% from "common/json.njk" import json %}
 {% extends "layout/layout.njk" %}
 
+{% set serviceName = serviceGatewayAccountIndex[accountId] if accountId else "" %}
+
 {% block main %}
   <span class="govuk-caption-m">
-    {% if service %}
-      <span>{{ service.name }}</span>
+    {% if accountId %}
+      <span>{{ serviceName }}</span>
     {% else %}
       <span>GOV.UK Pay platform</span>
     {% endif %}
   </span>
-
   <h1 class="govuk-heading-m">Payment links</h1>
 
-  {% if filters.reference %}
-  <div class="govuk-body">
-    <span>Filtered by reference</span>
-    <span><strong class="govuk-tag">{{ filters.reference }}</strong></span>
-  </div>
-  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+  {% if accountId %}
+    <div>
+      <a href="/gateway_accounts/{{ accountId }}" class="govuk-back-link">Associated gateway account {{serviceName}} ({{ accountId }})</a>
+    </div>
   {% endif %}
 
   <div>
     <table class="govuk-table">
       <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-          <th class="govuk-table__header" scope="col">ID</th>
           <th class="govuk-table__header" scope="col">Name</th>
           <th class="govuk-table__header" scope="col">Status</th>
+          <th class="govuk-table__header" scope="col">
+            <a class="govuk-link govuk-link--no-visited-state" href="?sort=payment_count">
+              Payments created
+            </a>
+          </th>
+          <th class="govuk-table__header" scope="col">
+            <a class="govuk-link govuk-link--no-visited-state" href="?sort=last_payment_date">
+              Last used
+            </a>
+          </th>
         </tr>
       </thead>
       <tbody class="govuk-table__body">
-        {% for link in paymentLinks %}
-        <tr class="govuk-table__row" onclick="local.href='/transactions'">
-          <td class="govuk-table__cell">
-            <span class="govuk-caption-m">{{ link.external_id | truncate(6) }}</span>
-          </td>
-          <td class="govuk-table__cell">
-            <span>{{ link.name or "(No name)" }}</span>
-          </td>
-          <td class="govuk-table__cell">
-            <strong class="govuk-tag">{{ link.status }}</strong>
-          </td>
-        </tr>
-        <tr class="govuk-table__row" onclick="local.href='/transactions'">
-          <td class="govuk-table__cell" colspan="3">
-            <a class="govuk-link govuk-link--no-visited-state" href="{{ link._indexedLinks.friendly or link._indexedLinks.pay }}">
-                {{ link._indexedLinks.friendly or link._indexedLinks.pay }}
+        {% for group in groupedPaymentLinks %}
+          {% if not accountId %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell" colspan="4">
+              <strong class="govuk-!-margin-right-2">{{ serviceGatewayAccountIndex[group.key] }}</strong>  <a class="govuk-link govuk-link--no-visited-state" href="/transactions?account_id={{ group.key }}">Transactions</a>
+            </td>
+          </tr>
+          {% endif %}
+          {% for link in group.links %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">
+              <span>{{ (link.product.name or "(No name)") | truncate(30) }}</span>
+            </td>
+            <td class="govuk-table__cell">
+              <strong class="govuk-tag">{{ link.product.status }}</strong>
+            </td>
+            <td class="govuk-table__cell">
+              <span>{{ link.payment_count }}</span>
+            </td>
+            <td class="govuk-table__cell">
+              <span>{{ link.last_payment_date | formatDateSince }}</span>
+            </td>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell" colspan="4">
+              {% set linkHref = link.product._indexedLinks.friendly or link.product._indexedLinks.pay %}
+              <a class="govuk-link govuk-link--no-visited-state" href="{{ linkHref }}">
+                {{ linkHref | truncate(80) }}
               </a>
-        </tr>
-        {% else %}
-        <tr class="govuk-table__row">
-          <td class="govuk-table__cell center" colspan="3"><span><i>No payment links found.</i></span></td>
-        </tr>
+          </tr>
+          {% endfor %}
+
+          {% else %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell center" colspan="4"><span><i>No payment links found.</i></span></td>
+          </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 
-  {{ json("Payment links list source", paymentLinks) }}
+  {{ json("Payment links list source", groupedPaymentLinks) }}
 {% endblock %}

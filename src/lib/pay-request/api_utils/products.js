@@ -9,8 +9,19 @@ const productsMethods = function productsMethods(instance) {
       .then(utilExtractData)
   }
 
+  const paymentLinksWithUsage = function paymentLinksWithUsage(gatewayAccountId) {
+    const queryParams = {
+      params: {
+        ...gatewayAccountId && { gatewayAccountId }
+      }
+    }
+    return axiosInstance.get('/v1/api/stats/products', queryParams)
+      .then(utilExtractData)
+  }
+
   return {
-    paymentLinksByGatewayAccount
+    paymentLinksByGatewayAccount,
+    paymentLinksWithUsage
   }
 }
 
