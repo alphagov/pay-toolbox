@@ -54,14 +54,15 @@ export async function search(req: Request, res: Response, next: NextFunction): P
 
 export async function list(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    let account
+    let service, account
     const accountId = req.query.account
     const selectedStatus = req.query.status || PaymentListFilterStatus[PaymentListFilterStatus.all]
     const filters = { ...req.query.reference && { reference: req.query.reference } }
     const response = await Ledger.transactions(accountId, req.query.page, selectedStatus, filters)
 
     if (req.query.account) {
-      account = await AdminUsers.gatewayAccountServices(accountId)
+      service = await AdminUsers.gatewayAccountServices(accountId)
+      account = await Connector.account(accountId)
     }
 
     res.render('transactions/list', {
@@ -70,6 +71,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
       filters,
       set: response,
       account,
+      service,
       accountId
     })
   } catch (error) {

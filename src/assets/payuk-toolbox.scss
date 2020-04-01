@@ -226,3 +226,27 @@
     width: 100%
   }
 }
+
+.test-data-banner {
+  text-align: center;
+  border-top: 5px solid govuk-colour("orange");
+  z-index: 10;
+}
+
+// only include spacing correction if we're not on a large display
+@include govuk-media-query($from: tablet) {
+  .test-data-banner {
+    margin-top: -#{govuk-spacing(4)};
+  }
+}
+
+.test-data-tag {
+  position: relative;
+  display: inline-block;
+  padding: 2px;
+  padding-right: 8px;
+  padding-left: 8px;
+  background-color: govuk-colour("orange");
+  color: govuk-colour("white")
+}
+

@@ -3,6 +3,8 @@
 {% from "common/json.njk" import json %}
 {% extends "layout/layout.njk" %}
 
+{% set isTestData = not account.live %}
+
 {% block main %}
   <span class="govuk-caption-m">{{ account.description or account.gateway_account_id }}</span>
   <h1 class="govuk-heading-m">Gateway account details</h1>

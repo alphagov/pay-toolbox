@@ -2,6 +2,8 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% extends "layout/layout.njk" %}
 
+{% set isTestData = account and not (account.type === "live") %}
+
 {% block main %}
   <span class="govuk-caption-m">Update gateway account</span>
   <h1 class="govuk-heading-m">Email custom branding</h1>

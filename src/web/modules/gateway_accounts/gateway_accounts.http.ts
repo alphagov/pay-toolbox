@@ -161,8 +161,10 @@ const detail = async function detail(req: Request, res: Response): Promise<void>
 
 const apiKeys = async function apiKeys(req: Request, res: Response): Promise<void> {
   const gatewayAccountId = req.params.id
+
+  const account = await getAccount(gatewayAccountId)
   const tokens = await PublicAuth.apiKeyTokens(gatewayAccountId)
-  res.render('gateway_accounts/api_keys', { tokens, gatewayAccountId, messages: req.flash('info') })
+  res.render('gateway_accounts/api_keys', { account, tokens, gatewayAccountId, messages: req.flash('info') })
 }
 
 const deleteApiKey = async function deleteApiKey(req: Request, res: Response): Promise<void> {

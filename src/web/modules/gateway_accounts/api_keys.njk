@@ -3,6 +3,8 @@
 {% from "common/json.njk" import json %}
 {% extends "layout/layout.njk" %}
 
+{% set isTestData = not (account.type === "live") %}
+
 {% block main %}
   <h1 class="govuk-heading-m">Manage API keys</h1>
 
