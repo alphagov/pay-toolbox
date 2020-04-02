@@ -10,11 +10,27 @@
     <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Gateway account ({{ account.gateway_account_id }})</a>
   </div>
 
+  <p class="govuk-body">
+    The Stripe statement descriptor is what the user paying a service will see in their bank account. It's important that this
+    correctly identifies the service to avoid chargebacks from confused users. This tool will update the Stripe Connect account.
+  </p>
+
+  <p class="govuk-body">
+    <a class="govuk-link" href="https://stripe.com/docs/connect/statement-descriptors">Statement descriptors with Connect</a>
+  </p>
+
+  <p class="govuk-body">
+    <a class="govuk-link" href="https://stripe.com/docs/statement-descriptors#requirements">Statement descriptor requirements</a>
+  </p>
+
   <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/stripe_statement_descriptor">
     {{ govukInput({
       id: "statement_descriptor",
       name: "statement_descriptor",
       label: { text: "Stripe statement descriptor" },
+      hint: {
+        text: "Contains between 5 and 22 characters, inclusive. Contains at least one letter. Does not contain any of the special characters < > \ ' \" *"
+      },
       autocomplete: "off"
     })
     }}
