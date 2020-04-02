@@ -156,6 +156,11 @@
     href: "/services/" + services.external_id + "/gateway_account/" + gatewayAccountId + "/payouts"
     })
     }}
+    {{ govukButton({
+    text: "Update statement descriptor",
+    href: "/gateway_accounts/" + gatewayAccountId + "/stripe_statement_descriptor"
+    })
+    }}
     {% endif %}
     {% if account.payment_method !== "DIRECT_DEBIT" %}
       {{ govukButton({
