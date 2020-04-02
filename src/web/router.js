@@ -55,6 +55,7 @@ router.post('/gateway_accounts/:id/email_branding', auth.secured, gatewayAccount
 router.post('/gateway_accounts/:id/toggle_moto_payments', auth.secured, gatewayAccounts.toggleMotoPayments)
 
 router.get('/gateway_accounts/:accountId/payment_links', auth.secured, paymentLinks.list)
+router.get('/gateway_accounts/:accountId/payment_links/csv', auth.secured, paymentLinks.listCSV)
 
 router.get('/services', auth.secured, services.overview)
 router.get('/services/search', auth.secured, services.search)
@@ -110,6 +111,7 @@ router.get('/transactions/:id/parity', auth.secured, parity.validateLedgerTransa
 router.get('/transactions', auth.secured, transactions.list)
 
 router.get('/payment_links', auth.secured, paymentLinks.list)
+router.get('/payment_links/csv', auth.secured, paymentLinks.listCSV)
 
 router.get('/platform/dashboard', auth.secured, platform.dashboard)
 router.get('/platform/dashboard/live', platform.live)

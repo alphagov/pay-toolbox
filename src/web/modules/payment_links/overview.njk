@@ -2,7 +2,10 @@
 {% from "common/json.njk" import json %}
 {% extends "layout/layout.njk" %}
 
-{% set serviceName = serviceGatewayAccountIndex[accountId] if accountId else "" %}
+{% set serviceName =
+  (serviceGatewayAccountIndex[accountId] and
+  serviceGatewayAccountIndex[accountId].service_name and
+  serviceGatewayAccountIndex[accountId].service_name.en) if accountId else "" %}
 
 {% block main %}
   <span class="govuk-caption-m">
@@ -35,18 +38,32 @@
   {% endif %}
 
   <div>
+    {% set csvHref =
+      ("/gateway_accounts/" + accountId + "/payment_links/csv?live=" + filterLiveAccounts + "&sort=" + sort)
+      if accountId else
+      ("/payment_links/csv?live=" + filterLiveAccounts + "&sort=" + sort) %}
+    <a href="{{ csvHref }}"
+      class="govuk-button govuk-button--secondary govuk-!-margin-bottom-2">
+      Export page as CSV
+    </a>
+  </div>
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+  <div>
     <table class="govuk-table">
       <thead class="govuk-table__head">
         <tr class="govuk-table__row">
           <th class="govuk-table__header" scope="col">Name</th>
           <th class="govuk-table__header" scope="col">Status</th>
           <th class="govuk-table__header" scope="col">
-            <a class="govuk-link govuk-link--no-visited-state" href="?sort=payment_count">
+            {% set sortByCreated = "?sort=payment_count" if filterLiveAccounts else "?sort=payment_count&live=false" %}
+            <a class="govuk-link govuk-link--no-visited-state" href="{{ sortByCreated }}">
               Payments created
             </a>
           </th>
           <th class="govuk-table__header" scope="col">
-            <a class="govuk-link govuk-link--no-visited-state" href="?sort=last_payment_date">
+            {% set sortByLastPaid = "?sort=last_payment_date" if filterLiveAccounts else "?sort=last_payment_date&live=false" %}
+            <a class="govuk-link govuk-link--no-visited-state" href="{{ sortByLastPaid }}">
               Last used
             </a>
           </th>
@@ -57,7 +74,7 @@
           {% if not accountId %}
           <tr class="govuk-table__row">
             <td class="govuk-table__cell" colspan="4">
-              <strong class="govuk-!-margin-right-2">{{ serviceGatewayAccountIndex[group.key] }}</strong>  <a class="govuk-link govuk-link--no-visited-state" href="/transactions?account={{ group.key }}">Transactions</a>
+              <strong class="govuk-!-margin-right-2">{{ serviceGatewayAccountIndex[group.key].service_name and serviceGatewayAccountIndex[group.key].service_name.en }}</strong>  <a class="govuk-link govuk-link--no-visited-state" href="/transactions?account={{ group.key }}">Transactions</a>
             </td>
           </tr>
           {% endif %}
@@ -78,9 +95,8 @@
           </tr>
           <tr class="govuk-table__row">
             <td class="govuk-table__cell" colspan="4">
-              {% set linkHref = link.product._indexedLinks.friendly or link.product._indexedLinks.pay %}
-              <a class="govuk-link govuk-link--no-visited-state" href="{{ linkHref }}">
-                {{ linkHref | truncate(80) }}
+              <a class="govuk-link govuk-link--no-visited-state" href="{{ link.url }}">
+                {{ link.url | truncate(80) }}
               </a>
           </tr>
           {% endfor %}
