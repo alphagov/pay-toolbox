@@ -21,7 +21,7 @@ export const VolumesByHourChart = (props: VolumesByHourChart) => <ResponsiveLine
   data={props.data}
   xScale={{ type: 'time', format: '%Y-%m-%dT%H:%M:%S.000000Z', precision: 'hour' }}
   xFormat='time:%Y-%m-%dT%H:%M:%S.000000Z'
-  margin={{ top: 10, right: 30, bottom: 60, left: 30 }}
+  margin={{ top: 10, right: 30, bottom: 60, left: 38 }}
   yScale={{
     type: 'linear',
     stacked: false,
