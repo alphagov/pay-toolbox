@@ -15,7 +15,7 @@ const secured = function secured(req, res, next) {
 }
 
 const administrative = function administrative(req, res, next) {
-  if (req.user.admin || disableAuth) {
+  if (disableAuth || req.user.admin) {
     next()
     return
   }
