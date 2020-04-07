@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express'
+import { Request, Response, NextFunction } from 'express'
 import { parse } from 'qs'
 
 import logger from '../../../lib/logger'
@@ -17,6 +17,7 @@ import { ClientFormError } from '../common/validationErrorFormat'
 import * as config from '../../../config'
 import Stripe from 'stripe'
 import HTTPSProxyAgent from 'https-proxy-agent'
+import { format } from './csv'
 
 const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY)
 stripe.setApiVersion('2018-09-24')
@@ -44,6 +45,43 @@ const overview = async function overview(req: Request, res: Response): Promise<v
     filters,
     total: accounts.length.toLocaleString()
   })
+}
+
+const listCSV = async function listCSV(req: Request, res: Response): Promise<void> {
+  const servicesRequest = AdminUsers.services()
+  const accountsRequest = Connector.accounts().then((response: any) => response.accounts)
+
+  const [serviceResponse, accountsResponse] = await Promise.all([servicesRequest, accountsRequest])
+
+  const serviceGatewayAccountIndex = serviceResponse
+    .reduce((aggregate: any, service: any) => {
+      service.gateway_account_ids.forEach((accountId: string) => {
+        aggregate[accountId] = service
+      })
+      return aggregate
+    }, {})
+
+  const combinedData = accountsResponse
+    .filter((account: any) => serviceGatewayAccountIndex[account.gateway_account_id] != undefined)
+    .map((account: any) => {
+      const service = serviceGatewayAccountIndex[account.gateway_account_id]
+      return {
+        account,
+        service,
+        payment_email_enabled: account.email_notifications['PAYMENT_CONFIRMED'] && account.email_notifications['PAYMENT_CONFIRMED'].enabled || false,
+        refund_email_emailed: account.email_notifications['REFUND_ISSUED'] && account.email_notifications['REFUND_ISSUED'].enabled || false,
+        custom_branding: service.custom_branding != undefined,
+        email_branding: account.notify_settings != undefined,
+        corporate_surcharge: account.corporate_prepaid_credit_card_surcharge_amount
+          + account.corporate_prepaid_debit_card_surcharge_amount
+          + account.corporate_credit_card_surcharge_amount
+          + account.corporate_debit_card_surcharge_amount !== 0
+      }
+    })
+
+  res.set('Content-Type', 'text/csv')
+  res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_all_gateway_accounts.csv"`)
+  res.status(200).send(format(combinedData))
 }
 
 const overviewDirectDebit = async function overviewDirectDebit(
@@ -298,6 +336,7 @@ const updateStripeStatementDescriptor = async function updateStripeStatementDesc
 
 export default {
   overview: wrapAsyncErrorHandler(overview),
+  listCSV: wrapAsyncErrorHandler(listCSV),
   overviewDirectDebit: wrapAsyncErrorHandler(overviewDirectDebit),
   create: wrapAsyncErrorHandler(create),
   confirm: wrapAsyncErrorHandler(confirm),
