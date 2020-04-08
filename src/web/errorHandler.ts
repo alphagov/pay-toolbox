@@ -77,7 +77,7 @@ const handleDefault = function handleDefault(
   if (res.headersSent) {
     return next(error)
   }
-  if (!req.isAuthenticated()) {
+  if (!req.isAuthenticated() && !config.disableAuth) {
     // don't render application structure for non authenticated issues
     return res.redirect('/auth/unauthorised?default_throw')
   }
