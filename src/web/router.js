@@ -40,6 +40,7 @@ router.get('/statistics/services', auth.secured, statistics.csvServices)
 router.post('/statistics/services', auth.secured, statistics.byServices)
 
 router.get('/gateway_accounts', auth.secured, gatewayAccounts.overview)
+router.get('/gateway_accounts/csv', auth.secured, gatewayAccounts.listCSV)
 router.get('/gateway_accounts/direct_debit', auth.secured, gatewayAccounts.overviewDirectDebit)
 router.get('/gateway_accounts/create', auth.secured, gatewayAccounts.create.http, gatewayAccounts.create.exceptions)
 router.get('/gateway_accounts/:id', auth.secured, gatewayAccounts.detail.http, gatewayAccounts.detail.exceptions)
