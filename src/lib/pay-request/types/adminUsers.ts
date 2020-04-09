@@ -1,6 +1,19 @@
 export interface Service {
   external_id: string;
+
   current_go_live_stage: string;
+
+  gateway_account_ids: string[];
+
+  redirect_to_service_immediately_on_terminal_state: boolean;
+
+  collect_billing_address: boolean;
+
+  experimental_features_enabled: boolean;
+
+  custom_branding: { 
+    [key: string]: any;
+   }
 
   service_name: {
     en: string;

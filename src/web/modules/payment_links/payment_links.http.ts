@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import { Request, Response, NextFunction } from 'express'
 import { Products, AdminUsers, Connector } from '../../../lib/pay-request'
+import { aggregateServicesByGatewayAccountId } from '../../../lib/gatewayAccounts'
 import { format } from './csv'
 function indexPaymentLinksByType(paymentLink: any): any {
   const index = paymentLink.product._links.reduce((aggregate: any, linkDetails: any) => {
@@ -77,13 +78,7 @@ async function fetchUsageContext(sortKey: string, filterLiveAccounts: Boolean, a
 
   const [serviceResponse, paymentLinksResponse, liveAccountsResponse] = await Promise.all([serviceRequest, paymentLinksRequest, liveAccountsRequest])
 
-  const serviceGatewayAccountIndex = serviceResponse
-    .reduce((aggregate: any, service: any) => {
-      service.gateway_account_ids.forEach((accountId: string) => {
-        aggregate[accountId] = service
-      })
-      return aggregate
-    }, {})
+  const serviceGatewayAccountIndex = aggregateServicesByGatewayAccountId(serviceResponse)
 
   const liveAccounts = liveAccountsResponse.map((account: any) => account.gateway_account_id)
 
