@@ -8,11 +8,12 @@ import {
   Connector, DirectDebitConnector, AdminUsers, PublicAuth
 } from '../../../lib/pay-request'
 import { wrapAsyncErrorHandler } from '../../../lib/routes'
+import { aggregateServicesByGatewayAccountId } from '../../../lib/gatewayAccounts'
 
 import GatewayAccountFormModel from './gatewayAccount.model'
 import { Service } from '../../../lib/pay-request/types/adminUsers'
 import DirectDebitGatewayAccount from '../../../lib/pay-request/types/directDebitConnector'
-import { GatewayAccount as CardGatewayAccount } from '../../../lib/pay-request/types/connector'
+import { GatewayAccount as CardGatewayAccount, GatewayAccount } from '../../../lib/pay-request/types/connector'
 import { ClientFormError } from '../common/validationErrorFormat'
 import * as config from '../../../config'
 import Stripe from 'stripe'
@@ -53,17 +54,11 @@ const listCSV = async function listCSV(req: Request, res: Response): Promise<voi
 
   const [serviceResponse, accountsResponse] = await Promise.all([servicesRequest, accountsRequest])
 
-  const serviceGatewayAccountIndex = serviceResponse
-    .reduce((aggregate: any, service: any) => {
-      service.gateway_account_ids.forEach((accountId: string) => {
-        aggregate[accountId] = service
-      })
-      return aggregate
-    }, {})
+  const serviceGatewayAccountIndex = aggregateServicesByGatewayAccountId(serviceResponse)
 
   const combinedData = accountsResponse
-    .filter((account: any) => serviceGatewayAccountIndex[account.gateway_account_id] != undefined)
-    .map((account: any) => {
+    .filter((account: GatewayAccount) => serviceGatewayAccountIndex[account.gateway_account_id] != undefined)
+    .map((account: GatewayAccount) => {
       const service = serviceGatewayAccountIndex[account.gateway_account_id]
       return {
         account,
