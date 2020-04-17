@@ -2,6 +2,7 @@
 // @TODO(sfount) this should be split up as the service grows
 const express = require('express')
 const passport = require('passport')
+const multer = require('multer')
 
 const auth = require('./../lib/auth')
 const healthcheck = require('./../lib/healthcheck')
@@ -16,6 +17,7 @@ const discrepancies = require('./modules/discrepancies')
 const stripe = require('./modules/stripe')
 const payouts = require('./modules/payouts/payouts.http')
 const transactions = require('./modules/transactions/transactions.http')
+const updateTransactions = require('./modules/transactions/update/update.http')
 const parity = require('./modules/transactions/discrepancies/validateLedger.http')
 const platform = require('./modules/platform/dashboard.http')
 const paymentLinks = require('./modules/payment_links/payment_links.http')
@@ -24,6 +26,9 @@ const paymentLinks = require('./modules/payment_links/payment_links.http')
 const users = require('./modules/users/users.http').default
 
 const router = express.Router()
+
+const storage = multer.memoryStorage()
+const upload = multer({ storage })
 
 router.get('/auth', passport.authenticate('github'))
 router.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/auth/unauthorised', successRedirect: '/' }))
@@ -108,6 +113,8 @@ router.post('/transactions/search', auth.secured, transactions.search)
 router.get('/transactions/statistics', auth.secured, transactions.statistics)
 router.get('/transactions/csv', auth.secured, transactions.csvPage)
 router.post('/transactions/csv', auth.secured, transactions.streamCsv)
+router.get('/transactions/update', auth.secured, updateTransactions.fileUpload)
+router.post('/transactions/update', auth.secured, upload.single('transactions-file'), updateTransactions.update)
 router.get('/transactions/:id', auth.secured, transactions.show)
 router.get('/transactions/:id/parity', auth.secured, parity.validateLedgerTransaction)
 
