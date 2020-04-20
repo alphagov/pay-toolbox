@@ -7,6 +7,7 @@ const common = require('./common')
 const services = require('./services')
 const sentry = require('./sentry.js')
 const auth = require('./auth')
+const aws = require('./aws')
 
 // allow requests through IFF node environment is set to development and the environment
 // has been explitly set to not enable OAUTH
@@ -19,5 +20,6 @@ module.exports = {
   logger,
   services,
   sentry,
-  auth
+  auth,
+  aws
 }
