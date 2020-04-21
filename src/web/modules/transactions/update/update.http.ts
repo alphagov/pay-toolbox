@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { parseString } from 'fast-csv'
 import { Parser } from 'json2csv'
-import { S3 } from 'aws-sdk'
+import { S3, ECS } from 'aws-sdk'
 import moment from 'moment'
 import logger from '../../../../lib/logger'
 import { aws } from '../../../../config'
@@ -22,7 +22,7 @@ export async function fileUpload(req: Request, res: Response): Promise<void> {
   })
 }
 
-const uploadToS3 = async function uploadToS3(content: string, user: any): Promise<void> {
+const uploadToS3 = async function uploadToS3(content: string, user: any): Promise<string> {
   // The AWS SDK automatically uses the AWS credentials from the environment when deployed.
   // For local testing, set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables.
   try {
@@ -36,9 +36,39 @@ const uploadToS3 = async function uploadToS3(content: string, user: any): Promis
       ServerSideEncryption: 'AES256'
     }).promise();
     logger.info('S3 upload response: ' + JSON.stringify(response))
+    return key
   } catch (err) {
     logger.error(`Error uploading to s3: ${err.message}`)
     throw new Error('There was an error uploading the file to S3')
+  }
+}
+
+const runEcsTask = async function runEcsTask(fileKey: string): Promise<string> {
+  try {
+    const ecs = new ECS()
+    const response = await ecs.runTask({
+      taskDefinition: aws.AWC_ECS_UPDATE_TRANSACTIONS_TASK_DEFINITION,
+      overrides: {
+        containerOverrides: [
+          {
+            environment: [
+              {
+                name: "PROVIDER_S3_SOURCE_FILE",
+                value: fileKey
+              }
+            ]
+          }
+        ]
+      }
+    }).promise()
+    logger.info('ECS response: ' + JSON.stringify(response))
+    if (!response.tasks || response.tasks.length < 1 ) {
+      throw new Error('No task data returned in ECS run task response')
+    }
+    return response.tasks[0].taskArn
+  } catch (err) {
+    logger.error(`Error running ECS task: ${err.message}`)
+    throw new Error('There was an error starting the update transactions task')
   }
 }
 
@@ -104,8 +134,9 @@ export async function update(req: Request, res: Response): Promise<void> {
     const data = await validateAndAddDefaults(req.file.buffer.toLocaleString())
     const parser = new Parser()
     const output = parser.parse(data)
-    await uploadToS3(output, req.user)
-    req.flash('info', 'File upload successful')
+    const fileKey = await uploadToS3(output, req.user)
+    const taskArn = await runEcsTask(fileKey)
+    req.flash('info', `Transaction update job started successfully. Search in Splunk for ECS task ARN ${taskArn} to check progress.`)
   } catch (err) {
     logger.error(`Error updating transactions: ${err.message}`)
     req.flash('error', err.message)
