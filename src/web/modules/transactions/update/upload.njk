@@ -1,11 +1,12 @@
 {% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "common/errorSummary.njk" import errorSummary %}
 {% extends "layout/layout.njk" %}
 
 {% block main %}
   <span class="govuk-caption-m">GOV.UK Pay platform</span>
-  <h1 class="govuk-heading-m">Update transactions</h1>
+  <h1 class="govuk-heading-l">Update transactions</h1>
 
   {% for message in messages %}
     <div class="govuk-error-summary success-summary" role="alert">
@@ -20,18 +21,53 @@
   {% endfor %}
 
   <form method="POST" action="/transactions/update?_csrf={{ csrf }}" enctype="multipart/form-data">
-
     {{ govukFileUpload({
-      id: "transactions-file",
-      name: "transactions-file",
-      label: {
-        text: "Upload csv of transactions to update"
-      }
+        id: "transactions-file",
+        name: "transactions-file",
+        label: {
+          text: "Upload a CSV containing a list of transactions to update"
+        }
     }) }}
 
     {{ govukButton({
-      text: "Submit"
-      })
-      }}
+        text: "Submit"
+        })
+    }}
   </form>
+
+  <h2 class="govuk-heading-m govuk-!-margin-top-4">The CSV must be comma separated and have the following headers</h2>
+
+  <div>
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col">Header</th>
+          <th class="govuk-table__header" scope="col">Description</th>
+          <th class="govuk-table__header" scope="col">Required</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">transaction_id</th>
+          <td class="govuk-table__cell">The external ID of the payment/refund</td>
+          <td class="govuk-table__cell">Yes</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">event_type</th>
+          <td class="govuk-table__cell">The name of the event that will be stored against the transaction. It should be SCREAMING_SNAKE_CASE and describe the action performed against the transaction in the past tense.</td>
+          <td class="govuk-table__cell">Yes</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">event_date</th>
+          <td class="govuk-table__cell">The timestamp for the event. Must be a valid ISO_8601 format. If not provided, the time when the file is uploaded will be used.</td>
+          <td class="govuk-table__cell">No</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Transaction field headers</th>
+          <td class="govuk-table__cell">Any number of headers which are the names of the fields on the transaction to update. For each transaction row, give the value to assign to the field named in the header.</td>
+          <td class="govuk-table__cell"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 {% endblock %}
