@@ -8,8 +8,10 @@ import { aws } from '../../../../config'
 
 type TransactionRow = {
   transaction_id: string;
-  event_type: string;
+  transaction_type: string;
+  event_name: string;
   event_date: string;
+  parent_transaction_id: string;
 }
 
 export async function fileUpload(req: Request, res: Response): Promise<void> {
@@ -49,17 +51,26 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
         if (!row.event_date) {
           row.event_date = moment().utc().format()
         }
+        if (!row.transaction_type) {
+          row.transaction_type = 'payment'
+        }
         return row
       })
       .validate((row, cb) => {
         if (!row.transaction_id) {
           return cb(null, false, 'transaction_id is missing')
         }
-        if (!row.event_type) {
-          return cb(null, false, 'event_type is missing')
+        if (!row.event_name) {
+          return cb(null, false, 'event_name is missing')
         }
         if (!moment(row.event_date, moment.ISO_8601).isValid()) {
           return cb(null, false, 'event_date is not a valid ISO_8601 string')
+        }
+        if (!['payment', 'refund'].includes(row.transaction_type)) {
+          return cb(null, false, 'transaction_type must be one of \'payment\' or \'refund\'')
+        }
+        if (row.transaction_type === 'refund' && !row.parent_transaction_id) {
+          return cb(null, false, 'parent_transaction_id is required when transaction_type is \'refund\'')
         }
         return cb(null, true)
       })
