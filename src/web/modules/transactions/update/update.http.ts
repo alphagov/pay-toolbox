@@ -43,7 +43,7 @@ const uploadToS3 = async function uploadToS3(content: string, user: any): Promis
   }
 }
 
-const runEcsTask = async function runEcsTask(fileKey: string): Promise<string> {
+const runEcsTask = async function runEcsTask(fileKey: string, jobId: string): Promise<string> {
   try {
     const ecs = new ECS()
     const response = await ecs.runTask({
@@ -52,10 +52,8 @@ const runEcsTask = async function runEcsTask(fileKey: string): Promise<string> {
         containerOverrides: [
           {
             environment: [
-              {
-                name: "PROVIDER_S3_SOURCE_FILE",
-                value: fileKey
-              }
+              { name: "PROVIDER_S3_SOURCE_FILE", value: fileKey },
+              { name: "JOB_ID", value: jobId }
             ]
           }
         ]
@@ -135,7 +133,7 @@ export async function update(req: Request, res: Response): Promise<void> {
     const parser = new Parser()
     const output = parser.parse(data)
     const fileKey = await uploadToS3(output, req.user)
-    const taskArn = await runEcsTask(fileKey)
+    const taskArn = await runEcsTask(fileKey, <string>req.headers['x-request-id'])
     req.flash('info', `Transaction update job started successfully. Search in Splunk for ECS task ARN ${taskArn} to check progress.`)
   } catch (err) {
     logger.error(`Error updating transactions: ${err.message}`)
