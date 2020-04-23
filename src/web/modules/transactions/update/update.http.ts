@@ -52,7 +52,7 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
           row.event_date = moment().utc().format()
         }
         if (!row.transaction_type) {
-          row.transaction_type = 'PAYMENT'
+          row.transaction_type = 'payment'
         }
         return row
       })
@@ -66,8 +66,11 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
         if (!moment(row.event_date, moment.ISO_8601).isValid()) {
           return cb(null, false, 'event_date is not a valid ISO_8601 string')
         }
-        if (row.transaction_type.toUpperCase() === 'REFUND' && !row.parent_transaction_id) {
-          return cb(null, false, 'parent_transaction_id is required when transaction_type is \'REFUND\'')
+        if (!['payment', 'refund'].includes(row.transaction_type)) {
+          return cb(null, false, 'transaction_type must be one of \'payment\' or \'refund\'')
+        }
+        if (row.transaction_type === 'refund' && !row.parent_transaction_id) {
+          return cb(null, false, 'parent_transaction_id is required when transaction_type is \'refund\'')
         }
         return cb(null, true)
       })
