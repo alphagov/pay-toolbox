@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import { Request, Response } from 'express'
 import { parseString } from 'fast-csv'
 import { Parser } from 'json2csv'
@@ -54,18 +55,21 @@ const runEcsTask = async function runEcsTask(fileKey: string, jobId: string): Pr
           {
             name: 'stream-s3-sqs',
             environment: [
-              { name: "PROVIDER_S3_SOURCE_FILE", value: fileKey },
-              { name: "JOB_ID", value: jobId }
+              { name: 'PROVIDER_S3_SOURCE_FILE', value: fileKey },
+              { name: 'JOB_ID', value: jobId }
             ]
           }
         ]
       }
     }).promise()
-    logger.info('ECS response: ' + JSON.stringify(response))
+    logger.info('Run ECS task completed', {
+      numberOfFailures: response.failures.length,
+      numberOfTasksStarted: response.tasks.length
+    })
     if (!response.tasks || response.tasks.length < 1 ) {
       throw new Error('No task data returned in ECS run task response')
     }
-    return response.tasks[0].taskArn
+    return response.tasks[0].containers[0].runtimeId
   } catch (err) {
     logger.error(`Error running ECS task: ${err.message}`)
     throw new Error('There was an error starting the update transactions task')
@@ -80,7 +84,7 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
     parseString<TransactionRow, TransactionRow>(csv, { headers: true })
       .transform((row: TransactionRow) => {
         if (!row.event_date) {
-          row.event_date = moment().utc().format()
+          row.event_date = `${moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
         }
         if (!row.transaction_type) {
           row.transaction_type = 'payment'
@@ -133,10 +137,11 @@ export async function update(req: Request, res: Response): Promise<void> {
   try {
     const data = await validateAndAddDefaults(req.file.buffer.toLocaleString())
     const parser = new Parser()
+    const jobId = crypto.randomBytes(4).toString('hex')
     const output = parser.parse(data)
     const fileKey = await uploadToS3(output, req.user)
-    const taskArn = await runEcsTask(fileKey, <string>req.headers['x-request-id'])
-    req.flash('info', `Transaction update job started successfully. Search in Splunk for ECS task ARN ${taskArn} to check progress.`)
+    await runEcsTask(fileKey, jobId)
+    req.flash('info', `Transaction update job started successfully. Search in Splunk for job identifier ${jobId} to check progress.`)
   } catch (err) {
     logger.error(`Error updating transactions: ${err.message}`)
     req.flash('error', err.message)
