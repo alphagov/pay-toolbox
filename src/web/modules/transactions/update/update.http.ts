@@ -52,6 +52,7 @@ const runEcsTask = async function runEcsTask(fileKey: string, jobId: string): Pr
       overrides: {
         containerOverrides: [
           {
+            name: 'stream-s3-sqs',
             environment: [
               { name: "PROVIDER_S3_SOURCE_FILE", value: fileKey },
               { name: "JOB_ID", value: jobId }
