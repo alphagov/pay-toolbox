@@ -4,7 +4,7 @@ import { Parser } from 'json2csv'
 import { S3, ECS } from 'aws-sdk'
 import moment from 'moment'
 import logger from '../../../../lib/logger'
-import { aws } from '../../../../config'
+import { aws, common } from '../../../../config'
 
 type TransactionRow = {
   transaction_id: string;
@@ -48,6 +48,7 @@ const runEcsTask = async function runEcsTask(fileKey: string, jobId: string): Pr
     const ecs = new ECS()
     const response = await ecs.runTask({
       taskDefinition: aws.AWC_ECS_UPDATE_TRANSACTIONS_TASK_DEFINITION,
+      cluster: common.ENVIRONMENT,
       overrides: {
         containerOverrides: [
           {
