@@ -23,6 +23,17 @@ export async function fileUpload(req: Request, res: Response): Promise<void> {
   })
 }
 
+export async function updateSuccess(req: Request, res: Response):Promise<void> {
+  if (!req.session.updateTransactionJobId) {
+    req.flash('error', 'Job ID not found on current session')
+    res.redirect('/transactions/update')
+    return
+  }
+  const context = { jobId: req.session.updateTransactionJobId }
+  delete req.session.updateTransactionJobId
+  res.render('transactions/update/success', context)
+}
+
 const uploadToS3 = async function uploadToS3(content: string, user: any): Promise<string> {
   // The AWS SDK automatically uses the AWS credentials from the environment when deployed.
   // For local testing, set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables.
@@ -141,10 +152,11 @@ export async function update(req: Request, res: Response): Promise<void> {
     const output = parser.parse(data)
     const fileKey = await uploadToS3(output, req.user)
     await runEcsTask(fileKey, jobId)
-    req.flash('info', `Transaction update job started successfully. Search in Splunk for job identifier ${jobId} to check progress.`)
+    req.session.updateTransactionJobId = jobId
+    res.redirect('/transactions/update/success')
   } catch (err) {
     logger.error(`Error updating transactions: ${err.message}`)
     req.flash('error', err.message)
+    res.redirect('/transactions/update')
   }
-  res.redirect('/transactions/update')
 }

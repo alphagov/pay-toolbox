@@ -1,0 +1,25 @@
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+<div class="govuk-panel govuk-panel--confirmation">
+	<h1 class="govuk-panel__title">
+		Transaction update job started
+	</h1>
+	<div class="govuk-panel__body">
+		Your job reference
+		<br>
+		<p class="govuk-!-font-size-24"> <strong>{{ jobId }}</strong></p>
+	</div>
+</div>
+
+<p class="govuk-body">
+A job has been started to process the transaction updates provided by CSV. Progress of this job can be monitored through Splunk
+by
+<a
+  class="govuk-link"
+  href="https://gds.splunkcloud.com/en-GB/app/gds-004-pay/search?q=search%20{{ jobId }}">
+  searching with your job reference
+</a>.
+</p>
+
+{% endblock %}
