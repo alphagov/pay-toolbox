@@ -1,10 +1,11 @@
+import crypto from 'crypto'
 import { Request, Response } from 'express'
 import { parseString } from 'fast-csv'
 import { Parser } from 'json2csv'
-import { S3 } from 'aws-sdk'
+import { S3, ECS } from 'aws-sdk'
 import moment from 'moment'
 import logger from '../../../../lib/logger'
-import { aws } from '../../../../config'
+import { aws, common } from '../../../../config'
 
 type TransactionRow = {
   transaction_id: string;
@@ -22,7 +23,7 @@ export async function fileUpload(req: Request, res: Response): Promise<void> {
   })
 }
 
-const uploadToS3 = async function uploadToS3(content: string, user: any): Promise<void> {
+const uploadToS3 = async function uploadToS3(content: string, user: any): Promise<string> {
   // The AWS SDK automatically uses the AWS credentials from the environment when deployed.
   // For local testing, set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables.
   try {
@@ -36,9 +37,42 @@ const uploadToS3 = async function uploadToS3(content: string, user: any): Promis
       ServerSideEncryption: 'AES256'
     }).promise();
     logger.info('S3 upload response: ' + JSON.stringify(response))
+    return key
   } catch (err) {
     logger.error(`Error uploading to s3: ${err.message}`)
     throw new Error('There was an error uploading the file to S3')
+  }
+}
+
+const runEcsTask = async function runEcsTask(fileKey: string, jobId: string): Promise<string> {
+  try {
+    const ecs = new ECS()
+    const response = await ecs.runTask({
+      taskDefinition: aws.AWC_ECS_UPDATE_TRANSACTIONS_TASK_DEFINITION,
+      cluster: common.ENVIRONMENT,
+      overrides: {
+        containerOverrides: [
+          {
+            name: 'stream-s3-sqs',
+            environment: [
+              { name: 'PROVIDER_S3_SOURCE_FILE', value: fileKey },
+              { name: 'JOB_ID', value: jobId }
+            ]
+          }
+        ]
+      }
+    }).promise()
+    logger.info('Run ECS task completed', {
+      numberOfFailures: response.failures.length,
+      numberOfTasksStarted: response.tasks.length
+    })
+    if (!response.tasks || response.tasks.length < 1 ) {
+      throw new Error('No task data returned in ECS run task response')
+    }
+    return response.tasks[0].containers[0].runtimeId
+  } catch (err) {
+    logger.error(`Error running ECS task: ${err.message}`)
+    throw new Error('There was an error starting the update transactions task')
   }
 }
 
@@ -50,7 +84,7 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
     parseString<TransactionRow, TransactionRow>(csv, { headers: true })
       .transform((row: TransactionRow) => {
         if (!row.event_date) {
-          row.event_date = moment().utc().format()
+          row.event_date = `${moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
         }
         if (!row.transaction_type) {
           row.transaction_type = 'payment'
@@ -103,9 +137,11 @@ export async function update(req: Request, res: Response): Promise<void> {
   try {
     const data = await validateAndAddDefaults(req.file.buffer.toLocaleString())
     const parser = new Parser()
+    const jobId = crypto.randomBytes(4).toString('hex')
     const output = parser.parse(data)
-    await uploadToS3(output, req.user)
-    req.flash('info', 'File upload successful')
+    const fileKey = await uploadToS3(output, req.user)
+    await runEcsTask(fileKey, jobId)
+    req.flash('info', `Transaction update job started successfully. Search in Splunk for job identifier ${jobId} to check progress.`)
   } catch (err) {
     logger.error(`Error updating transactions: ${err.message}`)
     req.flash('error', err.message)
