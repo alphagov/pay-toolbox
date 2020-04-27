@@ -23,7 +23,7 @@ export async function fileUpload(req: Request, res: Response): Promise<void> {
   })
 }
 
-export async function updateSuccess(req: Request, res: Response):Promise<void> {
+export async function updateSuccess(req: Request, res: Response): Promise<void> {
   if (!req.session.updateTransactionJobId) {
     req.flash('error', 'Job ID not found on current session')
     res.redirect('/transactions/update')
@@ -77,7 +77,7 @@ const runEcsTask = async function runEcsTask(fileKey: string, jobId: string): Pr
       numberOfFailures: response.failures.length,
       numberOfTasksStarted: response.tasks.length
     })
-    if (!response.tasks || response.tasks.length < 1 ) {
+    if (!response.tasks || response.tasks.length < 1) {
       throw new Error('No task data returned in ECS run task response')
     }
     return response.tasks[0].containers[0].runtimeId
@@ -94,7 +94,11 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
   return new Promise((resolve, reject) => {
     parseString<TransactionRow, TransactionRow>(csv, { headers: true })
       .transform((row: TransactionRow) => {
-        if (!row.event_date) {
+        if (row.event_date) {
+          if (moment(row.event_date, moment.ISO_8601).isValid()) {
+            row.event_date = `${moment(row.event_date, moment.ISO_8601).utc().format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
+          }
+        } else {
           row.event_date = `${moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
         }
         if (!row.transaction_type) {
