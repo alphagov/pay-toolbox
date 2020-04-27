@@ -32,7 +32,8 @@ const uploadToS3 = async function uploadToS3(content: string, user: any): Promis
     const response = await s3.putObject({
       Bucket: aws.AWS_S3_UPDATE_TRANSACTIONS_BUCKET_NAME,
       Body: content,
-      Key: key
+      Key: key,
+      ServerSideEncryption: 'AES256'
     }).promise();
     logger.info('S3 upload response: ' + JSON.stringify(response))
   } catch (err) {
