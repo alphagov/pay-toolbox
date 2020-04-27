@@ -115,6 +115,7 @@ router.get('/transactions/csv', auth.secured, transactions.csvPage)
 router.post('/transactions/csv', auth.secured, transactions.streamCsv)
 router.get('/transactions/update', auth.secured, updateTransactions.fileUpload)
 router.post('/transactions/update', auth.secured, upload.single('transactions-file'), updateTransactions.update)
+router.get('/transactions/update/success', auth.secured, updateTransactions.updateSuccess)
 router.get('/transactions/:id', auth.secured, transactions.show)
 router.get('/transactions/:id/parity', auth.secured, parity.validateLedgerTransaction)
 
