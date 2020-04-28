@@ -37,47 +37,50 @@
 
   <h2 class="govuk-heading-m govuk-!-margin-top-4">CSV headers schema</h2>
 
-  <div>
+  <h3 class="govuk-heading-s">Required headers</h3>
+
+    <div>
     <table class="govuk-table">
-      <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-          <th class="govuk-table__header" scope="col">Header</th>
-          <th class="govuk-table__header" scope="col">Description</th>
-          <th class="govuk-table__header" scope="col">Required</th>
-        </tr>
-      </thead>
-      <tbody class="govuk-table__body">
-        <tr class="govuk-table__row">
-          <td class="govuk-table__cell">transaction_id</th>
+          <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">transaction_id</span></th>
           <td class="govuk-table__cell">The external ID of the payment/refund</td>
-          <td class="govuk-table__cell">Yes</td>
         </tr>
         <tr class="govuk-table__row">
-          <td class="govuk-table__cell">event_name</th>
-          <td class="govuk-table__cell">The name of the event that will be stored against the transaction. It should be SCREAMING_SNAKE_CASE and describe the action performed against the transaction in the past tense.</td>
-          <td class="govuk-table__cell">Yes</td>
+          <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">event_name</span></th>
+          <td class="govuk-table__cell">The name of the event that will be stored against the transaction. It should be SCREAMING_SNAKE_CASE and describe the action performed against the transaction in the past tense. Do not use names given to system created events.</td>
         </tr>
         <tr class="govuk-table__row">
-          <td class="govuk-table__cell">event_date</th>
-          <td class="govuk-table__cell">The timestamp for the event. Must be a valid ISO_8601 format. If no UTC offset is specified, local time will be used. If no value is provided, the time when the file is uploaded will be used.</td>
-          <td class="govuk-table__cell">No</td>
-        </tr>
-        <tr class="govuk-table__row">
-          <td class="govuk-table__cell">transaction_type</th>
-          <td class="govuk-table__cell">The type of the transaction, one of 'payment' or 'refund'. Defaults to 'payment' if not provided.</td>
-          <td class="govuk-table__cell">No</td>
-        </tr>
-        <tr class="govuk-table__row">
-          <td class="govuk-table__cell">parent_transaction_id</th>
-          <td class="govuk-table__cell">For refunds, this is the payment external ID.</td>
-          <td class="govuk-table__cell">Required for refunds</td>
-        </tr>
-        <tr class="govuk-table__row">
-          <td class="govuk-table__cell">Transaction field headers</th>
-          <td class="govuk-table__cell">Any number of headers which are the names of the fields on the transaction to update. For each transaction row, give the value to assign to the field named in the header.</td>
-          <td class="govuk-table__cell"></td>
+          <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">reason</span></th>
+          <td class="govuk-table__cell">A free text explanation of why the transaction is being updated. This field will only be used internally as a record so should be as detailed as necessary. Reference Zendesk or JIRA ticket IDs where appropriate.</td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <h3 class="govuk-heading-s">Transaction field headers</h3>
+
+  <p class="govuk-body">Include any number of headers which correlate to fields on a transaction to add or update, e.g. ‘reference’. For nested fields, use dot notation, i.e. ‘outer_field.nested_field’. </p>
+  <p class="govuk-body">If no value is provided for individual transaction rows, the field will not be updated for that transaction.</p>
+
+  <h3 class="govuk-heading-s">Optional headers</h3>
+
+    <div>
+    <table class="govuk-table">
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">event_date</span></th>
+          <td class="govuk-table__cell">The timestamp for the event. Must be a valid ISO_8601 format. If no UTC offset is specified, local time will be used. If no value is provided, the time when the file is uploaded will be used.</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">transaction_type</span></th>
+          <td class="govuk-table__cell">The type of the transaction, one of ‘payment’ or ‘refund’. Defaults to ‘payment’ if not provided.</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">parent_transaction_id</span></th>
+          <td class="govuk-table__cell">Required for refunds only, this is the payment external ID.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
 {% endblock %}
