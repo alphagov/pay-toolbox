@@ -13,6 +13,7 @@ type TransactionRow = {
   event_name: string;
   event_date: string;
   parent_transaction_id: string;
+  reason: string;
 }
 
 export async function fileUpload(req: Request, res: Response): Promise<void> {
@@ -114,6 +115,9 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
         }
         if (!row.event_name) {
           return cb(null, false, 'event_name is missing')
+        }
+        if (!row.reason) {
+          return cb(null, false, 'reason is missing')
         }
         if (!moment(row.event_date, moment.ISO_8601).isValid()) {
           return cb(null, false, 'event_date is not a valid ISO_8601 string')
