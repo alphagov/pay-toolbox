@@ -92,7 +92,9 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
   const data: Object[] = []
 
   return new Promise((resolve, reject) => {
-    parseString<TransactionRow, TransactionRow>(csv, { headers: true })
+    parseString<TransactionRow, TransactionRow>(csv, {
+      headers: headers => headers.map(h => h?.trim())
+    })
       .transform((row: TransactionRow) => {
         if (row.event_date) {
           if (moment(row.event_date, moment.ISO_8601).isValid()) {
