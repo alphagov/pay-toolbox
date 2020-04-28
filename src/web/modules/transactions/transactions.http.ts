@@ -96,13 +96,11 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
         return event
       })
 
-    if (transaction.refund_summary && transaction.refund_summary.amount_submitted !== 0) {
-      const relatedResult = await Ledger.relatedTransactions(
-        transaction.transaction_id,
-        transaction.gateway_account_id
-      )
-      relatedTransactions.push(...relatedResult.transactions)
-    }
+    const relatedResult = await Ledger.relatedTransactions(
+      transaction.transaction_id,
+      transaction.gateway_account_id
+    )
+    relatedTransactions.push(...relatedResult.transactions)
 
     const renderKey = transaction.transaction_type.toLowerCase()
     res.render(`transactions/${renderKey}`, {
