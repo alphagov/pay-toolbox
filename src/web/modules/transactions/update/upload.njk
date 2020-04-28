@@ -64,7 +64,7 @@
 
   <h3 class="govuk-heading-s">Optional headers</h3>
 
-    <div>
+  <div>
     <table class="govuk-table">
       <tbody class="govuk-table__body">
         <tr class="govuk-table__row">
@@ -82,5 +82,28 @@
       </tbody>
     </table>
   </div>
+
+  <h3 class="govuk-heading-s">Event naming</h3>
+
+  <p class="govuk-body">
+    If the administrative update to a payment/ refund requires moving the external state, the event name should
+    correspond to a known Ledger 'salient' event.
+  </p>
+  <p class="govuk-body">Examples of corrective Ledger events:</p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li><code>PAYMENT_STATUS_CORRECTED_TO_SUCCESS_BY_ADMIN</code></li>
+    <li><code>PAYMENT_STATUS_CORRECTED_TO_ERROR_BY_ADMIN</code></li>
+    <li><code>REFUND_STATUS_CORRECTED_TO_SUCCESS_BY_ADMIN</code></li>
+    <li><code>REFUND_STATUS_CORRECTED_TO_SUCCESS_BY_ADMIN</code></li>
+  </ul>
+  <p class="govuk-body">Possible external statuses and events can be
+  <a class="govuk-link" href="https://github.com/alphagov/pay-ledger/blob/master/src/main/java/uk/gov/pay/ledger/transaction/state/TransactionState.java">viewed and contributed to on GitHub</a>
+  .
+  </p>
+  <p class="govuk-body">
+    Most administrative updates will not need to move the external state of a transaction and should follow naming advice
+    as per the table above. For example the event name <code>PAYMENT_UPDATED_TO_MATCH_SERVICE_RECORDS</code> with the 'reason'
+    and 'reference' fields populated.
+  </p>
 
 {% endblock %}
