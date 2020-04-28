@@ -130,9 +130,9 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
         if (!row.reason) {
           return cb(null, false, 'reason is missing')
         }
-        if (!row.admin_github_id) {
-          row.admin_github_id = formatSessionUserIdentifier(user)
-        }
+
+        row.admin_github_id = formatSessionUserIdentifier(user)
+
         if (!moment(row.event_date, moment.ISO_8601).isValid()) {
           return cb(null, false, 'event_date is not a valid ISO_8601 string')
         }
