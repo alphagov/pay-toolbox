@@ -49,7 +49,10 @@ const uploadToS3 = async function uploadToS3(content: string, user: any): Promis
       Key: key,
       ServerSideEncryption: 'AES256'
     }).promise();
-    logger.info('S3 upload response: ' + JSON.stringify(response))
+    logger.info('Upload to S3 completed', {
+      fileVersionId: response.VersionId,
+      fileExpiration: response.Expiration
+    })
     return key
   } catch (err) {
     logger.error(`Error uploading to s3: ${err.message}`)
@@ -179,7 +182,10 @@ export async function update(req: Request, res: Response): Promise<void> {
     req.session.updateTransactionJobId = jobId
     res.redirect('/transactions/update/success')
   } catch (err) {
-    logger.error(`Error updating transactions: ${err.message}`)
+    logger.warn('Error updating transactions', {
+      message: err.message,
+      filename: req.file && req.file.filename
+    })
     req.flash('error', err.message)
     res.redirect('/transactions/update')
   }
