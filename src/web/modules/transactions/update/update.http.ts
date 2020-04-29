@@ -14,6 +14,7 @@ type TransactionRow = {
   event_date: string;
   parent_transaction_id: string;
   reason: string;
+  admin_github_id: string;
 }
 
 export async function fileUpload(req: Request, res: Response): Promise<void> {
@@ -88,7 +89,17 @@ const runEcsTask = async function runEcsTask(fileKey: string, jobId: string): Pr
   }
 }
 
-const validateAndAddDefaults = async function validateAndAddDefaults(csv: string): Promise<Object[]> {
+const formatSessionUserIdentifier = function formatSessionUserIdentifier(user: any) {
+  if (!user) {
+    return '(No Toolbox user session)'
+  } else if (!user.displayName) {
+    return user.username
+  } else {
+    return `${user.displayName} (${user.username})`
+  }
+}
+
+const validateAndAddDefaults = async function validateAndAddDefaults(csv: string, user: any): Promise<Object[]> {
   let validationError = false
   const data: Object[] = []
 
@@ -119,6 +130,9 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
         if (!row.reason) {
           return cb(null, false, 'reason is missing')
         }
+
+        row.admin_github_id = formatSessionUserIdentifier(user)
+
         if (!moment(row.event_date, moment.ISO_8601).isValid()) {
           return cb(null, false, 'event_date is not a valid ISO_8601 string')
         }
@@ -156,7 +170,7 @@ export async function update(req: Request, res: Response): Promise<void> {
   }
 
   try {
-    const data = await validateAndAddDefaults(req.file.buffer.toLocaleString())
+    const data = await validateAndAddDefaults(req.file.buffer.toLocaleString(), req.user)
     const parser = new Parser()
     const jobId = crypto.randomBytes(4).toString('hex')
     const output = parser.parse(data)
