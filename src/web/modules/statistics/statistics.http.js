@@ -9,7 +9,7 @@ const { formatStatsAsTableRows } = require('./statistics.utils.js')
 const startOfGovUkPay = moment.utc().month(8).year(2016)
 
 const overview = async function overview(req, res) {
-  const report = await Connector.performanceReport()
+  const report = await Ledger.paymentVolumesAggregate(startOfGovUkPay.format(), moment().format(), 'SUCCESS')
   res.render('statistics/overview', { stats: formatStatsAsTableRows(report) })
 }
 
@@ -120,7 +120,7 @@ const byServices = async function byServices(req, res, next) {
     res.flush()
 
     const gatewayAccountReport = await Ledger.gatewayMonthlyPerformanceReport(fromDate.format(), toDate.format())
-  
+
     // default 0 amounts for all months and all gateway accounts
     const report_schema = liveGatewayAccounts
     .map((gatewayAccount) => yearMonthValues
