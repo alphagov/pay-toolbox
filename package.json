@@ -23,9 +23,10 @@
     "build:sass": "scripts/compile-assets",
     "build:copy": "copyfiles --up 1 src/**/*.njk dist/",
     "preinstall": "echo \"Preinstall hook\" && exit 0",
-    "prepare": "npm run build:sass && npm run build-browser",
+    "prepare": "npm run snyk-protect && npm run build:sass && npm run build-browser",
     "postinstall": "echo \"postinstall set to run with prepare (only in dev)\" && exit 0",
-    "version": "echo $npm_package_version"
+    "version": "echo $npm_package_version",
+    "snyk-protect": "snyk protect"
   },
   "repository": {
     "type": "git",
@@ -68,7 +69,8 @@
     "qs": "6.9.1",
     "stripe": "7.15.0",
     "winston": "3.2.1",
-    "winston-transport": "4.3.0"
+    "winston-transport": "4.3.0",
+    "snyk": "^1.317.0"
   },
   "devDependencies": {
     "@juggle/resize-observer": "2.5.0",
@@ -119,5 +121,6 @@
     "webpack-cli": "3.3.11",
     "webpack-manifest-plugin": "2.2.0",
     "webpack-node-externals": "1.7.2"
-  }
+  },
+  "snyk": true
 }
