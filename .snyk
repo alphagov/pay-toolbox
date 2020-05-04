@@ -1,9 +1,24 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.13.5
+version: v1.14.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
-  'SNYK-JS-KINDOF-537849':
+  SNYK-JS-KINDOF-537849:
     - kind-of:
-        reason: this is a low severity exploit that allows crafted user input to manipulate type detection. kind-of is used at very low level by nunjucks. We validate user input using Joi, and generally only access specified fields in njk templates. In any case exploiting this vulnerability in this context does not seem to carry any threat.
+        reason: >-
+          this is a low severity exploit that allows crafted user input to
+          manipulate type detection. kind-of is used at very low level by
+          nunjucks. We validate user input using Joi, and generally only access
+          specified fields in njk templates. In any case exploiting this
+          vulnerability in this context does not seem to carry any threat.
         expires: '2021-01-23T00:00:00.000Z'
-patch: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - lodash:
+        patched: '2020-05-04T13:44:16.795Z'
+    - '@govuk-pay/pay-js-commons > lodash':
+        patched: '2020-05-04T13:44:16.795Z'
+    - winston > async > lodash:
+        patched: '2020-05-04T13:44:16.795Z'
+    - '@govuk-pay/pay-js-commons > winston > async > lodash':
+        patched: '2020-05-04T13:44:16.795Z'
