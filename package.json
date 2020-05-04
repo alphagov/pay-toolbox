@@ -68,8 +68,7 @@
     "qs": "6.9.1",
     "stripe": "7.15.0",
     "winston": "3.2.1",
-    "winston-transport": "4.3.0",
-    "snyk": "1.317.0"
+    "winston-transport": "4.3.0"
   },
   "devDependencies": {
     "@juggle/resize-observer": "2.5.0",
@@ -120,6 +119,5 @@
     "webpack-cli": "3.3.11",
     "webpack-manifest-plugin": "2.2.0",
     "webpack-node-externals": "1.7.2"
-  },
-  "snyk": true
+  }
 }
