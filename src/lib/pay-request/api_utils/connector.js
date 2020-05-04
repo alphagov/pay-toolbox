@@ -21,6 +21,10 @@ const connectorMethods = function connectorMethods(instance) {
     return axiosInstance.get(`/v1/frontend/accounts/${id}`).then(utilExtractData)
   }
 
+  const acceptedCardTypes = function acceptedCardTypes(accountId) {
+    return axiosInstance.get(`/v1/frontend/accounts/${accountId}/card-types`).then(utilExtractData)
+  }
+
   const createAccount = function createAccount(accountDetails) {
     return axiosInstance.post('/v1/api/accounts', accountDetails).then(utilExtractData)
   }
@@ -127,6 +131,7 @@ const connectorMethods = function connectorMethods(instance) {
     account,
     accounts,
     accountWithCredentials,
+    acceptedCardTypes,
     createAccount,
     searchTransactionsByChargeId,
     searchTransactionsByReference,

@@ -180,11 +180,13 @@ const detail = async function detail(req: Request, res: Response): Promise<void>
   const { id } = req.params
   let services = {}
   const isDirectDebitID = id.match(/^DIRECT_DEBIT:/)
-  const readAccountMethod = isDirectDebitID
-    ? DirectDebitConnector.account
-    : Connector.accountWithCredentials
 
-  const account = await readAccountMethod(id)
+  let account, acceptedCards
+  if (isDirectDebitID) {
+    account = await DirectDebitConnector.account(id)
+  } else {
+    [account, acceptedCards] = await Promise.all([Connector.accountWithCredentials(id), Connector.acceptedCardTypes(id)])
+  }
 
   try {
     services = await AdminUsers.gatewayAccountServices(id)
@@ -194,6 +196,7 @@ const detail = async function detail(req: Request, res: Response): Promise<void>
 
   res.render('gateway_accounts/detail', {
     account,
+    acceptedCards,
     gatewayAccountId: id,
     services,
     messages: req.flash('info'),
