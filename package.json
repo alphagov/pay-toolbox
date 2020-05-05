@@ -35,7 +35,7 @@
   "homepage": "https://github.com/alphagov/pay-toolbox#readme",
   "dependencies": {
     "@govuk-pay/pay-js-commons": "2.20.1",
-    "@sentry/node": "5.9.0",
+    "@sentry/node": "5.15.4",
     "@types/morgan": "1.7.37",
     "@types/multer": "1.4.2",
     "@types/qs": "6.9.1",
