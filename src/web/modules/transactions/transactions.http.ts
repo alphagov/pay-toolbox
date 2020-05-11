@@ -102,6 +102,10 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     )
     relatedTransactions.push(...relatedResult.transactions)
 
+    if (transaction.parent_transaction_id) {
+      transaction.parent = await Ledger.transaction(transaction.parent_transaction_id) as Transaction
+    }
+
     const renderKey = transaction.transaction_type.toLowerCase()
     res.render(`transactions/${renderKey}`, {
       transaction,

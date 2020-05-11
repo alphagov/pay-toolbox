@@ -59,6 +59,8 @@ declare module 'ledger' {
     refund_summary: RefundSummary;
     transaction_id: string;
     transaction_type: string;
+    parent_transaction_id?: string;
+    parent?: Transaction;
   }
 
   export interface Event {
