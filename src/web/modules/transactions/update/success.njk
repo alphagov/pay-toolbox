@@ -13,12 +13,12 @@
 </div>
 
 <p class="govuk-body">
-A job has been started to process the transaction updates provided by CSV. Progress of this job can be monitored through Splunk
-by
+A job has been started to process the transaction updates provided by CSV. Progress of this job can be monitored using the
+payment update Splunk dashboard
 <a
   class="govuk-link"
-  href="https://gds.splunkcloud.com/en-GB/app/gds-004-pay/search?q=search%20{{ jobId }}">
-  searching with your job reference
+  href="https://gds.splunkcloud.com/en-GB/app/gds-004-pay/payment_update_job?form.job_id={{ jobId }}">
+  filtered by your job reference
 </a>.
 </p>
 
