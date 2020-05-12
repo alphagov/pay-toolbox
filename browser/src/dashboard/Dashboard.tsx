@@ -2,7 +2,7 @@ import React from 'react'
 
 import moment from 'moment'
 
-import ResizeObserver from '@juggle/resize-observer'
+import { ResizeObserver } from '@juggle/resize-observer'
 import { Serie, Datum } from '@nivo/line'
 
 import { Event } from 'ledger'
