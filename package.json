@@ -43,7 +43,7 @@
     "client-sessions": "0.8.0",
     "cls-hooked": "4.2.2",
     "connect-flash": "0.1.1",
-    "cookie-session": "2.0.0-beta.3",
+    "cookie-session": "2.0.0-rc.1",
     "csurf": "1.10.0",
     "deep-diff": "1.0.2",
     "dotenv": "8.2.0",
