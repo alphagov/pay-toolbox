@@ -23,6 +23,7 @@ const router = require('./router')
 
 // @FIXME(sfount) move this out of server configuration
 const {
+  toSimpleDate,
   toFormattedDate,
   toFormattedDateLocalTimeZone,
   toFormattedDateLong,
@@ -107,6 +108,7 @@ const configureTemplateRendering = function configureTemplateRendering(instance)
   // make static manifest details available to all templates
   templaterEnvironment.addGlobal('manifest', { ...staticResourceManifest, ...browserManifest })
   templaterEnvironment.addFilter('formatDate', (date) => toFormattedDate(new Date(date)))
+  templaterEnvironment.addFilter('formatToSimpleDate', (date) => toSimpleDate(date))
   templaterEnvironment.addFilter('formatDateLocalTimeZone', (date) => toFormattedDateLocalTimeZone(new Date(date)))
   templaterEnvironment.addFilter('formatDateLong', (date) => toFormattedDateLong(new Date(date)))
   templaterEnvironment.addFilter('formatDateSince', (date) => toFormattedDateSince(new Date(date)))

@@ -70,7 +70,8 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     const selectedStatus = req.query.status || PaymentListFilterStatus[PaymentListFilterStatus.all]
     const filters = {
       ...req.query.reference && { reference: req.query.reference },
-      ...req.query.gateway_transaction_id && { gateway_transaction_id: req.query.gateway_transaction_id }
+      ...req.query.gateway_transaction_id && { gateway_transaction_id: req.query.gateway_transaction_id },
+      ...req.query.gateway_payout_id && { gateway_payout_id: req.query.gateway_payout_id }
     }
     const response = await Ledger.transactions(accountId, req.query.page, selectedStatus, filters)
 
