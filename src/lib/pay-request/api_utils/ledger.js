@@ -61,6 +61,9 @@ const ledgerMethods = function ledgerMethods(instance) {
   const transactionsByReference = async function transactionsByReference(reference, limit = 2) {
     return transactions(null, null, null, { reference, display_size: limit })
   }
+  const transactionsByGatewayTransactionId = function transactionsByGatewayTransactionId(gatewayTransactionId, limit = 2) {
+    return transactions(null, null, null, { gateway_transaction_id: gatewayTransactionId, display_size: limit })
+  }
   const relatedTransactions = async function relatedTransactions(id, accountId) {
     const params = {
       gateway_account_id: accountId
@@ -157,6 +160,7 @@ const ledgerMethods = function ledgerMethods(instance) {
     getPaymentsByState,
     paymentStatistics,
     transactionsByReference,
+    transactionsByGatewayTransactionId,
     relatedTransactions,
     paymentVolumesByHour,
     paymentVolumesAggregate,

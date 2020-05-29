@@ -41,11 +41,22 @@ export async function search(req: Request, res: Response, next: NextFunction): P
 
       if (referenceSearch.results.length > 1) {
         res.redirect(`/transactions?reference=${id}`)
+        return
       } else if (referenceSearch.results.length === 1) {
         res.redirect(`/transactions/${referenceSearch.results[0].transaction_id}`)
-      } else {
-        next(new EntityNotFoundError('Transaction search with criteria ', id))
+        return
       }
+
+      const gatewayTransactionIdSearch = await Ledger.transactionsByGatewayTransactionId(id)
+      if (gatewayTransactionIdSearch.results.length > 1) {
+        res.redirect(`/transactions?gateway_transaction_id=${id}`)
+        return
+      } else if (gatewayTransactionIdSearch.results.length === 1) {
+        res.redirect(`/transactions/${gatewayTransactionIdSearch.results[0].transaction_id}`)
+        return
+      }
+
+      next(new EntityNotFoundError('Transaction search with criteria ', id))
       return
     }
     next(error)
@@ -57,7 +68,10 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     let service, account
     const accountId = req.query.account
     const selectedStatus = req.query.status || PaymentListFilterStatus[PaymentListFilterStatus.all]
-    const filters = { ...req.query.reference && { reference: req.query.reference } }
+    const filters = {
+      ...req.query.reference && { reference: req.query.reference },
+      ...req.query.gateway_transaction_id && { gateway_transaction_id: req.query.gateway_transaction_id }
+    }
     const response = await Ledger.transactions(accountId, req.query.page, selectedStatus, filters)
 
     if (req.query.account) {
