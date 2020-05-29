@@ -33,6 +33,15 @@
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
   {% endif %}
 
+{% if filters.gateway_transaction_id %}
+  <div class="govuk-body">
+    <span>Filtered by gateway transaction ID </span>
+    <span><strong class="govuk-tag">{{ filters.gateway_transaction_id }}</strong></span>
+  </div>
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+  {% endif %}
+
+
   <div>
     <table class="govuk-table">
       <thead class="govuk-table__head">
