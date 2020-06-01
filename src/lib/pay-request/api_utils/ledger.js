@@ -32,9 +32,9 @@ const ledgerMethods = function ledgerMethods(instance) {
     const pageSize = 20
     const externalStatusMap = {
       all: [],
-      succeeded: [ 'success' ],
-      failed: [ 'declined', 'timedout', 'cancelled', 'error' ],
-      'in-progress': [ 'created', 'started', 'submitted', 'capturable' ]
+      succeeded: ['success'],
+      failed: ['declined', 'timedout', 'cancelled', 'error'],
+      'in-progress': ['created', 'started', 'submitted', 'capturable']
     }
     const states = currentStatus ? externalStatusMap[currentStatus] : externalStatusMap.all
 
@@ -64,6 +64,7 @@ const ledgerMethods = function ledgerMethods(instance) {
   const transactionsByGatewayTransactionId = function transactionsByGatewayTransactionId(gatewayTransactionId, limit = 2) {
     return transactions(null, null, null, { gateway_transaction_id: gatewayTransactionId, display_size: limit })
   }
+
   const relatedTransactions = async function relatedTransactions(id, accountId) {
     const params = {
       gateway_account_id: accountId
@@ -153,6 +154,24 @@ const ledgerMethods = function ledgerMethods(instance) {
       .catch(handleNotFound('Transaction', id))
   }
 
+  const payouts = function getPayouts(account, state, currentPage) {
+    const page = currentPage || 1
+    const pageSize = 20
+    const params = {
+      page,
+      display_size: pageSize,
+      ...account && { gateway_account_id: account },
+      ...state && { state: state }
+    }
+
+    if (!account) {
+      params.override_account_id_restriction = true
+    }
+
+    return axiosInstance.get('/v1/payout', { params })
+      .then(utilExtractData)
+  }
+
   return {
     transaction,
     transactions,
@@ -166,7 +185,8 @@ const ledgerMethods = function ledgerMethods(instance) {
     paymentVolumesAggregate,
     eventTicker,
     gatewayMonthlyPerformanceReport,
-    transactionByGatewayTransactionId
+    transactionByGatewayTransactionId,
+    payouts
   }
 }
 

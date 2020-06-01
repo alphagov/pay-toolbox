@@ -25,12 +25,23 @@
     {% endfor %}
   </div>
 
-  {% if filters.reference %}
-  <div class="govuk-body">
-    <span>Filtered by reference</span>
-    <span><strong class="govuk-tag">{{ filters.reference }}</strong></span>
-  </div>
-  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+  {% if filters.reference or filters.gateway_payout_id %}
+    <div class="govuk-body">
+      <h4 class="govuk-heading-s">Filtered by</h4>
+      {% if filters.reference %}
+        <div class="govuk-body">
+          <div class="govuk-grid-column-one-third">Reference: </div>
+          <span><strong class="govuk-tag">{{ filters.reference }}</strong></span>
+        </div>
+      {% endif %}
+      {% if filters.gateway_payout_id %}
+        <div class="govuk-body">
+            <div class="govuk-grid-column-one-third">Gateway payout ID : </div>
+            <span><strong class="govuk-tag">{{ filters.gateway_payout_id }}</strong></span>
+        </div>
+      {% endif %}
+    </div>
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
   {% endif %}
 
 {% if filters.gateway_transaction_id %}

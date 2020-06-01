@@ -15,6 +15,7 @@ const dateFormatterOptions = {
   timeZoneName: 'short'
 }
 
+const dateFormatterWithoutTimestamp = new Intl.DateTimeFormat('en-GB', { month: 'short', day: 'numeric', year: 'numeric' })
 const dateFormatter = new Intl.DateTimeFormat('en-GB', { ...dateFormatterOptions, 'timeZone': 'UTC' })
 const dateFormatterLocalTimeZone = new Intl.DateTimeFormat('en-GB', dateFormatterOptions)
 
@@ -23,6 +24,10 @@ const unixDateFormatter = new Intl.DateTimeFormat('en-GB', {
   month: 'short',
   day: '2-digit'
 })
+
+const toSimpleDate = function toSimpleDate(date) {
+  return date != null ? dateFormatterWithoutTimestamp.format(new Date(date)) : null
+}
 
 const toFormattedDate = function toFormattedDate (date) {
   return dateFormatter.format(date)
@@ -55,6 +60,7 @@ const toFormattedDateSince = function toFormattedDateSince (date) {
 }
 
 module.exports = {
+  toSimpleDate,
   toFormattedDate,
   toFormattedDateLocalTimeZone,
   toCurrencyString,

@@ -21,6 +21,7 @@ const updateTransactions = require('./modules/transactions/update/update.http')
 const parity = require('./modules/transactions/discrepancies/validateLedger.http')
 const platform = require('./modules/platform/dashboard.http')
 const paymentLinks = require('./modules/payment_links/payment_links.http')
+const ledgerPayouts = require('./modules/ledger_payouts/payout.http')
 
 // @TODO(sfount) remove `default`s on update to import export syntax
 const users = require('./modules/users/users.http').default
@@ -123,6 +124,8 @@ router.get('/transactions', auth.secured, transactions.list)
 
 router.get('/payment_links', auth.secured, paymentLinks.list)
 router.get('/payment_links/csv', auth.secured, paymentLinks.listCSV)
+
+router.get('/payouts', auth.secured, ledgerPayouts.list)
 
 router.get('/platform/dashboard', auth.secured, platform.dashboard)
 router.get('/platform/dashboard/live', platform.live)

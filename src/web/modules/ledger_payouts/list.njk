@@ -1,0 +1,112 @@
+{% extends "layout/layout.njk" %}
+
+{% macro payout_status(status) %}
+  <strong class="govuk-tag
+        {% if (status=='paidout') %} status-success {% endif %}
+        {% if (status=='failed') %} status-failed {% endif %}
+        {% if (status=='intransit') %} status-in-progress {% endif %}
+      status-tag">
+    <span>{{ status | capitalize }}</span>
+  </strong>
+{% endmacro %}
+
+{% block main %}
+
+  <span class="govuk-caption-m">
+    {% if service %}
+      <span>{{ service.name }}</span>
+    {% else %}
+      <span>GOV.UK Pay platform</span>
+    {% endif %}
+  </span>
+
+  <h1 class="govuk-heading-m">Platform payouts</h1>
+
+  {% if accountId %}
+    <div class="govuk-body">
+      <a href="/payouts" class="govuk-link govuk-link--no-visited-state">
+        <span>View all platform payouts</span>
+      </a>
+    </div>
+  {% endif %}
+
+  <div class="transactions-filter__container govuk-body">
+    {% for status in["intransit", "paidout", "failed", "all"] %}
+      <a
+        class="transactions-filter__item {% if selectedStatus === status %}selected{% endif %} no-decoration"
+        href="/payouts?status={{ status }}{% if service %}&account={{ accountId }}{% endif %}">
+        <span>{{ status | capitalize }}</span>
+      </a>
+    {% endfor %}
+  </div>
+
+  <div>
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col">Payout ID</th>
+          <th class="govuk-table__header" scope="col">Amount</th>
+          <th class="govuk-table__header" scope="col"></th>
+          <th class="govuk-table__header" scope="col">Created date</th>
+          <th class="govuk-table__header" scope="col" title="Transactions">Txs</th>
+          <th class="govuk-table__header" scope="col">View for<br> account</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for payout in payouts %}
+          <tr class="govuk-table__row" onclick="local.href='/transactions'">
+            <td class="govuk-table__cell">
+              <span class="govuk-caption-m" title="{{ payout.gateway_payout_id }}" >{{ payout.gateway_payout_id | truncate(10)}}</span>
+            </td>
+            <td class="govuk-table__cell">
+              <span class="govuk-caption-m">{{ payout.amount | currency }} </span>
+            </td>
+            <td class="govuk-table__cell">
+              <span class="">{{ payout_status ( payout.state.status ) }}</span>
+            </td>
+            <td class="govuk-table__cell">
+              <span class="govuk-caption-m">{{ payout.created_date | formatToSimpleDate }}</span>
+            </td>
+            <td class="govuk-table__cell">
+               <a class="govuk-link govuk-link--no-visited-state" 
+                   href="/transactions?account={{ payout.gateway_account_id }}&gateway_payout_id={{ payout.gateway_payout_id }}">
+                View
+              </a>
+            </td>
+            <td class="govuk-table__cell">
+              <a class="govuk-link govuk-link--no-visited-state" href="/payouts?account={{ payout.gateway_account_id }}">
+                {{ payout.gateway_account_id }}
+              </a>
+            </td>
+          </tr>
+        {% else %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell center" colspan="6">
+              <span>
+                <i>No payouts found.</i>
+              </span>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="govuk-body">
+    <p>Showing page {{ set.page }} ({{ set.count }}) of about {{ set.total }} payouts</p>
+  </div>
+
+  <div class="toolbox-right">
+    <a  {% if set.page <= 1 %} disabled
+        {% else %} href="/payouts?page={{ set.page - 1 }}&status={{ selectedStatus }}{% if service %}&account={{ accountId }}{% endif %}"
+        {% endif %} class="govuk-button govuk-button--secondary">
+      Previous
+    </a>
+    <a  {% if not(set._links.next_page) %} disabled 
+        {% else %} href="/payouts?page={{ set.page + 1 }}&status={{ selectedStatus }}{% if service %}&account={{ accountId }}{% endif %}"
+      {% endif %} class="govuk-button govuk-button--secondary">
+      Next
+    </a>
+  </div>
+
+{% endblock %}
