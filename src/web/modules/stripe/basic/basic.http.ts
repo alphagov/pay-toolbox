@@ -100,30 +100,39 @@ const submitAccountCreate = async function submitAccountCreate(
     )
 
     logger.info('Requesting new Stripe account from stripe API')
-    // @ts-ignore
     const stripeAccount = await stripe.accounts.create({
       type: 'custom',
       country: 'GB',
-      business_name: service.merchant_details.name,
-      payout_statement_descriptor: accountDetails.statementDescriptor,
-      statement_descriptor: accountDetails.statementDescriptor,
-      support_phone: service.merchant_details.telephone_number,
-      legal_entity: {
-        type: 'government_agency',
-        business_name: service.merchant_details.name,
+      business_profile: {
+        name: service.merchant_details.name,
+        support_phone: service.merchant_details.telephone_number
+      },
+      settings: {
+        payouts: {
+          statement_descriptor: accountDetails.statementDescriptor
+        },
+        payments: {
+          statement_descriptor: accountDetails.statementDescriptor
+        }
+      },
+      business_type: 'government_entity',
+      company: {
+        name: service.merchant_details.name,
         address: {
           line1: service.merchant_details.address_line1,
           line2: service.merchant_details.address_line2,
           city: service.merchant_details.address_city,
           postal_code: service.merchant_details.address_postcode,
           country: service.merchant_details.address_country
-        },
-        additional_owners: ''
+        }
       },
       tos_acceptance: {
         ip: stripeAgreement.ip_address,
         date: Math.floor(new Date(stripeAgreement.agreement_time).getTime() / 1000)
-      }
+      },
+      // sfount: required capabilities for these accounts are [ 'card_payments', 'transfers' ], in order to set these
+      //         additional information is required from services to take payments straight away
+      requested_capabilities: [ 'legacy_payments' ]
     })
     logger.info(`Stripe API responded with success, account ${stripeAccount.id} created.`)
 
