@@ -63,7 +63,7 @@
     "passport": "0.4.0",
     "passport-github": "1.1.0",
     "qs": "6.9.1",
-    "stripe": "7.15.0",
+    "stripe": "8.60.0",
     "winston": "3.2.1",
     "winston-transport": "4.3.0"
   },
@@ -85,7 +85,7 @@
     "@types/passport": "1.0.0",
     "@types/react": "16.9.35",
     "@types/react-dom": "16.9.8",
-    "@types/stripe": "6.25.8",
+    "@types/stripe": "7.13.23",
     "@types/webpack": "4.41.12",
     "@types/webpack-manifest-plugin": "2.1.0",
     "@types/webpack-node-externals": "1.7.1",
