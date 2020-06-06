@@ -88,9 +88,6 @@ router.post('/discrepancies/resolve/:id', auth.secured, discrepancies.resolveDis
 router.get('/charges/search', auth.secured, charges.search)
 router.post('/charges/search', auth.secured, charges.searchTransaction.http, charges.searchTransaction.exceptions)
 
-router.get('/stripe/create', auth.secured, auth.administrative, stripe.create)
-router.post('/stripe/create', auth.secured, auth.administrative, stripe.createAccount.http, stripe.createAccount.exceptions)
-
 router.get('/stripe/basic/create', auth.secured, stripe.basic)
 router.post('/stripe/basic/create', auth.secured, stripe.basicCreate)
 
