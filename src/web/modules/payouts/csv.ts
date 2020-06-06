@@ -1,6 +1,5 @@
 import { parseAsync } from 'json2csv'
 import Stripe from 'stripe'
-
 import { toCurrencyString, toISODateString } from '../../../lib/format'
 
 export enum PaymentType {
@@ -28,7 +27,7 @@ export interface PayTransactionCSVEntity {
 
 export async function renderCSV(
   transactions: PayTransactionCSVEntity[],
-  payout: Stripe.payouts.IPayout
+  payout: Stripe.Payout
 ): Promise<string> {
   const fields = [ {
     label: 'GOV.UK Pay external ID',
@@ -94,7 +93,7 @@ export async function renderCSV(
 }
 
 export async function renderPayoutListCSV(
-  payouts: Stripe.payouts.IPayout[]
+  payouts: Stripe.Payout[]
 ): Promise<string> {
   const fields = [ {
     label: 'Payment gateway ID',

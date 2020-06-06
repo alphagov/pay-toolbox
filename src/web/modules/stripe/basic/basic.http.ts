@@ -11,15 +11,15 @@ import { formatErrorsForTemplate, ClientFormError } from '../../common/validatio
 import { Service, StripeAgreement } from '../../../../lib/pay-request/types/adminUsers'
 import AccountDetails from './basicAccountDetails.model'
 
-const STRIPE_ACCOUNT_API_KEY: string = process.env.STRIPE_ACCOUNT_API_KEY || ''
-const stripe = new Stripe(STRIPE_ACCOUNT_API_KEY)
 const { StripeError } = Stripe.errors
 
-if (config.server.HTTPS_PROXY) {
-  // @ts-ignore
-  stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
-}
-stripe.setApiVersion('2018-09-24')
+const STRIPE_ACCOUNT_API_KEY: string = process.env.STRIPE_ACCOUNT_API_KEY || ''
+
+const stripe = new Stripe(STRIPE_ACCOUNT_API_KEY, {
+  apiVersion: '2020-03-02',
+  typescript: true,
+  ...config.server.HTTPS_PROXY && { httpAgent: new HTTPSProxyAgent(config.server.HTTPS_PROXY) }
+})
 
 const createAccountForm = async function createAccountForm(
   req: Request,
@@ -100,6 +100,7 @@ const submitAccountCreate = async function submitAccountCreate(
     )
 
     logger.info('Requesting new Stripe account from stripe API')
+    // @ts-ignore
     const stripeAccount = await stripe.accounts.create({
       type: 'custom',
       country: 'GB',

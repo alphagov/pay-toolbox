@@ -20,11 +20,11 @@ import Stripe from 'stripe'
 import HTTPSProxyAgent from 'https-proxy-agent'
 import { format } from './csv'
 
-const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY)
-stripe.setApiVersion('2018-09-24')
-
-// @ts-ignore
-if (config.server.HTTPS_PROXY) stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
+const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY, {
+  apiVersion: '2020-03-02',
+  typescript: true,
+  ...config.server.HTTPS_PROXY && { httpAgent: new HTTPSProxyAgent(config.server.HTTPS_PROXY) }
+})
 
 const overview = async function overview(req: Request, res: Response): Promise<void> {
   const filters = parse(req.query)
@@ -314,18 +314,15 @@ const updateStripeStatementDescriptor = async function updateStripeStatementDesc
     throw new Error('Cannot update empty state descriptor')
   }
 
-  // @ts-ignore
-  const updateParams = {
-    settings: {
-      payments: {
-        statement_descriptor
-      }
-    }
-  }
   await stripe.accounts.update(
     account.credentials.stripe_account_id,
-    // @ts-ignore
-    updateParams
+    {
+      settings: {
+        payments: {
+          statement_descriptor
+        }
+      }
+    }
   )
   req.flash('info', `Statement descriptor updated to [${statement_descriptor}]`)
   res.redirect(`/gateway_accounts/${id}`)

@@ -7,7 +7,7 @@ import { Ledger } from '../../../lib/pay-request'
 export const STRIPE_FEES_FEATURE_TURNED_ON = 1556823600
 
 const legacyPayPayment = async function legacyPayPayment(
-  payment: Stripe.balance.IBalanceTransaction
+  payment: Stripe.BalanceTransaction
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   // @ts-ignore
@@ -19,7 +19,7 @@ const legacyPayPayment = async function legacyPayPayment(
 }
 
 const payPayment = async function payPayment(
-  payment: Stripe.balance.IBalanceTransaction,
+  payment: Stripe.BalanceTransaction,
   gatewayAccountId: string
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
@@ -30,7 +30,7 @@ const payPayment = async function payPayment(
 }
 
 const legacyPayRefund = async function legacyPayRefund(
-  refund: Stripe.balance.IBalanceTransaction
+  refund: Stripe.BalanceTransaction
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   // @ts-ignore
@@ -40,7 +40,7 @@ const legacyPayRefund = async function legacyPayRefund(
 }
 
 const payRefund = async function payRefund(
-  refund: Stripe.balance.IBalanceTransaction,
+  refund: Stripe.BalanceTransaction,
   gatewayAccountId: string
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
@@ -51,7 +51,7 @@ const payRefund = async function payRefund(
 
 export async function reconcilePayment(
   gatewayAccountId: string,
-  payment: Stripe.balance.IBalanceTransaction
+  payment: Stripe.BalanceTransaction
 ): Promise<PayTransactionCSVEntity> {
   const paymentIsLegacy = payment.created <= STRIPE_FEES_FEATURE_TURNED_ON
   const payCharge = paymentIsLegacy
@@ -74,7 +74,7 @@ export async function reconcilePayment(
 
 export async function reconcileRefund(
   gatewayAccountId: string,
-  refund: Stripe.balance.IBalanceTransaction
+  refund: Stripe.BalanceTransaction
 ): Promise<PayTransactionCSVEntity> {
   const refundIsLegacy = refund.created <= STRIPE_FEES_FEATURE_TURNED_ON
   const payCharge = refundIsLegacy

@@ -5,11 +5,11 @@ import * as config from '../../../config'
 
 import logger = require('../../../lib/logger');
 
-const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY)
-stripe.setApiVersion('2018-09-24')
-
-// @ts-ignore
-if (config.server.HTTPS_PROXY) stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
+const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY, {
+  apiVersion: '2020-03-02',
+  typescript: true,
+  ...config.server.HTTPS_PROXY && { httpAgent: new HTTPSProxyAgent(config.server.HTTPS_PROXY) }
+})
 
 const MAX_PAGE_SIZE = 100
 
@@ -17,7 +17,7 @@ const getPage = async function getPage(
   accountId: string,
   payoutId: string,
   startingAfter?: string
-): Promise<Stripe.IList<Stripe.balance.IBalanceTransaction>> {
+): Promise<Stripe.ApiList<Stripe.BalanceTransaction>> {
   const limits = {
     limit: MAX_PAGE_SIZE,
     payout: payoutId,
@@ -25,8 +25,7 @@ const getPage = async function getPage(
     ...startingAfter && { starting_after: startingAfter }
   }
 
-  // @ts-ignore
-  const result = await stripe.balanceTransactions.list(limits, { stripe_account: accountId })
+  const result = await stripe.balanceTransactions.list(limits, { stripeAccount: accountId })
 
   logger.info(`[pages] fetched ${result.data.length} transactions for ${payoutId} [has_more=${result.has_more}]`)
   return result
@@ -35,8 +34,8 @@ const getPage = async function getPage(
 const all = async function all(
   accountId: string,
   payoutId: string
-): Promise<Stripe.balance.IBalanceTransaction[]> {
-  const transactions: Stripe.balance.IBalanceTransaction[] = []
+): Promise<Stripe.BalanceTransaction[]> {
+  const transactions: Stripe.BalanceTransaction[] = []
   const initialPage = await getPage(accountId, payoutId)
 
   transactions.push(...initialPage.data)
@@ -55,7 +54,7 @@ const all = async function all(
 
 export async function getTransactionsForPayout(
   stripeAccountId: string,
-  payout: Stripe.payouts.IPayout
-): Promise<Stripe.balance.IBalanceTransaction[]> {
+  payout: Stripe.Payout
+): Promise<Stripe.BalanceTransaction[]> {
   return all(stripeAccountId, payout.id)
 }

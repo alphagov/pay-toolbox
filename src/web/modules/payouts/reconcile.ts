@@ -9,14 +9,14 @@ import { renderCSV, PayTransactionCSVEntity, PaymentType } from './csv'
 import { reconcilePayment, reconcileRefund } from './payTransaction'
 import { getTransactionsForPayout } from './page'
 
-const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY)
-stripe.setApiVersion('2018-09-24')
-
-// @ts-ignore
-if (config.server.HTTPS_PROXY) stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
+const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY, {
+  apiVersion: '2020-03-02',
+  typescript: true,
+  ...config.server.HTTPS_PROXY && { httpAgent: new HTTPSProxyAgent(config.server.HTTPS_PROXY) }
+})
 
 const verifyReconciledTotals = async function verifyReconciledTotals(
-  payout: Stripe.payouts.IPayout,
+  payout: Stripe.Payout,
   transactions: PayTransactionCSVEntity[]
 ): Promise<void> {
   const grouped = _.groupBy(transactions, 'type')
@@ -32,8 +32,8 @@ const verifyReconciledTotals = async function verifyReconciledTotals(
 
 const reconcileStripePayTransactions = async function reconcileStripePayTransactions(
   gatewayAccountId: string,
-  payout: Stripe.payouts.IPayout,
-  transactions: Stripe.balance.IBalanceTransaction[]
+  payout: Stripe.Payout,
+  transactions: Stripe.BalanceTransaction[]
 ): Promise<PayTransactionCSVEntity[]> {
   const grouped = _.groupBy(transactions, 'type')
   _.minBy(grouped.payment, 'created')
@@ -64,7 +64,7 @@ const reconcileStripePayTransactions = async function reconcileStripePayTransact
 
 export async function buildPayoutCSVReport(
   gatewayAccountId: string,
-  payout: Stripe.payouts.IPayout,
+  payout: Stripe.Payout,
   stripeAccountId: string
 ): Promise<string> {
   const transactions = await getTransactionsForPayout(stripeAccountId, payout)
@@ -80,9 +80,9 @@ export async function getPayoutsForAccount(
   stripeAccountId: string,
   startingAfter: string,
   endingBefore: string
-): Promise<Stripe.IList<Stripe.payouts.IPayout>> {
+): Promise<Stripe.ApiList<Stripe.Payout>> {
   const limitPayoutPageSize = 10
-  const options: Stripe.payouts.IPayoutListOptions = {
+  const options: Stripe.PayoutListParams = {
     limit: limitPayoutPageSize,
     ...startingAfter && { starting_after: startingAfter },
     ...endingBefore && { ending_before: endingBefore }
@@ -94,6 +94,6 @@ export async function getPayoutsForAccount(
 export async function getPayout(
   payoutId: string,
   stripeAccountId: string
-): Promise<Stripe.payouts.IPayout> {
+): Promise<Stripe.Payout> {
   return stripe.payouts.retrieve(payoutId, { stripe_account: stripeAccountId })
 }

@@ -8,7 +8,7 @@ const logger = require('./../../../lib/logger')
 if (server.HTTPS_PROXY) {
   stripe.setHttpAgent(new HTTPSProxyAgent(server.HTTPS_PROXY))
 }
-stripe.setApiVersion('2018-09-24')
+stripe.setApiVersion('2020-03-02')
 
 const { AdminUsers } = require('./../../../lib/pay-request')
 const StripeAccount = require('./stripe.model')
