@@ -98,6 +98,11 @@
           <dd class="govuk-summary-list__value">{{ account.requires3ds | string | capitalize }}</dd>
           <dd class="govuk-summary-list__actions"></dd>
         </div>
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">3DS version</dt>
+          <dd class="govuk-summary-list__value">{{ account.integration_version_3ds | string }}</dd>
+          <dd class="govuk-summary-list__actions"></dd>
+        </div>
     {% endif %}
     {% if account.allow_apple_pay != undefined %}
         <div class="govuk-summary-list__row">
