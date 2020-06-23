@@ -24,6 +24,7 @@ applications:
     PRODUCTS_URL: ""
     PUBLIC_AUTH_URL: ""
     LEDGER_URL: ""
+    SELFSERVICE_URL: ""
 
     # The following are provided by toolbox-secret-service - see env-map.yml
     DISABLE_REQUEST_LOGGING: ""

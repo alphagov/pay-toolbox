@@ -166,13 +166,27 @@ const writeAccount = async function writeAccount(req: Request, res: Response): P
     }
   }
 
+  const stripeAccountStatementDescriptors: {
+    payoutStatementDescriptor?: string,
+    statementDescriptor?: string
+  } = {}
+
+  if (account.provider === 'stripe'){
+    const stripeAccountDetails = await stripe.accounts.retrieve(account.credentials);
+    stripeAccountStatementDescriptors.payoutStatementDescriptor =  stripeAccountDetails.payout_statement_descriptor
+    stripeAccountStatementDescriptors.statementDescriptor =  stripeAccountDetails.statement_descriptor
+  }
+
   // note payment_provider is not returned in the object returned from createAccount
   res.render('gateway_accounts/createSuccess', {
     account: createdAccount,
     linkedService,
     gatewayAccountIdDerived,
     provider: account.provider,
-    isLive: account.isLive()
+    isLive: account.isLive(),
+    isStripe: account.provider === 'stripe',
+    stripeAccountStatementDescriptors,
+    selfServiceBaseUrl: config.services.SELFSERVICE_URL
   })
 }
 

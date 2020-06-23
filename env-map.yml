@@ -5,6 +5,7 @@ env_vars:
   PRODUCTS_URL: '.[][] | select(.name == "app-catalog")                                | .credentials.products_url'
   PUBLIC_AUTH_URL: '.[][] | select(.name == "app-catalog")                             | .credentials.publicauth_url'
   LEDGER_URL: '.[][] | select(.name == "app-catalog")                                  | .credentials.ledger_url'
+  SELFSERVICE_URL: '.[][] | select(.name == "app-catalog")                             | .credentials.selfservice_url'
   DISABLE_REQUEST_LOGGING: '.[][] | select(.name == "toolbox-secret-service")          | .credentials.disable_request_logging' 
   COOKIE_SESSION_ENCRYPTION_SECRET: '.[][] | select(.name == "toolbox-secret-service") | .credentials.cookie_encryption_secret'
   SENTRY_DSN: '.[][] | select(.name == "toolbox-secret-service")                       | .credentials.sentry_dsn'
