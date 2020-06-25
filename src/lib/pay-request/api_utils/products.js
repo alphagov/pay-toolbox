@@ -1,4 +1,5 @@
 import { EntityNotFoundError } from '../../errors'
+const { redactProductTokens } = require('./redact')
 
 const productsMethods = function productsMethods(instance) {
   const axiosInstance = instance || this
@@ -17,6 +18,7 @@ const productsMethods = function productsMethods(instance) {
     }
     return axiosInstance.get('/v1/api/stats/products', queryParams)
       .then(utilExtractData)
+      .then(redactProductTokens)
   }
 
   return {
