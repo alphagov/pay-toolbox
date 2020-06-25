@@ -31,8 +31,8 @@ A {{ account.type | upper }} Gateway account has been created through Admin User
 			],
 			rows: [
 				[ { text: "***GO_LIVE_URL***" }, { text: selfServiceBaseUrl + "/service/" + linkedService + "/dashboard/live", classes: "stripe-go-live-url-table-cell"  } ],
-				[ { text: "***STATEMENT_DESCRIPTOR***" }, { text: stripeAccountStatementDescriptors.statementDescriptor  } ],
-				[ { text: "***PAYOUT_STATEMENT_DESCRIPTOR***" }, { text: stripeAccountStatementDescriptors.payoutStatementDescriptor } ]
+				[ { text: "***STATEMENT_DESCRIPTOR***" }, { text: stripeAccountStatementDescriptors.statementDescriptor | upper } ],
+				[ { text: "***PAYOUT_STATEMENT_DESCRIPTOR***" }, { text: stripeAccountStatementDescriptors.payoutStatementDescriptor | upper } ]
 			]
 			})
 	}}
