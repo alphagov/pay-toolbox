@@ -53,7 +53,8 @@ const csvServices = async function csvServices (req, res) {
 
 const byServices = async function byServices (req, res, next) {
   const { options } = req.body
-  const fromDate = options === 'all' ? startOfGovUkPay : moment.utc().startOf('month')
+  const forAllTime = options === 'all'
+  const fromDate = forAllTime ? startOfGovUkPay : moment.utc().startOf('month')
   const toDate = moment.utc().endOf('month')
 
   try {
@@ -86,6 +87,10 @@ const byServices = async function byServices (req, res, next) {
       label: 'Service went live date',
       value: 'went_live_date'
     }]
+
+    if (forAllTime) {
+      fields.push({ label: 'Starting month', value: 'starting_month'})
+    }
 
     do {
       const key = compareDate.format('YYYY-MM')
@@ -160,6 +165,10 @@ const byServices = async function byServices (req, res, next) {
           const zeroIndexedMonth = Number(gatewayAccountReport[i].month) - 1
           const date = moment().utc().year(gatewayAccountReport[i].year).month(zeroIndexedMonth)
           emptyMonthlyReport[date.format('YYYY-MM')] = gatewayAccountReport[i].total_volume
+
+          if (forAllTime && (!emptyMonthlyReport.starting_month || date.isBefore(moment(emptyMonthlyReport.starting_month)))) {
+            emptyMonthlyReport.starting_month =  date.format('YYYY-MM')
+          }
         }
       }
       return emptyMonthlyReport
