@@ -8,33 +8,33 @@ const { formatStatsAsTableRows } = require('./statistics.utils.js')
 
 const startOfGovUkPay = moment.utc().month(8).year(2016)
 
-const overview = async function overview(req, res) {
+const overview = async function overview (req, res) {
   const report = await Connector.performanceReport()
   res.render('statistics/overview', { stats: formatStatsAsTableRows(report) })
 }
 
-const dateFilterRequest = function dateFilterRequest(req, res) {
+const dateFilterRequest = function dateFilterRequest (req, res) {
   const date = new Date()
   res.render('statistics/filter_date', { date, csrf: req.csrfToken() })
 }
 
-const dateFilter = async function dateFilter(req, res) {
+const dateFilter = async function dateFilter (req, res) {
   const { date } = new DateFilter(req.body)
   const stats = await Connector.dailyPerformanceReport(date)
 
   res.render('statistics/overview', { date, stats: formatStatsAsTableRows(stats) })
 }
 
-const compareFilterRequest = function compareFilterRequest(req, res) {
+const compareFilterRequest = function compareFilterRequest (req, res) {
   const date = new Date()
   const comparison = new Date()
   comparison.setDate(date.getDate() - 1)
   res.render('statistics/filter_comparison', { date, comparison, csrf: req.csrfToken() })
 }
 
-const compareFilter = async function compareFilter(req, res) {
+const compareFilter = async function compareFilter (req, res) {
   const { date, compareDate } = new DateFilter(req.body)
-  const [ stats, compareStats ] = await Promise.all([
+  const [stats, compareStats] = await Promise.all([
     Connector.dailyPerformanceReport(date),
     Connector.dailyPerformanceReport(compareDate)
   ])
@@ -47,22 +47,22 @@ const compareFilter = async function compareFilter(req, res) {
   })
 }
 
-const csvServices = async function csvServices(req, res) {
+const csvServices = async function csvServices (req, res) {
   res.render('statistics/by_gateway_csv', { csrf: req.csrfToken() })
 }
 
-const byServices = async function byServices(req, res, next) {
+const byServices = async function byServices (req, res, next) {
   const { options } = req.body
   const fromDate = options === 'all' ? startOfGovUkPay : moment.utc().startOf('month')
   const toDate = moment.utc().endOf('month')
 
   try {
-    const [ gatewayAccountsResponse, services ] = await Promise.all([ Connector.accounts(), AdminUsers.services() ])
+    const [gatewayAccountsResponse, services] = await Promise.all([Connector.accounts(), AdminUsers.services()])
     const { accounts } = gatewayAccountsResponse
 
     // Generate all months between from and to date
     const compareDate = fromDate.clone()
-    const yearMonthValues = [ compareDate.format('YYYY-MM') ]
+    const yearMonthValues = [compareDate.format('YYYY-MM')]
 
     const fields = [{
       label: 'GOV.UK Pay account ID',
@@ -77,11 +77,14 @@ const byServices = async function byServices(req, res, next) {
       label: 'Organisation name',
       value: 'organisation_name'
     }, {
+      label: 'Sector',
+      value: 'sector'
+    }, {
       label: 'Payment service provider',
       value: 'payment_provider'
     }, {
-      label: 'Service created date',
-      value: 'created_at'
+      label: 'Service went live date',
+      value: 'went_live_date'
     }]
 
     do {
@@ -91,14 +94,18 @@ const byServices = async function byServices(req, res, next) {
       compareDate.add(1, 'month')
     } while (compareDate.isBefore(toDate))
 
-    let serviceNameMap = {}
+    let serviceDataMap = {}
     services.forEach((service) => {
       Object.assign(
-        serviceNameMap,
+        serviceDataMap,
         service.gateway_account_ids.reduce((aggregate, accountId) => {
           aggregate[accountId] = {
             service: service.service_name && service.service_name.en,
-            organisation: service.merchant_details && service.merchant_details.name
+            organisation: service.merchant_details && service.merchant_details.name,
+            sector: service.sector,
+            went_live_date: service.went_live_date,
+            internal: service.internal,
+            archived: service.archived,
           }
           return aggregate
         }, {})
@@ -106,10 +113,16 @@ const byServices = async function byServices(req, res, next) {
     })
 
     const liveGatewayAccounts = accounts
-      .filter((account) => account.type === 'live')
+      .filter((account) => account.type === 'live'
+        && serviceDataMap[account.gateway_account_id]
+        && !serviceDataMap[account.gateway_account_id].internal
+        && !serviceDataMap[account.gateway_account_id].archived)
       .map((account) => {
-        account.service_name = serviceNameMap[account.gateway_account_id] && serviceNameMap[account.gateway_account_id].service || account.service_name
-        account.organisation_name = serviceNameMap[account.gateway_account_id] && serviceNameMap[account.gateway_account_id].organisation || ''
+        const serviceData = serviceDataMap[account.gateway_account_id]
+        account.service_name = serviceData.service || account.service_name
+        account.organisation_name = serviceData.organisation || ''
+        account.sector = serviceData.sector
+        account.went_live_date = serviceData.went_live_date
         return account
       })
 
@@ -120,21 +133,23 @@ const byServices = async function byServices(req, res, next) {
     res.flush()
 
     const gatewayAccountReport = await Ledger.gatewayMonthlyPerformanceReport(fromDate.format(), toDate.format())
-  
+
     // default 0 amounts for all months and all gateway accounts
     const report_schema = liveGatewayAccounts
-    .map((gatewayAccount) => yearMonthValues
-      .reduce((aggregate, month) => {
-        aggregate[month] = 0
-        return aggregate
+      .map((gatewayAccount) => yearMonthValues
+        .reduce((aggregate, month) => {
+          aggregate[month] = 0
+          return aggregate
         }, {
           gateway_account_id: gatewayAccount.gateway_account_id,
           service_name: gatewayAccount.service_name,
           description: gatewayAccount.description,
           organisation_name: gatewayAccount.organisation_name,
-          payment_provider: gatewayAccount.payment_provider
+          payment_provider: gatewayAccount.payment_provider,
+          sector: gatewayAccount.sector,
+          went_live_date: gatewayAccount.went_live_date && moment(gatewayAccount.went_live_date).format('YYYY-MM-DD') || ''
         })
-    )
+      )
 
     const completedReport = report_schema.map((emptyMonthlyReport) => {
       for (let i = 0; i < gatewayAccountReport.length; i++) {
