@@ -1,4 +1,5 @@
 const { EntityNotFoundError, NotImplementedError } = require('../../errors')
+const moment = require('moment')
 
 const adminUsersMethods = function adminUsersMethods(instance) {
   const axiosInstance = instance || this
@@ -141,12 +142,34 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
 
-  const updateServiceGoLiveStatus = function updateServiceGoLiveStatus(id, status) {
+  const updateServiceDetails = function updateServiceDetails(id, isUpdateServiceToLive, sector, internalFlag,) {
     const path = `v1/api/services/${id}`
-    const payload = {
-      op: 'replace',
-      path: 'current_go_live_stage',
-      value: status
+    const payload = [
+      {
+        op: 'replace',
+        path: 'internal',
+        value: internalFlag
+      },
+      {
+        op: 'replace',
+        path: 'sector',
+        value: sector
+      }
+    ]
+
+    if (isUpdateServiceToLive){
+      payload.push(
+        {
+          op: 'replace',
+          path: 'current_go_live_stage',
+          value: 'LIVE'
+        },
+        {
+          op: 'replace',
+          path: 'went_live_date',
+          value: moment.utc().format()
+        }
+      )
     }
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
@@ -197,7 +220,7 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     updateServiceBranding,
     updateServiceGatewayAccount,
     gatewayAccountServices,
-    updateServiceGoLiveStatus,
+    updateServiceDetails,
     updateServiceOrganisationName,
     updateUserPhone,
     updateUserEmail,

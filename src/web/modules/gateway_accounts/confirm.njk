@@ -14,7 +14,9 @@
     [ { text: 'Description' }, { text: request.description } ],
     [ { text: 'Google analytics ID' }, { text: request.analyticsId } ],
     [ { text: 'Is live' }, { text: request.live | capitalize } ],
-    [ { text: 'Credentials' }, { text: request.credentials } ]
+    [ { text: 'Credentials' }, { text: request.credentials } ],
+    [ { text: 'Sector' }, { text: request.sector } ],
+    [ { text: 'Is internal?' }, { text: request.internalFlag } ]
     ]
   })
   }}
@@ -30,6 +32,9 @@
 
     <input type="hidden" name="live" value="{{ request.live }}">
     <input type="hidden" name="credentials" value="{{ request.credentials }}">
+
+    <input type="hidden" name="sector" value="{{ request.sector}}">
+    <input type="hidden" name="internalFlag" value="{{ request.internalFlag }}">
 
     {{ govukButton({
       text: "Create gateway account"

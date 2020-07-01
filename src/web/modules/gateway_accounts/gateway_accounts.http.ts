@@ -152,18 +152,19 @@ const writeAccount = async function writeAccount(req: Request, res: Response): P
 
   logger.info(`Created new Gateway Account ${gatewayAccountIdDerived}`)
 
-  // connect system linked services to the created account
+  // connect system linked services to the created account  
   if (linkedService) {
     await AdminUsers.updateServiceGatewayAccount(
       linkedService,
       gatewayAccountIdDerived
     )
     logger.info(`Service ${linkedService} linked to new Gateway Account ${gatewayAccountIdDerived}`)
+    
+    const serviceDetails = await AdminUsers.service(linkedService)
+    const isUpdateServiceToLive = account.isLive() && serviceDetails.current_go_live_stage !== 'LIVE'
 
-    if (account.isLive()) {
-      await AdminUsers.updateServiceGoLiveStatus(linkedService, 'LIVE')
-      logger.info(`Service ${linkedService} 'current_go_live_stage' updated to 'LIVE'`)
-    }
+    await AdminUsers.updateServiceDetails(linkedService, isUpdateServiceToLive, account.sector, account.internalFlag)
+    logger.info(`Service ${linkedService} - 'sector' updated to '${account.sector}', 'internal' updated to ${account.internalFlag}`)
   }
 
   const stripeAccountStatementDescriptors: {

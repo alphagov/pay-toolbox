@@ -11,7 +11,8 @@ const validGatewayAccountDetails = {
   serviceName: 'Valid gateway account service',
   provider: 'stripe',
   analyticsId: 'fs-valid-id',
-  credentials: 'valid-credentials'
+  credentials: 'valid-credentials',
+  sector: 'valid-sector'
 }
 
 describe('Gateway Accounts', () => {

@@ -31,6 +31,36 @@
     <table class="govuk-table">
       <thead class="govuk-table__head">
         <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col" colspan="2">Reporting details</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col">Sector</th>
+          <td class="govuk-table__cell">{{(service.sector or "(Not set)")}}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col">Internal service</th>
+          <td class="govuk-table__cell">{{service.internal}}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col">Went live date</th>
+          <td class="govuk-table__cell">
+            {% if service.went_live_date %} 
+              {{service.went_live_date | formatDate }} 
+            {% else %} 
+              (Not set) 
+            {% endif %}
+          </td>
+        </tr>
+    </tbody>
+    </table>
+  </div>
+
+  <div>
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
           <th class="govuk-table__header" scope="col" colspan="2">Gateway accounts</th>
         </tr>
       </thead>

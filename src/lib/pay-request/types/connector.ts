@@ -12,6 +12,10 @@ export interface GatewayAccountRequest {
   requires_3ds?: string;
 
   credentials?: object;
+
+  sector: string,
+  
+  internalFlag: boolean
 }
 
 export interface GatewayAccount {
