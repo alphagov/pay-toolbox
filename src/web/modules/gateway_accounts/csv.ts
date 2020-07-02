@@ -80,7 +80,7 @@ const fields = [{
   value: 'corporate_surcharge'
 }]
 
-export function format(linksUsage: any): string {
+export function format(gatewayAccounts: any): string {
   const parser = new Parser({ fields })
-  return parser.parse(linksUsage)
+  return parser.parse(gatewayAccounts)
 }

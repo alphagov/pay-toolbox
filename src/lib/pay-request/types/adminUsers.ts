@@ -1,4 +1,6 @@
 export interface Service {
+  id: number;
+
   external_id: string;
 
   current_go_live_stage: string;
@@ -10,6 +12,16 @@ export interface Service {
   collect_billing_address: boolean;
 
   experimental_features_enabled: boolean;
+
+  internal: boolean;
+
+  archived: boolean;
+
+  sector: string;
+
+  went_live_date: string;
+
+  created_date: string;
 
   custom_branding: { 
     [key: string]: any;

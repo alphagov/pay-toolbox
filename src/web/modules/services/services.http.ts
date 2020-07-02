@@ -6,17 +6,30 @@ import { Service, User } from '../../../lib/pay-request/types/adminUsers'
 import { wrapAsyncErrorHandler } from '../../../lib/routes'
 import { sanitiseCustomBrandingURL } from './branding'
 import GatewayAccountRequest from './gatewayAccountRequest.model'
+import { format } from './performancePlatformCsv'
 
 const overview = async function overview(req: Request, res: Response): Promise<void> {
-  const services: Service = await AdminUsers.services()
+  const services: Service[] = await AdminUsers.services()
   res.render('services/overview', { services })
+}
+
+const performancePlatformCsv = async function performancePlatformCsv(req: Request, res: Response): Promise<void> {
+  const services: Service[] = await AdminUsers.services()
+  const liveActiveServices = services.filter(service =>
+    service.current_go_live_stage === 'LIVE'
+    && !service.internal
+    && !service.archived)
+
+  res.set('Content-Type', 'text/csv')
+  res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_live_services.csv"`)
+  res.status(200).send(format(liveActiveServices))
 }
 
 const detail = async function detail(req: Request, res: Response): Promise<void> {
   const serviceId = req.params.id
   const messages = req.flash('info')
 
-  const [ service, users ] = await Promise.all([
+  const [service, users] = await Promise.all([
     AdminUsers.service(serviceId),
     AdminUsers.serviceUsers(serviceId) as User[]
   ])
@@ -126,6 +139,7 @@ const toggleExperimentalFeaturesEnabledFlag = async function toggleExperimentalF
 
 export default {
   overview: wrapAsyncErrorHandler(overview),
+  performancePlatformCsv: wrapAsyncErrorHandler(performancePlatformCsv),
   detail: wrapAsyncErrorHandler(detail),
   branding: wrapAsyncErrorHandler(branding),
   updateBranding: wrapAsyncErrorHandler(updateBranding),
