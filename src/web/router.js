@@ -67,6 +67,7 @@ router.get('/gateway_accounts/:accountId/payment_links', auth.secured, paymentLi
 router.get('/gateway_accounts/:accountId/payment_links/csv', auth.secured, paymentLinks.listCSV)
 
 router.get('/services', auth.secured, services.overview)
+router.get('/services/performance_platform_csv', auth.secured, services.performancePlatformCsv)
 router.get('/services/search', auth.secured, services.search)
 router.post('/services/search', auth.secured, services.searchRequest)
 router.get('/services/:id', auth.secured, services.detail.http, services.detail.exceptions)
