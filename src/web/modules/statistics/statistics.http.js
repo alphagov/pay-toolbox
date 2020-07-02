@@ -113,10 +113,13 @@ const byServices = async function byServices (req, res, next) {
     })
 
     const liveGatewayAccounts = accounts
-      .filter((account) => account.type === 'live'
-        && serviceDataMap[account.gateway_account_id]
-        && !serviceDataMap[account.gateway_account_id].internal
-        && !serviceDataMap[account.gateway_account_id].archived)
+      .filter((account) => {
+        const serviceData = serviceDataMap[account.gateway_account_id]
+        return account.type === 'live'
+          && serviceData
+          && !serviceData.internal
+          && !serviceData.archived
+      })
       .map((account) => {
         const serviceData = serviceDataMap[account.gateway_account_id]
         account.service_name = serviceData.service || account.service_name
