@@ -7,6 +7,9 @@ import { wrapAsyncErrorHandler } from '../../../lib/routes'
 import { sanitiseCustomBrandingURL } from './branding'
 import GatewayAccountRequest from './gatewayAccountRequest.model'
 import { format } from './performancePlatformCsv'
+import { formatErrorsForTemplate, ClientFormError } from '../common/validationErrorFormat'
+import UpdateOrganisationFormRequest from './UpdateOrganisationForm'
+import { IOValidationError } from '../../../lib/errors'
 
 const overview = async function overview(req: Request, res: Response): Promise<void> {
   const services: Service[] = await AdminUsers.services()
@@ -137,6 +140,64 @@ const toggleExperimentalFeaturesEnabledFlag = async function toggleExperimentalF
   res.redirect(`/services/${serviceId}`)
 }
 
+interface RecoverContext {
+  service: Service;
+  csrf: string;
+  formValues?: object;
+  errors?: object;
+  errorMap?: object[];
+}
+
+const updateOrganisationForm = async function updateOrganisationForm(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const service = await AdminUsers.service(req.params.id)
+  const context: RecoverContext = { service, csrf: req.csrfToken() }
+  const { recovered } = req.session
+
+  if (recovered) {
+    context.formValues = recovered.formValues
+
+    if (recovered.errors) {
+      context.errors = recovered.errors
+      context.errorMap = recovered.errors.reduce((aggregate: {
+        [key: string]: string;
+      }, error: ClientFormError) => {
+        // eslint-disable-next-line no-param-reassign
+        aggregate[error.id] = error.message
+        return aggregate
+      }, {})
+    }
+    delete req.session.recovered
+  }
+
+  res.render('services/services.update_organisation.njk', context)
+}
+
+const updateOrganisation = async function updateOrganisation(
+  req: Request,
+  res: Response
+) : Promise<void> {
+  const { id } = req.params
+
+  try {
+    const updateRequest = new UpdateOrganisationFormRequest(req.body)
+    await AdminUsers.updateServiceOrganisationName(id, updateRequest.name)
+    req.flash('info', 'Updated organisation')
+    res.redirect(`/services/${id}`)
+  } catch (error) {
+    if (error instanceof IOValidationError) {
+      req.session.recovered = {
+        formValues: req.body,
+        errors: formatErrorsForTemplate(error.source)
+      }
+      res.redirect(`/services/${id}/organisation`)
+      return
+    }
+  }
+}
+
 export default {
   overview: wrapAsyncErrorHandler(overview),
   performancePlatformCsv: wrapAsyncErrorHandler(performancePlatformCsv),
@@ -148,5 +209,7 @@ export default {
   search: wrapAsyncErrorHandler(search),
   searchRequest: wrapAsyncErrorHandler(searchRequest),
   toggleTerminalStateRedirectFlag: wrapAsyncErrorHandler(toggleTerminalStateRedirectFlag),
-  toggleExperimentalFeaturesEnabledFlag: wrapAsyncErrorHandler(toggleExperimentalFeaturesEnabledFlag)
+  toggleExperimentalFeaturesEnabledFlag: wrapAsyncErrorHandler(toggleExperimentalFeaturesEnabledFlag),
+  updateOrganisationForm: wrapAsyncErrorHandler(updateOrganisationForm),
+  updateOrganisation: wrapAsyncErrorHandler(updateOrganisation)
 }

@@ -1,0 +1,34 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "common/errorSummary.njk" import errorSummary %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+<span class="govuk-caption-m">Update service</span>
+<h1 class="govuk-heading-m">Organisation</h1>
+
+<div>
+    <a href="/services/{{ service.external_id }}" class="govuk-back-link">Back to service ({{service.name}})</a>
+</div>
+
+{% if errors %}
+  {{ errorSummary({ errors: errors }) }}
+{% endif %}
+
+<form action="/services/{{service.external_id}}/organisation" method="POST">
+  {{ govukInput({
+    label: { text: "Organisation name" },
+    id: "name",
+    name: "name",
+    value: formValues.name or service.merchant_details and service.merchant_details.name,
+    errorMessage: errorMap.name and { text: errorMap.name }
+    })
+  }}
+
+  {{ govukButton({
+    text: "Update organisation"
+    })
+  }}
+  <input type="hidden" name="_csrf" value="{{ csrf }}">
+</form>
+{% endblock %}
