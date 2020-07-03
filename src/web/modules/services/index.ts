@@ -18,5 +18,7 @@ export default {
   search: http.search,
   searchRequest: http.searchRequest,
   toggleTerminalStateRedirectFlag: http.toggleTerminalStateRedirectFlag,
-  toggleExperimentalFeaturesEnabled: http.toggleExperimentalFeaturesEnabledFlag
+  toggleExperimentalFeaturesEnabled: http.toggleExperimentalFeaturesEnabledFlag,
+  updateOrganisationForm: http.updateOrganisationForm,
+  updateOrganisation: http.updateOrganisation
 }

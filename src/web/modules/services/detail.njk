@@ -1,4 +1,5 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "common/json.njk" import json %}
 
 {% extends "layout/layout.njk" %}
@@ -13,40 +14,18 @@
     </div>
   {% endfor %}
 
-  <div>
-  <table class="govuk-table">
-    <tbody class="govuk-table__body">
-      <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">Service ID</th>
-        <td class="govuk-table__cell">{{service.id}}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">External ID</th>
-        <td class="govuk-table__cell">{{service.external_id}}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">Name</th>
-        <td class="govuk-table__cell">{{service.name}}</td>
-      </tr>
-      <tr class="govuk-table__row">
-      <th class="govuk-table__header" scope="col">Organisation</th>
-        <td class="govuk-table__cell">{{(service.merchant_details.name or "(Not set)")}}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">Go live status</th>
-        <td class="govuk-table__cell">{{service.current_go_live_stage | upper }}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">Redirect to service on terminal state</th>
-        <td class="govuk-table__cell">{{service.redirect_to_service_immediately_on_terminal_state | string | capitalize }}</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">Experimental features are enabled</th>
-        <td class="govuk-table__cell">{{service.experimental_features_enabled | string | capitalize }}</td>
-      </tr>
-    </tbody>
-  </table>
-  </div>
+  {{ govukSummaryList({
+    rows: [
+      { key: { text: "Service ID" }, value: { text: service.id } },
+      { key: { text: "External ID" }, value: { html: "<code>" + service.external_id + "</code>" } },
+      { key: { text: "Name" }, value: { text: service.name } },
+      { key: { text: "Organisation" }, value: { text: service.merchant_details.name or "(Not set)" }, actions: { items: [{ href: "/services/" + service.external_id + "/organisation", text: "Change" }] } },
+      { key: { text: "Go live status" }, value: { text: service.current_go_live_stage | upper } },
+      { key: { text: "Redirect to service on terminal state" }, value: { text: service.redirect_to_service_immediately_on_terminal_state | string | capitalize } },
+      { key: { text: "Experimental features are enabled" }, value: { text: service.experimental_features_enabled | string | capitalize } }
+    ]
+    })
+  }}
 
   <div>
     <table class="govuk-table">

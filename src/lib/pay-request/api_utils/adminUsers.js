@@ -151,6 +151,16 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
 
+  const updateServiceOrganisationName = function updateServiceOrganisationName(id, status) {
+    const path = `v1/api/services/${id}`
+    const payload = {
+      op: 'replace',
+      path: 'merchant_details/name',
+      value: status
+    }
+    return axiosInstance.patch(path, payload).then(utilExtractData)
+  }
+
   const toggleTerminalStateRedirectFlag = async function toggleTerminalStateRedirectFlag(
     id
   ) {
@@ -188,6 +198,7 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     updateServiceGatewayAccount,
     gatewayAccountServices,
     updateServiceGoLiveStatus,
+    updateServiceOrganisationName,
     updateUserPhone,
     updateUserEmail,
     toggleUserEnabled,
