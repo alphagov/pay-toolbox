@@ -67,6 +67,12 @@ class GatewayAccount extends Validated {
 
   public isDirectDebit: boolean;
 
+  @IsString()
+  @IsNotEmpty({ message: 'Please select a sector' })
+  public sector: string;
+
+  public internalFlag: boolean; 
+
   public validate(): void {
     super.validate()
 
@@ -97,6 +103,8 @@ class GatewayAccount extends Validated {
     this.analyticsId = formValues.analyticsId
     this.credentials = formValues.credentials
     this.isDirectDebit = this.paymentMethod === paymentMethod.directDebit
+    this.sector = formValues.sector
+    this.internalFlag = formValues.internalFlag === "true"
     this.validate()
   }
 
@@ -109,7 +117,9 @@ class GatewayAccount extends Validated {
       description: this.description,
       type: this.isLive() ? 'live' : 'test',
       service_name: this.serviceName,
-      analytics_id: this.analyticsId
+      analytics_id: this.analyticsId,
+      sector: this.sector,
+      internalFlag: this.internalFlag
     }
 
     if (this.isLive()) {

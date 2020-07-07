@@ -149,6 +149,69 @@
       }) }}
     {% endif %}
 
+    {% if service %}
+      {{ govukRadios({
+        id: "sector",
+        name: "sector",
+        fieldset: {
+          legend: {
+            text: "Which sector does this service belong to?",
+            isPageHeading: false
+          }
+        },
+        errorMessage: errorMap.sector and { text: errorMap.sector },
+        items: [
+          {
+            value: "central",
+            text: "Central - includes devolved administrations, arms length bodies, non departmental public bodies",
+            checked: recovered.sector and recovered.sector === 'central' or service.sector === 'central'
+          },
+          {
+            value: "local",
+            text: "Local",
+            checked: recovered.sector and recovered.sector === 'local' or service.sector === 'local'
+          },
+          {
+            value: "police",
+            text: "Police",
+            checked: recovered.sector and recovered.sector === 'police' or service.sector === 'police'
+          },
+          {
+            value: "nhs central",
+            text: "NHS central",
+            checked: recovered.sector and recovered.sector === 'nhs central' or service.sector === 'nhs central'
+          },
+          {
+            value: "nhs trust",
+            text: "NHS trust",
+            checked: recovered.sector and recovered.sector === 'nhs trust' or service.sector === 'nhs trust'
+          },
+          {
+            value: "other",
+            text: "Other",
+            checked: recovered.sector and recovered.sector === 'other' or service.sector === 'other'
+          }
+        ]
+      }) }}
+
+      {{ govukRadios({
+        classes: "govuk-radios--inline",
+        idPrefix: "internalFlag",
+        name: "internalFlag",
+        fieldset: {
+          legend: {
+            text: "Is the service for internal testing?",
+            isPageHeading: false
+          }
+        },
+        items: [
+          { value: "true", text: "Yes", checked: recovered.internalFlag and recovered.internalFlag === "true" or service.internal },
+          { value: "false", text: "No" , checked: recovered.internalFlag and recovered.internalFlag === "false" or not service.internal}
+        ]
+      })
+      }}
+    {% endif %}
+
     {{ govukButton({
       text: "Submit"
       })
