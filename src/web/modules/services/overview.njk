@@ -3,6 +3,21 @@
 {% block main %}
   <span class="govuk-caption-m">GOV.UK Pay platform</span>
   <h1 class="govuk-heading-m">Services</h1>
+
+  {% if filterLive %}
+    <div class="govuk-body">
+      <p class="govuk-body">
+        <span>Filtering to only show live services, excluding internal and archived services</span>
+      </p>
+      <p class="govuk-body">
+        <a class="govuk-link govuk-link--no-visited-state" href="?live=false">
+          Show all services
+        </a>
+      </p>
+    </div>
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+  {% endif %}
+
   <div>
     <a href="services/performance_platform_csv"
       class="govuk-button govuk-button--secondary govuk-!-margin-bottom-2">

@@ -11,17 +11,24 @@ import { formatErrorsForTemplate, ClientFormError } from '../common/validationEr
 import UpdateOrganisationFormRequest from './UpdateOrganisationForm'
 import { IOValidationError } from '../../../lib/errors'
 
+function filterRealLiveServices(services: Service[]) {
+  return services.filter(service => service.current_go_live_stage === 'LIVE'
+    && !service.internal
+    && !service.archived)
+}
+
 const overview = async function overview(req: Request, res: Response): Promise<void> {
-  const services: Service[] = await AdminUsers.services()
-  res.render('services/overview', { services })
+  const shouldFilterLiveServices = req.query.live !== "false"
+  let services: Service[] = await AdminUsers.services()
+  if ( shouldFilterLiveServices ) {
+    services = filterRealLiveServices(services)
+  }
+  res.render('services/overview', { services, filterLive: shouldFilterLiveServices })
 }
 
 const performancePlatformCsv = async function performancePlatformCsv(req: Request, res: Response): Promise<void> {
   const services: Service[] = await AdminUsers.services()
-  const liveActiveServices = services.filter(service =>
-    service.current_go_live_stage === 'LIVE'
-    && !service.internal
-    && !service.archived)
+  const liveActiveServices = filterRealLiveServices(services)
 
   res.set('Content-Type', 'text/csv')
   res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_live_services.csv"`)
@@ -213,3 +220,4 @@ export default {
   updateOrganisationForm: wrapAsyncErrorHandler(updateOrganisationForm),
   updateOrganisation: wrapAsyncErrorHandler(updateOrganisation)
 }
+
