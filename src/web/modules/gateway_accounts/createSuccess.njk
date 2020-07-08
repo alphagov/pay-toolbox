@@ -19,24 +19,27 @@
 A {{ account.type | upper }} Gateway account has been created through Admin Users.
 </p>
 
-{% if isStripe %}
-	<h2 class="govuk-heading-m">What to do next</h2>
-	<p class="govuk-body">In Zendesk, setup the Stripe go live email using the Zendesk macro.  
-	<p class="govuk-body">Replace the placeholders in the macro with the following:</p>
+<h2 class="govuk-heading-m">What to do next</h2>
+<p class="govuk-body">In Zendesk, respond to the request to go live using the appropriate Zendesk macro (either “Stripe account” or “non-Stripe”).</p>
+<p class="govuk-body">Replace the placeholders in the macro with the following:</p>
 
-	{{ govukTable({
-			head: [ 
-				{ text: "Zendesk macro placeholder"}, 
-				{ text: "Value"} 
-			],
-			rows: [
-				[ { text: "***GO_LIVE_URL***" }, { text: selfServiceBaseUrl + "/service/" + linkedService + "/dashboard/live", classes: "stripe-go-live-url-table-cell"  } ],
-				[ { text: "***STATEMENT_DESCRIPTOR***" }, { text: stripeAccountStatementDescriptors.statementDescriptor | upper } ],
-				[ { text: "***PAYOUT_STATEMENT_DESCRIPTOR***" }, { text: stripeAccountStatementDescriptors.payoutStatementDescriptor | upper } ]
-			]
-			})
-	}}
-{% endif %}
+{{ govukTable({
+		head: [ 
+			{ text: "Zendesk macro placeholder"}, 
+			{ text: "Value"} 
+		],
+		rows: 
+		[
+			[ { text: "***GO_LIVE_URL***" }, { text: selfServiceBaseUrl + "/service/" + linkedService + "/dashboard/live", classes: "stripe-go-live-url-table-cell"  } ],
+			[ { text: "***STATEMENT_DESCRIPTOR***" }, { text: stripeAccountStatementDescriptors.statementDescriptor | upper } ],
+			[ { text: "***PAYOUT_STATEMENT_DESCRIPTOR***" }, { text: stripeAccountStatementDescriptors.payoutStatementDescriptor | upper } ]
+		] 
+		if isStripe else
+		[
+			[ { text: "***GO_LIVE_URL***" }, { text: selfServiceBaseUrl + "/service/" + linkedService + "/dashboard/live", classes: "stripe-go-live-url-table-cell"  } ]
+		]
+		})
+}}
 
 <h2 class="govuk-heading-m">Actions taken</h2>
 <ol class="govuk-list govuk-list--number">
