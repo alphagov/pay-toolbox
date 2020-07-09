@@ -54,7 +54,7 @@
     "https-proxy-agent": "3.0.1",
     "joi": "14.3.1",
     "json2csv": "4.5.4",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "moment": "2.24.0",
     "morgan": "1.9.1",
     "multer": "1.4.2",
