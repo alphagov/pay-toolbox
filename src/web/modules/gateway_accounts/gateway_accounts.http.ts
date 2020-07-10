@@ -152,14 +152,14 @@ const writeAccount = async function writeAccount(req: Request, res: Response): P
 
   logger.info(`Created new Gateway Account ${gatewayAccountIdDerived}`)
 
-  // connect system linked services to the created account  
+  // connect system linked services to the created account
   if (linkedService) {
     await AdminUsers.updateServiceGatewayAccount(
       linkedService,
       gatewayAccountIdDerived
     )
     logger.info(`Service ${linkedService} linked to new Gateway Account ${gatewayAccountIdDerived}`)
-    
+
     const serviceDetails = await AdminUsers.service(linkedService)
     const isUpdateServiceToLive = account.isLive() && serviceDetails.current_go_live_stage !== 'LIVE'
 
@@ -317,6 +317,16 @@ const updateStripeStatementDescriptorPage = async function updateStripeStatement
   res.render('gateway_accounts/stripe_statement_descriptor', { account, csrf: req.csrfToken() })
 }
 
+const updateStripePayoutDescriptorPage = async function updateStripePayoutDescriptorPage(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { id } = req.params
+  const account = await getAccount(id)
+
+  res.render('gateway_accounts/stripe_payout_descriptor', { account, csrf: req.csrfToken() })
+}
+
 const updateStripeStatementDescriptor = async function updateStripeStatementDescriptor(
   req: Request,
   res: Response
@@ -346,6 +356,35 @@ const updateStripeStatementDescriptor = async function updateStripeStatementDesc
   res.redirect(`/gateway_accounts/${id}`)
 }
 
+const updateStripePayoutDescriptor = async function updateStripePayoutDescriptor(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { statement_descriptor } = req.body
+  const { id } = req.params
+  const account = await Connector.accountWithCredentials(id)
+
+  if (!statement_descriptor) {
+    throw new Error('Cannot update empty state descriptor')
+  }
+
+  // @ts-ignore
+  const updateParams = {
+    settings: {
+      payouts: {
+        statement_descriptor
+      }
+    }
+  }
+  await stripe.accounts.update(
+    account.credentials.stripe_account_id,
+    // @ts-ignore
+    updateParams
+  )
+  req.flash('info', `Payout descriptor updated to [${statement_descriptor}]`)
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
 
 export default {
   overview: wrapAsyncErrorHandler(overview),
@@ -364,6 +403,7 @@ export default {
   toggleBlockPrepaidCards: wrapAsyncErrorHandler(toggleBlockPrepaidCards),
   toggleMotoPayments: wrapAsyncErrorHandler(toggleMotoPayments),
   updateStripeStatementDescriptorPage: wrapAsyncErrorHandler(updateStripeStatementDescriptorPage),
-  updateStripeStatementDescriptor: wrapAsyncErrorHandler(updateStripeStatementDescriptor)
-
+  updateStripeStatementDescriptor: wrapAsyncErrorHandler(updateStripeStatementDescriptor),
+  updateStripePayoutDescriptorPage: wrapAsyncErrorHandler(updateStripePayoutDescriptorPage),
+  updateStripePayoutDescriptor: wrapAsyncErrorHandler(updateStripePayoutDescriptor)
 }

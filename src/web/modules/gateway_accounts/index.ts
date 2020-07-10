@@ -30,5 +30,7 @@ export default {
   toggleBlockPrepaidCards: http.toggleBlockPrepaidCards,
   toggleMotoPayments: http.toggleMotoPayments,
   updateStripeStatementDescriptorPage: http.updateStripeStatementDescriptorPage,
-  updateStripeStatementDescriptor: http.updateStripeStatementDescriptor
+  updateStripeStatementDescriptor: http.updateStripeStatementDescriptor,
+  updateStripePayoutDescriptorPage: http.updateStripePayoutDescriptorPage,
+  updateStripePayoutDescriptor: http.updateStripePayoutDescriptor
 }

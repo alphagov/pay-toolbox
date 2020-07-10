@@ -166,6 +166,12 @@
     href: "/gateway_accounts/" + gatewayAccountId + "/stripe_statement_descriptor"
     })
     }}
+    {{ govukButton({
+    text: "Update payout descriptor",
+    href: "/gateway_accounts/" + gatewayAccountId + "/stripe_payout_descriptor"
+    })
+    }}
+
     {% endif %}
     {% if account.payment_method !== "DIRECT_DEBIT" %}
       {{ govukButton({

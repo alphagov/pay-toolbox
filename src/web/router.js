@@ -62,6 +62,8 @@ router.post('/gateway_accounts/:id/email_branding', auth.secured, gatewayAccount
 router.post('/gateway_accounts/:id/toggle_moto_payments', auth.secured, gatewayAccounts.toggleMotoPayments)
 router.get('/gateway_accounts/:id/stripe_statement_descriptor', auth.secured, gatewayAccounts.updateStripeStatementDescriptorPage)
 router.post('/gateway_accounts/:id/stripe_statement_descriptor', auth.secured, gatewayAccounts.updateStripeStatementDescriptor)
+router.get('/gateway_accounts/:id/stripe_payout_descriptor', auth.secured, gatewayAccounts.updateStripePayoutDescriptorPage)
+router.post('/gateway_accounts/:id/stripe_payout_descriptor', auth.secured, gatewayAccounts.updateStripePayoutDescriptor)
 
 router.get('/gateway_accounts/:accountId/payment_links', auth.secured, paymentLinks.list)
 router.get('/gateway_accounts/:accountId/payment_links/csv', auth.secured, paymentLinks.listCSV)
