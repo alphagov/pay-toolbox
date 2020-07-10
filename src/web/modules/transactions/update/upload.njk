@@ -25,7 +25,7 @@
         id: "transactions-file",
         name: "transactions-file",
         label: {
-          text: "Upload a CSV containing a list of transactions to update, the CSV must be comma separated and have headers according the specification below."
+          text: "Upload a CSV containing a list of transactions to update. The CSV must have headers according the specification below."
         }
     }) }}
 
@@ -69,7 +69,7 @@
       <tbody class="govuk-table__body">
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">event_date</span></th>
-          <td class="govuk-table__cell">The timestamp for the event. Must be a valid ISO_8601 format. If no UTC offset is specified, local time will be used. If no value is provided, the time when the file is uploaded will be used.</td>
+          <td class="govuk-table__cell">The timestamp for the event. Must be a valid ISO-8601 format e.g. 2020-01-01T12:30:45Z. If no value is provided, the time when the file is uploaded will be used. When picking a time, remember that later events override earlier ones when calculating the status etc.</td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">transaction_type</span></th>
@@ -94,7 +94,7 @@
     <li><code>PAYMENT_STATUS_CORRECTED_TO_SUCCESS_BY_ADMIN</code></li>
     <li><code>PAYMENT_STATUS_CORRECTED_TO_ERROR_BY_ADMIN</code></li>
     <li><code>REFUND_STATUS_CORRECTED_TO_SUCCESS_BY_ADMIN</code></li>
-    <li><code>REFUND_STATUS_CORRECTED_TO_SUCCESS_BY_ADMIN</code></li>
+    <li><code>REFUND_STATUS_CORRECTED_TO_ERROR_BY_ADMIN</code></li>
   </ul>
   <p class="govuk-body">Possible external statuses and events can be
   <a class="govuk-link" href="https://github.com/alphagov/pay-ledger/blob/master/src/main/java/uk/gov/pay/ledger/transaction/state/TransactionState.java">viewed and contributed to on GitHub</a>
@@ -104,6 +104,21 @@
     Most administrative updates will not need to move the external state of a transaction and should follow naming advice
     as per the table above. For example the event name <code>PAYMENT_UPDATED_TO_MATCH_SERVICE_RECORDS</code> with the 'reason'
     and 'reference' fields populated.
+  </p>
+
+  <h2 class="govuk-heading-s">Things to remember</h2>
+  <p class="govuk-body">
+    If a payment or refund is changed from error to success or vice-versa, the <code>refund_status</code>,
+    <code>refund_amount_refunded</code> and <code>refund_amount_available</code> have to also be updated on the payment.
+  </p>
+  <p class="govuk-body">
+    If the transaction is still in connector, it will need to be updated there as well.
+  </p>
+
+  <h2 class="govuk-heading-s">Inspiration</h2>
+  <p class="govuk-body">
+    See <a href="https://github.com/alphagov/pay-scripts/tree/master/ad-hoc-scripts/toolbox_csv_uploads">toolbox_csv_uploads
+    in Pay scripts</a> for past CSVs.</p>
   </p>
 
 {% endblock %}
