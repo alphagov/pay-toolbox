@@ -1,0 +1,40 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">Update gateway account</span>
+  <h1 class="govuk-heading-m">Stripe payout descriptor</h1>
+
+  <div>
+    <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Gateway account ({{ account.gateway_account_id }})</a>
+  </div>
+
+  <p class="govuk-body">
+    The Stripe payout descriptor is what the integrating service will see in their bank account when they receive payments (payouts) from Stripe. This tool will update the Stripe Connect account.
+  </p>
+
+  <p class="govuk-body">
+    <a class="govuk-link" href="https://stripe.com/docs/api/payouts/object#payout_object-statement_descriptor">Payout statement descriptors</a>
+  </p>
+
+  <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/stripe_payout_descriptor">
+    {{ govukInput({
+      id: "statement_descriptor",
+      name: "statement_descriptor",
+      label: { text: "Stripe payout descriptor" },
+      hint: {
+        text: "Contains between 5 and 22 characters, inclusive. Contains at least one letter. Does not contain any of the special characters < > \ ' \" *"
+      },
+      autocomplete: "off"
+    })
+    }}
+
+    {{ govukButton({
+    text: "Update Stripe payout descriptor"
+    })
+    }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}
