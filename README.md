@@ -18,9 +18,9 @@ Getting Toolbox up and running for development.
 npm install
 
 # generate a dev environment file - run the version according to your needs
-./scripts/generate-dev-environment # default - target services running through SSH tunnel
-./scripts/generate-dev-environment local # target services running locally on your machine
-./scripts/generate-dev-environment docker # for docker deployment - talk to external network
+node scripts/generate-dev-environment.js # default - target services running through SSH tunnel
+node scripts/generate-dev-environment.js local # target services running locally on your machine
+node scripts/generate-dev-environment.js docker # for docker deployment - talk to external network
 
 # this will watch javascript files for changes and restart the server accordingly
 npm run dev

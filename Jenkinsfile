@@ -28,7 +28,7 @@ pipeline {
             sh 'npm ci'
 
             // @TODO(sfount) CI envrionment should be configured outside of direct Jenkinsfile call
-            sh 'scripts/generate-dev-environment'
+            sh 'node scripts/generate-dev-environment.js'
           }
         }
         stage('Security audit') {
