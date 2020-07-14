@@ -47,7 +47,7 @@ else
   URL_MAP="$URL_TARGET_TUNNEL"
 fi
 
-cat > "$ENV_FILE" << EOM
+cat < "$ENV_FILE" << EOM
 PORT=3000
 NODE_ENV=development
 BUILD_FOLDER_ROOT=$PWD/dist
