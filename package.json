@@ -13,7 +13,6 @@
     "lint": "eslint \"src/**/*.{js,ts,tsx}\"",
     "test": "npm run test:unit",
     "test:unit": "AUTH_GITHUB_ENABLED=true mocha -r ts-node/register -r dotenv/config --recursive \"./src/**/*.spec.{js,ts}\" dotenv_config_path=src/tests/.env",
-    "test:cypress": "./scripts/run-cypress",
     "compile": "npm run build",
     "build": "scripts/build && npm run build:typescript && npm run build-browser && npm run build:copy && npm run build:sass",
     "build-browser": "webpack --mode production",
