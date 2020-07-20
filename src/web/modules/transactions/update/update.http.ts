@@ -6,6 +6,7 @@ import { S3, ECS } from 'aws-sdk'
 import moment from 'moment'
 import logger from '../../../../lib/logger'
 import { aws, common } from '../../../../config'
+import _, { Dictionary } from 'lodash'
 
 type TransactionRow = {
   transaction_id: string;
@@ -15,6 +16,10 @@ type TransactionRow = {
   parent_transaction_id: string;
   reason: string;
   admin_github_id: string;
+  captured_date?: string, 
+  refund_status?: string, 
+  refund_amount_refunded?: string, 
+  refund_amount_available?: string 
 }
 
 export async function fileUpload(req: Request, res: Response): Promise<void> {
@@ -102,9 +107,9 @@ const formatSessionUserIdentifier = function formatSessionUserIdentifier(user: a
   }
 }
 
-const validateAndAddDefaults = async function validateAndAddDefaults(csv: string, user: any): Promise<Object[]> {
+const validateAndAddDefaults = async function validateAndAddDefaults(csv: string, user: any): Promise<TransactionRow[]> {
   let validationError = false
-  const data: Object[] = []
+  const data: TransactionRow[] = []
 
   return new Promise((resolve, reject) => {
     parseString<TransactionRow, TransactionRow>(csv, {
@@ -145,6 +150,36 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
         if (row.transaction_type === 'refund' && !row.parent_transaction_id) {
           return cb(null, false, 'parent_transaction_id is required when transaction_type is \'refund\'')
         }
+        if (row.captured_date && !moment(row.captured_date, moment.ISO_8601).isValid()) {
+          return cb(null, false, 'captured_date is not a valid ISO_8601 string')
+        }
+
+        if (row.refund_amount_refunded && !parseInt(row.refund_amount_refunded)){
+          return cb(null, false, 'refund_amount_refunded must be a number')
+        }
+
+        if (row.refund_amount_available && !parseInt(row.refund_amount_available)){
+          return cb(null, false, 'refund_amount_available must be a number')
+        }
+
+        if (row.event_name === 'PAYMENT_STATUS_CORRECTED_TO_SUCCESS_BY_ADMIN') {
+          if (!row.captured_date){
+            return cb(null, false, `captured_date is required when event_name is '${row.event_name}'`)
+          }
+          
+          if (!row.refund_status){
+            return cb(null, false, `refund_status is required when event_name is '${row.event_name}'`)
+          }
+
+          if (!row.refund_amount_refunded){
+            return cb(null, false, `refund_amount_refunded is required when event_name is '${row.event_name}'`)
+          }
+
+          if (!row.refund_amount_available){
+            return cb(null, false, `refund_amount_available is required when event_name is '${row.event_name}'`)
+          }
+        }
+
         return cb(null, true)
       })
       .on('error', error => {
@@ -174,9 +209,20 @@ export async function update(req: Request, res: Response): Promise<void> {
 
   try {
     const data = await validateAndAddDefaults(req.file.buffer.toLocaleString(), req.user)
+
+    const transformedData:Dictionary<string|number>[] = data.map((row) => {
+      const transformedRow = {
+        ...row,
+        refund_amount_refunded: row.refund_amount_refunded && parseInt(row.refund_amount_refunded),
+        refund_amount_available: row.refund_amount_available && parseInt(row.refund_amount_available),
+      }
+
+      return _.omitBy(transformedRow, _.isUndefined);
+    })
+
     const parser = new Parser()
     const jobId = crypto.randomBytes(4).toString('hex')
-    const output = parser.parse(data)
+    const output = parser.parse(transformedData)
     const fileKey = await uploadToS3(output, req.user)
     await runEcsTask(fileKey, jobId)
     req.session.updateTransactionJobId = jobId
