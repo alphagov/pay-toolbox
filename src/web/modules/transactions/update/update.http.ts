@@ -6,7 +6,6 @@ import { S3, ECS } from 'aws-sdk'
 import moment from 'moment'
 import logger from '../../../../lib/logger'
 import { aws, common } from '../../../../config'
-import _, { Dictionary } from 'lodash'
 
 type TransactionRow = {
   transaction_id: string;
@@ -209,20 +208,9 @@ export async function update(req: Request, res: Response): Promise<void> {
 
   try {
     const data = await validateAndAddDefaults(req.file.buffer.toLocaleString(), req.user)
-
-    const transformedData:Dictionary<string|number>[] = data.map((row) => {
-      const transformedRow = {
-        ...row,
-        refund_amount_refunded: row.refund_amount_refunded && parseInt(row.refund_amount_refunded),
-        refund_amount_available: row.refund_amount_available && parseInt(row.refund_amount_available),
-      }
-
-      return _.omitBy(transformedRow, _.isUndefined);
-    })
-
     const parser = new Parser()
     const jobId = crypto.randomBytes(4).toString('hex')
-    const output = parser.parse(transformedData)
+    const output = parser.parse(data)
     const fileKey = await uploadToS3(output, req.user)
     await runEcsTask(fileKey, jobId)
     req.session.updateTransactionJobId = jobId
