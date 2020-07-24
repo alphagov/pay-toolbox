@@ -153,11 +153,11 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
           return cb(null, false, 'captured_date is not a valid ISO_8601 string')
         }
 
-        if (row.refund_amount_refunded && !parseInt(row.refund_amount_refunded)){
+        if (row.refund_amount_refunded && !(parseInt(row.refund_amount_refunded) >= 0)){
           return cb(null, false, 'refund_amount_refunded must be a number')
         }
 
-        if (row.refund_amount_available && !parseInt(row.refund_amount_available)){
+        if (row.refund_amount_available && !(parseInt(row.refund_amount_available) >= 0)){
           return cb(null, false, 'refund_amount_available must be a number')
         }
 
