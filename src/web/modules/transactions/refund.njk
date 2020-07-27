@@ -25,16 +25,12 @@
   </div>
 
   <div>
-    <h1 class="govuk-heading-s payment__header">Payment details</h1>
+    <h1 class="govuk-heading-s payment__header">Refund details</h1>
     <table class="govuk-table">
       <tbody class="govuk-table__body">
         <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Status</span></th>
           <td class="govuk-table__cell payment__cell">{{ transaction.state and transaction.state.status | capitalize }}</td>
-        </tr>
-        <tr class="govuk-table__row">
-          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Reference</span></th>
-          <td class="govuk-table__cell payment__cell">{{ transaction.reference }}</td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Created date</span></th>
@@ -48,7 +44,6 @@
         </tr>
     </table>
   </div>
-
 
   <div>
     <h1 class="govuk-heading-s payment__header">Processing details</h1>
@@ -66,6 +61,12 @@
           <a class="govuk-link govuk-link--no-visited-state" href="/services/{{service.external_id}}">{{ service.external_id }}
           </td>
         </tr>
+        {% if transaction.gateway_transaction_id %}
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Provider transaction</span></th>
+          <td class="govuk-table__cell payment__cell">{{ transaction.gateway_transaction_id }}</td>
+        </tr>
+        {% endif %}
       </tobdy>
     </table>
   </div>
