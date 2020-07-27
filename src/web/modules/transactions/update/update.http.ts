@@ -122,14 +122,14 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
         } else {
           row.event_date = `${moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
         }
-        if (!row.transaction_type) {
-          row.transaction_type = 'payment'
-        }
         return row
       })
       .validate((row, cb) => {
         if (!row.transaction_id) {
           return cb(null, false, 'transaction_id is missing')
+        }
+        if (!row.transaction_type) {
+          return cb(null, false, 'transaction_type is missing')
         }
         if (!row.event_name) {
           return cb(null, false, 'event_name is missing')

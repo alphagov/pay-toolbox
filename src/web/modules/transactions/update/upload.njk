@@ -46,6 +46,10 @@
           <td class="govuk-table__cell">The external ID of the payment/refund</td>
         </tr>
         <tr class="govuk-table__row">
+          <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">transaction_type</span></th>
+          <td class="govuk-table__cell">The type of the transaction, one of ‘payment’ or ‘refund’.</td>
+        </tr>
+        <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">event_name</span></th>
           <td class="govuk-table__cell">The name of the event that will be stored against the transaction. It should be SCREAMING_SNAKE_CASE and describe the action performed against the transaction in the past tense. Do not use names given to system created events.</td>
         </tr>
@@ -70,10 +74,6 @@
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">event_date</span></th>
           <td class="govuk-table__cell">The timestamp for the event. Must be a valid ISO-8601 format e.g. 2020-01-01T12:30:45Z. If no value is provided, the time when the file is uploaded will be used. When picking a time, remember that later events override earlier ones when calculating the status etc.</td>
-        </tr>
-        <tr class="govuk-table__row">
-          <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">transaction_type</span></th>
-          <td class="govuk-table__cell">The type of the transaction, one of ‘payment’ or ‘refund’. Defaults to ‘payment’ if not provided.</td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">parent_transaction_id</span></th>
