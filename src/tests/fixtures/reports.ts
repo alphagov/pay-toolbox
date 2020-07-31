@@ -1,4 +1,4 @@
-import { PaymentsByStatusReport, PaymentsReport } from 'reports'
+import { PaymentsByStatusReport, PaymentsReport } from '../../web/modules/transactions/types/reports'
 
 const paymentsByStatusReport: PaymentsByStatusReport = {
   success: 1,

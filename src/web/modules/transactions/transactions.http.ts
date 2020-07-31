@@ -2,7 +2,7 @@
 
 import { Request, Response, NextFunction } from 'express'
 
-import { Transaction } from 'ledger'
+import { Transaction } from './types/ledger'
 
 import { Ledger, Connector, AdminUsers } from '../../../lib/pay-request'
 import { EntityNotFoundError } from '../../../lib/errors'
