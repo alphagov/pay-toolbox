@@ -76,7 +76,7 @@ const configureServingPublicStaticFiles = function configureServingPublicStaticF
 
 const configureClientSessions = function configureClientSessions(instance) {
   instance.use(cookieSession({
-    name: 'tbx',
+    name: 'tbx-session',
     keys: [ server.COOKIE_SESSION_ENCRYPTION_SECRET ],
     maxAge: 24 * 60 * 60 * 1000
   }))
