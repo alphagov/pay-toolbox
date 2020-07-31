@@ -3,7 +3,7 @@ import {
   PaymentProvider,
   CardBrand,
   TransactionStatus
-} from 'ledger'
+} from './../../../src/web/modules/transactions/types/ledger'
 
 const transaction: Transaction = {
   gateway_account_id: '182',

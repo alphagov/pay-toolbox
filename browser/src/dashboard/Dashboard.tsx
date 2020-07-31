@@ -5,7 +5,7 @@ import moment from 'moment'
 import { ResizeObserver } from '@juggle/resize-observer'
 import { Serie, Datum } from '@nivo/line'
 
-import { Event } from 'ledger'
+import { Event } from './../../../src/web/modules/transactions/types/ledger'
 import { StatsPanel } from './StatsPanel'
 import { EventListPanel } from './EventListPanel'
 

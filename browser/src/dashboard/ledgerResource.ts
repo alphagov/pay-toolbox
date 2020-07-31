@@ -3,7 +3,7 @@ import moment from 'moment'
 
 import { eventsActiveSuccess, eventsErrored, supportedEvents } from './events'
 
-import { Event } from 'ledger'
+import { Event } from './../../../src/web/modules/transactions/types/ledger'
 
 export interface EventTickerResponse {
   timeFetched?: moment.Moment,

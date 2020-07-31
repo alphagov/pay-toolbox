@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { Transaction } from 'ledger'
+import { Transaction } from './../types/ledger'
 import { diff } from 'deep-diff'
 import { Ledger, Connector } from '../../../../lib/pay-request'
 

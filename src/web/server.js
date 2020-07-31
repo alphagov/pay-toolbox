@@ -1,4 +1,5 @@
 const path = require('path')
+const fs = require('fs')
 const express = require('express')
 const helmet = require('helmet')
 const bodyParser = require('body-parser')
@@ -31,11 +32,6 @@ const {
   toUnixDate,
   toFormattedDateSince
 } = require('./../lib/format')
-
-// @FIXME(sfount) errors should be thrown and this should be properly handled if
-//                there is no manifest etc.
-const staticResourceManifest = require('./../public/manifest')
-const browserManifest = require('./../public/browser.manifest')
 
 const app = express()
 
@@ -80,9 +76,9 @@ const configureServingPublicStaticFiles = function configureServingPublicStaticF
 
 const configureClientSessions = function configureClientSessions(instance) {
   instance.use(cookieSession({
-    name: 'tbx',
+    name: 'tbx-session',
     keys: [ server.COOKIE_SESSION_ENCRYPTION_SECRET ],
-    maxAge: '24h'
+    maxAge: 24 * 60 * 60 * 1000
   }))
 }
 
@@ -98,7 +94,10 @@ const configureAuth = function configureAuth(instance) {
   instance.use(exposeAuthenticatedUserToTemplate)
 }
 
-const configureTemplateRendering = function configureTemplateRendering(instance) {
+const configureTemplateRendering = async function configureTemplateRendering(instance) {
+  const staticResourceManifest = await readManifest('manifest')
+  const browserManifest = await readManifest('browser.manifest')
+
   const templateRendererConfig = { autoescape: true, express: instance, watch: common.development }
 
   // include both templates from this repository and from govuk frontend
@@ -154,6 +153,25 @@ const configureSentryRequestHandler = function configureSentryRequestHandler(ins
 
 const configureSentryErrorHandler = function configureSentryErrorHandler(instance) {
   instance.use(Sentry.Handlers.errorHandler())
+}
+
+const readManifest = function readManifest(name) {
+  return new Promise((resolve) => {
+    const file = `${name}.json`
+    fs.readFile(path.join(__dirname, '..//public', file), (err, data) => {
+      if (err) {
+        resolve({})
+        return
+      }
+      try {
+        const parsed = JSON.parse(data)
+        resolve(parsed)
+      } catch (error) {
+        logger.warn('Failed to parse manifest', { path })
+        resolve({})
+      }
+    })
+  })
 }
 
 // order of configuration options important given the nature of Express Middleware

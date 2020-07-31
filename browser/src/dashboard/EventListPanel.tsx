@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Event } from 'ledger'
+import { Event } from './../../../src/web/modules/transactions/types/ledger'
 
 import { EventCard } from './EventCard'
 
