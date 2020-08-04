@@ -30,6 +30,7 @@ const ledgerMethods = function ledgerMethods(instance) {
   ) {
     const page = currentPage || 1
     const pageSize = 20
+    const limitTotalSize = 5000
     const externalStatusMap = {
       all: [],
       succeeded: ['success'],
@@ -45,6 +46,8 @@ const ledgerMethods = function ledgerMethods(instance) {
       payment_states: states.join(','),
       transaction_type: fetchAsCSV ? '' : 'PAYMENT',
       exact_reference_match: true,
+      limit_total: true,
+      limit_total_size: limitTotalSize,
       ...filters,
       ...account && { account_id: account }
     }
