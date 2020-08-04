@@ -99,7 +99,13 @@
   </div>
 
   <div class="govuk-body">
-    <p>Showing page {{ set.page }} ({{ set.count }}) of about {{ set.total }} transactions</p>
+    Showing page {{ set.page }} ({{ set.count }}) of
+    {% if set.total <= 5000 %}
+        about {{ set.total }} transactions
+    {% else %}
+        over 5000 transactions
+    {% endif %}
+
   </div>
   <div class="toolbox-right">
     <a
@@ -112,8 +118,12 @@
       Previous
     </a>
     <a
-      href="/transactions?page={{ set.page + 1 }}&status={{ selectedStatus }}{% if service %}&account={{ accountId }}{% endif %}"
-      class="govuk-button govuk-button--secondary">
+       {% if not(set._links.next_page) %}
+         disabled
+       {% else %}
+          href="/transactions?page={{ set.page + 1 }}&status={{ selectedStatus }}{% if service %}&account={{ accountId }}{% endif %}"
+       {% endif %}
+       class="govuk-button govuk-button--secondary">
       Next
     </a>
   </div>
