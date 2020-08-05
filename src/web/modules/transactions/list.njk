@@ -100,7 +100,7 @@
 
   <div class="govuk-body">
     Showing page {{ set.page }} ({{ set.count }}) of
-    {% if set.total <= 5000 %}
+    {% if set.total < 5000 %}
         about {{ set.total }} transactions
     {% else %}
         over 5000 transactions
