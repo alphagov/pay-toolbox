@@ -1,10 +1,12 @@
 const moment = require('moment')
 const { Parser } = require('json2csv')
 const { Connector, Ledger, AdminUsers } = require('./../../../lib/pay-request')
+const { Form, validate } = require('./forms/form')
 const DateFilter = require('./dateFilter.model')
 
 const { wrapAsyncErrorHandlers } = require('./../../../lib/routes')
 const { formatStatsAsTableRows } = require('./statistics.utils.js')
+const { input } = require('../../../lib/logger')
 
 const startOfGovUkPay = moment.utc().month(8).year(2016)
 
@@ -181,6 +183,95 @@ const byServices = async function byServices (req, res, next) {
   }
 }
 
+const anchors = {
+  date_filter: 'date'
+}
+
+// TODO(sfount) server side validation might not be able to be split up as cleanly as other
+/** some might
+ * // everything custom is automatically processed async? this will mean you need to await the form
+ * // potentially there should be promise _versions_ of the method like this aws
+ * // Form.validate().promise()
+ * // if you just asked for validate you would get the sync results but you wouldn't get the things that need to be looked up (gracefully)
+ *
+ * // if you CAN know validation _before_ doing the operation
+ * validateCustom(async (inputString) => {
+ *  const checkReference = await Ledger.transaction.list({ reference: inputString })
+ *  if (!checkReference) {
+ *
+ *    // @sfount - the _id_, href, etc. are all filled in nicely for you on custom validation
+ *    return {
+ *      valid: false,
+ *      reason: 'Did not know anything about the reference in the database'
+ *    }
+ *  }
+ * })
+ *
+ * // if you CANT know validation _before_ doing the operation but need to respond to the form after trying to do the action
+ * } catch (error) {
+ *  if (error.error_identifer === 'SOME_CODE_WE_KNOW') {
+ *    // takes care of assigning the failed validation _to_ that component
+ *    // takes care of making sure the error summary list is up to date and references that component
+ *    form.submissionError(form.id_of_component, 'Did not know anything about the reference in the database')
+ *    res.render('page', { form })
+ *  }
+ * }
+ *
+*/
+
+
+// id: id that should be used for the form element (this will identify it in HTML and in the lib)s
+// name?: optional name for the form element, this is what will come back in the post body, if this isn't set id will be used
+// alias?: this is what will be returned in the formatted model, if this isn't set name will be used
+// type?: optionally specify a data type, for more complex data models this will help the util parse multiple values (for example dates)
+// ?granularity: 'date' | 'month' -- needs a better name than granularity
+const dateFilterInput = {
+  id: 'date_filter',
+  type: 'date',
+  valid: [
+    // validateRealDate(),
+    // validateIsAfter('2020-08-01', true),
+    // validateIsBefore('2020-08-30', true),
+    // validateIsBetween('2020-08-01', '2020-08-30'),
+    // validateIsFuture(false),
+    validate.isPast(true),
+  ]
+}
+
+// @TODO(sfount) try and really be focussed on a separation
+// ID is the _only_ link between data and view
+// ID _must_ be a valid JSON key
+// everything about _showing_ the thing is defined in the template (where possible, overrides for messages etc. are allowed in either place)
+// everything about _the data_ is defined here
+// here is about defining a standard form model that will be used to accept data from the frontend, do validation, send data to the backend
+const nameInput = {
+  id: 'first_name',
+  valid: [
+    validate.maximumCharacterLength(10),
+    validate.minimumCharacterLength(5)
+  ]
+}
+const secondName = {
+  id: 'second_name',
+  valid: [
+    validate.maximumCharacterLength(10),
+    validate.minimumCharacterLength(5)
+  ]
+}
+
+const DateFilterForm = new Form(dateFilterInput, nameInput, secondName)
+const filter = function filter(req, res, next) {
+  const dateFilterForm = DateFilterForm.empty()
+  res.render('statistics/filter', { csrf: req.csrfToken(), dateFilterForm })
+}
+
+const submitFilter = function submitFilter(req, res, next) {
+  const dateFilterForm = DateFilterForm.validate(req.body)
+  console.log('got submission', req.body)
+  console.log(dateFilterForm)
+  res.render('statistics/filter', { csrf: req.csrfToken(), dateFilterForm, anchor: anchors[req.body.filter_type ] })
+}
+
 const handlers = {
   overview,
   dateFilter,
@@ -188,6 +279,8 @@ const handlers = {
   compareFilter,
   compareFilterRequest,
   csvServices,
-  byServices
+  byServices,
+  filter,
+  submitFilter
 }
 module.exports = wrapAsyncErrorHandlers(handlers)

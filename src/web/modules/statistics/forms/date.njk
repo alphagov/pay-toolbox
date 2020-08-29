@@ -1,0 +1,46 @@
+{% set globallyConfiguredGovUkComponentsPath = "govuk/components/" %}
+{% from globallyConfiguredGovUkComponentsPath + "date-input/macro.njk" import govukDateInput %}
+{% macro formDate(component, overrides = {}) %}
+
+  {% set supportedTypes = [ 'date' ] %}
+  {#
+    At this stage do we want to very clearly visually flag up that either the component isn't well imported
+    OR that it has a component definition that isn't supported by this macro
+  #}
+  {% set year = component.value.year %}
+  {% set month = component.value.month %}
+  {% set day = component.value.day %}
+  {% set yearClassModifier = 'govuk-input--error' if (component.error.field and 'year' in component.error.field) or (component.error.valid === false and component.error.field === undefined) else '' %}
+  {% set monthClassModifier = 'govuk-input--error' if (component.error.field and 'month' in component.error.field) or (component.error.valid === false and component.error.field === undefined) else '' %}
+  {% set dayClassModifier = 'govuk-input--error' if (component.error.field and 'day' in component.error.field) or (component.error.valid === false and component.error.field === undefined) else '' %}
+  {{ govukDateInput({
+    id: component.id,
+    namePrefix: component.name,
+    fieldset: (component.label or overrides.label) and {
+      legend: {
+        text: overrides.label or component.label,
+        classes: overrides.isPageHeading and "govuk-fieldset__legend--l",
+        isPageHeading: overrides.isPageHeading or false
+      }
+    },
+    hint: (component.hint or overrides.hint) and {
+      text: overrides.hint or component.hint
+    },
+    errorMessage: component.error and {
+      text: component.error.reason
+    },
+    items: [{
+      classes: "govuk-input--width-2 " + dayClassModifier,
+      name: "day",
+      value: day
+    },{
+      classes: "govuk-input--width-2 " + monthClassModifier,
+      name: "month",
+      value: month
+    },{
+      classes: "govuk-input--width-4 " + yearClassModifier,
+      name: "year",
+      value: year
+    }]
+  }) }}
+{% endmacro %}

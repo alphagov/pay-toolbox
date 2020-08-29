@@ -1,0 +1,40 @@
+{# should this be split into formInput with type or should it be formText, formNumber #}
+{% set globallyConfiguredGovUkComponentsPath = "govuk/components/" %}
+{% from globallyConfiguredGovUkComponentsPath + "input/macro.njk" import govukInput %}
+{% macro formInput(component, overrides = {}) %}
+
+  {# custom for input #}
+  {# isWholeNumber: true or false #}
+
+  {# we'll need some kind of nunjucks interpolater to be able to work out the messages if a key has been provided #}
+  {# should the key be a data thing or a view thing? #}
+
+  {#? 'tense': 'personal' | 'noun' | undefined --- "Your full name", "The full name", "Full name" #}
+
+  {% set supportedTypes = [ 'string', 'number' ] %}
+
+  {% set inputWidthSizeModifierClass = ("govuk-input--width-" + overrides.inputWidthSize) if overrides.inputWidthSize else null %}
+
+  {# @TODO(sfount) some services put links _into_ the error message (linking to guidance etc.) html will be needed to support this #}
+  {# error -> reason should be able to `en` or `cy` depending on the users session #}
+  {{ govukInput ({
+    id: component.id,
+    name: component.name,
+    label: (component.label or overrides.label) and {
+      text: overrides.label or component.label,
+      classes: overrides.isPageHeading and "govuk-label--l",
+      isPageHeading: overrides.isPageHeading or false
+    },
+    hint: (component.hint or overrides.hint) and {
+      text: overrides.hint or component.hint
+    },
+    errorMessage: component.error and {
+      text: component.error.reason
+    },
+    inputmode: (component.isWholeNumber) and "numeric",
+    pattern: (component.isWholeNumber) and "[0-9]*",
+    classes: overrides.inputWidthSize and inputWidthSizeModifierClass,
+    value: component.value
+  }) }}
+
+{% endmacro %}

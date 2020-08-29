@@ -45,13 +45,20 @@ const configureSecureHeaders = function configureSecureHeaders(instance) {
     hsts: !serverBehindProxy,
     xssFilter: !serverBehindProxy
   }))
-  instance.use(helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: [ '\'self\'' ],
-      imgSrc: [ '*.githubusercontent.com', '\'self\'', 'data:' ],
-      styleSrc: [ '\'self\'', '\'unsafe-inline\'' ]
-    }
-  }))
+  // instance.use(helmet.contentSecurityPolicy({
+  //   directives: {
+  //     defaultSrc: [ '\'self\'' ],
+  //     imgSrc: [ '*.githubusercontent.com', '\'self\'', 'data:' ],
+  //     styleSrc: [ '\'self\'', '\'unsafe-inline\'' ],
+  //     scriptSrc: [
+  //       '\'self\'',
+  //       '\'sha256-tqCUU2yHjDH9fiULK1QKKUFdNg//3tfcIB2bl/5yKI4=\'',
+  //       '\'sha256-sp5LdEiLVbj3Hkr0Dt8A+3UiObargJ/ZVXodsnowmqg=\'',
+  //       '\'sha256-SHuobqtLsz+BkKUf/96voBWs07uHoGYGkSPNAUGB3zI=\'',
+  //       '\'sha256-WECXrfIM4qswqRtVMthU0BWdq4guuxZbOXZvmtMTUV8=\''
+  //     ]
+  //   }
+  // }))
 
   instance.use(csurf())
 }
@@ -71,6 +78,7 @@ const configureServingPublicStaticFiles = function configureServingPublicStaticF
   const cache = { maxage: '1y' }
   instance.use('/public', express.static(path.join(__dirname, '../public'), cache))
   instance.use('/assets/fonts', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/govuk/assets/fonts'), cache))
+  instance.use('/scripts/govuk-frontend.js', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/govuk/all.js'), cache))
   instance.use('/images/favicon.ico', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/govuk/assets/images/', 'favicon.ico'), cache))
 }
 
