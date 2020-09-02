@@ -2,6 +2,21 @@ const moment = require('moment')
 
 const govukDateFormatString = 'D MMMM YYYY'
 
+// @TODO(sfount) have `formatValidation` do the `simpleReplace` given the template and message values passed in (with the instance.token already available)
+
+function formatValidation(valid, instance, options = { messageValues: [], template: '', reason: '' }) {
+  return {
+    valid,
+    template: options.template,
+    messageValues: options.messageValues,
+    token: instance.token || DEFAULT_TOKEN,
+    tokenIndex: options.template.indexOf('{token}'),
+    reason: options.reason,
+    ...options.field && { field: options.field },
+    ...options.href && { href: options.href }
+  }
+}
+
 // @TODO(sfount) date todos
 // - support automomplete, right now probably an optional flag that's passed down
 function isBefore(beforeDateString, includeSameAsDate = false) {
@@ -9,8 +24,11 @@ function isBefore(beforeDateString, includeSameAsDate = false) {
   if (!beforeDate.isValid()) {
     throw new Error('Invalid before date provided for validation')
   }
-  return (inputDateValues, elementId) => {
-    const isReal = realDate()(inputDateValues, elementId)
+  return (instance) => {
+    const inputDateValues = instance.value
+    const token = instance.token || DEFAULT_TOKEN
+
+    const isReal = realDate()(instance)
     if (!isReal.valid) return isReal
 
     const { year, month, day} = inputDateValues
@@ -21,14 +39,23 @@ function isBefore(beforeDateString, includeSameAsDate = false) {
       enteredDate.isBefore(beforeDate)
 
     if (!valid) {
-      const prefix = includeSameAsDate ?
-        DEFAULT_REASON_TEXTS.date_must_be_before_or_same_prefix :
-        DEFAULT_REASON_TEXTS.date_must_be_before_prefix
+      const template = includeSameAsDate ?
+        DEFAULT_REASON_TEXTS.date_must_be_before_or_same :
+        DEFAULT_REASON_TEXTS.date_must_be_before
 
-      return {
-        valid: false,
-        reason: `${prefix} ${beforeDate.format(govukDateFormatString)}`
-      }
+      return formatValidation(false, instance, {
+        template,
+        messageValues: [ beforeDate.format(govukDateFormatString) ],
+        reason: simpleReplace(template, simpleCapitalise(token), beforeDate.format(govukDateFormatString))
+      })
+      // return {
+      //   valid: false,
+      //   reason: simpleReplace(
+      //     template,
+      //     simpleCapitalise(token),
+      //     beforeDate.format(govukDateFormatString)
+      //   )
+      // }
     }
     return {
       valid: true
@@ -41,8 +68,11 @@ function isAfter(afterDateString, includeSameAsDate = false) {
   if (!afterDate.isValid()) {
     throw new Error('Invalid after date provided for validation')
   }
-  return (inputDateValues, elementId) => {
-    const isReal = realDate()(inputDateValues, elementId)
+  return (instance, elementId) => {
+    const inputDateValues = instance.value
+    const token = instance.token || DEFAULT_TOKEN
+
+    const isReal = realDate()(instance, elementId)
     if (!isReal.valid) return isReal
 
     const { year, month, day} = inputDateValues
@@ -53,14 +83,23 @@ function isAfter(afterDateString, includeSameAsDate = false) {
       enteredDate.isAfter(afterDate)
 
     if (!valid) {
-      const prefix = includeSameAsDate ?
-        DEFAULT_REASON_TEXTS.date_must_be_after_or_same_prefix :
-        DEFAULT_REASON_TEXTS.date_must_be_after_prefix
+      const template = includeSameAsDate ?
+        DEFAULT_REASON_TEXTS.date_must_be_after_or_same :
+        DEFAULT_REASON_TEXTS.date_must_be_after
 
-      return {
-        valid: false,
-        reason: `${prefix} ${afterDate.format(govukDateFormatString)}`
-      }
+      return formatValidation(false, instance, {
+        template,
+        messageValues: [ afterDate.format(govukDateFormatString) ],
+        reason: simpleReplace(template, simpleCapitalise(token), afterDate.format(govukDateFormatString))
+      })
+      // return {
+      //   valid: false,
+      //   reason: simpleReplace(
+      //     template,
+      //     simpleCapitalise(token),
+      //     afterDate.format(govukDateFormatString)
+      //   )
+      // }
     }
     return {
       valid: true
@@ -74,8 +113,11 @@ function isBetween(beforeDateString, afterDateString) {
   if (!afterDate.isValid() || !beforeDate.isValid()) {
     throw new Error('Invalid date range provided for validation')
   }
-  return (inputDateValues, elementId) => {
-    const isReal = realDate()(inputDateValues, elementId)
+  return (instance, elementId) => {
+    const inputDateValues = instance.value
+    const token = instance.token || DEFAULT_TOKEN
+
+    const isReal = realDate()(instance, elementId)
     if (!isReal.valid) return isReal
 
     const { year, month, day} = inputDateValues
@@ -84,12 +126,17 @@ function isBetween(beforeDateString, afterDateString) {
     const valid = enteredDate.isBetween(beforeDate, afterDate)
 
     if (!valid) {
-      const prefix = DEFAULT_REASON_TEXTS.date_must_be_between_prefix
-
-      return {
-        valid: false,
-        reason: `${prefix} ${beforeDate.format(govukDateFormatString)} and ${afterDate.format(govukDateFormatString)}`
-      }
+      const template = DEFAULT_REASON_TEXTS.date_must_be_between
+      return formatValidation(false, instance, {
+        reason: simpleReplace(
+          template,
+          simpleCapitalise(token),
+          beforeDate.format(govukDateFormatString),
+          afterDate.format(govukDateFormatString)
+        ),
+        messageValues: [ beforeDate.format(govukDateFormatString), afterDate.format(govukDateFormatString) ],
+        template
+      })
     }
     return {
       valid: true
@@ -98,9 +145,12 @@ function isBetween(beforeDateString, afterDateString) {
 }
 
 function isFuture(includeToday = false) {
-  return (inputDateValues, elementId) => {
+  return (instance, elementId) => {
+    const inputDateValues = instance.value
+    const token = instance.token || DEFAULT_TOKEN
+
     const today = moment().startOf('day')
-    const isReal = realDate()(inputDateValues, elementId)
+    const isReal = realDate()(instance, elementId)
     if (!isReal.valid) return isReal
 
     const { year, month, day} = inputDateValues
@@ -111,14 +161,18 @@ function isFuture(includeToday = false) {
       enteredDate.isAfter(today)
 
     if (!valid) {
-      const reasonText = includeToday ?
+      const template = includeToday ?
         DEFAULT_REASON_TEXTS.date_must_be_today_or_future :
         DEFAULT_REASON_TEXTS.date_must_be_future
 
-      return {
-        valid: false,
-        reason: `${reasonText}`
-      }
+      return formatValidation(false, instance, {
+        template,
+        messageValues: [],
+        reason: simpleReplace(
+          template,
+          simpleCapitalise(token)
+        )
+      })
     }
     return {
       valid: true
@@ -127,9 +181,13 @@ function isFuture(includeToday = false) {
 }
 
 function isPast(includeToday = false) {
-  return (inputDateValues, elementId) => {
+  return (instance, elementId) => {
+    console.log('step into', instance)
+    const inputDateValues = instance.value
+    const token = instance.token || DEFAULT_TOKEN
+
     const today = moment().startOf('day')
-    const isReal = realDate()(inputDateValues, elementId)
+    const isReal = realDate()(instance, elementId)
     if (!isReal.valid) return isReal
 
     const { year, month, day} = inputDateValues
@@ -140,14 +198,18 @@ function isPast(includeToday = false) {
       enteredDate.isBefore(today)
 
     if (!valid) {
-      const reasonText = includeToday ?
+      const template = includeToday ?
         DEFAULT_REASON_TEXTS.date_must_be_today_or_past :
         DEFAULT_REASON_TEXTS.date_must_be_past
 
-      return {
-        valid: false,
-        reason: `${reasonText}`
-      }
+      return formatValidation(false, instance, {
+        template,
+        messageValues: [],
+        reason: simpleReplace(
+          template,
+          simpleCapitalise(token)
+        )
+      })
     }
     return {
       valid: true
@@ -176,10 +238,42 @@ function isPast(includeToday = false) {
 // The date your passport was issued must include a year
 // ?optionally optionally accept a string with a %s to replace with the value
 
+function simpleReplace(template, ...values) {
+  let formatted = template
+  values.forEach((replaceValue) => {
+    formatted = formatted.replace('{}', replaceValue)
+  })
+  return formatted
+}
+
+function simpleCapitalise(string) {
+  return `${string[0].toUpperCase()}${string.slice(1)}`
+}
+
+const DEFAULT_TOKEN = 'the value'
+
+const DEFAULT_REASON_TEXTS = {
+  input_must_exist: 'Enter {}', // token
+  input_must_be_shorter: '{} must be {} characters or fewer', // token, character limit
+  input_must_be_longer: '{} must be {} characters or more', // token, character limit
+
+  // type: date
+  date_must_be_valid: '{} must be a real date', // token
+  date_must_contain_all: '{} must include a {}', // token, list of keys
+  date_must_be_before: '{} must be before {}', // token, date
+  date_must_be_before_or_same: '{} must be the same as or before {}', // token, date
+  date_must_be_after: '{} must be after {}', // token, date
+  date_must_be_after_or_same: '{} must be the same as or after {}', // token, date
+  date_must_be_between: '{} must be between {} and {}', // token, from date, to date
+  date_must_be_future: '{} must be in the future', // token
+  date_must_be_today_or_future: '{} must be today or in the future', // token
+  date_must_be_past: '{} must in the past', // token
+  date_must_be_today_or_past: '{} must be today or in the past' // token
+}
 
 // @TODO(sfount) consider moving from prefixes and suffixes to a substition to potentially allow custom message
 // maps to make use of the key as well (other than overriding every possible message)
-const DEFAULT_REASON_TEXTS = {
+/* const DEFAULT_REASON_TEXTS = {
   date_is_invalid: 'Date must be a real date',
   date_is_missing: 'Enter a date',
   date_must_include_prefix: 'Date must include a',
@@ -199,19 +293,26 @@ const DEFAULT_REASON_TEXTS = {
   input_is_too_long_suffix: 'characters or fewer',
   input_is_too_short_prefix: 'The value must be',
   input_is_too_short_suffix: 'characters or more'
-}
+} */
 function realDate() {
-  return (inputDateValues, elementId) => {
+  return (instance) => {
+    const inputDateValues = instance.value
+    const token = instance.token || DEFAULT_TOKEN
+
     const { year, month, day } = inputDateValues
 
     // potential alternative (if supporting granular and all)
     // --------
     if (!inputDateValues.year && !inputDateValues.month && !inputDateValues.day) {
-      return {
-        href: `#${elementId}-day`,
-        valid: false,
-        reason: DEFAULT_REASON_TEXTS.date_is_missing
-      }
+      return formatValidation(false, instance, {
+        href: `#${instance.id}-day`,
+        reason: simpleReplace(
+          DEFAULT_REASON_TEXTS.input_must_exist,
+          token
+        ),
+        template: DEFAULT_REASON_TEXTS.input_must_exist,
+        messageValues: [],
+      })
     }
     const keys = [ 'day', 'month', 'year' ]
     const errorFields = []
@@ -221,24 +322,31 @@ function realDate() {
       }
     })
     if (errorFields.length) {
-      return {
-        href: `#${elementId}-${errorFields[0]}`,
-        valid: false,
+      return formatValidation(false, instance, {
+        href: `#${instance.id}-${errorFields[0]}`,
         field: errorFields,
-
-        // @TODO(sfount) hacky method of using keys for text values, there should be a map for these to allow
-        // translation/ customisation in the future
-        reason: `${DEFAULT_REASON_TEXTS.date_must_include_prefix} ${errorFields.join(' and ') }`
-      }
+        reason: simpleReplace(
+          DEFAULT_REASON_TEXTS.date_must_contain_all,
+          simpleCapitalise(token),
+          errorFields.join(' and ')
+        ),
+        template: DEFAULT_REASON_TEXTS.date_must_contain_all,
+        messageValues: errorFields
+      })
     }
 
     const isValid = moment({ year, month, day }).isValid()
 
     if (!isValid) {
-      return {
-        valid: false,
-        reason: DEFAULT_REASON_TEXTS.date_is_invalid
-      }
+      const template = DEFAULT_REASON_TEXTS.date_must_be_valid
+      return formatValidation(false, instance, {
+        reason: simpleReplace(
+          template,
+          simpleCapitalise(token)
+        ),
+        template,
+        messageValues: []
+      })
     }
     return {
       valid: true,
@@ -247,12 +355,19 @@ function realDate() {
 }
 
 function notEmpty() {
-  return (inputStringValue) => {
+  return (instance) => {
+    const inputStringValue = instance.value
+    const token = instance.token || DEFAULT_TOKEN
+
     if (!inputStringValue) {
-      return {
-        valid: false,
-        reason: DEFAULT_REASON_TEXTS.input_is_empty
-      }
+      return formatValidation(false, instance, {
+        reason: simpleReplace(
+          DEFAULT_REASON_TEXTS.input_must_exist,
+          token
+        ),
+        template: DEFAULT_REASON_TEXTS.input_must_exist,
+        messageValues: []
+      })
     }
     return {
       valid: true
@@ -260,19 +375,27 @@ function notEmpty() {
   }
 }
 
-function maximumCharacterLength(maximumCharacterLength) {
-  if (maximumCharacterLength === undefined || maximumCharacterLength === null) {
+function maximumCharacterLength(maxCharacterLength) {
+  if (maxCharacterLength === undefined || maxCharacterLength === null) {
     throw new Error('Invalid character length for maximum validation')
   }
-  return (inputStringValue) => {
-    const isEmpty = notEmpty()(inputStringValue)
+  return (instance) => {
+    const inputStringValue = instance.value
+    const token = instance.token || DEFAULT_TOKEN
+
+    const isEmpty = notEmpty()(instance)
     if (!isEmpty.valid) return isEmpty
 
-    if (inputStringValue.length > maximumCharacterLength) {
-      return {
-        valid: false,
-        reason: `${DEFAULT_REASON_TEXTS.input_is_too_long_prefix} ${maximumCharacterLength} ${DEFAULT_REASON_TEXTS.input_is_too_long_suffix}`
-      }
+    if (inputStringValue.length > maxCharacterLength) {
+      return formatValidation(false, instance, {
+        reason: simpleReplace(
+          DEFAULT_REASON_TEXTS.input_must_be_shorter,
+          simpleCapitalise(token),
+          maxCharacterLength
+        ),
+        template: DEFAULT_REASON_TEXTS.input_must_be_shorter,
+        messageValues: [ maxCharacterLength ]
+      })
     }
     return {
       valid: true
@@ -280,19 +403,27 @@ function maximumCharacterLength(maximumCharacterLength) {
   }
 }
 
-function minimumCharacterLength(minimumCharacterLength) {
-  if (minimumCharacterLength === undefined || minimumCharacterLength === null) {
+function minimumCharacterLength(minCharacterLength) {
+  if (minCharacterLength === undefined || minCharacterLength === null) {
     throw new Error('Invalid character length for minimum validation')
   }
-  return (inputStringValue) => {
-    const isEmpty = notEmpty()(inputStringValue)
+  return (instance) => {
+    const inputStringValue = instance.value
+    const token = instance.token || DEFAULT_TOKEN
+
+    const isEmpty = notEmpty()(instance)
     if (!isEmpty.valid) return isEmpty
 
-    if (inputStringValue.length < minimumCharacterLength) {
-      return {
-        valid: false,
-        reason: `${DEFAULT_REASON_TEXTS.input_is_too_short_prefix} ${minimumCharacterLength} ${DEFAULT_REASON_TEXTS.input_is_too_short_suffix}`
-      }
+    if (inputStringValue.length < minCharacterLength) {
+      return formatValidation(false, instance, {
+        reason: simpleReplace(
+          DEFAULT_REASON_TEXTS.input_must_be_longer,
+          simpleCapitalise(token),
+          minCharacterLength
+        ),
+        template: DEFAULT_REASON_TEXTS.input_must_be_longer,
+        messageValues: [ maximumCharacterLength ]
+      })
     }
     return {
       valid: true
@@ -322,6 +453,7 @@ class Form {
         id: element.id,
         name: element.name || element.id,
         alias: element.alias || element.name || element.id,
+        token: element.messages && element.messages.token || null,
         value: null,
         error: null
       }
@@ -370,13 +502,15 @@ class Form {
       } else {
         elementInstance.value = submission[elementInstance.name] && submission[elementInstance.name].trim()
       }
-      const errors = element.valid
+      const errors = element.rules
         .map((validationMethod) => {
-          return validationMethod(instance[element.id].value, element.id)
+          console.log('validating', elementInstance)
+          return validationMethod(elementInstance)
         })
         .filter((validationResult) => !validationResult.valid)
       elementInstance.error = errors[0]
       if (elementInstance.error) {
+        // instance.errors.push(elementInstance.error)
         instance.errors.push({
           href: elementInstance.error.href || `#${elementInstance.id}`,
           text: elementInstance.error.reason
@@ -396,6 +530,7 @@ class Form {
 module.exports = {
   Form,
   validate: {
+    realDate,
     isAfter,
     isBefore,
     isBetween,

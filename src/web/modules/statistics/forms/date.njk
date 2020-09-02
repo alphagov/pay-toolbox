@@ -7,6 +7,26 @@
     At this stage do we want to very clearly visually flag up that either the component isn't well imported
     OR that it has a component definition that isn't supported by this macro
   #}
+
+  {# @TODO(sfount) detail alogrithm for interpolating error messages based on tokens #}
+  {# {% set token = (component.error.token | capitalize) if component.error.tokenIndex === 0 else component.error.token %}
+  {% set interpolateMessage = component.error.template | replace("{token}", overrides.token or token) %}
+  {% for value in component.error.messageValues %}
+    {% set interpolateMessage = interpolateMessage | replace("{}", value) %}
+  {% endfor %} #}
+
+  {#
+    @FIXME(sfount) questions remaining:
+      - how can we have the same interpolated message (_based_ on overrides provided to individual components) without
+        hacking everything to pieces (the answer may be that the token has to be provided at the data level)
+        - currently reviewing what order everything in nunjucks is done in;;; if sets are done first then there is a chance
+          that the interpolated value can be shared with a fallback if not available (default token etc.)
+      - how many workarounds are acceptable to have the messages based on the label provided in the template rather
+        than just putting a token in the data model
+      - can we get a map to an error list (of href, text) from the error list if it contains a copy of each error
+        - as each error contains a reference to the instance do we need anything further? the href can be generated from the id
+  #}
+
   {% set year = component.value.year %}
   {% set month = component.value.month %}
   {% set day = component.value.day %}
@@ -43,4 +63,8 @@
       value: year
     }]
   }) }}
+    {# errorMessage: component.error and {
+      text: component.error.reason
+    }, #}
+
 {% endmacro %}

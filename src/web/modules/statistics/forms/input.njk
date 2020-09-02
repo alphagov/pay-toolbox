@@ -1,4 +1,5 @@
 {# should this be split into formInput with type or should it be formText, formNumber #}
+
 {% set globallyConfiguredGovUkComponentsPath = "govuk/components/" %}
 {% from globallyConfiguredGovUkComponentsPath + "input/macro.njk" import govukInput %}
 {% macro formInput(component, overrides = {}) %}
@@ -14,6 +15,12 @@
   {% set supportedTypes = [ 'string', 'number' ] %}
 
   {% set inputWidthSizeModifierClass = ("govuk-input--width-" + overrides.inputWidthSize) if overrides.inputWidthSize else null %}
+
+  {# {% set interpolateMessage = } #}
+  {% set interpolateMessage %}
+
+    {# {% for values } #}
+  {% endset %}
 
   {# @TODO(sfount) some services put links _into_ the error message (linking to guidance etc.) html will be needed to support this #}
   {# error -> reason should be able to `en` or `cy` depending on the users session #}

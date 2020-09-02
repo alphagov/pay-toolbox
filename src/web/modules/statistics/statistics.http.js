@@ -228,15 +228,26 @@ const anchors = {
 const dateFilterInput = {
   id: 'date_filter',
   type: 'date',
-  valid: [
-    // validateRealDate(),
-    // validateIsAfter('2020-08-01', true),
-    // validateIsBefore('2020-08-30', true),
-    // validateIsBetween('2020-08-01', '2020-08-30'),
-    // validateIsFuture(false),
-    validate.isPast(true),
-  ]
+  rules: [
+    validate.realDate(),
+    // validate.isAfter('2020-08-01', true),
+    // validate.isBefore('2020-08-30', true),
+    // validate.isBetween('2020-08-01', '2020-08-30'),
+    // validate.isFuture(false),
+    validate.isPast(false),
+    // validate.isBefore('2020-08-30', true),
+  ],
+  messages: {
+    token: 'filter date'
+  }
 }
+// rules: [ validate.isBefore('') ],
+// messages: {
+//  token: 'your first name'
+//  override: {
+//    input_must_exist: 'Theres no way your first name is optional mayn'
+//  }
+// }
 
 // @TODO(sfount) try and really be focussed on a separation
 // ID is the _only_ link between data and view
@@ -246,19 +257,26 @@ const dateFilterInput = {
 // here is about defining a standard form model that will be used to accept data from the frontend, do validation, send data to the backend
 const nameInput = {
   id: 'first_name',
-  valid: [
+  rules: [
     validate.maximumCharacterLength(10),
     validate.minimumCharacterLength(5)
-  ]
+  ],
+  messages: {
+    token: 'your first name'
+  }
 }
 const secondName = {
   id: 'second_name',
-  valid: [
+  rules: [
     validate.maximumCharacterLength(10),
     validate.minimumCharacterLength(5)
-  ]
+  ],
+  messages: {
+    token: 'your second name'
+  }
 }
 
+// const DateFilterForm = new Form(dateFilterInput, nameInput, secondName)
 const DateFilterForm = new Form(dateFilterInput, nameInput, secondName)
 const filter = function filter(req, res, next) {
   const dateFilterForm = DateFilterForm.empty()
