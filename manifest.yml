@@ -3,7 +3,6 @@ applications:
 - name: toolbox
   buildpacks:
   - https://github.com/alphagov/env-map-buildpack.git#v1
-  - https://github.com/cloudfoundry/nodejs-buildpack.git#v1.7.9
   health-check-type: http
   health-check-http-endpoint: '/healthcheck'
   health-check-invocation-timeout: 5
