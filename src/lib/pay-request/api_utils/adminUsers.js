@@ -25,7 +25,7 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     return axiosInstance.post(path, { username: email })
       .then(utilExtractData)
       .catch((error) => {
-        if (error.data.response && error.data.response.status === 404) throw new EntityNotFoundError('User', email)
+        if (error.data.response && error.data.response.status === 404) throw new EntityNotFoundError('User', email, 'Email')
         throw error
       })
   }
@@ -36,7 +36,7 @@ const adminUsersMethods = function adminUsersMethods(instance) {
       .then(utilExtractData)
       .then(redactOtp)
       .catch((error) => {
-        if (error.data.response && error.data.response.status === 404) throw new EntityNotFoundError('User', id)
+        if (error.data.response && error.data.response.status === 404) throw new EntityNotFoundError('User', id, 'External ID')
         throw error
       })
   }
@@ -79,7 +79,7 @@ const adminUsersMethods = function adminUsersMethods(instance) {
       .then(utilExtractData)
       .catch((error) => {
         if (error.data.response && error.data.response.status === 404) {
-          throw new EntityNotFoundError('Service', id)
+          throw new EntityNotFoundError('Service', id, 'External ID')
         }
         throw error
       })

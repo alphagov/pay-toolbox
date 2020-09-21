@@ -15,8 +15,8 @@ export class RequestError extends Error {
 export class EntityNotFoundError extends RequestError {
   public data: { name: string; identifier: string }
 
-  public constructor(name: string, identifier: string) {
-    super(`${name} with ID ${identifier} was not found.`)
+  public constructor(name: string, identifier: string, description: string = 'ID') {
+    super(`${name} with ${description} ${identifier} was not found.`)
     this.data = { name, identifier }
   }
 }
