@@ -2,8 +2,8 @@
 
 {% set globallyConfiguredGovUkComponentsPath = "govuk/components/" %}
 {% from globallyConfiguredGovUkComponentsPath + "input/macro.njk" import govukInput %}
-{% macro formInput(component, overrides = {}) %}
-
+{% macro formInput(form, id, overrides = {}) %}
+  {% set component = form[id] %}
   {# custom for input #}
   {# isWholeNumber: true or false #}
 

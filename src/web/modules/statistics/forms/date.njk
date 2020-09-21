@@ -1,8 +1,11 @@
 {% set globallyConfiguredGovUkComponentsPath = "govuk/components/" %}
 {% from globallyConfiguredGovUkComponentsPath + "date-input/macro.njk" import govukDateInput %}
-{% macro formDate(component, overrides = {}) %}
-
+{% macro formDate(form, id, overrides = {}) %}
+  {% set component = form[id] %}
   {% set supportedTypes = [ 'date' ] %}
+
+  <h1>({{ someUniqueThing | dump }}) + someUniqueThing</h1>
+  <h1>({{ loggedIn | dump }}) + loggedin</h1>
   {#
     At this stage do we want to very clearly visually flag up that either the component isn't well imported
     OR that it has a component definition that isn't supported by this macro

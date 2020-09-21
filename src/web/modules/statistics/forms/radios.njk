@@ -1,0 +1,38 @@
+{% set globallyConfiguredGovUkComponentsPath = "govuk/components/" %}
+{% from globallyConfiguredGovUkComponentsPath + "radios/macro.njk" import govukRadios %}
+{% macro formRadios(form, id, overrides = {}) %}
+  {% set component = form[id] %}
+
+  {% set options = component.options or overrides.options or {} %}
+  {# IFF NOT component - show errored component with explanation #}
+
+  {% set formatOptions = [] %}
+  {% for key, option in options %}
+    {% set formatOptions = (formatOptions.push({
+      value: key,
+      text: option.text,
+      selected: true,
+      hint: { text: option.hint },
+      checked: component.value === key
+    }), formatOptions) %}
+  {% endfor %}
+
+  {{ govukRadios({
+      idPrefix: component.id,
+      name: component.name,
+      fieldset: (component.label or overrides.label) and {
+        legend: {
+          text: overrides.label or component.label,
+          classes: overrides.isPageHeading and "govuk-fieldset__legend--l",
+          isPageHeading: overrides.isPageHeading or false
+        }
+      },
+      hint: (component.hint or overrides.hint) and {
+        text: overrides.hint or component.hint
+      },
+      errorMessage: component.error and {
+        text: component.error.reason
+      },
+      items: formatOptions
+    }) }}
+{% endmacro %}

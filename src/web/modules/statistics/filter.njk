@@ -1,0 +1,243 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set formMessageOverrides = {
+  preset_radios: {
+    input_must_be_selected: "This is a custom override message"
+  }
+} %}
+
+{% from "./forms/date.njk" import formDate with context %}
+{% from "./forms/input.njk" import formInput with context %}
+{% from "./forms/radios.njk" import formRadios with context %}
+
+
+{# {% set errorList = [] %} #}
+{# {% for error in allFormErrors %} #}
+{# {% set token = (component.error.token | capitalize) if component.error.tokenIndex === 0 else component.error.token %}
+{% set interpolateMessage = component.error.template | replace("{token}", overrides.token or token) %}
+{% for value in component.error.messageValues %}
+  {% set interpolateMessage = interpolateMessage | replace("{}", value) %}
+{% endfor %} #}
+{# {% endfor %} #}
+{# {% set errorList = errorList.push({
+  href: error.href or ("#"),
+  text: error.interpolateMessage
+}) %} #}
+
+
+{% extends "layout/layout.njk" %}
+{% block main %}
+  {{ forms | dump }}
+  <span class="govuk-caption-m">GOV.UK Pay platform</span>
+  <h1 class="govuk-heading-m">Filter payment statistics</h1>
+
+  {% set allFormErrors = dateFilterForm.errors.concat(presetFilterForm.errors) %}
+  {% if allFormErrors.length %}
+    {{ govukErrorSummary({
+      titleText: "There is a problem",
+      errorList: allFormErrors
+    }) }}
+  {% endif %}
+
+  {% set presetHtml %}
+  <h2 class="govuk-heading-l">Preset</h2>
+  <form name="date_select_form" method="POST" action="/statistics/filter">
+    <input hidden name="filter_type" value="preset" />
+    {{ formRadios(presetFilterForm, "preset_radios", {
+      options: {
+        today: { text: "Today", hint: "25 August 2020" },
+        this_week: { text: "This week", hint: "24 August 2020 to 30 August 2020" },
+        this_month: { text: "This month", hint: "24 August 2020 to 30 August 2020" },
+        this_year: { text: "This year", hint: "24 August 2020 to 30 August 2020" },
+        yesterday: { text: "Yesterday", hint: "24 August 2020 to 30 August 2020" },
+        last_week: { text: "Last week", hint: "24 August 2020 to 30 August 2020" },
+        last_month: { text: "Last month", hint: "24 August 2020 to 30 August 2020" }
+      }
+    }) }}
+    {# {{ govukRadios({
+      idPrefix: "preset_radios",
+      name: "preset_radios",
+      items: [{
+        value: "today",
+        text: "Today",
+        hint: { text: "25 August 2020" }
+      }, {
+        value: "this_week",
+        text: "This week",
+        hint: { text: "24 August 2020 to 30 August 2020" }
+      }, {
+        value: "this_month",
+        text: "This month",
+        hint: { text: "01 August 2020 to 31 August 2020" }
+      }, {
+        value: "this_year",
+        text: "This year",
+        hint: { text: "01 August 2020 to 31 August 2020" }
+      }, {
+        value: "yesterday",
+        text: "Yesterday",
+        hint: { text: "24 August 2020" }
+      }, {
+        value: "last_week",
+        text: "Last week",
+        hint: { text: "24 August 2020" }
+      }, {
+        value: "last_month",
+        text: "Last month",
+        hint: { text: "24 August 2020" }
+      }]
+    }) }} #}
+    {{ govukButton({
+      text: "Select and filter payment statistics"
+    }) }}
+    <input hidden name="_csrf" value="{{csrf}}" />
+  </form>
+  {% endset -%}
+
+  {% set relativeHtml %}
+  <h2 class="govuk-heading-l">Relative</h2>
+  {{ govukRadios({
+    idPrefix: "relative_radios",
+    name: "relative_radios",
+    items: [{
+      value: "last_7_days",
+      text: "Last 7 days",
+      hint: { text: "25 August 2020" }
+    }, {
+      value: "last_30_days",
+      text: "Last 30 days",
+      hint: { text: "24 August 2020 to 30 August 2020" }
+    }, {
+      value: "last_90_days",
+      text: "Last 90 days",
+      hint: { text: "01 August 2020 to 31 August 2020" }
+    }]
+  }) }}
+  {{ govukButton({
+    text: "Select and filter payment statistics"
+  }) }}
+  {% endset -%}
+
+  {% set dateHtml %}
+  <h2 class="govuk-heading-l">Date</h2>
+  <form name="date_select_form" method="POST" action="/statistics/filter">
+  <input hidden name="filter_type" value="date_filter" />
+
+  {#
+    - highest priority is what is overriden in the macro
+    - second priority is what stored by overrides in the definition
+    - final fallback are the default values or type
+  #}
+
+  {#
+    {{ formDate(dateFilterForm.date_filter)  }}
+  #}
+  {#
+  {{ formDate(dateFilterForm.date_filter, {
+    ?interpolate_key: "date of birth"
+    reasons: {
+      date_is_missing: "Enter your date of birth",
+      date_is_missing_year: "Date of birth must include a year"
+    }
+  }) }}
+  #}
+
+  {# @TODO(sfount) should it be formDate(dateFilterForm, { id: 'date_filer' }) as that forces you to consider that its an HTML ID that's being assigned?    #}
+{# 1 #}
+  {{ formDate(dateFilterForm, "date_filter", {
+    label: "Filter date",
+    hint: "The date the report will be filtered on",
+    isPageHeading: true
+  }) }}
+
+{# 2 #}
+  {{ formInput(dateFilterForm, "first_name", {
+    label: "First name",
+    hint: "Your full first name given at birth",
+    isPageHeading: true
+  }) }}
+
+{# 3 #}
+  {# should the "label" default to the message token -- how do you override to just use default tokens (value | date | etc.) #}
+  {{ formInput(dateFilterForm, "second_name", {
+    label: "Second name",
+    hint: "Your full second name given at birth"
+  }) }}
+
+
+  {#
+
+  {{ formInput(dateFilterForm.name, {
+    label: "First name",
+    hint: "Your full first name given at birth",
+    messages: {
+      key: "full name",
+      // ? personal: true,
+      // ? becomes "your" where the context matters
+      // ? Enter your first name
+      map: {
+        input_is_empty: "Enter your first name. We need to process your medical records"
+      }
+    }
+  }) }}
+
+  #}
+
+  {{ govukButton({
+    text: "Select and filter payment statistics"
+  }) }}
+  <input hidden name="_csrf" value="{{csrf}}" />
+  </form>
+
+  {% endset -%}
+  {% set dateRangeHtml %}
+  <h2 class="govuk-heading-l">Date range</h2>
+  {{ govukDateInput({
+    id: "date_range_from",
+    namePrefix: "date_range_from",
+    fieldset: {
+      legend: {
+        text: "From",
+        isPageHeading: false
+      }
+    }
+  }) }}
+  {{ govukDateInput({
+    id: "date_range_to",
+    namePrefix: "date_range_to",
+    fieldset: {
+      legend: {
+        text: "To",
+        isPageHeading: false
+      }
+    }
+  }) }}
+
+  {{ govukButton({
+    text: "Select and filter payment statistics"
+  }) }}
+
+  {% endset -%}
+
+  {{ govukTabs({
+    items: [
+      { label: "Preset", id: "preset", panel: { html: presetHtml  } },
+      { label: "Relative", id: "relative", panel: { html: relativeHtml  } },
+      { label: "Date", id: "date", panel: { html: dateHtml  } },
+      { label: "Date range", id: "date-range", panel: { html: dateRangeHtml  } }
+    ]
+  }) }}
+
+  <script></script>
+  <script src="/scripts/govuk-frontend.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      window.location.hash = "{{anchor}}"
+      GOVUKFrontend.initAll()
+    })
+  </script>
+{% endblock %}

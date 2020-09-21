@@ -256,6 +256,7 @@ const DEFAULT_REASON_TEXTS = {
   input_must_exist: 'Enter {}', // token
   input_must_be_shorter: '{} must be {} characters or fewer', // token, character limit
   input_must_be_longer: '{} must be {} characters or more', // token, character limit
+  input_must_be_selected: 'Select the {}',
 
   // type: date
   date_must_be_valid: '{} must be a real date', // token
@@ -375,6 +376,26 @@ function notEmpty() {
   }
 }
 
+function isSelected() {
+  return (instance) => {
+    const empty = notEmpty()(instance)
+    if (!empty.valid) {
+      const token = instance.token || DEFAULT_TOKEN
+      return formatValidation(false, instance, {
+        reason: simpleReplace(
+          DEFAULT_REASON_TEXTS.input_must_be_selected,
+          token
+        ),
+        template: DEFAULT_REASON_TEXTS.input_must_be_selected,
+        messageValues: []
+      })
+    }
+    return {
+      valid: true
+    }
+  }
+}
+
 function maximumCharacterLength(maxCharacterLength) {
   if (maxCharacterLength === undefined || maxCharacterLength === null) {
     throw new Error('Invalid character length for maximum validation')
@@ -454,6 +475,7 @@ class Form {
         name: element.name || element.id,
         alias: element.alias || element.name || element.id,
         token: element.messages && element.messages.token || null,
+        template: element.template || {},
         value: null,
         error: null
       }
@@ -537,6 +559,7 @@ module.exports = {
     isFuture,
     isPast,
     notEmpty,
+    isSelected,
     maximumCharacterLength,
     minimumCharacterLength
   }

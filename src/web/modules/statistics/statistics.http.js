@@ -276,18 +276,33 @@ const secondName = {
   }
 }
 
+const presetOptions = {
+  id: 'preset_radios',
+  rules: [
+    validate.isSelected()
+  ],
+  messages: {
+    token: 'preset filter'
+  }
+  // enum: [ 'today', 'this_week', 'this_month', 'this_year', 'yesterday', 'last_week', 'last_month' ]
+}
+
 // const DateFilterForm = new Form(dateFilterInput, nameInput, secondName)
 const DateFilterForm = new Form(dateFilterInput, nameInput, secondName)
+const PresetFilterForm = new Form(presetOptions)
 const filter = function filter(req, res, next) {
   const dateFilterForm = DateFilterForm.empty()
-  res.render('statistics/filter', { csrf: req.csrfToken(), dateFilterForm })
+  const presetFilterForm = PresetFilterForm.empty()
+  res.render('statistics/filter', { csrf: req.csrfToken(), dateFilterForm, presetFilterForm })
 }
 
 const submitFilter = function submitFilter(req, res, next) {
-  const dateFilterForm = DateFilterForm.validate(req.body)
+  const dateFilterForm = req.body.filter_type === 'date_filter' ? DateFilterForm.validate(req.body) : DateFilterForm.empty()
+  const presetFilterForm = req.body.filter_type === 'preset' ? PresetFilterForm.validate(req.body) : PresetFilterForm.empty()
+
   console.log('got submission', req.body)
   console.log(dateFilterForm)
-  res.render('statistics/filter', { csrf: req.csrfToken(), dateFilterForm, anchor: anchors[req.body.filter_type ] })
+  res.render('statistics/filter', { csrf: req.csrfToken(), dateFilterForm, presetFilterForm, anchor: anchors[req.body.filter_type ] })
 }
 
 const handlers = {
