@@ -6,7 +6,7 @@ chai.use(spies)
 
 const auth = require('./auth')
 
-const requestMock = {}
+const requestMock = { session: {} }
 
 describe('Authorisation middleware', () => {
   it('secured middleware should allow authenticated requests', () => {
