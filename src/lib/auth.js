@@ -6,7 +6,7 @@ const { disableAuth } = require('./../config')
 // sufficient access headers to access secured routes. Any route that specifies
 // `secured` will be rejected without these headers.
 const secured = function secured(req, res, next) {
-  if (req.isAuthenticated() || disableAuth) {
+  if ((req.session && req.isAuthenticated()) || disableAuth) {
     next()
     return
   }
@@ -24,7 +24,7 @@ const administrative = function administrative(req, res, next) {
 }
 
 const unauthorised = function unauthorised(req, res) {
-  if (req.isAuthenticated()) {
+  if (req.session && req.isAuthenticated()) {
     res.redirect('/')
     return
   }

@@ -11,8 +11,6 @@ describe('session cookies', () => {
       .end((err, res) => {
         expect(res.headers['set-cookie'][0]).to.contain('expires=')
         expect(res.headers['set-cookie'][0]).to.not.contain('Invalid Date')
-        expect(res.headers['set-cookie'][1]).to.contain('expires=')
-        expect(res.headers['set-cookie'][1]).to.not.contain('Invalid Date')
         done()
       })
   })

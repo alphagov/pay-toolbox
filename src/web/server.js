@@ -4,7 +4,7 @@ const express = require('express')
 const helmet = require('helmet')
 const bodyParser = require('body-parser')
 const flash = require('connect-flash')
-const cookieSession = require('cookie-session')
+const sessions = require('client-sessions')
 const nunjucks = require('nunjucks')
 const csurf = require('csurf')
 const Sentry = require('@sentry/node')
@@ -75,10 +75,15 @@ const configureServingPublicStaticFiles = function configureServingPublicStaticF
 }
 
 const configureClientSessions = function configureClientSessions(instance) {
-  instance.use(cookieSession({
-    name: 'tbx-session',
-    keys: [ server.COOKIE_SESSION_ENCRYPTION_SECRET ],
-    maxAge: 24 * 60 * 60 * 1000
+  const serverBehindProxy = server.HTTP_PROXY
+  instance.use(sessions({
+    cookieName: 'session',
+    secret: server.COOKIE_SESSION_ENCRYPTION_SECRET,
+    duration: 12 * 60 * 60 * 1000,
+    activeDuration: 5 * 60 * 1000,
+    cookie: {
+      secure: serverBehindProxy
+    }
   }))
 }
 
