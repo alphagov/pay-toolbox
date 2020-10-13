@@ -60,3 +60,9 @@ this should no longer be something we have to account for with hacks
 Currently relies on `tsc-watch` to extend the Typescript compiler in dev mode, ideally this should combine `nodemon` waiting on standard `tsc --watch`
 
 `ts-node` is used for directly interpreting unit test files, we can either use this or include test files in the watch/ build process
+
+## Licence
+[MIT License](LICENCE)
+
+## Responsible Disclosure
+GOV.UK Pay aims to stay secure for everyone. If you are a security researcher and have discovered a security vulnerability in this code, we appreciate your help in disclosing it to us in a responsible manner. We will give appropriate credit to those reporting confirmed issues. Please e-mail gds-team-pay-security@digital.cabinet-office.gov.uk with details of any issue you find, we aim to reply quickly.
