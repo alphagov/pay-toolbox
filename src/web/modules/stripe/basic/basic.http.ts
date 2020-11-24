@@ -115,7 +115,8 @@ const submitAccountCreate = async function submitAccountCreate(
           statement_descriptor: accountDetails.statementDescriptor
         }
       },
-      business_type: 'government_entity',
+      // 'government_entity' flagged as US only in the docs
+      business_type: 'company',
       company: {
         name: service.merchant_details.name,
         address: {
@@ -130,12 +131,9 @@ const submitAccountCreate = async function submitAccountCreate(
         ip: stripeAgreement.ip_address,
         date: Math.floor(new Date(stripeAgreement.agreement_time).getTime() / 1000)
       },
-      // sfount: required capabilities for these accounts are [ 'card_payments', 'transfers' ], in order to set these
-      //         additional information is required from services to take payments straight away
-      requested_capabilities: [ 'legacy_payments' ]
+      requested_capabilities: [ 'card_payments', 'transfers' ]
     })
     logger.info(`Stripe API responded with success, account ${stripeAccount.id} created.`)
-
     res.render('stripe/success', { response: stripeAccount, systemLinkService, service })
   } catch (error) {
     let errors
