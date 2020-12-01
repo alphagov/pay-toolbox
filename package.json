@@ -32,7 +32,7 @@
   "license": "MIT",
   "homepage": "https://github.com/alphagov/pay-toolbox#readme",
   "dependencies": {
-    "@govuk-pay/pay-js-commons": "2.33.0",
+    "@govuk-pay/pay-js-commons": "3.0.4",
     "@sentry/node": "5.21.1",
     "aws-sdk": "2.734.0",
     "axios": "0.19.0",
@@ -52,7 +52,7 @@
     "https-proxy-agent": "3.0.1",
     "joi": "14.3.1",
     "json2csv": "4.5.4",
-    "lodash": "4.17.19",
+    "lodash": "4.17.20",
     "moment": "2.27.0",
     "morgan": "1.9.1",
     "multer": "1.4.2",
