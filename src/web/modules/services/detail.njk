@@ -37,20 +37,22 @@
       <tbody class="govuk-table__body">
         <tr class="govuk-table__row">
           <th class="govuk-table__header" scope="col">Sector</th>
-          <td class="govuk-table__cell">{{(service.sector or "(Not set)")}}</td>
+          <td class="govuk-table__cell">{{service.sector | capitalize or "(This is set when the service is made live)"}}</td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__header" scope="col">Internal service</th>
-          <td class="govuk-table__cell">{{service.internal}}</td>
+          <td class="govuk-table__cell">{{service.internal | string | capitalize }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col">Created date</th>
+          <td class="govuk-table__cell">
+            {{service.created_date | formatToSimpleDate or "(Service was created before we captured this date)" }}
+          </td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__header" scope="col">Went live date</th>
           <td class="govuk-table__cell">
-            {% if service.went_live_date %} 
-              {{service.went_live_date | formatDate }} 
-            {% else %} 
-              (Not set) 
-            {% endif %}
+            {{service.went_live_date | formatToSimpleDate or "(This is set when the service is made live)"}}
           </td>
         </tr>
     </tbody>
