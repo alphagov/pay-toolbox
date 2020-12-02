@@ -6,10 +6,11 @@ import { Service, User } from '../../../lib/pay-request/types/adminUsers'
 import { wrapAsyncErrorHandler } from '../../../lib/routes'
 import { sanitiseCustomBrandingURL } from './branding'
 import GatewayAccountRequest from './gatewayAccountRequest.model'
-import { format } from './performancePlatformCsv'
+import { formatPerformancePlatformCsv } from './performancePlatformCsv'
 import { formatErrorsForTemplate, ClientFormError } from '../common/validationErrorFormat'
 import UpdateOrganisationFormRequest from './UpdateOrganisationForm'
 import { IOValidationError } from '../../../lib/errors'
+import { formatServiceExportCsv } from './serviceExportCsv'
 
 function filterRealLiveServices(services: Service[]) {
   return services.filter(service => service.current_go_live_stage === 'LIVE'
@@ -17,22 +18,35 @@ function filterRealLiveServices(services: Service[]) {
     && !service.archived)
 }
 
-const overview = async function overview(req: Request, res: Response): Promise<void> {
-  const shouldFilterLiveServices = req.query.live !== "false"
+async function fetchAndFilterServices(shouldFilterLive: boolean): Promise<Service[]> {
   let services: Service[] = await AdminUsers.services()
-  if ( shouldFilterLiveServices ) {
+  if (shouldFilterLive) {
     services = filterRealLiveServices(services)
   }
-  res.render('services/overview', { services, filterLive: shouldFilterLiveServices })
+  return services
+}
+
+const overview = async function overview(req: Request, res: Response): Promise<void> {
+  const shouldFilterLive = req.query.live !== "false"
+  const services = await fetchAndFilterServices(shouldFilterLive)
+  res.render('services/overview', { services, filterLive: shouldFilterLive })
+}
+
+const listCsv = async function exportCsv(req: Request, res: Response): Promise<void> {
+  const shouldFilterLive = req.query.live !== "false"
+  const services = await fetchAndFilterServices(shouldFilterLive)
+
+  res.set('Content-Type', 'text/csv')
+  res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_services.csv"`)
+  res.status(200).send(formatServiceExportCsv(services))
 }
 
 const performancePlatformCsv = async function performancePlatformCsv(req: Request, res: Response): Promise<void> {
-  const services: Service[] = await AdminUsers.services()
-  const liveActiveServices = filterRealLiveServices(services)
+  const liveActiveServices = await fetchAndFilterServices(true)
 
   res.set('Content-Type', 'text/csv')
-  res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_live_services.csv"`)
-  res.status(200).send(format(liveActiveServices))
+  res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_live_services_for_perfomance_platform.csv"`)
+  res.status(200).send(formatPerformancePlatformCsv(liveActiveServices))
 }
 
 const detail = async function detail(req: Request, res: Response): Promise<void> {
@@ -185,7 +199,7 @@ const updateOrganisationForm = async function updateOrganisationForm(
 const updateOrganisation = async function updateOrganisation(
   req: Request,
   res: Response
-) : Promise<void> {
+): Promise<void> {
   const { id } = req.params
 
   try {
@@ -207,6 +221,7 @@ const updateOrganisation = async function updateOrganisation(
 
 export default {
   overview: wrapAsyncErrorHandler(overview),
+  listCsv: wrapAsyncErrorHandler(listCsv),
   performancePlatformCsv: wrapAsyncErrorHandler(performancePlatformCsv),
   detail: wrapAsyncErrorHandler(detail),
   branding: wrapAsyncErrorHandler(branding),
