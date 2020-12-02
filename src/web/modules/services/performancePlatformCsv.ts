@@ -30,7 +30,7 @@ const fields = [
   }
 ]
 
-export function format(liveServices: Service[]): string {
+export function formatPerformancePlatformCsv(liveServices: Service[]): string {
   const parser = new Parser({ fields })
   const sortedServices = _.orderBy(liveServices, [
     service => service.merchant_details && service.merchant_details.name && service.merchant_details.name.toLowerCase(),

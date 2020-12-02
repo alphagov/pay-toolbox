@@ -3,6 +3,7 @@ import * as exceptions from './services.exceptions'
 
 export default {
   overview: http.overview,
+  listCsv: http.listCsv,
   performancePlatformCsv: http.performancePlatformCsv,
   detail: {
     http: http.detail,
