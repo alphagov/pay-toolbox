@@ -385,6 +385,16 @@ const updateStripePayoutDescriptor = async function updateStripePayoutDescriptor
   res.redirect(`/gateway_accounts/${id}`)
 }
 
+const search = async function search(req: Request, res: Response): Promise<void> {
+  res.render('gateway_accounts/search', { csrf: req.csrfToken() })
+}
+
+const searchRequest = async function searchRequest(req: Request, res: Response): Promise<void> {
+  const accountId = req.body.id.trim()
+  res.redirect(`/gateway_accounts/${accountId}`)
+}
+
+
 
 export default {
   overview: wrapAsyncErrorHandler(overview),
@@ -405,5 +415,7 @@ export default {
   updateStripeStatementDescriptorPage: wrapAsyncErrorHandler(updateStripeStatementDescriptorPage),
   updateStripeStatementDescriptor: wrapAsyncErrorHandler(updateStripeStatementDescriptor),
   updateStripePayoutDescriptorPage: wrapAsyncErrorHandler(updateStripePayoutDescriptorPage),
-  updateStripePayoutDescriptor: wrapAsyncErrorHandler(updateStripePayoutDescriptor)
+  updateStripePayoutDescriptor: wrapAsyncErrorHandler(updateStripePayoutDescriptor),
+  search: wrapAsyncErrorHandler(search),
+  searchRequest: wrapAsyncErrorHandler(searchRequest)
 }

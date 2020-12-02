@@ -32,5 +32,7 @@ export default {
   updateStripeStatementDescriptorPage: http.updateStripeStatementDescriptorPage,
   updateStripeStatementDescriptor: http.updateStripeStatementDescriptor,
   updateStripePayoutDescriptorPage: http.updateStripePayoutDescriptorPage,
-  updateStripePayoutDescriptor: http.updateStripePayoutDescriptor
+  updateStripePayoutDescriptor: http.updateStripePayoutDescriptor,
+  search: http.search,
+  searchRequest: http.searchRequest
 }
