@@ -86,7 +86,7 @@
     "@types/qs": "6.9.2",
     "@types/react": "16.9.35",
     "@types/react-dom": "16.9.8",
-    "@types/stripe": "6.25.8",
+    "@types/stripe": "8.0.386",
     "@types/webpack": "4.41.12",
     "@types/webpack-manifest-plugin": "2.1.0",
     "@types/webpack-node-externals": "1.7.1",
