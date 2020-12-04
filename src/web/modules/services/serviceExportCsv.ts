@@ -69,8 +69,6 @@ const fields = [
 export function formatServiceExportCsv(liveServices: Service[]): string {
   const parser = new Parser({ fields })
   const sortedServices = _.orderBy(liveServices, [
-    service => service.merchant_details && service.merchant_details.name && service.merchant_details.name.toLowerCase(),
-    service => service.service_name.en.toLowerCase(),
     service => service.id
   ])
   const csvData = sortedServices.map((service, index) => {

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response, NextFunction } from 'express'
-import { parse } from 'qs'
+import { parse, ParsedQs, stringify } from 'qs'
 
 import logger from '../../../lib/logger'
 
@@ -19,6 +19,7 @@ import * as config from '../../../config'
 import Stripe from 'stripe'
 import HTTPSProxyAgent from 'https-proxy-agent'
 import { format } from './csv'
+import { BooleanFilterOption } from '../common/BooleanFilterOption'
 
 const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY)
 stripe.setApiVersion('2018-09-24')
@@ -26,31 +27,60 @@ stripe.setApiVersion('2018-09-24')
 // @ts-ignore
 if (config.server.HTTPS_PROXY) stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
 
-const overview = async function overview(req: Request, res: Response): Promise<void> {
-  const filters = parse(req.query)
-  const params = {
-    type: filters.type,
-    payment_provider: filters.payment_provider,
-    requires_3ds: filters.requires_3ds,
-    apple_pay_enabled: filters.apple_pay_enabled,
-    google_pay_enabled: filters.google_pay_enabled,
-    moto_enabled: filters.moto_enabled
-  }
+interface Filters {
+  live: BooleanFilterOption,
+  provider: string,
+  three_ds: BooleanFilterOption,
+  apple_pay: BooleanFilterOption,
+  google_pay: BooleanFilterOption,
+  moto: BooleanFilterOption
+}
 
-  const { accounts } = await Connector.accounts(params)
+function extractFiltersFromQuery(query: ParsedQs): Filters {
+  return {
+    live: query.live as BooleanFilterOption || BooleanFilterOption.True,
+    provider: query.provider as string,
+    three_ds: query.three_ds as BooleanFilterOption || BooleanFilterOption.All,
+    apple_pay: query.apple_pay as BooleanFilterOption || BooleanFilterOption.All,
+    google_pay: query.google_pay as BooleanFilterOption || BooleanFilterOption.All,
+    moto: query.moto as BooleanFilterOption || BooleanFilterOption.All,
+  }
+}
+
+function toAccountSearchParams(filters: Filters) {
+  return {
+    type: filters.live === BooleanFilterOption.True && 'live' || filters.live === BooleanFilterOption.False && 'test' || null,
+    payment_provider: filters.provider,
+    requires_3ds: BooleanFilterOption.toNullableBooleanString(filters.three_ds),
+    apple_pay_enabled: BooleanFilterOption.toNullableBooleanString(filters.apple_pay),
+    google_pay_enabled: BooleanFilterOption.toNullableBooleanString(filters.google_pay),
+    moto_enabled: BooleanFilterOption.toNullableBooleanString(filters.moto)
+  }
+}
+
+const overview = async function overview(req: Request, res: Response): Promise<void> {
+  const query = parse(req.query)
+  const filters = extractFiltersFromQuery(query)
+  const searchParams = toAccountSearchParams(filters)
+
+  const { accounts } = await Connector.accounts(searchParams)
 
   res.render('gateway_accounts/overview', {
     card: true,
     accounts,
     messages: req.flash('info'),
     filters,
-    total: accounts.length.toLocaleString()
+    total: accounts.length.toLocaleString(),
+    csvUrl: `gateway_accounts/csv?${stringify(filters)}`
   })
 }
 
 const listCSV = async function listCSV(req: Request, res: Response): Promise<void> {
+  const query = parse(req.query)
+  const filters = extractFiltersFromQuery(query)
+  const searchParams = toAccountSearchParams(filters)
   const servicesRequest = AdminUsers.services()
-  const accountsRequest = Connector.accounts().then((response: any) => response.accounts)
+  const accountsRequest = Connector.accounts(searchParams).then((response: any) => response.accounts)
 
   const [serviceResponse, accountsResponse] = await Promise.all([servicesRequest, accountsRequest])
 
@@ -75,7 +105,7 @@ const listCSV = async function listCSV(req: Request, res: Response): Promise<voi
     })
 
   res.set('Content-Type', 'text/csv')
-  res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_all_gateway_accounts.csv"`)
+  res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_gateway_accounts_${stringify(filters)}.csv"`)
   res.status(200).send(format(combinedData))
 }
 
@@ -419,3 +449,4 @@ export default {
   search: wrapAsyncErrorHandler(search),
   searchRequest: wrapAsyncErrorHandler(searchRequest)
 }
+

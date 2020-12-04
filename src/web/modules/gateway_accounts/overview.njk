@@ -5,17 +5,18 @@
   <h1 class="govuk-heading-m">Gateway accounts</h1>
 
   {% if card %}
+    {% include "gateway_accounts/filter.njk" %}
+
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
     <div>
-      <a href="gateway_accounts/csv"
-        class="govuk-button govuk-button--secondary govuk-!-margin-bottom-2">
-        Export all as CSV
+      <a href="{{csvUrl}}" class="govuk-button govuk-button--secondary govuk-!-margin-bottom-2">
+        Export results as CSV
       </a>
     </div>
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-    {% include "gateway_accounts/filter.njk" %}
-
     <h3 class="govuk-heading-s govuk-!-font-weight-regular govuk-!-margin-top-3">
+      Showing
       {{total}}
       accounts
     </h3>

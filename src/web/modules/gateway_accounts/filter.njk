@@ -1,71 +1,57 @@
-{% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "common/booleanFilterSelect.njk" import booleanFilterSelect %}
 
 <div class="filter govuk-grid-row">
   <form clas="govuk-clearfix" method="GET" action="/gateway_accounts" novalidate="novalidate">
 
     <div class="govuk-grid-column-one-third inputs-less-margin">
-      {{ govukSelect({
-        id: "type",
-        name: "type",
-        label: { text: "Type" },
-        items: [
-          {
-            text: 'All',
-            value: null,
-            selected: filters.type === null
-          },
-          {
-            text: 'Live',
-            value: 'live',
-            selected: filters.type === 'live'
-          },
-          {
-            text: 'Test',
-            value: 'test',
-            selected: filters.type === 'test'
-          }
-        ]
-      })
-    }}
+      {{ booleanFilterSelect({
+          id: "live",
+          name: "live",
+          label: "Type",
+          trueOptionText: "Live",
+          falseOptionText: "Test",
+          currentValue: filters.live
+        })
+      }}
     </div>
 
     <div class="govuk-grid-column-one-third inputs-less-margin">
       {{ govukSelect({
-        id: "payment-provider",
-        name: "payment_provider",
+        id: "provider",
+        name: "provider",
         label: { text: "Provider" },
         items: [
           {
             text: 'All',
             value: null,
-            selected: filters.payment_provider === null
+            selected: filters.provider === null
           },
           {
             text: 'Sandbox',
             value: 'sandbox',
-            selected: filters.payment_provider === 'sandbox'
+            selected: filters.provider === 'sandbox'
           },
           {
             text: 'Worldpay',
             value: 'worldpay',
-            selected: filters.payment_provider === 'worldpay'
+            selected: filters.provider === 'worldpay'
           },
           {
             text: 'Smartpay',
             value: 'smartpay',
-            selected: filters.payment_provider === 'smartpay'
+            selected: filters.provider === 'smartpay'
           },
           {
             text: 'ePDQ',
             value: 'epdq',
-            selected: filters.payment_provider === 'epdq'
+            selected: filters.provider === 'epdq'
           },
           {
             text: 'Stripe',
             value: 'stripe',
-            selected: filters.payment_provider === 'stripe'
+            selected: filters.provider === 'stripe'
           }
         ]
       })
@@ -73,110 +59,52 @@
     </div>
 
     <div class="govuk-grid-column-one-third inputs-less-margin">
-      {{ govukSelect({
-        id: "requires-3ds",
-        name: "requires_3ds",
-        label: { text: "3D Secure" },
-        items: [
-          {
-            text: 'All',
-            value: null,
-            selected: filters.requires_3ds === null
-          },
-          {
-            text: 'Enabled',
-            value: 'true',
-            selected: filters.requires_3ds === 'true'
-          },
-          {
-            text: 'Disabled',
-            value: 'false',
-            selected: filters.requires_3ds === 'false'
-          }
-        ]
-      })
-    }}
+      {{ booleanFilterSelect({
+          id: "three-ds",
+          name: "three_ds",
+          label: "3D Secure",
+          trueOptionText: "Enabled",
+          falseOptionText: "Disabled",
+          currentValue: filters.three_ds
+        })
+      }}
     </div>
 
     <div class="govuk-grid-column-one-third inputs-less-margin">
-      {{ govukSelect({
-        id: "apple-pay-enabled",
-        name: "apple_pay_enabled",
-        label: { text: "Apple pay" },
-        items: [
-          {
-            text: 'All',
-            value: null,
-            selected: filters.apple_pay_enabled === null
-          },
-          {
-            text: 'Enabled',
-            value: 'true',
-            selected: filters.apple_pay_enabled === 'true'
-          },
-          {
-            text: 'Disabled',
-            value: 'false',
-            selected: filters.apple_pay_enabled === 'false'
-          }
-        ]
-      })
-    }}
+      {{ booleanFilterSelect({
+          id: "apple-pay",
+          name: "apple_pay",
+          label: "Apple pay",
+          trueOptionText: "Enabled",
+          falseOptionText: "Disabled",
+          currentValue: filters.apple_pay
+        })
+      }}
     </div>
 
     <div class="govuk-grid-column-one-third inputs-less-margin">
-      {{ govukSelect({
-        id: "google-pay-enabled",
-        name: "google_pay_enabled",
-        label: { text: "Google pay" },
-        items: [
-          {
-            text: 'All',
-            value: null,
-            selected: filters.google_pay_enabled === null
-          },
-          {
-            text: 'Enabled',
-            value: 'true',
-            selected: filters.google_pay_enabled === 'true'
-          },
-          {
-            text: 'Disabled',
-            value: 'false',
-            selected: filters.google_pay_enabled === 'false'
-          }
-        ]
-      })
-    }}
+      {{ booleanFilterSelect({
+          id: "google-pay",
+          name: "google_pay",
+          label: "Google pay",
+          trueOptionText: "Enabled",
+          falseOptionText: "Disabled",
+          currentValue: filters.google_pay
+        })
+      }}
     </div>
 
     <div class="govuk-grid-column-one-third inputs-less-margin">
-      {{ govukSelect({
-        id: "moto-enabled",
-        name: "moto_enabled",
-        label: { text: "MOTO" },
-        items: [
-          {
-            text: 'All',
-            value: null,
-            selected: filters.moto_enabled === null
-          },
-          {
-            text: 'Enabled',
-            value: 'true',
-            selected: filters.moto_enabled === 'true'
-          },
-          {
-            text: 'Disabled',
-            value: 'false',
-            selected: filters.moto_enabled === 'false'
-          }
-        ]
-      })
-    }}
+      {{ booleanFilterSelect({
+          id: "moto",
+          name: "moto",
+          label: "MOTO",
+          trueOptionText: "Enabled",
+          falseOptionText: "Disabled",
+          currentValue: filters.moto
+        })
+      }}
     </div>
-
-    <div class="govuk-grid-column-one-third inputs-less-margin"></div>
 
     <div class="govuk-grid-column-full inputs-less-margin">
       {{ govukButton({

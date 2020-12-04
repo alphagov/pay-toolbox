@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { parse, ParsedQs, stringify } from 'qs'
 
 import logger from '../../../lib/logger'
 import { AdminUsers } from '../../../lib/pay-request'
@@ -11,38 +12,65 @@ import { formatErrorsForTemplate, ClientFormError } from '../common/validationEr
 import UpdateOrganisationFormRequest from './UpdateOrganisationForm'
 import { IOValidationError } from '../../../lib/errors'
 import { formatServiceExportCsv } from './serviceExportCsv'
+import { BooleanFilterOption } from '../common/BooleanFilterOption'
 
-function filterRealLiveServices(services: Service[]) {
-  return services.filter(service => service.current_go_live_stage === 'LIVE'
-    && !service.internal
-    && !service.archived)
+interface Filters {
+  live: BooleanFilterOption;
+  internal: BooleanFilterOption;
+  archived: BooleanFilterOption;
 }
 
-async function fetchAndFilterServices(shouldFilterLive: boolean): Promise<Service[]> {
-  let services: Service[] = await AdminUsers.services()
-  if (shouldFilterLive) {
-    services = filterRealLiveServices(services)
+function extractFiltersFromQuery(query: ParsedQs): Filters {
+  return {
+    live: query.live as BooleanFilterOption || BooleanFilterOption.True,
+    internal: query.internal as BooleanFilterOption || BooleanFilterOption.False,
+    archived: query.archived as BooleanFilterOption || BooleanFilterOption.False
   }
-  return services
+}
+
+function serviceAttributeMatchesFilter(filterValue: BooleanFilterOption, serviceValue: Boolean) {
+  return filterValue === BooleanFilterOption.True && serviceValue ||
+    filterValue === BooleanFilterOption.False && !serviceValue ||
+    filterValue === BooleanFilterOption.All
+}
+
+async function fetchAndFilterServices(filters: Filters): Promise<Service[]> {
+  const services: Service[] = await AdminUsers.services()
+  return services.filter(service =>
+    serviceAttributeMatchesFilter(filters.live, service.current_go_live_stage === 'LIVE')
+    && serviceAttributeMatchesFilter(filters.internal, service.internal)
+    && serviceAttributeMatchesFilter(filters.archived, service.archived)
+  )
 }
 
 const overview = async function overview(req: Request, res: Response): Promise<void> {
-  const shouldFilterLive = req.query.live !== "false"
-  const services = await fetchAndFilterServices(shouldFilterLive)
-  res.render('services/overview', { services, filterLive: shouldFilterLive })
+  const query = parse(req.query)
+  const filters = extractFiltersFromQuery(query)
+  const services = await fetchAndFilterServices(filters)
+  res.render('services/overview', {
+    services,
+    filters,
+    total: services.length.toLocaleString(),
+    csvUrl: `/services/csv?${stringify(filters)}`
+  })
 }
 
 const listCsv = async function exportCsv(req: Request, res: Response): Promise<void> {
-  const shouldFilterLive = req.query.live !== "false"
-  const services = await fetchAndFilterServices(shouldFilterLive)
+  const query = parse(req.query)
+  const filters = extractFiltersFromQuery(query)
+  const services = await fetchAndFilterServices(filters)
 
   res.set('Content-Type', 'text/csv')
-  res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_services.csv"`)
+  res.set('Content-Disposition', `attachment; filename="GOVUK_PAY_services_${stringify(filters)}.csv"`)
   res.status(200).send(formatServiceExportCsv(services))
 }
 
 const performancePlatformCsv = async function performancePlatformCsv(req: Request, res: Response): Promise<void> {
-  const liveActiveServices = await fetchAndFilterServices(true)
+  const liveActiveServices = await fetchAndFilterServices({
+    live: BooleanFilterOption.True,
+    internal: BooleanFilterOption.False,
+    archived: BooleanFilterOption.False
+  })
 
   res.set('Content-Type', 'text/csv')
   res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_live_services_for_perfomance_platform.csv"`)

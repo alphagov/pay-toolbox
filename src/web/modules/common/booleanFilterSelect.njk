@@ -1,0 +1,27 @@
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
+{% macro booleanFilterSelect(params) %}
+  {{ govukSelect({
+    id: params.id,
+    name: params.name,
+    label: { text: params.label },
+    items: [
+      {
+        text: 'All',
+        value: 'all',
+        selected: params.currentValue === 'all'
+      },
+      {
+        text: params.trueOptionText,
+        value: 'true',
+        selected: params.currentValue === 'true'
+      },
+      {
+        text: params.falseOptionText,
+        value: 'false',
+        selected: params.currentValue === 'false'
+      }
+    ]
+  })
+}}
+{% endmacro %}
