@@ -1,0 +1,51 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "common/booleanFilterSelect.njk" import booleanFilterSelect %}
+
+<div class="filter govuk-grid-row">
+  <form clas="govuk-clearfix" method="GET" action="/services" novalidate="novalidate">
+    <div class="govuk-grid-column-one-third inputs-less-margin">
+      {{ booleanFilterSelect({
+          id: "live",
+          name: "live",
+          label: "Go live status",
+          trueOptionText: "Live",
+          falseOptionText: "Not live",
+          currentValue: filters.live
+        })
+      }}
+    </div>
+
+    <div class="govuk-grid-column-one-third inputs-less-margin">
+      {{ booleanFilterSelect({
+          id: "internal",
+          name: "internal",
+          label: "Internal",
+          trueOptionText: "Internal",
+          falseOptionText: "Not internal",
+          currentValue: filters.internal
+        })
+      }}
+    </div>
+
+    <div class="govuk-grid-column-one-third inputs-less-margin">
+      {{ booleanFilterSelect({
+          id: "archived",
+          name: "archived",
+          label: "Archived",
+          trueOptionText: "Archived",
+          falseOptionText: "Not archived",
+          currentValue: filters.archived
+        })
+      }}
+    </div>
+
+    <div class="govuk-grid-column-one-third inputs-less-margin"></div>
+
+    <div class="govuk-grid-column-full inputs-less-margin">
+      {{ govukButton({
+        text: "Filter"
+      })
+    }}
+    </div>
+  </form>
+</div>

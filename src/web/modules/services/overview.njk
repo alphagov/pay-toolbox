@@ -4,24 +4,14 @@
   <span class="govuk-caption-m">GOV.UK Pay platform</span>
   <h1 class="govuk-heading-m">Services</h1>
 
-  {% if filterLive %}
-    <div class="govuk-body">
-      <p class="govuk-body">
-        <span>Filtering to only show live services, excluding internal and archived services</span>
-      </p>
-      <p class="govuk-body">
-        <a class="govuk-link govuk-link--no-visited-state" href="?live=false">
-          Show all services
-        </a>
-      </p>
-    </div>
-    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-  {% endif %}
+  {% include "services/filter.njk" %}
+
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
   <div>
-    <a href="/services/csv?live={{filterLive}}"
+    <a href="{{csvUrl}}"
       class="govuk-button govuk-button--secondary govuk-!-margin-bottom-2">
-      Export page as CSV
+      Export results as CSV
     </a>
 
     <a href="services/performance_platform_csv"
@@ -31,6 +21,10 @@
   </div>
 
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+    <h3 class="govuk-heading-s govuk-!-font-weight-regular govuk-!-margin-top-3">
+      Showing {{total}} services
+    </h3>
 
   <table class="govuk-table">
     <thead class="govuk-table__head">
