@@ -32,7 +32,7 @@ const fields = [{
   value: 'account.analytics_id'
 }, {
   label: '3DS enabled',
-  value: 'account.toggle_3ds'
+  value: 'account.requires3ds'
 }, {
   label: '3DS version',
   value: 'account.integration_version_3ds'
