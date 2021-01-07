@@ -29,6 +29,7 @@ export default {
   updateEmailBranding: http.updateEmailBranding,
   toggleBlockPrepaidCards: http.toggleBlockPrepaidCards,
   toggleMotoPayments: http.toggleMotoPayments,
+  toggleAllowTelephonePaymentNotifications: http.toggleAllowTelephonePaymentNotifications,
   updateStripeStatementDescriptorPage: http.updateStripeStatementDescriptorPage,
   updateStripeStatementDescriptor: http.updateStripeStatementDescriptor,
   updateStripePayoutDescriptorPage: http.updateStripePayoutDescriptorPage,

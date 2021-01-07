@@ -202,10 +202,10 @@ const writeAccount = async function writeAccount(req: Request, res: Response): P
     statementDescriptor?: string
   } = {}
 
-  if (account.provider === 'stripe'){
+  if (account.provider === 'stripe') {
     const stripeAccountDetails = await stripe.accounts.retrieve(account.credentials);
-    stripeAccountStatementDescriptors.payoutStatementDescriptor =  stripeAccountDetails.payout_statement_descriptor
-    stripeAccountStatementDescriptors.statementDescriptor =  stripeAccountDetails.statement_descriptor
+    stripeAccountStatementDescriptors.payoutStatementDescriptor = stripeAccountDetails.payout_statement_descriptor
+    stripeAccountStatementDescriptors.statementDescriptor = stripeAccountDetails.statement_descriptor
   }
 
   // note payment_provider is not returned in the object returned from createAccount
@@ -320,9 +320,9 @@ const toggleBlockPrepaidCards = async function toggleBlockPrepaidCards(
   res: Response
 ): Promise<void> {
   const { id } = req.params
-  await Connector.toggleBlockPrepaidCards(id)
+  const blocked = await Connector.toggleBlockPrepaidCards(id)
 
-  req.flash('info', 'Toggled block prepaid cards flag')
+  req.flash('info', `Prepaid cards are ${blocked ? 'blocked' : 'allowed'}`)
   res.redirect(`/gateway_accounts/${id}`)
 }
 
@@ -330,11 +330,22 @@ const toggleMotoPayments = async function toggleMotoPayments(
   req: Request,
   res: Response
 ): Promise<void> {
-  const gatewayAccountId = req.params.id
-  const motoPaymentsEnabled = await Connector.toggleMotoPayments(gatewayAccountId)
+  const { id } = req.params
+  const motoPaymentsEnabled = await Connector.toggleMotoPayments(id)
 
   req.flash('info', `MOTO payments ${motoPaymentsEnabled ? 'enabled' : 'disabled'}`)
-  res.redirect(`/gateway_accounts/${gatewayAccountId}`)
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
+const toggleAllowTelephonePaymentNotifications = async function toggleAllowTelephonePaymentNotifications(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { id } = req.params
+  const enabled = await Connector.toggleAllowTelephonePaymentNotifications(id)
+
+  req.flash('info', `Telephone payment notifications ${enabled ? 'enabled' : 'disabled'}`)
+  res.redirect(`/gateway_accounts/${id}`)
 }
 
 const updateStripeStatementDescriptorPage = async function updateStripeStatementDescriptorPage(
@@ -442,6 +453,7 @@ export default {
   updateEmailBranding: wrapAsyncErrorHandler(updateEmailBranding),
   toggleBlockPrepaidCards: wrapAsyncErrorHandler(toggleBlockPrepaidCards),
   toggleMotoPayments: wrapAsyncErrorHandler(toggleMotoPayments),
+  toggleAllowTelephonePaymentNotifications: wrapAsyncErrorHandler(toggleAllowTelephonePaymentNotifications),
   updateStripeStatementDescriptorPage: wrapAsyncErrorHandler(updateStripeStatementDescriptorPage),
   updateStripeStatementDescriptor: wrapAsyncErrorHandler(updateStripeStatementDescriptor),
   updateStripePayoutDescriptorPage: wrapAsyncErrorHandler(updateStripePayoutDescriptorPage),
