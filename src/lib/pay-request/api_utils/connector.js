@@ -112,6 +112,7 @@ const connectorMethods = function connectorMethods(instance) {
       path: 'block_prepaid_cards',
       value: !gatewayAccount.block_prepaid_cards
     })
+    return !gatewayAccount.block_prepaid_cards
   }
 
   const toggleMotoPayments = async function toggleMotoPayments(id) {
@@ -123,6 +124,17 @@ const connectorMethods = function connectorMethods(instance) {
       value: !gatewayAccount.allow_moto
     })
     return !gatewayAccount.allow_moto
+  }
+
+  const toggleAllowTelephonePaymentNotifications = async function toggleAllowTelephonePaymentNotifications(id) {
+    const gatewayAccount = await account(id)
+    const url = `/v1/api/accounts/${gatewayAccount.gateway_account_id}`
+    await axiosInstance.patch(url, {
+      op: 'replace',
+      path: 'allow_telephone_payment_notifications',
+      value: !gatewayAccount.allow_telephone_payment_notifications
+    })
+    return !gatewayAccount.allow_telephone_payment_notifications
   }
 
   return {
@@ -146,7 +158,8 @@ const connectorMethods = function connectorMethods(instance) {
     updateCorporateSurcharge,
     updateEmailBranding,
     toggleBlockPrepaidCards,
-    toggleMotoPayments
+    toggleMotoPayments,
+    toggleAllowTelephonePaymentNotifications
   }
 }
 
