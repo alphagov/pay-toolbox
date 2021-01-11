@@ -37,7 +37,7 @@
     "aws-sdk": "2.734.0",
     "axios": "0.21.1",
     "body-parser": "1.19.0",
-    "class-validator": "0.11.0",
+    "class-validator": "0.13.0",
     "client-sessions": "0.8.0",
     "cls-hooked": "4.2.2",
     "connect-flash": "0.1.1",
