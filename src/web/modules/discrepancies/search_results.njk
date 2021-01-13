@@ -7,6 +7,7 @@
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
         <th class="govuk-table__header" scope="col">External Id</th>
+        <th class="govuk-table__header" scope="col">External status</th>
         <th class="govuk-table__header" scope="col">State</th>
         <th class="govuk-table__header" scope="col">Gateway status</th>
         <th class="govuk-table__header" scope="col">Raw gateway response</th>
@@ -17,6 +18,7 @@
      {% for comparison in comparisons %}
       <tr class="govuk-table__row">
         <td class="govuk-table__cell">{{ comparison.chargeId }}</td>
+        <td class="govuk-table__cell">{{ comparison.payExternalStatus }}</td>
         <td class="govuk-table__cell">{{ comparison.payStatus }}</td>
         <td class="govuk-table__cell">{{ comparison.gatewayStatus }}</td>
         <td class="govuk-table__cell">{{ comparison.rawGatewayResponse }}</td>
