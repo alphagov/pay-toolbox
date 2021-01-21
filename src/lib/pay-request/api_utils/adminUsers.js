@@ -98,6 +98,13 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     return axiosInstance.post(path).then(utilExtractData)
   }
 
+  const adminEmailsForGatewayAccounts = function adminEmailsForGatewayAccounts(gatewayAccountIds) {
+    const path = '/v1/api/users/admin-emails-for-gateway-accounts'
+    const request = { 'gatewayAccountIds': gatewayAccountIds }
+    const response = axiosInstance.post(path, request)
+    return response.then(utilExtractData)
+  }
+
   const services = function services() {
     const path = '/v1/api/services/list'
     return axiosInstance.get(path).then(utilExtractData)
@@ -228,7 +235,8 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     removeUserFromService,
     resetUserSecondFactor,
     toggleTerminalStateRedirectFlag,
-    toggleExperimentalFeaturesEnabledFlag
+    toggleExperimentalFeaturesEnabledFlag,
+    adminEmailsForGatewayAccounts
   }
 }
 

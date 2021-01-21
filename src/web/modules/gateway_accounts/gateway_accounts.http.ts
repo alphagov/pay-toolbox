@@ -8,7 +8,7 @@ import {
   Connector, DirectDebitConnector, AdminUsers, PublicAuth
 } from '../../../lib/pay-request'
 import { wrapAsyncErrorHandler } from '../../../lib/routes'
-import { aggregateServicesByGatewayAccountId } from '../../../lib/gatewayAccounts'
+import { extractFiltersFromQuery, toAccountSearchParams } from '../../../lib/gatewayAccounts'
 
 import GatewayAccountFormModel from './gatewayAccount.model'
 import { Service } from '../../../lib/pay-request/types/adminUsers'
@@ -19,44 +19,14 @@ import * as config from '../../../config'
 import Stripe from 'stripe'
 import HTTPSProxyAgent from 'https-proxy-agent'
 import { format } from './csv'
-import { BooleanFilterOption } from '../common/BooleanFilterOption'
+import { formatWithAdminEmails } from './csv_with_admin_emails'
+import { createCsvWithAdminEmailsData, createCsvData } from './csv_data'
 
 const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY)
 stripe.setApiVersion('2018-09-24')
 
 // @ts-ignore
 if (config.server.HTTPS_PROXY) stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
-
-interface Filters {
-  live: BooleanFilterOption,
-  provider: string,
-  three_ds: BooleanFilterOption,
-  apple_pay: BooleanFilterOption,
-  google_pay: BooleanFilterOption,
-  moto: BooleanFilterOption
-}
-
-function extractFiltersFromQuery(query: ParsedQs): Filters {
-  return {
-    live: query.live as BooleanFilterOption || BooleanFilterOption.True,
-    provider: query.provider as string,
-    three_ds: query.three_ds as BooleanFilterOption || BooleanFilterOption.All,
-    apple_pay: query.apple_pay as BooleanFilterOption || BooleanFilterOption.All,
-    google_pay: query.google_pay as BooleanFilterOption || BooleanFilterOption.All,
-    moto: query.moto as BooleanFilterOption || BooleanFilterOption.All,
-  }
-}
-
-function toAccountSearchParams(filters: Filters) {
-  return {
-    type: filters.live === BooleanFilterOption.True && 'live' || filters.live === BooleanFilterOption.False && 'test' || null,
-    payment_provider: filters.provider,
-    requires_3ds: BooleanFilterOption.toNullableBooleanString(filters.three_ds),
-    apple_pay_enabled: BooleanFilterOption.toNullableBooleanString(filters.apple_pay),
-    google_pay_enabled: BooleanFilterOption.toNullableBooleanString(filters.google_pay),
-    moto_enabled: BooleanFilterOption.toNullableBooleanString(filters.moto)
-  }
-}
 
 const overview = async function overview(req: Request, res: Response): Promise<void> {
   const query = parse(req.query)
@@ -71,39 +41,20 @@ const overview = async function overview(req: Request, res: Response): Promise<v
     messages: req.flash('info'),
     filters,
     total: accounts.length.toLocaleString(),
-    csvUrl: `gateway_accounts/csv?${stringify(filters)}`
+    csvUrl: `gateway_accounts/csv?${stringify(filters)}`,
+    csvWithAdminEmailsUrl: `gateway_accounts/csvWithAdminEmails?${stringify(filters)}`
   })
 }
 
+const listCSVWithAdminEmails = async function listCSVWithAdminEmails(req: Request, res: Response): Promise<void> {
+  const { filters, combinedData } = await createCsvWithAdminEmailsData(req)
+  res.set('Content-Type', 'text/csv')
+  res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_gateway_accounts_with_admin_emails_${stringify(filters)}.csv"`)
+  res.status(200).send(formatWithAdminEmails(combinedData))
+}
+
 const listCSV = async function listCSV(req: Request, res: Response): Promise<void> {
-  const query = parse(req.query)
-  const filters = extractFiltersFromQuery(query)
-  const searchParams = toAccountSearchParams(filters)
-  const servicesRequest = AdminUsers.services()
-  const accountsRequest = Connector.accounts(searchParams).then((response: any) => response.accounts)
-
-  const [serviceResponse, accountsResponse] = await Promise.all([servicesRequest, accountsRequest])
-
-  const serviceGatewayAccountIndex = aggregateServicesByGatewayAccountId(serviceResponse)
-
-  const combinedData = accountsResponse
-    .filter((account: GatewayAccount) => serviceGatewayAccountIndex[account.gateway_account_id] != undefined)
-    .map((account: GatewayAccount) => {
-      const service = serviceGatewayAccountIndex[account.gateway_account_id]
-      return {
-        account,
-        service,
-        payment_email_enabled: account.email_notifications['PAYMENT_CONFIRMED'] && account.email_notifications['PAYMENT_CONFIRMED'].enabled || false,
-        refund_email_emailed: account.email_notifications['REFUND_ISSUED'] && account.email_notifications['REFUND_ISSUED'].enabled || false,
-        custom_branding: service.custom_branding !== undefined,
-        email_branding: account.notify_settings !== undefined,
-        corporate_surcharge: account.corporate_prepaid_credit_card_surcharge_amount
-          + account.corporate_prepaid_debit_card_surcharge_amount
-          + account.corporate_credit_card_surcharge_amount
-          + account.corporate_debit_card_surcharge_amount !== 0
-      }
-    })
-
+  const { filters, combinedData } = await createCsvData(req)
   res.set('Content-Type', 'text/csv')
   res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_gateway_accounts_${stringify(filters)}.csv"`)
   res.status(200).send(format(combinedData))
@@ -435,11 +386,10 @@ const searchRequest = async function searchRequest(req: Request, res: Response):
   res.redirect(`/gateway_accounts/${accountId}`)
 }
 
-
-
 export default {
   overview: wrapAsyncErrorHandler(overview),
   listCSV: wrapAsyncErrorHandler(listCSV),
+  listCSVWithAdminEmails: wrapAsyncErrorHandler(listCSVWithAdminEmails),
   overviewDirectDebit: wrapAsyncErrorHandler(overviewDirectDebit),
   create: wrapAsyncErrorHandler(create),
   confirm: wrapAsyncErrorHandler(confirm),
@@ -461,4 +411,3 @@ export default {
   search: wrapAsyncErrorHandler(search),
   searchRequest: wrapAsyncErrorHandler(searchRequest)
 }
-

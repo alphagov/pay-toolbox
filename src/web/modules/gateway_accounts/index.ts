@@ -4,6 +4,7 @@ import exceptions from './gateway_accounts.exceptions'
 export default {
   overview: http.overview,
   listCSV: http.listCSV,
+  listCSVWithAdminEmails: http.listCSVWithAdminEmails,
   overviewDirectDebit: http.overviewDirectDebit,
   create: {
     http: http.create,
