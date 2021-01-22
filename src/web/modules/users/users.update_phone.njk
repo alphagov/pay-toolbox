@@ -1,5 +1,6 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "common/errorSummary.njk" import errorSummary %}
 {% extends "layout/layout.njk" %}
 
@@ -23,6 +24,34 @@
     name: "telephone_number",
     value: formValues.telephone_number,
     errorMessage: errorMap.telephone_number and { text: errorMap.telephone_number }
+    })
+  }}
+
+  {{ govukRadios({
+    classes: "govuk-radios--inline",
+    idPrefix: "is_real_number",
+    name: "is_real_number",
+    fieldset: {
+      legend: {
+        text: "Is this a real phone number?",
+        isPageHeading: true,
+        classes: "govuk-fieldset__legend--l"
+      }
+    },
+    hint: {
+      text: "If this is a fake number for testing then select No"
+    },
+    items: [
+      {
+        value: "yes",
+        text: "Yes",
+        checked: true
+      },
+      {
+        value: "no",
+        text: "No"
+      }
+    ]
     })
   }}
 

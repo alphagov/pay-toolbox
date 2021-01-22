@@ -11,7 +11,9 @@ class UpdatePhoneNumberFormRequest extends Validated {
   public constructor(formValues: {[key: string]: string}) {
     super()
     this.telephone_number = formValues.telephone_number
-    this.validate()
+    if (formValues.is_real_number === 'yes') {
+      this.validate()
+    }
   }
 }
 
