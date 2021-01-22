@@ -72,7 +72,7 @@ const handleDefault = function handleDefault(
   next: NextFunction
 ): void {
   logger.warn('Unhandled error caught by middleware stack')
-  logger.error(error.stack)
+  logger.warn(error.stack)
 
   if (res.headersSent) {
     return next(error)
