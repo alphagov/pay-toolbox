@@ -47,17 +47,21 @@ const overview = async function overview(req: Request, res: Response): Promise<v
 }
 
 const listCSVWithAdminEmails = async function listCSVWithAdminEmails(req: Request, res: Response): Promise<void> {
-  const { filters, combinedData } = await createCsvWithAdminEmailsData(req)
+  const query = parse(req.query)
+  const filters = extractFiltersFromQuery(query)
+  const data = await createCsvWithAdminEmailsData(filters)
   res.set('Content-Type', 'text/csv')
   res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_gateway_accounts_with_admin_emails_${stringify(filters)}.csv"`)
-  res.status(200).send(formatWithAdminEmails(combinedData))
+  res.status(200).send(formatWithAdminEmails(data))
 }
 
 const listCSV = async function listCSV(req: Request, res: Response): Promise<void> {
-  const { filters, combinedData } = await createCsvData(req)
+  const query = parse(req.query)
+  const filters = extractFiltersFromQuery(query)
+  const data = await createCsvWithAdminEmailsData(filters)
   res.set('Content-Type', 'text/csv')
   res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_gateway_accounts_${stringify(filters)}.csv"`)
-  res.status(200).send(format(combinedData))
+  res.status(200).send(format(data))
 }
 
 const overviewDirectDebit = async function overviewDirectDebit(

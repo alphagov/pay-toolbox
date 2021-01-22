@@ -3,28 +3,20 @@ import { AdminUsers, Connector } from '../../../lib/pay-request'
 import { Service } from '../../../lib/pay-request/types/adminUsers'
 import { aggregateServicesByGatewayAccountId, extractFiltersFromQuery, toAccountSearchParams, Filters } from '../../../lib/gatewayAccounts'
 import { GatewayAccount } from '../../../lib/pay-request/types/connector'
-import { parse } from 'qs'
-import { Request } from 'express'
 
 async function getServiceGatewayAccountIndex(): Promise<{ [key: string]: Service }> {
   const services = await AdminUsers.services()
   return aggregateServicesByGatewayAccountId(services)
 }
 
-async function getAccounts(filters: Filters): Promise<GatewayAccount[]> {
+function getAccounts(filters: Filters): Promise<GatewayAccount[]> {
   const searchParams = toAccountSearchParams(filters)
-  return await Connector.accounts(searchParams).then((response: any) => response.accounts)
+  return Connector.accounts(searchParams).then((response: any) => response.accounts)
 }
 
-function getFiltersFromQuery(req: Request): Filters {
-  const query = parse(req.query)
-  return extractFiltersFromQuery(query)
-}
-
-export async function createCsvWithAdminEmailsData(req: Request): Promise<any> {
-  const filters = getFiltersFromQuery(req)
-  const [accountsResponse, serviceGatewayAccountIndex] = 
-    await Promise.all([await getAccounts(filters), await getServiceGatewayAccountIndex()])
+export async function createCsvWithAdminEmailsData(filters: Filters): Promise<any> {
+  const accountsResponse = await getAccounts(filters)
+  const serviceGatewayAccountIndex = await getServiceGatewayAccountIndex()
   const gatewayAccountToAdminEmails: { [key: string]: string[] } = 
     await AdminUsers.adminEmailsForGatewayAccounts(accountsResponse.map((account: GatewayAccount) => account.gateway_account_id))
   const gatewayAccountIndex = accountsResponse.reduce((aggregate: any, account: GatewayAccount) => {
@@ -42,7 +34,7 @@ export async function createCsvWithAdminEmailsData(req: Request): Promise<any> {
     })
   })
 
-  const data = emailAccountService
+  return emailAccountService
     .map(({email,service,account}) => {
       return {
         email,
@@ -58,16 +50,13 @@ export async function createCsvWithAdminEmailsData(req: Request): Promise<any> {
           + account.corporate_debit_card_surcharge_amount !== 0
       }
     })
-  
-  return { filters, data }
 }
 
-export async function createCsvData(req: Request): Promise<any> {
-  const filters = getFiltersFromQuery(req)
-  const [accountsResponse, serviceGatewayAccountIndex] = 
-    await Promise.all([await getAccounts(filters), await getServiceGatewayAccountIndex()])
+export async function createCsvData(filters: Filters): Promise<any> {
+  const accountsResponse = await getAccounts(filters)
+  const serviceGatewayAccountIndex = await getServiceGatewayAccountIndex() 
 
-  const data = accountsResponse
+  return accountsResponse
     .filter((account: GatewayAccount) => serviceGatewayAccountIndex[account.gateway_account_id] != undefined)
     .map((account: GatewayAccount) => {
       const service = serviceGatewayAccountIndex[account.gateway_account_id]
@@ -84,6 +73,4 @@ export async function createCsvData(req: Request): Promise<any> {
           + account.corporate_debit_card_surcharge_amount !== 0
       }
     })
-
-  return { filters, data }
 }
