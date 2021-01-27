@@ -58,7 +58,7 @@ const listCSVWithAdminEmails = async function listCSVWithAdminEmails(req: Reques
 const listCSV = async function listCSV(req: Request, res: Response): Promise<void> {
   const query = parse(req.query)
   const filters = extractFiltersFromQuery(query)
-  const data = await createCsvWithAdminEmailsData(filters)
+  const data = await createCsvData(filters)
   res.set('Content-Type', 'text/csv')
   res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_gateway_accounts_${stringify(filters)}.csv"`)
   res.status(200).send(format(data))
