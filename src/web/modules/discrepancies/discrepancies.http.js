@@ -8,7 +8,7 @@ const searchTransaction = async function searchTransaction(req, res) {
 }
 
 const getDiscrepancyReport = async function getDiscrepancyReport(req, res) {
-  const chargeIds = req.body.search_string.split(',')
+  const chargeIds = req.body.search_string.split(',').map(chargeId => chargeId.trim())
   const comparisons = await Connector.getGatewayComparisons(chargeIds)
 
   const interpretedComparisons = comparisons.map((comparison) => {
