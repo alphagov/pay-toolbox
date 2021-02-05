@@ -29,8 +29,7 @@ stripe.setApiVersion('2018-09-24')
 if (config.server.HTTPS_PROXY) stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
 
 const overview = async function overview(req: Request, res: Response): Promise<void> {
-  const query = parse(req.query)
-  const filters = extractFiltersFromQuery(query)
+  const filters = extractFiltersFromQuery(req.query)
   const searchParams = toAccountSearchParams(filters)
 
   const { accounts } = await Connector.accounts(searchParams)
@@ -47,8 +46,7 @@ const overview = async function overview(req: Request, res: Response): Promise<v
 }
 
 const listCSVWithAdminEmails = async function listCSVWithAdminEmails(req: Request, res: Response): Promise<void> {
-  const query = parse(req.query)
-  const filters = extractFiltersFromQuery(query)
+  const filters = extractFiltersFromQuery(req.query)
   const data = await createCsvWithAdminEmailsData(filters)
   res.set('Content-Type', 'text/csv')
   res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_gateway_accounts_with_admin_emails_${stringify(filters)}.csv"`)
@@ -56,8 +54,7 @@ const listCSVWithAdminEmails = async function listCSVWithAdminEmails(req: Reques
 }
 
 const listCSV = async function listCSV(req: Request, res: Response): Promise<void> {
-  const query = parse(req.query)
-  const filters = extractFiltersFromQuery(query)
+  const filters = extractFiltersFromQuery(req.query)
   const data = await createCsvData(filters)
   res.set('Content-Type', 'text/csv')
   res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_gateway_accounts_${stringify(filters)}.csv"`)
@@ -83,7 +80,7 @@ const create = async function create(req: Request, res: Response): Promise<void>
     errorMap?: object;
     csrf: string;
   } = {
-    linkedCredentials: req.query.credentials,
+    linkedCredentials: req.query.credentials as string,
     flash: req.flash(),
     csrf: req.csrfToken()
   }

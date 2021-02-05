@@ -20,7 +20,10 @@ const browser = {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: 'ts-loader'
+        loader: 'ts-loader',
+        options: {
+          onlyCompileBundledFiles: true
+        }
       },
       {
         test: /\.(png|svg|jpg|gif)$/,

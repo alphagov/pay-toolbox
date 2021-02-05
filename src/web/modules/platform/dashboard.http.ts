@@ -19,14 +19,14 @@ export async function timeseries(req: Request, res: Response, next: NextFunction
   const { date, fromHour, toHour } = req.query
 
   try {
-    const baseDate = moment(date)
+    const baseDate = moment(date as string)
 
     const fromDate = fromHour ?
-      baseDate.clone().utc().set('hour', fromHour).startOf('hour') :
+      baseDate.clone().utc().set('hour', Number(fromHour as string)).startOf('hour') :
       baseDate.clone().utc().startOf('day')
 
     const toDate = toHour ?
-      baseDate.clone().utc().set('hour', toHour).endOf('hour') :
+      baseDate.clone().utc().set('hour', Number(toHour as string)).endOf('hour') :
       baseDate.clone().utc().endOf('day')
 
     const result = await Ledger.paymentVolumesByHour(
@@ -46,7 +46,7 @@ export async function aggregate(req: Request, res: Response, next: NextFunction)
   const { date, state, limit } = req.query
 
   try {
-    const baseDate = moment(date)
+    const baseDate = moment(date as string)
 
     const toDate = limit && limit.length ?
       limit :

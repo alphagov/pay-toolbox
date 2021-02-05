@@ -44,8 +44,7 @@ async function fetchAndFilterServices(filters: Filters): Promise<Service[]> {
 }
 
 const overview = async function overview(req: Request, res: Response): Promise<void> {
-  const query = parse(req.query)
-  const filters = extractFiltersFromQuery(query)
+  const filters = extractFiltersFromQuery(req.query)
   const services = await fetchAndFilterServices(filters)
   res.render('services/overview', {
     services,
@@ -56,8 +55,7 @@ const overview = async function overview(req: Request, res: Response): Promise<v
 }
 
 const listCsv = async function exportCsv(req: Request, res: Response): Promise<void> {
-  const query = parse(req.query)
-  const filters = extractFiltersFromQuery(query)
+  const filters = extractFiltersFromQuery(req.query)
   const services = await fetchAndFilterServices(filters)
 
   res.set('Content-Type', 'text/csv')

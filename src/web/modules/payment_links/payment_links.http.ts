@@ -15,7 +15,7 @@ function indexPaymentLinksByType(paymentLink: any): any {
 export async function list(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { accountId } = req.params
-    const sort = req.query.sort || 'last_payment_date'
+    const sort = req.query.sort as string || 'last_payment_date'
     const live = req.query.live === undefined ? true : req.query.live && req.query.live !== "false"
 
     // we're only going to filter live gateway accounts if we're at the whole platform level
@@ -38,7 +38,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
 export async function listCSV(req: Request, res: Response, next: NextFunction): Promise<void> {
    try {
     const { accountId } = req.params
-    const sort = req.query.sort || 'last_payment_date'
+    const sort = req.query.sort as string || 'last_payment_date'
     const live = req.query.live === undefined ? true : req.query.live && req.query.live !== "false"
     const filterLiveAccounts = live && !accountId
     const usageReportResults = await fetchUsageContext(sort, filterLiveAccounts, accountId)
