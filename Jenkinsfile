@@ -1,9 +1,6 @@
 pipeline {
   agent any
   options { timestamps() }
-  parameters {
-    booleanParam(name: 'SKIP_NPM_AUDIT', defaultValue: false, description: 'Run npm security audit. This should only ever be set to false if a known fix is not yet merged on a dependency.')
-  }
   libraries { lib("pay-jenkins-library@master") }
   environment {
     npm_config_cache = 'npm-cache'
@@ -29,14 +26,6 @@ pipeline {
 
             // @TODO(sfount) CI envrionment should be configured outside of direct Jenkinsfile call
             sh 'node scripts/generate-dev-environment.js'
-          }
-        }
-        stage('Security audit') {
-          when {
-            not { expression { return params.SKIP_NPM_AUDIT } }
-          }
-          steps {
-            sh 'npm audit'
           }
         }
         stage('Lint') {
