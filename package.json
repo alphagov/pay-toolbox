@@ -71,7 +71,7 @@
     "@nivo/stream": "^0.67.0",
     "@types/chai": "4.1.7",
     "@types/client-sessions": "^0.8.0",
-    "@types/cls-hooked": "4.3.0",
+    "@types/cls-hooked": "4.3.3",
     "@types/cookie-session": "2.0.39",
     "@types/csurf": "1.9.35",
     "@types/deep-diff": "1.0.0",
