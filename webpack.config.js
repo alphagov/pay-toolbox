@@ -1,7 +1,7 @@
 // @ts-check
 /** @typedef { import('webpack').Configuration } WebpackConfig */
 
-const ManifestPlugin = require('webpack-manifest-plugin')
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 
 /** @type WebpackConfig */
 const browser = {
@@ -9,13 +9,14 @@ const browser = {
     browser: './browser/src/main.tsx'
   },
   output: {
+    publicPath: "",
     path: `${__dirname}/dist/public`,
     filename: '[name].[contenthash].js'
   },
   resolve: {
     extensions: [ '.ts', '.tsx', '.js', '.jsx' ]
   },
-  devtool: 'source-map',
+  devtool: 'cheap-source-map',
   module: {
     rules: [
       {
@@ -38,7 +39,7 @@ const browser = {
     // 'react-dom': 'ReactDOM'
   },
   plugins: [
-    new ManifestPlugin({
+    new WebpackManifestPlugin({
       fileName: 'browser.manifest.json'
     })
   ]
