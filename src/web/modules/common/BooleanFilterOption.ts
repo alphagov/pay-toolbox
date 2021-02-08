@@ -4,8 +4,6 @@ export enum BooleanFilterOption {
   All = 'all'
 }
 
-export namespace BooleanFilterOption {
-  export function toNullableBooleanString(booleanFilterOption: BooleanFilterOption) {
-    return booleanFilterOption === BooleanFilterOption.All ? null : booleanFilterOption
-  }
+export function toNullableBooleanString(booleanFilterOption: BooleanFilterOption) {
+  return booleanFilterOption === BooleanFilterOption.All ? null : booleanFilterOption
 }

@@ -2,8 +2,6 @@ import React from 'react'
 
 import { Event } from './../../../src/web/modules/transactions/types/ledger'
 
-import { BackgroundColorProperty, ColorProperty } from 'csstype'
-
 import VisaIcon from './../assets/card_visa.svg'
 import MastercardIcon from './../assets/card_mastercard.svg'
 import AmexIcon from './../assets/card_amex.svg'
@@ -26,8 +24,8 @@ import { eventsActiveSuccess, eventsErrored } from './events'
 import { currencyFormatter } from './format'
 
 interface CardProfile {
-  backgroundColour: BackgroundColorProperty
-  colour: ColorProperty
+  backgroundColour: string,
+  colour: string
 }
 
 const SuccessProfile: CardProfile = {

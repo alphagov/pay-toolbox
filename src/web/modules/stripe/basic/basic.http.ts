@@ -32,7 +32,7 @@ const createAccountForm = async function createAccountForm(
     throw new CustomValidationError('Expected \'service\' query parameter')
   }
 
-  const systemLinkService = req.query.service
+  const systemLinkService = req.query.service as string
   const service: Service = await AdminUsers.service(systemLinkService)
 
   if (service.current_go_live_stage !== 'TERMS_AGREED_STRIPE') {

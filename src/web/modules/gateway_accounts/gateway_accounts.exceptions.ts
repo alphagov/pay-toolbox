@@ -62,7 +62,7 @@ const create = function create(
 ): void {
   if (error instanceof RESTClientError) {
     if (error.data.response && error.data.response.status === 404) {
-      throw new EntityNotFoundError('Service', req.query.service)
+      throw new EntityNotFoundError('Service', req.query.service as string)
     }
   }
   next(error)

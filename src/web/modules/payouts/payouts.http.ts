@@ -15,8 +15,8 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     const account = await Connector.stripe(req.params.gatewayAccountId)
     const payouts = await getPayoutsForAccount(
       account.stripe_account_id,
-      startingAfter,
-      endingBefore
+      startingAfter as string,
+      endingBefore as string
     )
 
     res.render('payouts/payouts_show', {
@@ -58,8 +58,8 @@ export async function listPayoutsCsv(
     const account = await Connector.stripe(req.params.gatewayAccountId)
     const payouts = await getPayoutsForAccount(
       account.stripe_account_id,
-      startingAfter,
-      endingBefore
+      startingAfter as string,
+      endingBefore as string
     )
     const payoutListCSV = await renderPayoutListCSV(payouts.data)
 

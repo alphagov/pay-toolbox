@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Service } from './pay-request/types/adminUsers'
 import { parse, ParsedQs, stringify } from 'qs'
-import { BooleanFilterOption } from '../web/modules/common/BooleanFilterOption'
+import { BooleanFilterOption, toNullableBooleanString } from '../web/modules/common/BooleanFilterOption'
 
 export function aggregateServicesByGatewayAccountId(services: Service[]): { [key: string]: Service } {
   return services
@@ -39,9 +39,9 @@ export function toAccountSearchParams(filters: Filters) {
   return {
     type: filters.live === BooleanFilterOption.True && 'live' || filters.live === BooleanFilterOption.False && 'test' || null,
     payment_provider: filters.provider,
-    requires_3ds: BooleanFilterOption.toNullableBooleanString(filters.three_ds),
-    apple_pay_enabled: BooleanFilterOption.toNullableBooleanString(filters.apple_pay),
-    google_pay_enabled: BooleanFilterOption.toNullableBooleanString(filters.google_pay),
-    moto_enabled: BooleanFilterOption.toNullableBooleanString(filters.moto)
+    requires_3ds: toNullableBooleanString(filters.three_ds),
+    apple_pay_enabled: toNullableBooleanString(filters.apple_pay),
+    google_pay_enabled: toNullableBooleanString(filters.google_pay),
+    moto_enabled: toNullableBooleanString(filters.moto)
   }
 }
