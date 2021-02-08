@@ -1,12 +1,11 @@
 const Joi = require('joi')
 
-const expectedLoggingEnvironmentValues = {
+const expectedLoggingEnvironmentValues = Joi.object({
   DISABLE_REQUEST_LOGGING: Joi.boolean().default(false)
-}
+})
 
-const { error, value: validatedLoggingEnvironmentValues } = Joi.validate(
+const { error, value: validatedLoggingEnvironmentValues } = expectedLoggingEnvironmentValues.validate(
   process.env,
-  expectedLoggingEnvironmentValues,
   { allowUnknown: true, stripUnknown: true }
 )
 

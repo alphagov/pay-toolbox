@@ -5,12 +5,12 @@ const { addModelIfValid, stripEmpty } = require('./../../../lib/validation')
 const Address = require('./address.model')
 const Dob = require('./dob.model')
 
-const schema = {
+const schema = Joi.object({
   org_id: Joi.string(),
   org_name: Joi.string().required(),
   person_first_name: Joi.string(),
   person_last_name: Joi.string()
-}
+})
 
 const addSubModels = function addSubModels(legalEntity, params) {
   let entityWithSubModels = { ...legalEntity }
@@ -54,7 +54,7 @@ const build = function build(params) {
 class StripeLegalEntity {
   constructor(body) {
     const params = { ...body }
-    const { error, value: model } = Joi.validate(params, schema, { allowUnknown: true })
+    const { error, value: model } = schema.validate(params, { allowUnknown: true })
 
     if (error) {
       throw new ValidationError(`StripeLegalEntity ${error.details[0].message}`)
