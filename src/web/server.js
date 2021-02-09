@@ -38,13 +38,15 @@ const app = express()
 const configureSecureHeaders = function configureSecureHeaders(instance) {
   const serverBehindProxy = server.HTTP_PROXY
 
-  // only set certain proxy configured headers if not behind a proxy
-  instance.use(helmet({
-    noSniff: !serverBehindProxy,
-    frameguard: !serverBehindProxy,
-    hsts: !serverBehindProxy,
-    xssFilter: !serverBehindProxy
-  }))
+  // only set certain proxy configured headers if not behind a proxy, the proxy
+  // will be responsible for setting these headers
+  const helmetOptions = serverBehindProxy ? {
+    noSniff: false,
+    frameguard: false,
+    hsts: false,
+    xssFilter: false
+  } : {}
+  instance.use(helmet(helmetOptions))
   instance.use(helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: [ '\'self\'' ],
