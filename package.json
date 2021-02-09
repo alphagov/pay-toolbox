@@ -60,6 +60,7 @@
     "passport": "0.4.0",
     "passport-github": "1.1.0",
     "qs": "6.9.6",
+    "sass": "^1.32.6",
     "stripe": "7.15.0",
     "winston": "3.2.1",
     "winston-transport": "4.3.0"
@@ -99,7 +100,6 @@
     "eslint-plugin-react": "^7.22.0",
     "mocha": "7.1.2",
     "mockery": "2.1.0",
-    "node-sass": "4.14.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-inlinesvg": "1.2.0",
