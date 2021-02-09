@@ -62,7 +62,7 @@ interface PaymentLinkUsageContext {
   serviceGatewayAccountIndex: any
 }
 async function fetchUsageContext(sortKey: string, filterLiveAccounts: Boolean, accountId?: string): Promise<PaymentLinkUsageContext> {
-  let serviceRequest, paymentLinksRequest, liveAccountsRequest
+  let serviceRequest, liveAccountsRequest
   if (accountId) {
     serviceRequest = AdminUsers.gatewayAccountServices(accountId)
       .then((service: any) => [ service ])
@@ -74,7 +74,7 @@ async function fetchUsageContext(sortKey: string, filterLiveAccounts: Boolean, a
       .then((response: any) => response.accounts)
   }
 
-  paymentLinksRequest = Products.paymentLinksWithUsage(accountId)
+  const paymentLinksRequest = Products.paymentLinksWithUsage(accountId)
 
   const [serviceResponse, paymentLinksResponse, liveAccountsResponse] = await Promise.all([serviceRequest, paymentLinksRequest, liveAccountsRequest])
 
