@@ -1,12 +1,11 @@
 const Joi = require('joi')
 
-const expectedSentryEnvironmentValues = {
+const expectedSentryEnvironmentValues = Joi.object({
   SENTRY_DSN: Joi.string()
-}
+})
 
-const { error, value: validatedSentryEnvironmentValues } = Joi.validate(
+const { error, value: validatedSentryEnvironmentValues } = expectedSentryEnvironmentValues.validate(
   process.env,
-  expectedSentryEnvironmentValues,
   { allowUnknown: true, stripUnknown: true }
 )
 

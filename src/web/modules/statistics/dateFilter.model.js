@@ -2,10 +2,10 @@ const Joi = require('joi')
 
 const { ValidationError } = require('./../../../lib/errors')
 
-const schema = {
+const schema = Joi.object({
   date: Joi.date(),
   compareDate: Joi.date()
-}
+})
 
 const convertToISODates = function convertToISODates(model) {
   const converted = { ...model }
@@ -28,7 +28,7 @@ const parseFromBody = function parseFromBody(body) {
 
 class DateFilter {
   constructor(body) {
-    const { error, value: model } = Joi.validate(parseFromBody(body), schema)
+    const { error, value: model } = schema.validate(parseFromBody(body))
 
     if (error) {
       throw new ValidationError(`StatisticsDateFilter ${error.details[0].message}`)

@@ -3,10 +3,10 @@ const Joi = require('joi')
 const { ValidationError } = require('./../../../lib/errors')
 const { stripEmpty } = require('./../../../lib/validation')
 
-const schema = {
+const schema = Joi.object({
   bank_account_sort_code: Joi.string().required(),
   bank_account_number: Joi.string().required()
-}
+})
 
 const build = function build(params) {
   const core = {
@@ -24,9 +24,8 @@ const build = function build(params) {
 class StripeBankAccount {
   constructor(body) {
     const params = { ...body }
-    const { error, value: model } = Joi.validate(
+    const { error, value: model } = schema.validate(
       params,
-      schema,
       { allowUnknown: true, stripUnknown: true }
     )
 

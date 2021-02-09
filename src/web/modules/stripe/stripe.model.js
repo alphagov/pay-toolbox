@@ -8,13 +8,13 @@ const { addModelIfValid, stripEmpty } = require('./../../../lib/validation')
 const StripeBankAccount = require('./bankAccount.model')
 const StripeLegalEntity = require('./legalEntity.model')
 
-const schema = {
+const schema = Joi.object({
   org_id: Joi.string().required(),
   org_name: Joi.string().required(),
   org_ip_address: Joi.string().required(),
   org_statement_descriptor: Joi.string().required(),
   org_phone_number: Joi.string().required()
-}
+})
 
 const toE164InternationalFormat = function toE164InternationalFormat(rawNumber) {
   if (rawNumber) {
@@ -47,7 +47,7 @@ const build = function build(params) {
 
 class StripeAccount {
   constructor(body) {
-    const { error, value: model } = Joi.validate(body, schema, { allowUnknown: true })
+    const { error, value: model } = schema.validate(body, { allowUnknown: true })
 
     if (error) {
       throw new ValidationError(`StripeAccount ${error.details[0].message}`)

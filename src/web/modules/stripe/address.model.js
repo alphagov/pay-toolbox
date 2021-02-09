@@ -2,18 +2,17 @@ const Joi = require('joi')
 
 const { ValidationError } = require('./../../../lib/errors')
 
-const schema = {
+const schema = Joi.object({
   line1: Joi.string().required(),
   city: Joi.string().required(),
   postal_code: Joi.string().required()
-}
+})
 
 class StripeAddress {
   constructor(body) {
     const params = { ...body }
-    const { error, value: model } = Joi.validate(
+    const { error, value: model } = schema.validate(
       params,
-      schema,
       { allowUnknown: true, stripUnknown: true }
     )
 
