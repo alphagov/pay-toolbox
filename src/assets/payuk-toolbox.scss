@@ -1,5 +1,5 @@
 /*  @TODO(sfount) only import scss from frontend that is required */
-@import "node_modules/govuk-frontend/govuk/all";
+@import "govuk-frontend/govuk/all";
 
 .success-summary {
   border-color: govuk-colour("green");
