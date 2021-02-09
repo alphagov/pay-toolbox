@@ -2,18 +2,17 @@ const Joi = require('joi')
 
 const { ValidationError } = require('./../../../lib/errors')
 
-const schema = {
+const schema = Joi.object({
   day: Joi.number().required(),
   month: Joi.number().required(),
   year: Joi.number().required()
-}
+})
 
 class Dob {
   constructor(body) {
     const params = { ...body }
-    const { error, value: model } = Joi.validate(
+    const { error, value: model } = schema.validate(
       params,
-      schema,
       { allowUnknown: true, stripUnknown: true }
     )
 

@@ -2,17 +2,16 @@ const Joi = require('joi')
 
 const { ValidationError } = require('../../../../lib/errors')
 
-const schema = {
+const schema = Joi.object({
   account_id: Joi.string().required(),
   search_string: Joi.string().required(),
   search_by: Joi.string().valid('chargeId', 'reference').required()
-}
+})
 
 class TransactionSearch {
   constructor(body) {
-    const { error, value: model } = Joi.validate(
+    const { error, value: model } = schema.validate(
       body,
-      schema,
       { allowUnknown: true, stripUnknown: true }
     )
 

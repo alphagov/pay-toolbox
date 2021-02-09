@@ -1,16 +1,15 @@
 const Joi = require('joi')
 
-const expectedServerEnvironmentValues = {
+const expectedServerEnvironmentValues = Joi.object({
   PORT: Joi.number().integer().required(),
   COOKIE_SESSION_ENCRYPTION_SECRET: Joi.string().required(),
   HTTP_PROXY: Joi.string(),
   HTTPS_PROXY: Joi.string(),
   SESSION_COOKIE_DURATION_IN_MILLIS: Joi.number().integer()
-}
+})
 
-const { error, value: validatedServerEnvironmentValues } = Joi.validate(
+const { error, value: validatedServerEnvironmentValues } = expectedServerEnvironmentValues.validate(
   process.env,
-  expectedServerEnvironmentValues,
   { allowUnknown: true, stripUnknown: true }
 )
 
