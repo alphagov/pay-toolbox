@@ -101,7 +101,7 @@
     "mockery": "2.1.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
-    "react-inlinesvg": "1.2.0",
+    "react-inlinesvg": "2.2.2",
     "react-spring": "9.0.0-rc.3",
     "sinon": "^9.2.4",
     "supertest": "^6.1.3",
