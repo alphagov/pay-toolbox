@@ -61,7 +61,7 @@
     "passport-github": "1.1.0",
     "qs": "6.9.6",
     "sass": "^1.32.7",
-    "stripe": "7.15.0",
+    "stripe": "8.135.0",
     "winston": "^3.3.3",
     "winston-transport": "^4.4.0"
   },
