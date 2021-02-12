@@ -33,7 +33,7 @@ export class EntityNotFoundError extends RequestError {
 
 // wrap errors from other frameworks in a format that this service can report on
 // @FIXME(sfount) stack trace isn't respected
-export class RESTClientError extends Error {
+export class RESTClientError extends ManagedError {
   public name: string
 
   public data: AxiosError
@@ -50,7 +50,7 @@ export class RESTClientError extends Error {
 }
 
 // expects to be passed a class-validator ValidationError object
-export class IOValidationError extends Error {
+export class IOValidationError extends ManagedError {
   public source: ClassValidatorError[]
 
   public constructor(validations: ClassValidatorError[]) {
@@ -60,7 +60,7 @@ export class IOValidationError extends Error {
   }
 }
 
-export class ValidationError extends Error {
+export class ValidationError extends ManagedError {
   public name: string
 
   public constructor(message: string) {
@@ -70,7 +70,7 @@ export class ValidationError extends Error {
   }
 }
 
-export class NotImplementedError extends Error {
+export class NotImplementedError extends ManagedError {
   public name: string
 
   public constructor(message: string) {
