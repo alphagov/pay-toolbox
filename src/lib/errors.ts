@@ -45,7 +45,7 @@ export class RESTClientError extends ManagedError {
     this.name = this.constructor.name
     this.data = error
     this.service = { key: serviceKey, name: serviceName }
-    Error.captureStackTrace(this, this.constructor)
+    this.stack = error.stack
   }
 }
 

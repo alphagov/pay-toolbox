@@ -59,8 +59,8 @@ const byServices = async function byServices (req, res, next) {
   const toDate = moment.utc().endOf('month')
 
   logger.info(`Transaction volumes by gateway account for ${toDate.diff(fromDate, 'days')} days`, {
-    from_date: fromDate.format('YYYY-MM'),
-    to_date: toDate.format('YYYY-MM'),
+    from_date: fromDate.format('YYYY-MM-DD'),
+    to_date: toDate.format('YYYY-MM-DD'),
     number_of_days: toDate.diff(fromDate, 'days')
   })
 
