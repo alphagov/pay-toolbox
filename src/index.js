@@ -6,7 +6,7 @@ const logger = require('./lib/logger')
 const app = require('./web/server')
 
 const logHTTPServerStarted = function logHTTPServerStarted() {
-  const context = { node_version: process.version, port: server.PORT }
+  const context = { node_version: process.version, port: server.PORT, excludeFromBreadcrumb: true }
   logger.info(`Toolbox HTTP server listening on port ${server.PORT}`, context)
 }
 

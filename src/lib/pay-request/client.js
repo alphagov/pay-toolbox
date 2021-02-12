@@ -36,7 +36,8 @@ const logSuccessfulResponse = function logSuccessfulResponse(response) {
   const logContext = {
     pay_request_service: this.metadata.serviceKey,
     pay_request_method: response.request.method,
-    pay_request_url: response.config.url
+    pay_request_url: response.config.url,
+    excludeFromBreadcrumb: true
   }
 
   response.config.metadata.end = new Date()
@@ -52,7 +53,8 @@ const logFailureResponse = function logFailureResponse(error) {
     pay_request_service: this.metadata.serviceKey,
     pay_request_method: error.config.method,
     pay_request_url: error.config.url,
-    pay_request_code: code
+    pay_request_code: code,
+    excludeFromBreadcrumb: true
   }
 
   // @TODO(sfount) review how errors are passed through axios stack, favour

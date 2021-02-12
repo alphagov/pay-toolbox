@@ -146,12 +146,23 @@ const configureSentry = function configureSentry() {
   Sentry.init({
     dsn: sentryConfig.SENTRY_DSN,
     environment: common.ENVIRONMENT,
-      beforeSend(event) {
-        if (event.request) {
-          delete event.request // This can include sensitive data such as card numbers
+    version: `${process.env.npm_package_name}@${process.env.npm_package_version}`,
+    beforeSend(event, hint) {
+      const error = hint.originalException
+      if (event.request) {
+        delete event.request.cookies
+        if (event.request.headers) {
+          delete event.request.headers.cookie
         }
-          return event
       }
+
+      if (error && error.isManaged) {
+        // discard the event from going to Sentry if the app has already flagged
+        // this error as managed/ handled
+        return null
+      }
+      return event
+    }
   })
 }
 

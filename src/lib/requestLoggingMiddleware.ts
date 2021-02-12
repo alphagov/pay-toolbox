@@ -8,7 +8,7 @@ const logRequest = function logRequest(): RequestHandler {
   return morgan(format, {
     stream: {
       write: (message: string): void => {
-        logger.info('Request received', JSON.parse(message))
+        logger.info('Request received', { ...JSON.parse(message), excludeFromBreadcrumb: true })
       }
     }
   })

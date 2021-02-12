@@ -2,11 +2,21 @@
 import { ValidationError as ClassValidatorError } from 'class-validator'
 import { AxiosError } from 'axios'
 
-export class RequestError extends Error {
+// any error managed/ handled by the app (will not be thrown to upstream
+// services like Sentry)
+export class ManagedError extends Error {
+  public isManaged: boolean
+  public constructor(message: string, isManaged: boolean = true) {
+    super(message)
+    this.isManaged = isManaged
+  }
+}
+
+export class RequestError extends ManagedError {
   public name: string
 
-  public constructor(message: string) {
-    super(message)
+  public constructor(message: string, isManaged?: boolean) {
+    super(message, isManaged)
     this.name = this.constructor.name
     Error.captureStackTrace(this, this.constructor)
   }
@@ -15,8 +25,8 @@ export class RequestError extends Error {
 export class EntityNotFoundError extends RequestError {
   public data: { name: string; identifier: string }
 
-  public constructor(name: string, identifier: string, description: string = 'ID') {
-    super(`${name} with ${description} ${identifier} was not found.`)
+  public constructor(name: string, identifier: string, description: string = 'ID', isManaged?: boolean) {
+    super(`${name} with ${description} ${identifier} was not found.`, isManaged)
     this.data = { name, identifier }
   }
 }

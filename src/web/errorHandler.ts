@@ -19,7 +19,7 @@ const handleRequestErrors = function handleRequestErrors(
 ): void {
   // generic entity wasn't found - format reponse
   if (error instanceof EntityNotFoundError) {
-    logger.warn(error.message)
+    logger.warn(error.message, { excludeFromBreadcrumb: true })
     res.status(404).render('common/error', { message: error.message })
     return
   }
@@ -47,13 +47,13 @@ const handleRequestErrors = function handleRequestErrors(
   }
 
   if (error instanceof NotImplementedError) {
-    logger.warn(error.message)
+    logger.warn(error.message, { excludeFromBreadcrumb: true })
     res.status(501).render('common/error', { message: error.message })
     return
   }
 
   if ((error as HttpError).code === 'EBADCSRFTOKEN') {
-    logger.warn('Bad CSRF token received for request')
+    logger.warn('Bad CSRF token received for request', { excludeFromBreadcrumb: true })
     res.status(403).render('common/error', { message: `Request forbidden: ${error.message}` })
     return
   }
@@ -71,8 +71,7 @@ const handleDefault = function handleDefault(
   res: Response,
   next: NextFunction
 ): void {
-  logger.warn('Unhandled error caught by middleware stack')
-  logger.error(error.stack)
+  logger.warn('Unhandled error caught by middleware stack', { error, excludeFromBreadcrumb: true })
 
   if (res.headersSent) {
     return next(error)
