@@ -6,14 +6,13 @@
 import crypto from 'crypto'
 import { Request, Response, NextFunction } from 'express'
 import { createLogger, format, transports } from 'winston'
+import * as Sentry from '@sentry/node'
 
 // @FIXME(sfount) performance implications of cls-hooked and using the async-hooks
 //                node libraries should be very carefully considered continuation-local
 //                storage is basically the equivalent of Java thread storage, expires
 //                after all methods in a call have ended
 import { createNamespace } from 'cls-hooked'
-
-import WinstonSentryTransport from './winstonSentryTransport'
 
 import * as config from '../config'
 
@@ -48,9 +47,37 @@ const loggerMiddleware = function loggerMiddleware(
 
     // expose toolbox ID to template for debugging
     res.locals.toolboxId = toolboxId
+
+    // @TODO(sfount) potentially move to small sentry.ts lib
+    Sentry.configureScope((scope) => {
+      if (req.headers[correlationHeader]) {
+        scope.setTag('correlation_id', req.headers[correlationHeader] as string)
+      }
+    })
     next()
   })
 }
+
+const addSentryBreadcrumb = format((info) => {
+  const levelMap: { [key: string]: Sentry.Severity } = {
+    'info': Sentry.Severity.Info,
+    'warn': Sentry.Severity.Warning,
+    'debug': Sentry.Severity.Debug,
+    'crit': Sentry.Severity.Critical
+  }
+
+  if (!info.excludeFromBreadcrumb) {
+    Sentry.configureScope((scope) => {
+      scope.addBreadcrumb({
+        category: 'log',
+        message: info.message,
+        level: levelMap[info.level],
+        type: 'debug'
+      })
+    })
+  }
+  return info
+})
 
 const supplementProductionInfo = format((info) => {
   // LOGSTASH 675 versioning https://gds-way.cloudapps.digital/manuals/logging.html
@@ -59,6 +86,7 @@ const supplementProductionInfo = format((info) => {
     x_request_id: session.get(CORRELATION_ID_KEY),
     user_id: session.get(AUTHENTICATED_USER_ID_KEY)
   }
+
   return Object.assign(info, productionContext)
 })
 
@@ -66,6 +94,7 @@ if (!config.common.development) {
   const productionTransport = new transports.Console({
     format: combine(
       supplementProductionInfo(),
+      addSentryBreadcrumb(),
       splat(),
       prettyPrint(),
       govUkPayLoggingFormat({ container: 'toolbox', environment: config.common.ENVIRONMENT }),
@@ -74,13 +103,6 @@ if (!config.common.development) {
     level: 'info'
   })
   logger.add(productionTransport)
-}
-
-if (!config.common.development) {
-  const sentryTransport = new WinstonSentryTransport({
-    level: 'error'
-  })
-  logger.add(sentryTransport)
 }
 
 // coloursise and timestamp developer logs as these will probably be viewed

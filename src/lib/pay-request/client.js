@@ -29,6 +29,14 @@ const configureRequest = function configureRequest(request) {
     request.headers['x-request-id'] = session.get('correlation_id')
   }
   request.metadata = { start: new Date() }
+
+  // depends on long open issue https://github.com/axios/axios/issues/2387
+  // provide the original app stack trace to the error handler to get around axios smushing it
+  request.errorContext = new Error('Proxy axios stack trace')
+  const proxyStack = request.errorContext.stack.split('\n')
+  proxyStack.splice(1, 1)
+  request.errorContext.stack = proxyStack.join('\n')
+
   return request
 }
 
@@ -36,7 +44,8 @@ const logSuccessfulResponse = function logSuccessfulResponse(response) {
   const logContext = {
     pay_request_service: this.metadata.serviceKey,
     pay_request_method: response.request.method,
-    pay_request_url: response.config.url
+    pay_request_url: response.config.url,
+    excludeFromBreadcrumb: true
   }
 
   response.config.metadata.end = new Date()
@@ -52,7 +61,13 @@ const logFailureResponse = function logFailureResponse(error) {
     pay_request_service: this.metadata.serviceKey,
     pay_request_method: error.config.method,
     pay_request_url: error.config.url,
-    pay_request_code: code
+    pay_request_code: code,
+    excludeFromBreadcrumb: true
+  }
+
+  const originalStackTrace = error.config?.errorContext?.stack;
+  if (originalStackTrace) {
+    error.stack = `${error.stack}\n${originalStackTrace}`;
   }
 
   // @TODO(sfount) review how errors are passed through axios stack, favour

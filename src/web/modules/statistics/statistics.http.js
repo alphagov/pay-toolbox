@@ -1,5 +1,6 @@
 const moment = require('moment')
 const { Parser } = require('json2csv')
+const logger = require('../../../lib/logger')
 const { Connector, Ledger, AdminUsers } = require('./../../../lib/pay-request')
 const DateFilter = require('./dateFilter.model')
 
@@ -56,6 +57,12 @@ const byServices = async function byServices (req, res, next) {
   const forAllTime = options === 'all'
   const fromDate = forAllTime ? startOfGovUkPay : moment.utc().startOf('month')
   const toDate = moment.utc().endOf('month')
+
+  logger.info(`Transaction volumes by gateway account for ${toDate.diff(fromDate, 'days')} days`, {
+    from_date: fromDate.format('YYYY-MM-DD'),
+    to_date: toDate.format('YYYY-MM-DD'),
+    number_of_days: toDate.diff(fromDate, 'days')
+  })
 
   try {
     const [gatewayAccountsResponse, services] = await Promise.all([Connector.accounts(), AdminUsers.services()])

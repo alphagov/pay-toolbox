@@ -2,11 +2,21 @@
 import { ValidationError as ClassValidatorError } from 'class-validator'
 import { AxiosError } from 'axios'
 
-export class RequestError extends Error {
+// any error managed/ handled by the app (will not be thrown to upstream
+// services like Sentry)
+export class ManagedError extends Error {
+  public isManaged: boolean
+  public constructor(message: string, isManaged: boolean = true) {
+    super(message)
+    this.isManaged = isManaged
+  }
+}
+
+export class RequestError extends ManagedError {
   public name: string
 
-  public constructor(message: string) {
-    super(message)
+  public constructor(message: string, isManaged?: boolean) {
+    super(message, isManaged)
     this.name = this.constructor.name
     Error.captureStackTrace(this, this.constructor)
   }
@@ -15,15 +25,15 @@ export class RequestError extends Error {
 export class EntityNotFoundError extends RequestError {
   public data: { name: string; identifier: string }
 
-  public constructor(name: string, identifier: string, description: string = 'ID') {
-    super(`${name} with ${description} ${identifier} was not found.`)
+  public constructor(name: string, identifier: string, description: string = 'ID', isManaged?: boolean) {
+    super(`${name} with ${description} ${identifier} was not found.`, isManaged)
     this.data = { name, identifier }
   }
 }
 
 // wrap errors from other frameworks in a format that this service can report on
 // @FIXME(sfount) stack trace isn't respected
-export class RESTClientError extends Error {
+export class RESTClientError extends ManagedError {
   public name: string
 
   public data: AxiosError
@@ -35,12 +45,12 @@ export class RESTClientError extends Error {
     this.name = this.constructor.name
     this.data = error
     this.service = { key: serviceKey, name: serviceName }
-    Error.captureStackTrace(this, this.constructor)
+    this.stack = error.stack
   }
 }
 
 // expects to be passed a class-validator ValidationError object
-export class IOValidationError extends Error {
+export class IOValidationError extends ManagedError {
   public source: ClassValidatorError[]
 
   public constructor(validations: ClassValidatorError[]) {
@@ -50,7 +60,7 @@ export class IOValidationError extends Error {
   }
 }
 
-export class ValidationError extends Error {
+export class ValidationError extends ManagedError {
   public name: string
 
   public constructor(message: string) {
@@ -60,7 +70,7 @@ export class ValidationError extends Error {
   }
 }
 
-export class NotImplementedError extends Error {
+export class NotImplementedError extends ManagedError {
   public name: string
 
   public constructor(message: string) {
