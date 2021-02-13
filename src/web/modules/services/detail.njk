@@ -102,7 +102,9 @@
   </div>
 
   <div>
-    <h1 class="govuk-heading-s">Going live - new Stripe payment provider</h1>
+    <h1 class="govuk-heading-m">Stripe payment provider</h1>
+
+    <h2 class="govuk-heading-s">Going live</h2>
     <p class="govuk-body">This will guide you through:</p>
     <ul class="govuk-list govuk-list--number">
       <li>Creating new Stripe account through the Stripe API</li>
@@ -114,17 +116,18 @@
       href: "/stripe/basic/create?service=" + service.external_id
       })
     }}
+    <h2 class="govuk-heading-s">Test account</h2>
+    {{ govukButton({
+      text: "Setup test Stripe account",
+      classes: "govuk-button--secondary",
+      href: "/stripe/basic/create-test-account?service=" + service.external_id
+      })
+    }}
 
-    <p>
-      <a class="govuk-link" href="/stripe/create?service={{ service.external_id }}">
-        Create live Stripe account with all details (the old way)
-      </a>
-    </p>
-    <br/>
   </div>
 
   <div>
-    <h1 class="govuk-heading-s">Going live - existing payment provider</h1>
+    <h1 class="govuk-heading-m">Going live - existing payment provider</h1>
     <p class="govuk-body">This will guide you through:</p>
     <ul class="govuk-list govuk-list--number">
       <li>Creating a GOV.UK Pay gateway account</li>
@@ -138,7 +141,7 @@
   </div>
 
   <div>
-    <h1 class="govuk-heading-s">Service actions</h1>
+    <h1 class="govuk-heading-m">Service actions</h1>
     {{ govukButton({
       text: "Edit custom branding",
       href: "/services/" + serviceId + "/branding"

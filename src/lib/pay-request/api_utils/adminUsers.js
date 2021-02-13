@@ -181,6 +181,16 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
 
+  const updateServiceTestPspAccountStageToCreated = function updateServiceTestPspAccountStageToCreated(id) {
+    const path = `v1/api/services/${id}`
+    const payload = {
+      op: 'replace',
+      path: 'current_psp_test_account_stage',
+      value: 'CREATED'
+    }
+    return axiosInstance.patch(path, payload).then(utilExtractData)
+  }
+
   const updateServiceOrganisationName = function updateServiceOrganisationName(id, status) {
     const path = `v1/api/services/${id}`
     const payload = {
@@ -229,6 +239,7 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     gatewayAccountServices,
     updateServiceDetails,
     updateServiceOrganisationName,
+    updateServiceTestPspAccountStageToCreated,
     updateUserPhone,
     updateUserEmail,
     toggleUserEnabled,

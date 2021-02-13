@@ -1,0 +1,40 @@
+{% extends "layout/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% block main %}
+  <div class="govuk-body">
+    <a href="/services/{{ systemLinkService }}" class="govuk-back-link">Back to service ({{ systemLinkService }})</a>
+  </div>
+
+  <h1 class="govuk-heading-m">Create test Stripe account</h1>
+
+  {{ govukTable({
+    firstCellIsHeader: true,
+    rows: [
+      [
+        { text: "Service name" },
+        { text: serviceName }
+      ]
+    ]
+    })
+  }}
+
+  <form method="POST" action="/stripe/basic/create-test-account">
+    <p class="govuk-body">You are about to create Stripe account for the service. This will create:</p>
+    <ul class="govuk-list govuk-list--number">
+      <li>Stripe test connect account through the Stripe API</li>
+      <li>GOV.UK Pay test gateway account setting the provider to Stripe. This will be available for service immediately on the admin tool "My services" page</li>
+    </ul>
+
+    <input hidden="hidden" name="systemLinkService" id="systemLinkService" value="{{ systemLinkService }}">
+    <div class="govuk-form-group">
+      {{ govukButton({
+		    text: "Create test stripe account"
+        })
+      }}
+    </div>
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}

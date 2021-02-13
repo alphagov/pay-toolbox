@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response, NextFunction } from 'express'
-import { parse, ParsedQs, stringify } from 'qs'
+import { Request, Response } from 'express'
+import { stringify } from 'qs'
 
 import logger from '../../../lib/logger'
 
@@ -13,7 +13,7 @@ import { extractFiltersFromQuery, toAccountSearchParams } from '../../../lib/gat
 import GatewayAccountFormModel from './gatewayAccount.model'
 import { Service } from '../../../lib/pay-request/types/adminUsers'
 import DirectDebitGatewayAccount from '../../../lib/pay-request/types/directDebitConnector'
-import { GatewayAccount as CardGatewayAccount, GatewayAccount } from '../../../lib/pay-request/types/connector'
+import { GatewayAccount as CardGatewayAccount } from '../../../lib/pay-request/types/connector'
 import { ClientFormError } from '../common/validationErrorFormat'
 import * as config from '../../../config'
 import Stripe from 'stripe'
