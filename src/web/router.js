@@ -100,6 +100,8 @@ router.post('/charges/search', auth.secured, charges.searchTransaction.http, cha
 
 router.get('/stripe/basic/create', auth.secured, stripe.basic)
 router.post('/stripe/basic/create', auth.secured, stripe.basicCreate)
+router.get('/stripe/basic/create-test-account', auth.secured, stripe.createTestAccount)
+router.post('/stripe/basic/create-test-account', auth.secured, stripe.createTestAccountConfirm)
 
 // @TODO(sfount) simple to integrate into table action - should be reconsidered for POST or PATCH
 router.get('/users/search', auth.secured, users.searchPage)

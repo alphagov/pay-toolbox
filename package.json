@@ -62,6 +62,7 @@
     "qs": "6.9.6",
     "sass": "^1.32.7",
     "stripe": "7.15.0",
+    "stripe-latest": "npm:stripe@^8.135.0",
     "winston": "^3.3.3",
     "winston-transport": "^4.4.0"
   },

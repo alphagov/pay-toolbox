@@ -5,6 +5,8 @@ export interface Service {
 
   current_go_live_stage: string;
 
+  current_psp_test_account_stage: string;
+
   gateway_account_ids: string[];
 
   redirect_to_service_immediately_on_terminal_state: boolean;

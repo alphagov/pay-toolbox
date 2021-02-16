@@ -122,7 +122,7 @@ class GatewayAccount extends Validated {
       internalFlag: this.internalFlag
     }
 
-    if (this.isLive()) {
+    if (this.isLive() || this.provider === 'stripe' ) {
       payload.requires_3ds = 'true'
     } else {
       payload.requires_3ds = 'false'
