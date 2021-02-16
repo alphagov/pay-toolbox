@@ -16,8 +16,8 @@ import { stripeTestResponsiblePersonDetails } from '../model/person.model'
 
 const Stripe = require('stripe-latest')
 const { StripeError } = Stripe.errors
-const STRIPE_TEST_ACCOUNT_API_KEY: string = process.env.STRIPE_TEST_ACCOUNT_API_KEY || ''
-const stripe = new Stripe(STRIPE_TEST_ACCOUNT_API_KEY, {
+const STRIPE_ACCOUNT_TEST_API_KEY: string = process.env.STRIPE_ACCOUNT_TEST_API_KEY || ''
+const stripe = new Stripe(STRIPE_ACCOUNT_TEST_API_KEY, {
     apiVersion: '2020-08-27',
 })
 
@@ -36,7 +36,7 @@ function validateRequest(currentPspTestAccountStage: string) {
 }
 
 const createTestAccount = async function createTestAccount(req: Request, res: Response): Promise<void> {
-    if (!STRIPE_TEST_ACCOUNT_API_KEY) {
+    if (!STRIPE_ACCOUNT_TEST_API_KEY) {
         throw new CustomValidationError('Stripe test API Key was not configured for this Toolbox instance')
     }
 
