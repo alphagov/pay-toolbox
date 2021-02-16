@@ -7,7 +7,7 @@
     <a href="/services/{{ systemLinkService }}" class="govuk-back-link">Back to service ({{ systemLinkService }})</a>
   </div>
 
-  <h1 class="govuk-heading-m">Create test Stripe account</h1>
+  <h1 class="govuk-heading-m">Create test stripe account</h1>
 
   {{ govukTable({
     firstCellIsHeader: true,
@@ -21,7 +21,7 @@
   }}
 
   <form method="POST" action="/stripe/basic/create-test-account">
-    <p class="govuk-body">You are about to create Stripe account for the service. This will create:</p>
+    <p class="govuk-body">You are about to create a Stripe account for the service. This will create:</p>
     <ul class="govuk-list govuk-list--number">
       <li>Stripe test connect account through the Stripe API</li>
       <li>GOV.UK Pay test gateway account setting the provider to Stripe. This will be available for service immediately on the admin tool "My services" page</li>
