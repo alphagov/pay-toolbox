@@ -254,3 +254,7 @@
   word-break: break-word;
 }
 
+.ellipses-text-wrap {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

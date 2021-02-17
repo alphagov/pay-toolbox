@@ -24,7 +24,7 @@
       <span class="govuk-body">{{ transaction.created_date | formatDate }}</span>
     </div>
     {% if transaction.card_details %}
-    <div class="govuk-grid-column-one-quarter">
+    <div class="govuk-grid-column-one-quarter ellipses-text-wrap">
       <span class="govuk-caption-m">Payer</span>
       <span class="govuk-body">{{ transaction.card_details.cardholder_name }}</span>
     </div>
