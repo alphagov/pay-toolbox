@@ -104,6 +104,21 @@ const connectorMethods = function connectorMethods(instance) {
     })
   }
 
+  const updateStripeSetupValues = function updateStripeSetupValues(id, stripeSetupFields) {
+    const url = `/v1/api/accounts/${id}/stripe-setup`
+    const payload = []
+    
+    stripeSetupFields.forEach((field) =>{
+      payload.push({
+        op: 'replace',
+        path: field,
+        value: true
+      })
+    })
+
+    return axiosInstance.patch(url, payload)
+  }
+
   const toggleBlockPrepaidCards = async function toggleBlockPrepaidCards(id) {
     const gatewayAccount = await account(id)
     const url = `/v1/api/accounts/${id}`
@@ -159,7 +174,8 @@ const connectorMethods = function connectorMethods(instance) {
     updateEmailBranding,
     toggleBlockPrepaidCards,
     toggleMotoPayments,
-    toggleAllowTelephonePaymentNotifications
+    toggleAllowTelephonePaymentNotifications,
+    updateStripeSetupValues
   }
 }
 
