@@ -109,6 +109,14 @@ async function createTestGatewayAccount(serviceId: string, serviceName: string, 
     const gatewayAccountIdDerived = String(cardAccount.gateway_account_id)
     logger.info(`Created new Gateway Account ${gatewayAccountIdDerived}`)
 
+    await Connector.updateStripeSetupValues(gatewayAccountIdDerived, [
+        'bank_account', 
+        'company_number',
+        'responsible_person',
+        'vat_number'
+    ])
+    logger.info(`Set Stripe setup values to 'true' for Stripe test Gateway Account ${gatewayAccountIdDerived}`) 
+
     // connect system linked services to the created account
     await AdminUsers.updateServiceGatewayAccount(serviceId, gatewayAccountIdDerived)
     logger.info(`Service ${serviceId} linked to new Gateway Account ${gatewayAccountIdDerived}`)
