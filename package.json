@@ -101,7 +101,7 @@
     "eslint-plugin-react": "^7.22.0",
     "mocha": "^8.3.0",
     "mockery": "2.1.0",
-    "react": "^16.14.0",
+    "react": "^17.0.0",
     "react-dom": "^16.14.0",
     "react-inlinesvg": "2.2.2",
     "react-spring": "9.0.0-rc.3",
