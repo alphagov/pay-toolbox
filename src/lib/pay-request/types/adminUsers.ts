@@ -15,6 +15,8 @@ export interface Service {
 
   experimental_features_enabled: boolean;
 
+  agent_initiated_moto_enabled: boolean;
+
   internal: boolean;
 
   archived: boolean;
