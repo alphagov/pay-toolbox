@@ -187,6 +187,20 @@ const toggleExperimentalFeaturesEnabledFlag = async function toggleExperimentalF
   res.redirect(`/services/${serviceId}`)
 }
 
+const toggleAgentInitiatedMotoEnabledFlag = async function toggleAgentInitiatedMotoEnabledFlag(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const serviceId = req.params.id
+
+  const serviceResult = await AdminUsers.toggleAgentInitiatedMotoEnabledFlag(serviceId)
+  const { agent_initiated_moto_enabled: state } = serviceResult
+  logger.info(`Toggled agent-initiated MOTO enabled flag to ${state} for service ${serviceId}`, { externalId: serviceId })
+
+  req.flash('info', `Agent-initiated MOTO enabled flag set to ${state} for service`)
+  res.redirect(`/services/${serviceId}`)
+}
+
 interface RecoverContext {
   service: Service;
   csrf: string;
@@ -258,6 +272,7 @@ export default {
   searchRequest: wrapAsyncErrorHandler(searchRequest),
   toggleTerminalStateRedirectFlag: wrapAsyncErrorHandler(toggleTerminalStateRedirectFlag),
   toggleExperimentalFeaturesEnabledFlag: wrapAsyncErrorHandler(toggleExperimentalFeaturesEnabledFlag),
+  toggleAgentInitiatedMotoEnabled: wrapAsyncErrorHandler(toggleAgentInitiatedMotoEnabledFlag),
   updateOrganisationForm: wrapAsyncErrorHandler(updateOrganisationForm),
   updateOrganisation: wrapAsyncErrorHandler(updateOrganisation)
 }

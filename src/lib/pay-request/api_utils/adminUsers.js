@@ -227,6 +227,18 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
 
+  const toggleAgentInitiatedMotoEnabledFlag = async function toggleAgentInitiatedMotoEnabledFlag(serviceId) {
+    const path = `v1/api/services/${serviceId}`
+    const targetService = await service(serviceId)
+
+    const payload = {
+      op: 'replace',
+      path: 'agent_initiated_moto_enabled',
+      value: !targetService.agent_initiated_moto_enabled
+    }
+    return axiosInstance.patch(path, payload).then(utilExtractData)
+  }
+
   return {
     user,
     findUser,
@@ -247,6 +259,7 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     resetUserSecondFactor,
     toggleTerminalStateRedirectFlag,
     toggleExperimentalFeaturesEnabledFlag,
+    toggleAgentInitiatedMotoEnabledFlag,
     adminEmailsForGatewayAccounts
   }
 }

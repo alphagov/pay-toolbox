@@ -84,6 +84,7 @@ router.get('/services/:id/link_accounts', auth.secured, auth.administrative, ser
 router.post('/services/:id/link_accounts', auth.secured, auth.administrative, services.updateLinkAccounts.http, services.updateLinkAccounts.exceptions)
 router.get('/services/:id/toggle_terminal_state_redirect', auth.secured, services.toggleTerminalStateRedirectFlag)
 router.get('/services/:id/toggle_experimental_features_enabled', auth.secured, services.toggleExperimentalFeaturesEnabled)
+router.get('/services/:id/toggle_agent_initiated_moto_enabled', auth.secured, services.toggleAgentInitiatedMotoEnabled)
 router.get('/services/:id/organisation', auth.secured, services.updateOrganisationForm)
 router.post('/services/:id/organisation', auth.secured, services.updateOrganisation)
 

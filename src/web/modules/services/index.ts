@@ -20,6 +20,7 @@ export default {
   searchRequest: http.searchRequest,
   toggleTerminalStateRedirectFlag: http.toggleTerminalStateRedirectFlag,
   toggleExperimentalFeaturesEnabled: http.toggleExperimentalFeaturesEnabledFlag,
+  toggleAgentInitiatedMotoEnabled: http.toggleAgentInitiatedMotoEnabled,
   updateOrganisationForm: http.updateOrganisationForm,
   updateOrganisation: http.updateOrganisation
 }
