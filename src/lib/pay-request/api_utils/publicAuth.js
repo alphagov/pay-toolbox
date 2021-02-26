@@ -8,12 +8,16 @@ const publicAuthMethods = function publicAuthMethods(instance) {
       .then((data) => data.tokens)
   }
 
+  const createApiToken = function createApiToken(createTokenRequest) {
+    return axiosInstance.post('/v1/frontend/auth', createTokenRequest).then(utilExtractData)
+  }
+
   const deleteApiToken = function deleteApiToken(accountId, tokenId) {
     const payload = { token_link: tokenId }
     return axiosInstance.delete(`/v1/frontend/auth/${accountId}`, { data: payload })
   }
 
-  return { apiKeyTokens, deleteApiToken }
+  return { apiKeyTokens, createApiToken, deleteApiToken }
 }
 
 module.exports = publicAuthMethods

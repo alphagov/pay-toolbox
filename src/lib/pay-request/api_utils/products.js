@@ -1,5 +1,5 @@
 import { EntityNotFoundError } from '../../errors'
-const { redactProductTokens } = require('./redact')
+const { redactProductTokensFromProducts, redactProductTokensFromPaymentLinksWithUsage } = require('./redact')
 
 const productsMethods = function productsMethods(instance) {
   const axiosInstance = instance || this
@@ -10,6 +10,17 @@ const productsMethods = function productsMethods(instance) {
       .then(utilExtractData)
   }
 
+  const paymentLinksByGatewayAccountAndType = function paymentLinksByGatewayAccountAndType(id, productType) {
+    const queryParams = {
+      params: {
+        type: productType
+      }
+    }
+    return axiosInstance.get(`/v1/api/gateway-account/${id}/products`, queryParams)
+      .then(utilExtractData)
+      .then(redactProductTokensFromProducts)
+   }
+
   const paymentLinksWithUsage = function paymentLinksWithUsage(gatewayAccountId) {
     const queryParams = {
       params: {
@@ -18,12 +29,18 @@ const productsMethods = function productsMethods(instance) {
     }
     return axiosInstance.get('/v1/api/stats/products', queryParams)
       .then(utilExtractData)
-      .then(redactProductTokens)
+      .then(redactProductTokensFromPaymentLinksWithUsage)
+  }
+
+  const createProduct = function createProduct(createProductRequest) {
+    return axiosInstance.post('/v1/api/products', createProductRequest).then(utilExtractData)
   }
 
   return {
     paymentLinksByGatewayAccount,
-    paymentLinksWithUsage
+    paymentLinksByGatewayAccountAndType,
+    paymentLinksWithUsage,
+    createProduct
   }
 }
 
