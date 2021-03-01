@@ -36,5 +36,7 @@ export default {
   updateStripePayoutDescriptorPage: http.updateStripePayoutDescriptorPage,
   updateStripePayoutDescriptor: http.updateStripePayoutDescriptor,
   search: http.search,
-  searchRequest: http.searchRequest
+  searchRequest: http.searchRequest,
+  agentInitiatedMotoPage: http.agentInitiatedMotoPage,
+  createAgentInitiatedMotoProduct: http.createAgentInitiatedMotoProduct
 }

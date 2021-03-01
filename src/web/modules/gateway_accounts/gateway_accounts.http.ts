@@ -5,13 +5,14 @@ import { stringify } from 'qs'
 import logger from '../../../lib/logger'
 
 import {
-  Connector, DirectDebitConnector, AdminUsers, PublicAuth
+  Connector, DirectDebitConnector, AdminUsers, PublicAuth, Products
 } from '../../../lib/pay-request'
 import { wrapAsyncErrorHandler } from '../../../lib/routes'
 import { extractFiltersFromQuery, toAccountSearchParams } from '../../../lib/gatewayAccounts'
 
 import GatewayAccountFormModel from './gatewayAccount.model'
 import { Service } from '../../../lib/pay-request/types/adminUsers'
+import { Product } from '../../../lib/pay-request/types/products'
 import DirectDebitGatewayAccount from '../../../lib/pay-request/types/directDebitConnector'
 import { GatewayAccount as CardGatewayAccount } from '../../../lib/pay-request/types/connector'
 import { ClientFormError } from '../common/validationErrorFormat'
@@ -21,6 +22,9 @@ import HTTPSProxyAgent from 'https-proxy-agent'
 import { format } from './csv'
 import { formatWithAdminEmails } from './csv_with_admin_emails'
 import { createCsvWithAdminEmailsData, createCsvData } from './csv_data'
+import CreateAgentInitiatedMotoProductFormRequest from './CreateAgentInitiatedMotoProductFormRequest'
+import { formatErrorsForTemplate } from '../common/validationErrorFormat'
+import { IOValidationError } from '../../../lib/errors'
 
 const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY)
 stripe.setApiVersion('2018-09-24')
@@ -387,6 +391,131 @@ const searchRequest = async function searchRequest(req: Request, res: Response):
   res.redirect(`/gateway_accounts/${accountId}`)
 }
 
+const agentInitiatedMotoPage = async function agentInitiatedMotoPage(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { id } = req.params
+
+  const [account, service, products] = await Promise.all([
+    getAccount(id),
+    AdminUsers.gatewayAccountServices(id),
+    Products.paymentLinksByGatewayAccountAndType(id, 'AGENT_INITIATED_MOTO')
+  ])
+
+  const context: {
+    account: CardGatewayAccount;
+    service: Service;
+    products: Product[];
+    csrf: string;
+    formValues?: object;
+    flash: object;
+    errors?: object;
+    errorMap?: object[];
+  } = {
+    account: account,
+    service: service,
+    products: products,
+    flash: req.flash(),
+    csrf: req.csrfToken()
+  }
+
+  const { recovered } = req.session
+
+  if (recovered) {
+    context.formValues = recovered.formValues
+
+    if (recovered.errors) {
+      context.errors = recovered.errors
+      context.errorMap = recovered.errors.reduce((aggregate: {
+        [key: string]: string;
+      }, error: ClientFormError) => {
+        // eslint-disable-next-line no-param-reassign
+        aggregate[error.id] = error.message
+        return aggregate
+      }, {})
+    }
+    delete req.session.recovered
+  }
+
+  res.render('gateway_accounts/agent_initiated_moto', context)
+}
+
+const createAgentInitiatedMotoProduct = async function createAgentInitiatedMotoProduct(
+  req: Request,
+  res: Response
+): Promise<void> {
+  delete req.session.recovered
+
+  const { id: gatewayAccountId } = req.params
+
+  let formValues
+  try {
+    formValues = new CreateAgentInitiatedMotoProductFormRequest(req.body)
+  } catch (error) {
+    if (error instanceof IOValidationError) {
+      req.session.recovered = {
+        formValues: req.body,
+        errors: formatErrorsForTemplate(error.source)
+      }
+      res.redirect(`/gateway_accounts/${gatewayAccountId}/agent_initiated_moto`)
+      return
+    }
+  }
+
+  const account = await getAccount(gatewayAccountId)
+
+  const apiTokenDescription = `Agent-initiated MOTO API token: ${formValues.name}`
+
+  const createApiTokenRequest: {
+    account_id: string,
+    description: string,
+    created_by: string,
+    token_type: string,
+    type: string,
+    token_account_type: string
+  } = {
+    account_id: gatewayAccountId,
+    description: apiTokenDescription,
+    created_by: 'govuk-pay-support@digital.cabinet-office.gov.uk',
+    token_type: 'CARD',
+    type: 'PRODUCTS',
+    token_account_type: account.type
+  }
+
+  const { token } = await PublicAuth.createApiToken(createApiTokenRequest)
+
+  logger.info(`Created agent-initiated MOTO API token for gateway account ${gatewayAccountId} with description [${apiTokenDescription}]`)
+
+  const createAgentInitiatedMotoProductRequest: {
+    gateway_account_id: string,
+    pay_api_token: string,
+    name: string,
+    description: string,
+    reference_enabled: boolean,
+    reference_label: string,
+    reference_hint: string,
+    type: string,
+  } = {
+    gateway_account_id: gatewayAccountId,
+    pay_api_token: token,
+    name: formValues.name,
+    description: formValues.description,
+    reference_enabled: true,
+    reference_label: formValues.reference_label,
+    reference_hint: formValues.reference_hint,
+    type: 'AGENT_INITIATED_MOTO'
+  }
+
+  const { external_id } = await Products.createProduct(createAgentInitiatedMotoProductRequest)
+
+  logger.info(`Created agent-initiated MOTO product with ID ${external_id} for gateway account ${gatewayAccountId}`)
+
+  req.flash('generic', 'Agent-intiated MOTO product created')
+
+  res.redirect(`/gateway_accounts/${gatewayAccountId}/agent_initiated_moto`)
+}
+
 export default {
   overview: wrapAsyncErrorHandler(overview),
   listCSV: wrapAsyncErrorHandler(listCSV),
@@ -410,5 +539,7 @@ export default {
   updateStripePayoutDescriptorPage: wrapAsyncErrorHandler(updateStripePayoutDescriptorPage),
   updateStripePayoutDescriptor: wrapAsyncErrorHandler(updateStripePayoutDescriptor),
   search: wrapAsyncErrorHandler(search),
-  searchRequest: wrapAsyncErrorHandler(searchRequest)
+  searchRequest: wrapAsyncErrorHandler(searchRequest),
+  agentInitiatedMotoPage: wrapAsyncErrorHandler(agentInitiatedMotoPage),
+  createAgentInitiatedMotoProduct: wrapAsyncErrorHandler(createAgentInitiatedMotoProduct)
 }
