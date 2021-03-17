@@ -18,7 +18,8 @@ type TransactionRow = {
   captured_date?: string, 
   refund_status?: string, 
   refund_amount_refunded?: string, 
-  refund_amount_available?: string 
+  refund_amount_available?: string,
+  reproject_domain_object?: string
 }
 
 export async function fileUpload(req: Request, res: Response): Promise<void> {
@@ -153,29 +154,35 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
           return cb(null, false, 'captured_date is not a valid ISO_8601 string')
         }
 
-        if (row.refund_amount_refunded && !(parseInt(row.refund_amount_refunded) >= 0)){
+        if (row.refund_amount_refunded && !(parseInt(row.refund_amount_refunded) >= 0)) {
           return cb(null, false, 'refund_amount_refunded must be a number')
         }
 
-        if (row.refund_amount_available && !(parseInt(row.refund_amount_available) >= 0)){
+        if (row.refund_amount_available && !(parseInt(row.refund_amount_available) >= 0)) {
           return cb(null, false, 'refund_amount_available must be a number')
         }
 
         if (row.event_name === 'PAYMENT_STATUS_CORRECTED_TO_SUCCESS_BY_ADMIN') {
-          if (!row.captured_date){
+          if (!row.captured_date) {
             return cb(null, false, `captured_date is required when event_name is '${row.event_name}'`)
           }
           
-          if (!row.refund_status){
+          if (!row.refund_status) {
             return cb(null, false, `refund_status is required when event_name is '${row.event_name}'`)
           }
 
-          if (!row.refund_amount_refunded){
+          if (!row.refund_amount_refunded) {
             return cb(null, false, `refund_amount_refunded is required when event_name is '${row.event_name}'`)
           }
 
-          if (!row.refund_amount_available){
+          if (!row.refund_amount_available) {
             return cb(null, false, `refund_amount_available is required when event_name is '${row.event_name}'`)
+          }
+        }
+
+        if (row.reproject_domain_object) {
+          if (!['true', 'false'].includes(row.reproject_domain_object)) {
+            return cb(null, false, 'reproject_domain_object must be one of \'true\' or \'false\'')
           }
         }
 
