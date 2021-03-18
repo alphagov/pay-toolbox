@@ -60,7 +60,7 @@
     "nunjucks": "3.2.2",
     "passport": "^0.4.1",
     "passport-github": "1.1.0",
-    "qs": "6.9.6",
+    "qs": "6.10.0",
     "sass": "^1.32.8",
     "stripe": "7.15.0",
     "stripe-latest": "npm:stripe@^8.135.0",
