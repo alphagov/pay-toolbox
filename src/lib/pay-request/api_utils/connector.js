@@ -1,87 +1,105 @@
 /* eslint-disable no-restricted-syntax, no-await-in-loop */
+const { EntityNotFoundError } = require('../../errors')
 const lodash = require('lodash')
 
-const connectorMethods = function connectorMethods(instance) {
+const connectorMethods = function connectorMethods (instance) {
   const axiosInstance = instance || this
 
   // @TODO(sfount) extract and standardise this - there should be no need to
   // repeat this over and over
   const utilExtractData = (response) => response.data
 
-  const accounts = function accounts(params) {
+  const handleNotFound = function handleNotFound (entityName, entityId) {
+    return (error) => {
+      if (error.data.response && error.data.response.status === 404) {
+        throw new EntityNotFoundError(entityName, entityId)
+      }
+      throw error
+    }
+  }
+
+  const accounts = function accounts (params) {
     params = lodash.omitBy(params, lodash.isEmpty)
-    return axiosInstance.get('/v1/api/accounts', {params}).then(utilExtractData)
+    return axiosInstance.get('/v1/api/accounts', { params }).then(utilExtractData)
   }
 
-  const account = function account(id) {
-    return axiosInstance.get(`/v1/api/accounts/${id}`).then(utilExtractData)
+  const account = function account (id) {
+    return axiosInstance.get(`/v1/api/accounts/${id}`)
+      .then(utilExtractData)
+      .catch(handleNotFound('Account by id  ', id))
   }
 
-  const accountWithCredentials = function accountWithCredentials(id) {
+  const accountByExternalId = function accountByExternalId (externalId) {
+    return axiosInstance.get(`/v1/frontend/accounts/external-id/${externalId}`)
+      .then(utilExtractData)
+      .catch(handleNotFound('Account by external id  ', externalId))
+  }
+
+  const accountWithCredentials = function accountWithCredentials (id) {
     return axiosInstance.get(`/v1/frontend/accounts/${id}`).then(utilExtractData)
   }
 
-  const acceptedCardTypes = function acceptedCardTypes(accountId) {
+  const acceptedCardTypes = function acceptedCardTypes (accountId) {
     return axiosInstance.get(`/v1/frontend/accounts/${accountId}/card-types`).then(utilExtractData)
   }
 
-  const createAccount = function createAccount(accountDetails) {
+  const createAccount = function createAccount (accountDetails) {
     return axiosInstance.post('/v1/api/accounts', accountDetails).then(utilExtractData)
   }
 
-  const performanceReport = function performanceReport() {
+  const performanceReport = function performanceReport () {
     return axiosInstance.get('/v1/api/reports/performance-report').then(utilExtractData)
   }
 
-  const dailyPerformanceReport = function dailyPerformanceReport(date) {
+  const dailyPerformanceReport = function dailyPerformanceReport (date) {
     const params = { date }
     return axiosInstance.get('/v1/api/reports/daily-performance-report', { params }).then(utilExtractData)
   }
 
-  const gatewayAccountPerformanceReport = function gatewayAccountPerformanceReport() {
+  const gatewayAccountPerformanceReport = function gatewayAccountPerformanceReport () {
     return axiosInstance.get('/v1/api/reports/gateway-account-performance-report').then(utilExtractData)
   }
 
-  const searchTransactionsByChargeId = function searchTransactionsByChargeId(accountId, chargeId) {
+  const searchTransactionsByChargeId = function searchTransactionsByChargeId (accountId, chargeId) {
     return axiosInstance.get(`/v1/api/accounts/${accountId}/charges/${chargeId}/events`).then(utilExtractData)
   }
 
-  const getGatewayComparisons = function getGatewayComparisons(chargeIds) {
+  const getGatewayComparisons = function getGatewayComparisons (chargeIds) {
     return axiosInstance.post('/v1/api/discrepancies/report', chargeIds).then(utilExtractData)
   }
 
-  const getGatewayComparison = function getGatewayComparison(chargeId) {
-    return getGatewayComparisons([ chargeId ])
+  const getGatewayComparison = function getGatewayComparison (chargeId) {
+    return getGatewayComparisons([chargeId])
   }
 
-  const resolveDiscrepancy = function resolveDiscrepancy(chargeId) {
-    return axiosInstance.post('/v1/api/discrepancies/resolve', [ chargeId ]).then(utilExtractData)
+  const resolveDiscrepancy = function resolveDiscrepancy (chargeId) {
+    return axiosInstance.post('/v1/api/discrepancies/resolve', [chargeId]).then(utilExtractData)
   }
 
   // eslint-disable-next-line max-len
-  const searchTransactionsByReference = function searchTransactionsByReference(accountId, reference) {
+  const searchTransactionsByReference = function searchTransactionsByReference (accountId, reference) {
     return axiosInstance.get(`/v1/api/accounts/${accountId}/charges?reference=${reference}`).then(utilExtractData)
   }
 
-  const stripe = function stripe(accountId) {
+  const stripe = function stripe (accountId) {
     return axiosInstance.get(`/v1/api/accounts/${accountId}/stripe-account`).then(utilExtractData)
   }
 
-  const charge = function charge(accountId, externalChargeId) {
+  const charge = function charge (accountId, externalChargeId) {
     return axiosInstance.get(`/v1/api/accounts/${accountId}/charges/${externalChargeId}`).then(utilExtractData)
   }
 
-  const refunds = function refunds(accountId, externalChargeId) {
+  const refunds = function refunds (accountId, externalChargeId) {
     return axiosInstance.get(`/v1/api/accounts/${accountId}/charges/${externalChargeId}/refunds`).then(utilExtractData)
   }
 
-  const getChargeByGatewayTransactionId = function getChargeByGatewayTransactionId(
+  const getChargeByGatewayTransactionId = function getChargeByGatewayTransactionId (
     gatewayTransactionId
   ) {
     return axiosInstance.get(`/v1/api/charges/gateway_transaction/${gatewayTransactionId}`)
   }
 
-  const updateCorporateSurcharge = async function updateCorporateSurcharge(id, surcharges) {
+  const updateCorporateSurcharge = async function updateCorporateSurcharge (id, surcharges) {
     const url = `/v1/api/accounts/${id}`
     const results = Object.keys(surcharges)
       .filter((key) => key !== '_csrf')
@@ -95,7 +113,7 @@ const connectorMethods = function connectorMethods(instance) {
     }
   }
 
-  const updateEmailBranding = async function updateEmailBranding(id, notifySettings) {
+  const updateEmailBranding = async function updateEmailBranding (id, notifySettings) {
     const url = `/v1/api/accounts/${id}`
     await axiosInstance.patch(url, {
       op: 'replace',
@@ -104,11 +122,11 @@ const connectorMethods = function connectorMethods(instance) {
     })
   }
 
-  const updateStripeSetupValues = function updateStripeSetupValues(id, stripeSetupFields) {
+  const updateStripeSetupValues = function updateStripeSetupValues (id, stripeSetupFields) {
     const url = `/v1/api/accounts/${id}/stripe-setup`
     const payload = []
-    
-    stripeSetupFields.forEach((field) =>{
+
+    stripeSetupFields.forEach((field) => {
       payload.push({
         op: 'replace',
         path: field,
@@ -119,7 +137,7 @@ const connectorMethods = function connectorMethods(instance) {
     return axiosInstance.patch(url, payload)
   }
 
-  const toggleBlockPrepaidCards = async function toggleBlockPrepaidCards(id) {
+  const toggleBlockPrepaidCards = async function toggleBlockPrepaidCards (id) {
     const gatewayAccount = await account(id)
     const url = `/v1/api/accounts/${id}`
     await axiosInstance.patch(url, {
@@ -130,7 +148,7 @@ const connectorMethods = function connectorMethods(instance) {
     return !gatewayAccount.block_prepaid_cards
   }
 
-  const toggleMotoPayments = async function toggleMotoPayments(id) {
+  const toggleMotoPayments = async function toggleMotoPayments (id) {
     const gatewayAccount = await account(id)
     const url = `/v1/api/accounts/${gatewayAccount.gateway_account_id}`
     await axiosInstance.patch(url, {
@@ -141,7 +159,7 @@ const connectorMethods = function connectorMethods(instance) {
     return !gatewayAccount.allow_moto
   }
 
-  const toggleAllowTelephonePaymentNotifications = async function toggleAllowTelephonePaymentNotifications(id) {
+  const toggleAllowTelephonePaymentNotifications = async function toggleAllowTelephonePaymentNotifications (id) {
     const gatewayAccount = await account(id)
     const url = `/v1/api/accounts/${gatewayAccount.gateway_account_id}`
     await axiosInstance.patch(url, {
@@ -156,6 +174,7 @@ const connectorMethods = function connectorMethods(instance) {
     performanceReport,
     gatewayAccountPerformanceReport,
     account,
+    accountByExternalId,
     accounts,
     accountWithCredentials,
     acceptedCardTypes,
