@@ -155,40 +155,79 @@
     }}
   </div>
 
+  {% if service.redirect_to_service_immediately_on_terminal_state %}
   <div>
-    <h1 class="govuk-heading-s">Toggle redirect to service on terminal state flag</h1>
-    <p class="govuk-body">Enabling this flag for a service will change the payment flow across all gateway accounts, this should never be done without consulting the service.</p>
+    <h1 class="govuk-heading-s">Redirect to service on terminal state is enabled</h1>
     <p class="govuk-body">Reference the <a <a class="govuk-link" href="https://docs.payments.service.gov.uk/optional_features/use_your_own_error_pages/#use-your-own-payment-failure-pages">use your own error pages</a> documentation for more details.</p>
     {{ govukButton({
-      text: "Toggle redirect to service on terminal state flag",
+      text: "Disable redirect to service on terminal state",
       classes: "govuk-button--warning",
       href: "/services/" + serviceId + "/toggle_terminal_state_redirect"
       })
     }}
   </div>
-
+  {% else %}
   <div>
-    <h1 class="govuk-heading-s">Toggle agent-initiated MOTO payments enabled flag</h1>
+    <h1 class="govuk-heading-s">Enable redirect to service on terminal state</h1>
+    <p class="govuk-body">Enabling this flag for a service will change the payment flow across all gateway accounts, this should never be done without consulting the service.</p>
+    <p class="govuk-body">Reference the <a <a class="govuk-link" href="https://docs.payments.service.gov.uk/optional_features/use_your_own_error_pages/#use-your-own-payment-failure-pages">use your own error pages</a> documentation for more details.</p>
+    {{ govukButton({
+      text: "Enable redirect to service on terminal state",
+      classes: "govuk-button--warning",
+      href: "/services/" + serviceId + "/toggle_terminal_state_redirect"
+      })
+    }}
+  </div>
+  {% endif %}
+
+  {% if service.agent_initiated_moto_enabled%}
+  <div>
+    <h1 class="govuk-heading-s">Agent-initiated MOTO payments are enabled</h1>
     <p class="govuk-body">Enabling this flag for a service shows a ‘Take a telephone payment’ link on the admin tool dashboard if there is at least one agent-initiated MOTO product for the linked gateway account.</p>
     <p class="govuk-body">It also allows administrators to assign users to the ‘View and take telephone payments’ and ‘View, refund and take telephone payments’ roles.</p>
     <p class="govuk-body">Linked gateway accounts must have MOTO payments enabled or payment creation will fail.</p>
     {{ govukButton({
-      text: "Toggle agent-initiated MOTO payments enabled flag",
+      text: "Disable agent-initiated MOTO payments",
       href: "/services/" + serviceId + "/toggle_agent_initiated_moto_enabled"
       })
     }}
   </div>
-
+  {% else %}
   <div>
-    <h1 class="govuk-heading-s">Toggle experimental features enabled flag</h1>
-    <p class="govuk-body">Enabling this flag for a service will opt the service into any features checking for this flag to be set on the service.</p>
-    <p class="govuk-body">This flag should only be enabled while the service is testing functionality that will not be made available to all users/ services initially.</p>
+    <h1 class="govuk-heading-s">Enable agent-initiated MOTO payments</h1>
+    <p class="govuk-body">Enabling this flag for a service shows a ‘Take a telephone payment’ link on the admin tool dashboard if there is at least one agent-initiated MOTO product for the linked gateway account.</p>
+    <p class="govuk-body">It also allows administrators to assign users to the ‘View and take telephone payments’ and ‘View, refund and take telephone payments’ roles.</p>
+    <p class="govuk-body">Linked gateway accounts must have MOTO payments enabled or payment creation will fail.</p>
     {{ govukButton({
-      text: "Toggle experimental features flag",
+      text: "Enable agent-initiated MOTO payments",
+      href: "/services/" + serviceId + "/toggle_agent_initiated_moto_enabled"
+      })
+    }}
+  </div>
+  {% endif %}
+
+  {% if service.experimental_features_enabled %}
+  <div>
+    <h1 class="govuk-heading-s">Experimental features are enabled</h1>
+    <p class="govuk-body">Enabling this flag for a service will opt the service into any features checking for this flag to be set on the service.</p>
+    {{ govukButton({
+      text: "Disable experimental features",
       href: "/services/" + serviceId + "/toggle_experimental_features_enabled"
       })
     }}
   </div>
+  {% else %}
+  <div>
+    <h1 class="govuk-heading-s">Enable experimental features</h1>
+    <p class="govuk-body">Enabling this flag for a service will opt the service into any features checking for this flag to be set on the service.</p>
+    <p class="govuk-body">This flag should only be enabled while the service is testing functionality that will not be made available to all users/ services initially.</p>
+    {{ govukButton({
+      text: "Enable experimental features",
+      href: "/services/" + serviceId + "/toggle_experimental_features_enabled"
+      })
+    }}
+  </div>
+  {% endif %}
 
   {{ json("Service details source", service) }}
   {{ json("Users details source", users) }}
