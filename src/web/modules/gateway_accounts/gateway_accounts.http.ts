@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express'
+import { Request, Response, NextFunction } from 'express'
 import { stringify } from 'qs'
 
 import logger from '../../../lib/logger'
@@ -24,7 +24,7 @@ import { formatWithAdminEmails } from './csv_with_admin_emails'
 import { createCsvWithAdminEmailsData, createCsvData } from './csv_data'
 import CreateAgentInitiatedMotoProductFormRequest from './CreateAgentInitiatedMotoProductFormRequest'
 import { formatErrorsForTemplate } from '../common/validationErrorFormat'
-import { IOValidationError } from '../../../lib/errors'
+import { EntityNotFoundError, IOValidationError } from '../../../lib/errors'
 
 const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY)
 stripe.setApiVersion('2018-09-24')
@@ -386,9 +386,19 @@ const search = async function search(req: Request, res: Response): Promise<void>
   res.render('gateway_accounts/search', { csrf: req.csrfToken() })
 }
 
-const searchRequest = async function searchRequest(req: Request, res: Response): Promise<void> {
-  const accountId = req.body.id.trim()
-  res.redirect(`/gateway_accounts/${accountId}`)
+const searchRequest = async function searchRequest(req: Request, res: Response, next: NextFunction): Promise<void> {
+  const id = req.body.id.trim()
+  try {
+    await Connector.account(id)
+    return res.redirect(`/gateway_accounts/${id}`)
+  }
+  catch (err) {
+    if (err instanceof EntityNotFoundError) {
+      const accountByExternalId = await Connector.accountByExternalId(id)
+      return res.redirect(`/gateway_accounts/${accountByExternalId.gateway_account_id}`)
+    }
+    next(err)
+  }
 }
 
 const agentInitiatedMotoPage = async function agentInitiatedMotoPage(
