@@ -47,7 +47,7 @@
     "dotenv": "8.2.0",
     "express": "4.17.1",
     "fast-csv": "^4.3.6",
-    "google-libphonenumber": "3.2.18",
+    "google-libphonenumber": "3.2.19",
     "govuk-frontend": "^3.11.0",
     "helmet": "^4.4.1",
     "https-proxy-agent": "5.0.0",
