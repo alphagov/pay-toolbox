@@ -26,15 +26,6 @@ if (config.server.HTTPS_PROXY) {
     stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
 }
 
-function validateRequest(currentPspTestAccountStage: string) {
-    if (currentPspTestAccountStage === 'CREATED') {
-        throw new CustomValidationError('Stripe test account has already been created for service')
-    }
-    if (currentPspTestAccountStage !== 'REQUEST_SUBMITTED') {
-        throw new CustomValidationError('Service has not completed a request for Stripe test account')
-    }
-}
-
 const createTestAccount = async function createTestAccount(req: Request, res: Response): Promise<void> {
     if (!STRIPE_ACCOUNT_TEST_API_KEY) {
         throw new CustomValidationError('Stripe test API Key was not configured for this Toolbox instance')
@@ -42,8 +33,6 @@ const createTestAccount = async function createTestAccount(req: Request, res: Re
 
     const serviceExternalId = req.query.service as string
     const service: Service = await AdminUsers.service(serviceExternalId)
-
-    validateRequest(service.current_psp_test_account_stage)
 
     const context: {
         systemLinkService: string; serviceName: string;
@@ -65,8 +54,6 @@ const createTestAccountConfirm = async function createTestAccountConfirm(req: Re
 
     try {
         service = await AdminUsers.service(systemLinkService)
-
-        validateRequest(service.current_psp_test_account_stage)
 
         const stripeAccount = await createStripeTestAccount(service.service_name.en)
 
