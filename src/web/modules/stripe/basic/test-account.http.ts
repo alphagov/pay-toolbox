@@ -34,15 +34,12 @@ const createTestAccount = async function createTestAccount(req: Request, res: Re
     const serviceExternalId = req.query.service as string
     const service: Service = await AdminUsers.service(serviceExternalId)
 
-    const context: {
-        systemLinkService: string; serviceName: string;
-        csrf: string;
-        flash: object
-    } = {
+    const context = {
         systemLinkService: serviceExternalId,
         serviceName: service.service_name.en,
         csrf: req.csrfToken(),
-        flash: req.flash()
+        flash: req.flash(),
+        stripeTestAccountRequested: service.current_psp_test_account_stage === 'REQUEST_SUBMITTED'
     }
 
     return res.render('stripe/basic/confirm-create-test-account', context)
@@ -97,12 +94,12 @@ async function createTestGatewayAccount(serviceId: string, serviceName: string, 
     logger.info(`Created new Gateway Account ${gatewayAccountIdDerived}`)
 
     await Connector.updateStripeSetupValues(gatewayAccountIdDerived, [
-        'bank_account', 
+        'bank_account',
         'company_number',
         'responsible_person',
         'vat_number'
     ])
-    logger.info(`Set Stripe setup values to 'true' for Stripe test Gateway Account ${gatewayAccountIdDerived}`) 
+    logger.info(`Set Stripe setup values to 'true' for Stripe test Gateway Account ${gatewayAccountIdDerived}`)
 
     // connect system linked services to the created account
     await AdminUsers.updateServiceGatewayAccount(serviceId, gatewayAccountIdDerived)

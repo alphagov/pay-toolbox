@@ -1,6 +1,7 @@
 {% extends "layout/layout.njk" %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% block main %}
   <div class="govuk-body">
@@ -19,6 +20,13 @@
     ]
     })
   }}
+
+  {% if not stripeTestAccountRequested %}
+    {{ govukWarningText({
+      text: "This service has not requested a Stripe test account using the self service tool",
+      iconFallbackTest: "Warning"
+    }) }}
+  {% endif %}
 
   <form method="POST" action="/stripe/basic/create-test-account">
     <p class="govuk-body">You are about to create a Stripe account for the service. This will create:</p>
