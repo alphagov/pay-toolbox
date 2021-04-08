@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { S3 } from 'aws-sdk'
 import { parse, ParsedQs, stringify } from 'qs'
 
 import logger from '../../../lib/logger'
@@ -95,14 +96,60 @@ const detail = async function detail(req: Request, res: Response): Promise<void>
   })
 }
 
-const branding = async function branding(req: Request, res: Response): Promise<void> {
+const brandingLegacy = async function branding(req: Request, res: Response): Promise<void> {
   const serviceId: string = req.params.id
   const service = await AdminUsers.service(serviceId)
 
-  res.render('services/branding', { serviceId, service, csrf: req.csrfToken() })
+  res.render('services/branding-legacy', { serviceId, service, csrf: req.csrfToken() })
+}
+
+const branding = async function branding(req: Request, res: Response): Promise<void> {
+  const serviceId: string = req.params.id
+  // const service = await AdminUsers.service(serviceId)
+
+  res.render('services/branding', { serviceId, csrf: req.csrfToken() })
+}
+
+const uploadToS3 = async function uploadToS3(content: Buffer, key: string): Promise<string> {
+  try {
+    const s3 = new S3()
+    logger.info(`Uploading transactions file to S3 with key ${key}`)
+    const response = await s3.putObject({
+      Bucket: 'pay-govuk-custom-branding-test', //TODO env var this
+      Body: content,
+      Key: key //TODO use md5hash of image contents + stringified branding options (e.g. colour etc, alignment)
+    }).promise();
+    logger.info('Upload to S3 completed', {
+      fileVersionId: response.VersionId,
+      fileExpiration: response.Expiration
+    })
+    return key
+  } catch (err) {
+    logger.error(`Error uploading to s3: ${err.message}`)
+    throw new Error('There was an error uploading the file to S3')
+  }
 }
 
 const updateBranding = async function updateBranding(req: Request, res: Response): Promise<void> {
+  if (!req.file || !req.file.buffer) {
+    req.flash('error', 'Select a png/svg, 300px etc') //TODO validate
+    return res.redirect(`/services/${req.params.id}/branding`)
+  }
+
+  try {
+    const fileKey = await uploadToS3(req.file.buffer, req.file.originalname)
+    res.redirect(`/services/${req.params.id}/branding/confirm?key=${fileKey}`)
+  } catch (err) {
+    logger.warn('Error uploading image', {
+      message: err.message,
+      filename: req.file && req.file.filename
+    })
+    req.flash('error', err.message)
+    res.redirect(`/services/${req.params.id}/branding`)
+  }
+}
+
+const updateBrandingLegacy = async function updateBrandingLegacy(req: Request, res: Response): Promise<void> {
   const { id } = req.params
 
   await AdminUsers.updateServiceBranding(
@@ -264,7 +311,9 @@ export default {
   listCsv: wrapAsyncErrorHandler(listCsv),
   performancePlatformCsv: wrapAsyncErrorHandler(performancePlatformCsv),
   detail: wrapAsyncErrorHandler(detail),
+  brandingLegacy: wrapAsyncErrorHandler(brandingLegacy),
   branding: wrapAsyncErrorHandler(branding),
+  updateBrandingLegacy: wrapAsyncErrorHandler(updateBrandingLegacy),
   updateBranding: wrapAsyncErrorHandler(updateBranding),
   linkAccounts: wrapAsyncErrorHandler(linkAccounts),
   updateLinkAccounts: wrapAsyncErrorHandler(updateLinkAccounts),

@@ -9,7 +9,9 @@ export default {
     http: http.detail,
     exceptions: exceptions.detail
   },
+  brandingLegacy: http.brandingLegacy,
   branding: http.branding,
+  updateBrandingLegacy: http.updateBrandingLegacy,
   updateBranding: http.updateBranding,
   linkAccounts: http.linkAccounts,
   updateLinkAccounts: {
