@@ -1,3 +1,5 @@
+import { readFileSync } from 'fs'
+import { extname, join } from 'path'
 import { Request, Response } from 'express'
 import { S3 } from 'aws-sdk'
 import { parse, ParsedQs, stringify } from 'qs'
@@ -14,6 +16,8 @@ import UpdateOrganisationFormRequest from './UpdateOrganisationForm'
 import { IOValidationError } from '../../../lib/errors'
 import { formatServiceExportCsv } from './serviceExportCsv'
 import { BooleanFilterOption } from '../common/BooleanFilterOption'
+
+const scssTemplate = readFileSync(join(`${process.cwd()}`, '/src/web/modules/services/scss-template.scss'))
 
 interface Filters {
   live: BooleanFilterOption;
@@ -125,8 +129,17 @@ const uploadToS3 = async function uploadToS3(content: Buffer, key: string): Prom
     })
     return key
   } catch (err) {
-    logger.error(`Error uploading to s3: ${err.message}`)
+    logger.error(`Error uploading ${key} to s3: ${err.message}`)
     throw new Error('There was an error uploading the file to S3')
+  }
+}
+
+function getScssFileName(imageFileName: string): string {
+  const extension = extname(imageFileName)
+  if (extension) {
+    return imageFileName.replace(extension, '.scss')
+  } else {
+    return imageFileName + '.scss'
   }
 }
 
@@ -138,6 +151,7 @@ const updateBranding = async function updateBranding(req: Request, res: Response
 
   try {
     const fileKey = await uploadToS3(req.file.buffer, req.file.originalname)
+    await uploadToS3(scssTemplate, getScssFileName(req.file.originalname))
     res.redirect(`/services/${req.params.id}/branding/confirm?key=${fileKey}`)
   } catch (err) {
     logger.warn('Error uploading image', {
@@ -325,4 +339,3 @@ export default {
   updateOrganisationForm: wrapAsyncErrorHandler(updateOrganisationForm),
   updateOrganisation: wrapAsyncErrorHandler(updateOrganisation)
 }
-
