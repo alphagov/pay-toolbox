@@ -106,7 +106,7 @@ const configureTemplateRendering = async function configureTemplateRendering(ins
   const staticResourceManifest = await readManifest('manifest')
   const browserManifest = await readManifest('browser.manifest')
 
-  const templateRendererConfig = { autoescape: true, express: instance, watch: common.development }
+  const templateRendererConfig = { autoescape: true, express: instance }
 
   // include both templates from this repository and from govuk frontend
   const templatePathRoots = [ path.join(process.cwd(), 'node_modules/govuk-frontend'), path.join(__dirname, 'modules') ]
