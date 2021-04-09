@@ -1,14 +1,9 @@
 $govuk-font-family: -apple-system,BlinkMacSystemFont,helvetica neue,helvetica,ubuntu,roboto,noto,segoe ui,arial,sans-serif; // Override font as so not to use New Transport
-@import "govuk-frontend/govuk/all";
-
-// CUSTOM BRANDING
-// Use the variables below to control the style
-// Make sure banner colours meet minimum colour contrast levels
-
-$custom-banner-colour: #434240;
 $custom-banner-border-colour: #066AB1;
 $custom-text-colour: #ffffff;
 $logo-image-height: 2em;
+
+@import "govuk-frontend/govuk/all";
 
 .custom-branding {
   @if $logo-image-height != null {

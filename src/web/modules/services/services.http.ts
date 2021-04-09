@@ -1,4 +1,5 @@
 import { renderSync } from 'sass'
+import { readFileSync } from 'fs'
 import { extname, join } from 'path'
 import { Request, Response } from 'express'
 import { S3 } from 'aws-sdk'
@@ -16,6 +17,8 @@ import UpdateOrganisationFormRequest from './UpdateOrganisationForm'
 import { IOValidationError } from '../../../lib/errors'
 import { formatServiceExportCsv } from './serviceExportCsv'
 import { BooleanFilterOption } from '../common/BooleanFilterOption'
+
+const scssTemplate = readFileSync(join(`${process.cwd()}`, '/src/web/modules/services/scss-template.scss')).toString()
 
 interface Filters {
   live: BooleanFilterOption;
@@ -149,8 +152,11 @@ const updateBranding = async function updateBranding(req: Request, res: Response
 
   try {
     const fileKey = await uploadToS3(req.file.buffer, req.file.originalname)
+    //TODO validate colour below
     const sass = renderSync({
-      file: join(`${process.cwd()}`, '/src/web/modules/services/scss-template.scss'),
+      data: `
+$custom-banner-colour: ${req.body.custom_banner_colour};
+${scssTemplate}`,
       includePaths: ['node_modules']
     })
     await uploadToS3(sass.css, getScssFileName(req.file.originalname))

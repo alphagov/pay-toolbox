@@ -19,6 +19,14 @@
         }
     }) }}
 
+    {{ govukInput({
+      id: "custom_banner_colour",
+      name: "custom_banner_colour",
+      value: "#434240",
+      label: { text: "Custom banner colour" }
+      })
+    }}    
+
     {{ govukButton({
         text: "Submit"
         })
