@@ -19,6 +19,7 @@ import { formatServiceExportCsv } from './serviceExportCsv'
 import { BooleanFilterOption } from '../common/BooleanFilterOption'
 
 const scssTemplate = readFileSync(join(`${process.cwd()}`, '/src/web/modules/services/scss-template.scss')).toString()
+const cloudfrontUrl = 'https://d106cm2l6ezls7.cloudfront.net/' //TODO env var this
 
 interface Filters {
   live: BooleanFilterOption;
@@ -110,9 +111,9 @@ const brandingLegacy = async function branding(req: Request, res: Response): Pro
 
 const branding = async function branding(req: Request, res: Response): Promise<void> {
   const serviceId: string = req.params.id
-  // const service = await AdminUsers.service(serviceId)
+  const service = await AdminUsers.service(serviceId)
 
-  res.render('services/branding', { serviceId, csrf: req.csrfToken() })
+  res.render('services/branding', { serviceId, service, csrf: req.csrfToken() })
 }
 
 const uploadToS3 = async function uploadToS3(content: Buffer, key: string): Promise<string> {
@@ -122,6 +123,7 @@ const uploadToS3 = async function uploadToS3(content: Buffer, key: string): Prom
     const response = await s3.putObject({
       Bucket: 'pay-govuk-custom-branding-test', //TODO env var this
       Body: content,
+      ACL: 'public-read',
       Key: key //TODO use md5hash of image contents + stringified branding options (e.g. colour etc, alignment)
     }).promise();
     logger.info('Upload to S3 completed', {
@@ -135,7 +137,7 @@ const uploadToS3 = async function uploadToS3(content: Buffer, key: string): Prom
   }
 }
 
-function getScssFileName(imageFileName: string): string {
+function getCssFileName(imageFileName: string): string {
   const extension = extname(imageFileName)
   if (extension) {
     return imageFileName.replace(extension, '.css')
@@ -150,8 +152,11 @@ const updateBranding = async function updateBranding(req: Request, res: Response
     return res.redirect(`/services/${req.params.id}/branding`)
   }
 
+  const { id } = req.params
+
   try {
     const fileKey = await uploadToS3(req.file.buffer, req.file.originalname)
+
     //TODO validate colour below
     const sass = renderSync({
       data: `
@@ -159,7 +164,16 @@ $custom-banner-colour: ${req.body.custom_banner_colour};
 ${scssTemplate}`,
       includePaths: ['node_modules']
     })
-    await uploadToS3(sass.css, getScssFileName(req.file.originalname))
+    const cssFileName = getCssFileName(req.file.originalname)
+    await uploadToS3(sass.css, cssFileName)
+
+    await AdminUsers.updateServiceBranding(
+      id,
+      `${cloudfrontUrl}${req.file.originalname}`,
+      `${cloudfrontUrl}${cssFileName}`
+    )
+    logger.info(`Updated service branding for ${id}. Image: ${cloudfrontUrl}${req.file.originalname}, Css: ${cloudfrontUrl}${cssFileName}`)
+
     res.redirect(`/services/${req.params.id}/branding/confirm?key=${fileKey}`)
   } catch (err) {
     logger.warn('Error uploading image', {
