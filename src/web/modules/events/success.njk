@@ -1,0 +1,9 @@
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">GOV.UK Pay platform</span>
+  <h1 class="govuk-heading-m">Success</h1>
+  <p class="govuk-body">
+    Succesfully called Connector to {{ action }} events between {{ startParam }} and {{ endParam }}.
+  </p>
+{% endblock %}

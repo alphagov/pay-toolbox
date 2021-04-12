@@ -99,6 +99,38 @@ const connectorMethods = function connectorMethods (instance) {
     return axiosInstance.get(`/v1/api/charges/gateway_transaction/${gatewayTransactionId}`)
   }
 
+  const historicalEventEmitter = function historicalEventEmitter(startId, endId, recordType, retryDelayInSeconds) {
+    const params = {
+      start_id: startId,
+      end_id: endId,
+      record_type: recordType,
+      do_not_retry_emit_until: retryDelayInSeconds
+    }
+    return axiosInstance.post('/v1/tasks/historical-event-emitter', null, { params })
+  }
+
+  const historicalEventEmitterByDate = function historicalEventEmitterByDate(startDate, endDate, retryDelayInSeconds) {
+    const params = {
+      start_date: startDate,
+      end_date: endDate,
+      do_not_retry_emit_until: retryDelayInSeconds
+    }
+    return axiosInstance.post('/v1/tasks/historical-event-emitter-by-date', null, { params })
+  }
+
+  const parityCheck = function parityCheck(startId, endId, doNotReprocessValidRecords, parityCheckStatus, 
+    retryDelayInSeconds, recordType) {
+    const params = {
+      start_id: startId,
+      end_id: endId,
+      do_not_reprocess_valid_records: doNotReprocessValidRecords,
+      parity_check_status: parityCheckStatus,
+      retry_delay_in_seconds: retryDelayInSeconds,
+      record_type: recordType
+    }
+    return axiosInstance.post('/v1/tasks/parity-checker', null, { params })
+  }
+
   const updateCorporateSurcharge = async function updateCorporateSurcharge (id, surcharges) {
     const url = `/v1/api/accounts/${id}`
     const results = Object.keys(surcharges)
@@ -201,6 +233,7 @@ const connectorMethods = function connectorMethods (instance) {
     charge,
     refunds,
     getChargeByGatewayTransactionId,
+    historicalEventEmitter,
     updateCorporateSurcharge,
     updateEmailBranding,
     toggleBlockPrepaidCards,

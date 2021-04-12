@@ -1,0 +1,151 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">GOV.UK Pay platform</span>
+  <h1 class="govuk-heading-m">Parity Checker</h1>
+  <p class="govuk-body">
+    Check the parity of payment or refunds events between Connector and Ledger's record for a given start ID and (optional) end ID
+    range.
+  </p>
+
+  <form method="POST" action="/events/by_id">
+    {% if validationErrors.noStartId %} 
+      {{ govukInput({
+        id: "start_id",
+        name: "start_id",
+        hint: { text: "The transaction ID to start parity checking events from" },
+        label: { text: "Start ID" },
+        errorMessage: {
+          text: "Enter a start ID"
+        }
+        })
+      }}
+    {% else %}
+      {{ govukInput({
+        id: "start_id",
+        name: "start_id",
+        hint: { text: "The transaction ID to start parity checking from" },
+        label: { text: "Start ID" }
+        })
+      }}
+    {% endif%}
+    {{ govukInput({
+      id: "end_id",
+      name: "end_id",
+      hint: { text: "The transaction ID to end parity checking from" },
+      label: { text: "End ID (optional)" }
+      })
+      }}
+    {{ govukSelect({
+      id: "do_not_reprocess_valid_records",
+      name: "do_not_reprocess_valid_records",
+      hint: { text: "Skip the parity checking of records that already exist in Ledger" },
+      label: {
+        text: "Do not reprocess valid records"
+      },
+      items: [
+        {
+          value: "false",
+          text: "False",
+          selected: true
+        },
+        {
+          value: "true",
+          text: "True"
+        }
+      ]
+      })
+      }}
+    {{ govukSelect({
+      id: "record_type",
+      name: "record_type",
+      label: {
+        text: "Type of records for which events to be parity checked"
+      },
+      hint: { text: "Specify whether charges or refunds are to be parity checked, defaults to charges" },
+      items: [
+        {
+          value: "charge",
+          text: "Charges",
+          selected: true
+        },
+        {
+          value: "refund",
+          text: "Refunds"
+        }
+      ]
+      })
+      }}
+    {{ govukSelect({
+      id: "parity_check_status",
+      name: "parity_check_status",
+      label: {
+        text: "The status of the records you wish to parity check"
+      },
+      hint: { text: "Specify whether charges or refunds are to be parity checked, defaults to charges" },
+      items: [
+        {
+          value: "SKIPPED",
+          text: "Skipped",
+          selected: true
+        },
+        {
+          value: "EXISTS_IN_LEDGER",
+          text: "Exists In Ledger"
+        },
+        {
+          value: "MISSING_IN_LEDGER",
+          text: "Missing In Ledger"
+        },
+        {
+          value: "DATA_MISMATCH",
+          text: "Data Mismatch"
+        }
+      ]
+      })
+      }}
+    {% if validationErrors.noRetryDelay %} 
+      {{ govukInput({
+        id: "retry_delay",
+        name: "retry_delay",
+        hint: { text: "Duration (in seconds) until which emitted event sweeper should ignore retrying emitting events" },
+        label: { text: "Retry Delay" },
+        inputmode: "numeric",
+        pattern: "[0-9]+",
+        spellcheck: false,
+        errorMessage: {
+          text: "Enter a retry delay (it can be zero)"
+        },
+        suffix: {
+          text: "seconds"
+        },
+        classes: "govuk-input--width-10"
+        })
+        }}
+    {% else %}
+      {{ govukInput({
+        id: "retry_delay",
+        name: "retry_delay",
+        hint: { text: "Duration (in seconds) until which emitted event sweeper should ignore retrying emitting events" },
+        label: { text: "Retry Delay" },
+        inputmode: "numeric",
+        pattern: "[0-9]+",
+        spellcheck: false,
+        suffix: {
+          text: "seconds"
+        },
+        classes: "govuk-input--width-10"
+        })
+        }}
+    {% endif %}
+    {{ govukButton({
+      text: "Check parity"
+      })
+      }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}
