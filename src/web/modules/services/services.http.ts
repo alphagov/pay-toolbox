@@ -178,7 +178,8 @@ ${scssTemplate}`,
     )
     logger.info(`Updated service branding for ${id}. Image: ${cloudfrontUrl}${req.file.originalname}, Css: ${cloudfrontUrl}${cssFileName}`)
 
-    res.redirect(`/services/${req.params.id}/branding/confirm?key=${fileKey}`)
+    req.flash('info', 'Custom branding uploaded and applied successfully')
+    res.redirect(`/services/${req.params.id}?key=${fileKey}`)
   } catch (err) {
     logger.warn('Error uploading image', {
       message: err.message,
