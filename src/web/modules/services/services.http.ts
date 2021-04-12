@@ -13,34 +13,14 @@ import UpdateOrganisationFormRequest from './UpdateOrganisationForm'
 import { IOValidationError } from '../../../lib/errors'
 import { formatServiceExportCsv } from './serviceExportCsv'
 import { BooleanFilterOption } from '../common/BooleanFilterOption'
+import { ServiceFilters, fetchAndFilterServices, getLiveNotArchivedServices } from './getFilteredServices'
 
-interface Filters {
-  live: BooleanFilterOption;
-  internal: BooleanFilterOption;
-  archived: BooleanFilterOption;
-}
-
-function extractFiltersFromQuery(query: ParsedQs): Filters {
+function extractFiltersFromQuery(query: ParsedQs): ServiceFilters {
   return {
     live: query.live as BooleanFilterOption || BooleanFilterOption.True,
     internal: query.internal as BooleanFilterOption || BooleanFilterOption.False,
     archived: query.archived as BooleanFilterOption || BooleanFilterOption.False
   }
-}
-
-function serviceAttributeMatchesFilter(filterValue: BooleanFilterOption, serviceValue: Boolean) {
-  return filterValue === BooleanFilterOption.True && serviceValue ||
-    filterValue === BooleanFilterOption.False && !serviceValue ||
-    filterValue === BooleanFilterOption.All
-}
-
-async function fetchAndFilterServices(filters: Filters): Promise<Service[]> {
-  const services: Service[] = await AdminUsers.services()
-  return services.filter(service =>
-    serviceAttributeMatchesFilter(filters.live, service.current_go_live_stage === 'LIVE')
-    && serviceAttributeMatchesFilter(filters.internal, service.internal)
-    && serviceAttributeMatchesFilter(filters.archived, service.archived)
-  )
 }
 
 const overview = async function overview(req: Request, res: Response): Promise<void> {
@@ -64,11 +44,7 @@ const listCsv = async function exportCsv(req: Request, res: Response): Promise<v
 }
 
 const performancePlatformCsv = async function performancePlatformCsv(req: Request, res: Response): Promise<void> {
-  const liveActiveServices = await fetchAndFilterServices({
-    live: BooleanFilterOption.True,
-    internal: BooleanFilterOption.False,
-    archived: BooleanFilterOption.False
-  })
+  const liveActiveServices = await getLiveNotArchivedServices()
 
   res.set('Content-Type', 'text/csv')
   res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_live_services_for_perfomance_platform.csv"`)
