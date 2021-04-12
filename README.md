@@ -26,6 +26,13 @@ node scripts/generate-dev-environment.js docker # for docker deployment - talk t
 npm run dev
 ```
 
+### Debug using Visual Studio Code
+
+* In VSCode, go to the `Debug` view (on MacOS, use shortcut `CMD + shift + D`).
+* From the **Run** toolbar, select the launch config `Toolbox`.
+* Press The `green play` button (`F5` MacOS). This will run the app in debug mode.
+* Add breakpoints to any file you want to debug - click in the left hand column and a red dot will appear.
+
 ## Key runtime environment variables
 
 | Variable                 | Description                               |
