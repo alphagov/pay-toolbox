@@ -1,0 +1,32 @@
+{% extends "layout/layout.njk" %}
+{% block main %}
+  <h1 class="govuk-heading-m">Static performance data page</h1>
+  <p class="govuk-body">We host our performance data as a <a class="govuk-link" href="https://www.payments.service.gov.uk/performance">static page on the product pages</a>.</p>
+  <p class="govuk-body">To update this page:</p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>
+      Copy the <a class="govuk-link govuk-link--no-visited-state" href="/statistics/performance-page-html">generated HTML</a>, which contains the latest statistics about services and organisations.
+    </li>
+    <li>
+      Replace the <i>&lsaquo;main&rsaquo;</i> element in the
+      <a class="govuk-link" href="https://github.com/alphagov/pay-product-page/blob/master/source/performance.html.erb">performance page source</a>
+      with the copied HTML
+    </li>
+    <li>
+      Update the numbers for the transaction volume and totals with numbers obtained by running the following SQL query against the ledger database:
+      <pre>
+SELECT 
+  COUNT(1), 
+  SUM(
+    CASE WHEN total_amount IS NULL 
+    THEN amount 
+    ELSE total_amount 
+    END) amount_in_pence
+FROM transaction
+WHERE type = 'PAYMENT'
+AND state = 'SUCCESS'
+AND live;
+  </pre>
+    </li>
+  </ul>
+{% endblock %}</p>

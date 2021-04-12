@@ -22,6 +22,7 @@ const parity = require('./modules/transactions/discrepancies/validateLedger.http
 const platform = require('./modules/platform/dashboard.http')
 const paymentLinks = require('./modules/payment_links/payment_links.http')
 const ledgerPayouts = require('./modules/ledger_payouts/payout.http')
+const performance = require('./modules/statistics/performance.http')
 
 // @TODO(sfount) remove `default`s on update to import export syntax
 const users = require('./modules/users/users.http').default
@@ -44,6 +45,8 @@ router.get('/statistics/compare/date', auth.secured, statistics.compareFilterReq
 router.post('/statistics/compare/date', auth.secured, statistics.compareFilter)
 router.get('/statistics/services', auth.secured, statistics.csvServices)
 router.post('/statistics/services', auth.secured, statistics.byServices)
+router.get('/statistics/performance-page', auth.secured, performance.overview)
+router.get('/statistics/performance-page-html', auth.secured, performance.getPerformancePageHtml)
 
 router.get('/gateway_accounts', auth.secured, gatewayAccounts.overview)
 router.get('/gateway_accounts/csv', auth.secured, gatewayAccounts.listCSV)
