@@ -1,0 +1,40 @@
+.accepted-cards {
+  display: block;
+  width: 100%;
+  margin: govuk-spacing(3) 0 govuk-spacing(1);
+  padding: 0;
+  float: none;
+  overflow: hidden;
+
+ @include govuk-media-query($from: tablet) {
+    width: 66.666%;
+  }
+
+  li {
+    display: block;
+    width: 3rem;
+    height: 0;
+    margin: 0 govuk-spacing(2) govuk-spacing(1) 0;
+    padding-bottom: 2rem;
+    float: left;
+    background-image: url("/images/accepted-cards-sprite.png");
+    background-size: 900% 200%;
+  }
+
+  $cards: visa master-card american-express jcb diners-club discover maestro visa-electron unionpay;
+  @for $i from 1 through length($cards) {
+    // sass-lint:disable space-around-operator
+    .#{nth($cards, $i)} {
+      // background-position: #{12.5 * ($i - 1)}% 100%;
+    }
+
+    &.field-empty .#{nth($cards, $i)},
+    .#{nth($cards, $i)}.selected {
+      // background-position: #{12.5 * ($i - 1)}% 0%;
+    }
+  }
+
+  &-hint {
+    color: $govuk-secondary-text-colour;
+  }
+}

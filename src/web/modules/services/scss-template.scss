@@ -1,4 +1,5 @@
 $govuk-font-family: -apple-system,BlinkMacSystemFont,helvetica neue,helvetica,ubuntu,roboto,noto,segoe ui,arial,sans-serif; // Override font as so not to use New Transport
+@import "application";
 $custom-banner-border-colour: #066AB1;
 $custom-text-colour: #ffffff;
 $logo-image-height: 2em;

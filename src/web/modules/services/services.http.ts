@@ -4,6 +4,7 @@ import { extname, join } from 'path'
 import { Request, Response } from 'express'
 import { S3 } from 'aws-sdk'
 import { parse, ParsedQs, stringify } from 'qs'
+import crypto from 'crypto'
 
 import logger from '../../../lib/logger'
 import { AdminUsers } from '../../../lib/pay-request'
@@ -116,7 +117,7 @@ const branding = async function branding(req: Request, res: Response): Promise<v
   res.render('services/branding', { serviceId, service, csrf: req.csrfToken() })
 }
 
-const uploadToS3 = async function uploadToS3(content: Buffer, key: string): Promise<string> {
+const uploadToS3 = async function uploadToS3(content: Buffer, key: string, contentType?: string): Promise<string> {
   try {
     const s3 = new S3()
     logger.info(`Uploading transactions file to S3 with key ${key}`)
@@ -124,7 +125,8 @@ const uploadToS3 = async function uploadToS3(content: Buffer, key: string): Prom
       Bucket: 'pay-govuk-custom-branding-test', //TODO env var this
       Body: content,
       ACL: 'public-read',
-      Key: key //TODO use md5hash of image contents + stringified branding options (e.g. colour etc, alignment)
+      Key: key, //TODO use md5hash of image contents + stringified branding options (e.g. colour etc, alignment)
+      ...contentType && { ContentType: contentType }
     }).promise();
     logger.info('Upload to S3 completed', {
       fileVersionId: response.VersionId,
@@ -147,6 +149,7 @@ function getCssFileName(imageFileName: string): string {
 }
 
 const updateBranding = async function updateBranding(req: Request, res: Response): Promise<void> {
+  const tmpBrandingSessionId = crypto.randomBytes(16).toString('hex')
   if (!req.file || !req.file.buffer) {
     req.flash('error', 'Select a png/svg, 300px etc') //TODO validate
     return res.redirect(`/services/${req.params.id}/branding`)
@@ -155,21 +158,22 @@ const updateBranding = async function updateBranding(req: Request, res: Response
   const { id } = req.params
 
   try {
-    const fileKey = await uploadToS3(req.file.buffer, req.file.originalname)
+    const imageFileName = `${tmpBrandingSessionId}${req.file.originalname}`
+    const fileKey = await uploadToS3(req.file.buffer, imageFileName)
 
     //TODO validate colour below
     const sass = renderSync({
       data: `
 $custom-banner-colour: ${req.body.custom_banner_colour};
 ${scssTemplate}`,
-      includePaths: ['node_modules']
+      includePaths: ['node_modules', 'src/assets/sass']
     })
-    const cssFileName = getCssFileName(req.file.originalname)
-    await uploadToS3(sass.css, cssFileName)
+    const cssFileName = `${tmpBrandingSessionId}${getCssFileName(req.file.originalname)}`
+    await uploadToS3(sass.css, cssFileName, 'text/css')
 
     await AdminUsers.updateServiceBranding(
       id,
-      `${cloudfrontUrl}${req.file.originalname}`,
+      `${cloudfrontUrl}${imageFileName}`,
       `${cloudfrontUrl}${cssFileName}`
     )
     logger.info(`Updated service branding for ${id}. Image: ${cloudfrontUrl}${req.file.originalname}, Css: ${cloudfrontUrl}${cssFileName}`)
