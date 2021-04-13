@@ -53,15 +53,15 @@ export async function getPerformancePageHtml(req: Request, res: Response) {
 
   <div class="govuk-grid-row govuk-!-margin-bottom-4">
       <div class="govuk-grid-column-one-third">
-          <div class="govuk-heading-xl govuk-!-margin-bottom-0">${services.length}</div>
+          <div class="govuk-heading-l govuk-!-margin-bottom-0">${services.length}</div>
           <div class="govuk-body">live services</div>
       </div>
       <div class="govuk-grid-column-one-third">
-          <div class="govuk-heading-xl govuk-!-margin-bottom-0">X million</div>
+          <div class="govuk-heading-l govuk-!-margin-bottom-0">X million</div>
           <div class="govuk-body">total transactions processed</div>
       </div>
       <div class="govuk-grid-column-one-third">
-          <div class="govuk-heading-xl govuk-!-margin-bottom-0">&#163; X million</div>
+          <div class="govuk-heading-l govuk-!-margin-bottom-0">&#163; X million</div>
           <div class="govuk-body">total amount processed by Pay</div>
       </div>
   </div>
@@ -123,12 +123,12 @@ export async function getPerformancePageHtml(req: Request, res: Response) {
   <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-half">
           <span class="govuk-visually-hidden">There are</span>
-          <div class="govuk-heading-xl govuk-!-margin-bottom-0">${numberOfOrganisations}</div>
+          <div class="govuk-heading-l govuk-!-margin-bottom-0">${numberOfOrganisations}</div>
           <div class="govuk-body">organisations</div>
       </div>
       <div class="govuk-grid-column-one-half">
           <span class="govuk-visually-hidden">and</span>
-          <div class="govuk-heading-xl govuk-!-margin-bottom-0">${services.length}</div>
+          <div class="govuk-heading-l govuk-!-margin-bottom-0">${services.length}</div>
           <div class="govuk-body">services</div>
       </div>
   </div>
