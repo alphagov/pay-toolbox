@@ -36,7 +36,7 @@ export async function getPerformancePageHtml(req: Request, res: Response) {
   const numberOfOrganisations = Object.keys(countByOrganisation).length
   const date = moment().format('D MMMM YYYY')
 
-  const html = `<main class="govuk-main-wrapper govuk-!-margin-top-4">
+  const html = `<main class="govuk-main-wrapper govuk-!-margin-top-4" id="main-content">
   <div class="govuk-grid-row  govuk-!-margin-bottom-4">
       <div class="govuk-grid-column-two-thirds">
           <h1 class="govuk-heading-l">Performance data</h1>
