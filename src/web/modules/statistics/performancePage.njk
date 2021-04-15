@@ -5,15 +5,10 @@
   <p class="govuk-body">To update this page:</p>
   <ul class="govuk-list govuk-list--bullet">
     <li>
-      Copy the <a class="govuk-link govuk-link--no-visited-state" href="/statistics/performance-page-html">generated HTML</a>, which contains the latest statistics about services and organisations.
+      Download the <a class="govuk-link govuk-link--no-visited-state" href="/statistics/performance-data">generated JSON data file</a>.
     </li>
     <li>
-      Replace the <i>&lsaquo;main&rsaquo;</i> element in the
-      <a class="govuk-link" href="https://github.com/alphagov/pay-product-page/blob/master/source/performance.html.erb">performance page source</a>
-      with the copied HTML
-    </li>
-    <li>
-      Update the numbers for the transaction volume and totals with numbers obtained by running the following SQL query against the ledger database:
+      Update numberOfPayments and totalPaymentAmount with numbers obtained by running the following SQL query against the ledger database:
       <pre>
 SELECT 
   COUNT(1), 
@@ -27,6 +22,11 @@ WHERE type = 'PAYMENT'
 AND state = 'SUCCESS'
 AND live IS TRUE;
   </pre>
+    </li>
+    <li>
+      Replace the 
+      <a class="govuk-link" href="https://github.com/alphagov/pay-product-page/blob/master/data/performance.json">performance.json</a>
+      data file in pay-product-page and deploy the product page.
     </li>
   </ul>
 {% endblock %}</p>
