@@ -46,7 +46,7 @@ router.post('/statistics/compare/date', auth.secured, statistics.compareFilter)
 router.get('/statistics/services', auth.secured, statistics.csvServices)
 router.post('/statistics/services', auth.secured, statistics.byServices)
 router.get('/statistics/performance-page', auth.secured, performance.overview)
-router.get('/statistics/performance-page-html', auth.secured, performance.getPerformancePageHtml)
+router.get('/statistics/performance-data', auth.secured, performance.downloadData)
 
 router.get('/gateway_accounts', auth.secured, gatewayAccounts.overview)
 router.get('/gateway_accounts/csv', auth.secured, gatewayAccounts.listCSV)
