@@ -5,20 +5,11 @@ import * as Sentry from '@sentry/node'
 import logger from '../lib/logger'
 import * as config from '../config'
 import {
-  EntityNotFoundError, RESTClientError, ValidationError, NotImplementedError, ManagedError
+  EntityNotFoundError, RESTClientError, ValidationError, NotImplementedError
 } from '../lib/errors'
 
 interface HttpError extends Error {
   code: string;
-}
-
-// the error handler has decided this managed error  is an exceptional case,
-// as Sentry will have ignored managed errors, raise it manually
-function manuallyEmitManagedError(error: ManagedError | Error) {
-  if (error instanceof ManagedError) {
-    error.isManaged = false
-  }
-  Sentry.captureException(error)
 }
 
 const handleRequestErrors = function handleRequestErrors(
@@ -38,7 +29,7 @@ const handleRequestErrors = function handleRequestErrors(
   if (error instanceof RESTClientError) {
     if (error.data.code === 'ECONNREFUSED' || error.data.code === 'ECONNRESET') {
       const message = `${error.service.name} API endpoint is unavailable (${error.data.code})`
-      manuallyEmitManagedError(error)
+      Sentry.captureException(error)
       res.status(503).render('common/error', { message })
       return
     }
@@ -49,7 +40,7 @@ const handleRequestErrors = function handleRequestErrors(
 
       // all 5xx responses should be triaged in Sentry
       if (String(error.data.response.status).startsWith('5')) {
-        manuallyEmitManagedError(error)
+        Sentry.captureException(error)
       }
       res.status(400).render('common/error', { message })
       return
@@ -98,6 +89,7 @@ const handleDefault = function handleDefault(
   }
 
   const message = config.common.production ? error.message : error.stack
+  Sentry.captureException(error)
   res.status(500).render('common/error', { message })
 }
 

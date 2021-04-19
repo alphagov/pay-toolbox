@@ -156,11 +156,6 @@ const configureSentry = function configureSentry() {
         }
       }
 
-      if (error && error.isManaged) {
-        // discard the event from going to Sentry if the app has already flagged
-        // this error as managed/ handled
-        return null
-      }
       return event
     }
   })
@@ -168,10 +163,6 @@ const configureSentry = function configureSentry() {
 
 const configureSentryRequestHandler = function configureSentryRequestHandler(instance) {
   instance.use(Sentry.Handlers.requestHandler())
-}
-
-const configureSentryErrorHandler = function configureSentryErrorHandler(instance) {
-  instance.use(Sentry.Handlers.errorHandler())
 }
 
 const readManifest = function readManifest(name) {
@@ -204,7 +195,6 @@ const configure = [
   configureServingPublicStaticFiles,
   configureTemplateRendering,
   configureRouting,
-  configureSentryErrorHandler,
   configureErrorHandling
 ]
 configure.map((config) => config(app))
