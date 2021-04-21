@@ -49,7 +49,7 @@
     "fast-csv": "^4.3.6",
     "google-libphonenumber": "3.2.19",
     "govuk-frontend": "^3.11.0",
-    "helmet": "^4.4.1",
+    "helmet": "^4.5.0",
     "https-proxy-agent": "5.0.0",
     "joi": "^17.4.0",
     "json2csv": "^5.0.6",
