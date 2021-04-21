@@ -6,6 +6,10 @@ updates:
     interval: daily
     time: "03:00"
   open-pull-requests-limit: 10
+  labels:
+  - dependencies
+  - govuk-pay
+  - javascript
   ignore:
   - dependency-name: aws-sdk
     versions:
@@ -55,6 +59,10 @@ updates:
     interval: daily
     time: "03:00"
   open-pull-requests-limit: 10
+  labels:
+  - dependencies
+  - govuk-pay
+  - javascript
   ignore:
   - dependency-name: node
     versions:
