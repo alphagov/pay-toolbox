@@ -170,6 +170,18 @@ const connectorMethods = function connectorMethods (instance) {
     return !gatewayAccount.allow_telephone_payment_notifications
   }
 
+  const toggleWorldpayExemptionEngine = async function toggleWorldpayExemptionEngine(id) {
+    const gatewayAccount = await account(id)
+    const url = `/v1/api/accounts/${gatewayAccount.gateway_account_id}`
+    const toggledValue = !(gatewayAccount.worldpay_3ds_flex && gatewayAccount.worldpay_3ds_flex.exemption_engine_enabled)
+    await axiosInstance.patch(url, {
+      op: 'replace',
+      path: 'worldpay_exemption_engine_enabled',
+      value: toggledValue
+    })
+    return toggledValue
+  }
+
   return {
     performanceReport,
     gatewayAccountPerformanceReport,
@@ -194,7 +206,8 @@ const connectorMethods = function connectorMethods (instance) {
     toggleBlockPrepaidCards,
     toggleMotoPayments,
     toggleAllowTelephonePaymentNotifications,
-    updateStripeSetupValues
+    updateStripeSetupValues,
+    toggleWorldpayExemptionEngine
   }
 }
 

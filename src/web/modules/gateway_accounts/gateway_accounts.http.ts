@@ -293,6 +293,14 @@ const toggleMotoPayments = async function toggleMotoPayments(
   res.redirect(`/gateway_accounts/${id}`)
 }
 
+const toggleWorldpayExemptionEngine = async function toggleWorldpayExemptionEngine(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
+
+  const result = await Connector.toggleWorldpayExemptionEngine(id)
+  req.flash('info', `Worldpay Exception Engine ${result ? 'enabled' : 'disabled' }`)
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
 const toggleAllowTelephonePaymentNotifications = async function toggleAllowTelephonePaymentNotifications(
   req: Request,
   res: Response
@@ -551,5 +559,6 @@ export default {
   search: wrapAsyncErrorHandler(search),
   searchRequest: wrapAsyncErrorHandler(searchRequest),
   agentInitiatedMotoPage: wrapAsyncErrorHandler(agentInitiatedMotoPage),
-  createAgentInitiatedMotoProduct: wrapAsyncErrorHandler(createAgentInitiatedMotoProduct)
+  createAgentInitiatedMotoProduct: wrapAsyncErrorHandler(createAgentInitiatedMotoProduct),
+  toggleWorldpayExemptionEngine: wrapAsyncErrorHandler(toggleWorldpayExemptionEngine)
 }

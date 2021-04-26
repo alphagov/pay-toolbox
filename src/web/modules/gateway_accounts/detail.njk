@@ -103,6 +103,13 @@
           <dd class="govuk-summary-list__value">{{ account.integration_version_3ds | string }}</dd>
           <dd class="govuk-summary-list__actions"></dd>
         </div>
+        {% if account.payment_provider === 'worldpay' %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Exemption Engine</dt>
+            <dd class="govuk-summary-list__value">{{ "Enabled" if account.worldpay_3ds_flex and account.worldpay_3ds_flex.exemption_engine_enabled else "Disabled" }}</dd>
+            <dd class="govuk-summary-list__actions"></dd>
+          </div>
+        {% endif %}
     {% endif %}
     {% if account.allow_apple_pay != undefined %}
         <div class="govuk-summary-list__row">
@@ -297,6 +304,28 @@
         <input type="hidden" name="_csrf" value="{{ csrf }}">
       </form>
     </div>
+  {% endif %}
+
+  {% if account.payment_provider === 'worldpay' %}
+    {% set 3dsFlexEnabled = account.worldpay_3ds_flex %}
+    {% set exemptionEngineEnabled = account.worldpay_3ds_flex and account.worldpay_3ds_flex.exemption_engine_enabled %}
+
+    {% set exemptionEngineHeader = "Worldpay Exemption Engine is enabled" if exemptionEngineEnabled else "Worldpay Exemption Engine is disabled" %}
+    {% set exemptionEngineAction = "Disable Worldpay Exemption Engine" if exemptionEngineEnabled else "Enable Worldpay Exemption Engine" %}
+
+    <div>
+      <h1 class="govuk-heading-s">{{ exemptionEngineHeader }}</h1>
+      <p class="govuk-body">The Worldpay Exemption Engine can only be enabled if the service has configured Worldpay 3DS Flex. This action will be requested by the service through support.</p>
+      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_worldpay_exemption_engine">
+        {{ govukButton({
+          text: exemptionEngineAction,
+          classes: "" if exemptionEngineEnabled else "govuk-button--warning"
+          })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    </div>
+    <div>
   {% endif %}
 
   {{ json("Gateway account details source", account) }}
