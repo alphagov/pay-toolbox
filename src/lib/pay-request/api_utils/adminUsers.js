@@ -239,6 +239,18 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     return axiosInstance.patch(path, payload).then(utilExtractData)
   }
 
+  const toggleArchiveService = async function toggleArchiveService(serviceId) {
+    const path = `v1/api/services/${serviceId}`
+    const targetService = await service(serviceId)
+
+    const payload = {
+      op: 'replace',
+      path: 'archived',
+      value: !targetService.archived
+    }
+    return axiosInstance.patch(path, payload).then(utilExtractData)
+  }
+
   return {
     user,
     findUser,
@@ -260,7 +272,8 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     toggleTerminalStateRedirectFlag,
     toggleExperimentalFeaturesEnabledFlag,
     toggleAgentInitiatedMotoEnabledFlag,
-    adminEmailsForGatewayAccounts
+    adminEmailsForGatewayAccounts,
+    toggleArchiveService
   }
 }
 
