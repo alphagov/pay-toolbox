@@ -229,6 +229,18 @@
   </div>
   {% endif %}
 
+  <div>
+    {% set archive_action_name = "Archive this service" if service.archived else "Un-archive this service" %}
+
+    <h1 class="govuk-heading-s">{{ archive_action_name }}</h1>
+    <p class="govuk-body">Toggle the archived status of this service.</p>
+    {{ govukButton({
+      text: archive_action_name,
+      classes: "govuk-button--warning",
+      href: "/services/" + serviceId + "/toggle_archived_status"
+    })
+  </div>
+
   {{ json("Service details source", service) }}
   {{ json("Users details source", users) }}
 {% endblock %}

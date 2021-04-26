@@ -22,5 +22,6 @@ export default {
   toggleExperimentalFeaturesEnabled: http.toggleExperimentalFeaturesEnabledFlag,
   toggleAgentInitiatedMotoEnabled: http.toggleAgentInitiatedMotoEnabled,
   updateOrganisationForm: http.updateOrganisationForm,
-  updateOrganisation: http.updateOrganisation
+  updateOrganisation: http.updateOrganisation,
+  toggleArchiveService: http.toggleArchiveService
 }

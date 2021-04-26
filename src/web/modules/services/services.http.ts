@@ -235,6 +235,20 @@ const updateOrganisation = async function updateOrganisation(
   }
 }
 
+const toggleArchiveService = async function toggleArchiveService(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const serviceId = req.params.id
+
+  const serviceResult = await AdminUsers.toggleArchiveService(serviceId)
+  const { archived } = serviceResult
+  logger.info(`Toggled archive status to ${archived} for service ${serviceId}`, { externalId: serviceId })
+
+  req.flash('info', `Service archived status changed to ${archived} for service`)
+  res.redirect(`/services/${serviceId}`)
+}
+
 export default {
   overview: wrapAsyncErrorHandler(overview),
   listCsv: wrapAsyncErrorHandler(listCsv),
@@ -250,6 +264,7 @@ export default {
   toggleExperimentalFeaturesEnabledFlag: wrapAsyncErrorHandler(toggleExperimentalFeaturesEnabledFlag),
   toggleAgentInitiatedMotoEnabled: wrapAsyncErrorHandler(toggleAgentInitiatedMotoEnabledFlag),
   updateOrganisationForm: wrapAsyncErrorHandler(updateOrganisationForm),
-  updateOrganisation: wrapAsyncErrorHandler(updateOrganisation)
+  updateOrganisation: wrapAsyncErrorHandler(updateOrganisation),
+  toggleArchiveService: wrapAsyncErrorHandler(toggleArchiveService)
 }
 
