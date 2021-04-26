@@ -21,6 +21,7 @@
       { key: { text: "Name" }, value: { text: service.name } },
       { key: { text: "Organisation" }, value: { text: service.merchant_details.name or "(Not set)" }, actions: { items: [{ href: "/services/" + service.external_id + "/organisation", text: "Change" }] } },
       { key: { text: "Go live status" }, value: { text: service.current_go_live_stage | upper } },
+      { key: { text: "Archived" }, value: { text: service.archived | string | upper } },
       { key: { text: "Redirect to service on terminal state" }, value: { text: service.redirect_to_service_immediately_on_terminal_state | string | capitalize } },
       { key: { text: "Agent-initiated MOTO payments are enabled" }, value: { text: service.agent_initiated_moto_enabled | string | capitalize } },
       { key: { text: "Experimental features are enabled" }, value: { text: service.experimental_features_enabled | string | capitalize } }
@@ -230,15 +231,18 @@
   {% endif %}
 
   <div>
-    {% set archive_action_name = "Archive this service" if service.archived else "Un-archive this service" %}
+    {% set serviceActionName = "Un-archive this service" if service.archived else "Archive this service" %}
 
-    <h1 class="govuk-heading-s">{{ archive_action_name }}</h1>
-    <p class="govuk-body">Toggle the archived status of this service.</p>
+    <h1 class="govuk-heading-s">{{ serviceActionName }}</h1>
+    <p class="govuk-body">
+      Toggle the archived status of this service. Archived status will impact internal Pay team reports only. There is currently no change to the service user journey
+    </p>
+    <p class="govuk-body">This should not be used if you need to suspend a service</p>
     {{ govukButton({
-      text: archive_action_name,
+      text: serviceActionName,
       classes: "govuk-button--warning",
       href: "/services/" + serviceId + "/toggle_archived_status"
-    })
+    }) }}
   </div>
 
   {{ json("Service details source", service) }}
