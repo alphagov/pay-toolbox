@@ -67,6 +67,7 @@ router.get('/gateway_accounts/:id/email_branding', auth.secured, gatewayAccounts
 router.post('/gateway_accounts/:id/email_branding', auth.secured, gatewayAccounts.updateEmailBranding)
 router.post('/gateway_accounts/:id/toggle_moto_payments', auth.secured, gatewayAccounts.toggleMotoPayments)
 router.post('/gateway_accounts/:id/toggle_allow_telephone_payment_notifications', auth.secured, gatewayAccounts.toggleAllowTelephonePaymentNotifications)
+router.post('/gateway_accounts/:id/toggle_worldpay_exemption_engine', auth.secured, gatewayAccounts.toggleWorldpayExemptionEngine)
 router.get('/gateway_accounts/:id/stripe_statement_descriptor', auth.secured, gatewayAccounts.updateStripeStatementDescriptorPage)
 router.post('/gateway_accounts/:id/stripe_statement_descriptor', auth.secured, gatewayAccounts.updateStripeStatementDescriptor)
 router.get('/gateway_accounts/:id/stripe_payout_descriptor', auth.secured, gatewayAccounts.updateStripePayoutDescriptorPage)

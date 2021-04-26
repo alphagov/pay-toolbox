@@ -38,5 +38,6 @@ export default {
   search: http.search,
   searchRequest: http.searchRequest,
   agentInitiatedMotoPage: http.agentInitiatedMotoPage,
-  createAgentInitiatedMotoProduct: http.createAgentInitiatedMotoProduct
+  createAgentInitiatedMotoProduct: http.createAgentInitiatedMotoProduct,
+  toggleWorldpayExemptionEngine: http.toggleWorldpayExemptionEngine
 }
