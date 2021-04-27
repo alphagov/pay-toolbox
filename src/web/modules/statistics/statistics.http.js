@@ -147,7 +147,7 @@ const byServices = async function byServices (req, res, next) {
     res.write(parser.getHeader())
     res.flush()
 
-    const gatewayAccountReport = await Ledger.gatewayMonthlyPerformanceReport(fromDate.format(), toDate.format())
+    const gatewayAccountReport = await Ledger.gatewayMonthlyPerformanceReport(fromDate.format("YYYY-MM-DD"), toDate.format("YYYY-MM-DD"))
 
     // default 0 amounts for all months and all gateway accounts
     const report_schema = liveGatewayAccounts
