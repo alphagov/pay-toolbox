@@ -63,7 +63,7 @@ export async function fetchTransactionVolumesByHour(
 
 export async function fetchAggregateVolumes(date: moment.Moment, limitTime?: moment.Moment): Promise<AggregateVolumesResponse> {
   const timestamp = moment()
-  const limit = limitTime ? `&limit=${limitTime.format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z` : ''
+  const limit = limitTime ? `&limit=${limitTime.format('YYYY-MM-DD')}` : ''
 
   const [ completedResponse, allResponse ] = await Promise.all([
     fetch(`/api/platform/aggregate?date=${date.utc().format()}&state=SUCCESS${limit}`),

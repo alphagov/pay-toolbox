@@ -42,7 +42,6 @@ export async function timeseries(req: Request, res: Response, next: NextFunction
 
 export async function aggregate(req: Request, res: Response, next: NextFunction): Promise<void> {
   // limit expects an upper limit for the date provided - this can be to millisecond amount
-  // this should be an ISO formatted string that can be parsed by ZonedDateTime
   const { date, state, limit } = req.query
 
   try {
@@ -50,10 +49,10 @@ export async function aggregate(req: Request, res: Response, next: NextFunction)
 
     const toDate = limit && limit.length ?
       limit :
-      baseDate.utc().endOf('day').format()
+      baseDate.utc().endOf('day').format("YYY-MM-DD")
 
     const result = await Ledger.paymentVolumesAggregate(
-      baseDate.utc().startOf('day').format(),
+      baseDate.utc().startOf('day').format("YYYY-MM-DD"),
       toDate,
       state
     )
