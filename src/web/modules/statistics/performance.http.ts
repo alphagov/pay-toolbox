@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import moment from 'moment'
 import { Service } from '../../../lib/pay-request/types/adminUsers'
 import { getLiveNotArchivedServices } from '../services/getFilteredServices'
+import { Ledger } from '../../../lib/pay-request'
 
 export async function overview(req: Request, res: Response) {
   res.render('statistics/performancePage')
@@ -31,10 +32,12 @@ export async function downloadData(req: Request, res: Response) {
       return aggregate
     }, {})
 
+  const paymentStatistics = await Ledger.paymentStatistics()
+
   const data = {
     dateUpdated: moment().format('D MMMM YYYY'),
-    numberOfPayments: 'GET_DATA_FROM_QUERY',
-    totalPaymentAmount: 'GET_DATA_FROM_QUERY',
+    numberOfPayments: paymentStatistics.payments.count,
+    totalPaymentAmount: paymentStatistics.payments.gross_amount,
     numberOfServices: services.length,
     numberOfOrganisations: Object.keys(orderedCountByOrganisation).length,
     serviceCountBySector: countBySector,

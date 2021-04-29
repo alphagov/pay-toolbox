@@ -8,22 +8,6 @@
       Download the <a class="govuk-link govuk-link--no-visited-state" href="/statistics/performance-data">generated JSON data file</a>.
     </li>
     <li>
-      Update numberOfPayments and totalPaymentAmount with numbers obtained by running the following SQL query against the ledger database:
-      <pre>
-SELECT 
-  COUNT(1), 
-  SUM(
-    CASE WHEN total_amount IS NULL 
-    THEN amount 
-    ELSE total_amount 
-    END) amount_in_pence
-FROM transaction
-WHERE type = 'PAYMENT'
-AND state = 'SUCCESS'
-AND live IS TRUE;
-  </pre>
-    </li>
-    <li>
       Replace the 
       <a class="govuk-link" href="https://github.com/alphagov/pay-product-page/blob/master/data/performance.json">performance.json</a>
       data file in pay-product-page and deploy the product page.
