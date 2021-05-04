@@ -4,6 +4,11 @@ import { Service } from '../../../lib/pay-request/types/adminUsers'
 import { getLiveNotArchivedServices } from '../services/getFilteredServices'
 import { Ledger } from '../../../lib/pay-request'
 
+function displayAsMillion(amount: number) {
+    const stringOfAmount = (amount/1.0e6).toFixed(1) + " million";
+    return stringOfAmount;
+}
+
 export async function overview(req: Request, res: Response) {
   res.render('statistics/performancePage')
 }
@@ -32,12 +37,12 @@ export async function downloadData(req: Request, res: Response) {
       return aggregate
     }, {})
 
-  const paymentStatistics = await Ledger.paymentStatistics()
+  const paymentStatistics = await Ledger.paymentVolumesAggregate()
 
   const data = {
     dateUpdated: moment().format('D MMMM YYYY'),
-    numberOfPayments: paymentStatistics.payments.count,
-    totalPaymentAmount: paymentStatistics.payments.gross_amount,
+    numberOfPayments: displayAsMillion(paymentStatistics.total_volume),
+    totalPaymentAmount: displayAsMillion(paymentStatistics.total_amount),
     numberOfServices: services.length,
     numberOfOrganisations: Object.keys(orderedCountByOrganisation).length,
     serviceCountBySector: countBySector,
