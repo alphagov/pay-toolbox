@@ -147,19 +147,12 @@ const configureSentry = function configureSentry() {
     dsn: sentryConfig.SENTRY_DSN,
     environment: common.ENVIRONMENT,
     version: `${process.env.npm_package_name}@${process.env.npm_package_version}`,
-    beforeSend(event, hint) {
-      const error = hint.originalException
+    beforeSend(event) {
       if (event.request) {
         delete event.request.cookies
         if (event.request.headers) {
           delete event.request.headers.cookie
         }
-      }
-
-      if (error && error.isManaged) {
-        // discard the event from going to Sentry if the app has already flagged
-        // this error as managed/ handled
-        return null
       }
       return event
     }
@@ -168,10 +161,6 @@ const configureSentry = function configureSentry() {
 
 const configureSentryRequestHandler = function configureSentryRequestHandler(instance) {
   instance.use(Sentry.Handlers.requestHandler())
-}
-
-const configureSentryErrorHandler = function configureSentryErrorHandler(instance) {
-  instance.use(Sentry.Handlers.errorHandler())
 }
 
 const readManifest = function readManifest(name) {
@@ -204,7 +193,6 @@ const configure = [
   configureServingPublicStaticFiles,
   configureTemplateRendering,
   configureRouting,
-  configureSentryErrorHandler,
   configureErrorHandling
 ]
 configure.map((config) => config(app))
