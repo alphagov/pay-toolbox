@@ -1,0 +1,105 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">GOV.UK Pay platform</span>
+  <h1 class="govuk-heading-m">Emit events by ID</h1>
+  <p class="govuk-body">
+    Task to emit payment or refunds events for a given start ID and (optional) end ID
+    range. The historical event emitter task doesn't re-emit events. To re-emit events, the relevant emitted events records
+    need to be cleared (not currently supported by Toolbox).
+  </p>
+
+  <form method="POST" action="/events/by_id">
+    {% if validationErrors.noStartId %} 
+      {{ govukInput({
+        id: "start_id",
+        name: "start_id",
+        hint: { text: "The transaction ID to start emitting events from" },
+        label: { text: "Start ID" },
+        errorMessage: {
+          text: "Enter a start ID"
+        }
+        })
+      }}
+    {% else %}
+      {{ govukInput({
+        id: "start_id",
+        name: "start_id",
+        hint: { text: "The transaction ID to start emitting events from" },
+        label: { text: "Start ID" }
+        })
+      }}
+    {% endif %}
+
+    {{ govukInput({
+      id: "end_id",
+      name: "end_id",
+      hint: { text: "The transaction ID to end emitting events from" },
+      label: { text: "End ID (optional)" }
+      })
+      }}
+    {{ govukSelect({
+      id: "record_type",
+      name: "record_type",
+      label: {
+        text: "Type of records for which events to be emitted"
+      },
+      hint: { text: "Specify whether charges or refunds are to be parity checked, defaults to charges" },
+      items: [
+        {
+          value: "charge",
+          text: "Charges",
+          selected: true
+        },
+        {
+          value: "refund",
+          text: "Refunds"
+        }
+      ]
+      })
+      }}
+    {% if validationErrors.noRetryDelay %} 
+      {{ govukInput({
+        id: "retry_delay",
+        name: "retry_delay",
+        hint: { text: "Duration (in seconds) until which emitted event sweeper should ignore retrying emitting events" },
+        label: { text: "Retry Delay" },
+        inputmode: "numeric",
+        pattern: "[0-9]+",
+        spellcheck: false,
+        errorMessage: {
+          text: "Enter a retry delay (it can be zero)"
+        },
+        suffix: {
+          text: "seconds"
+        },
+        classes: "govuk-input--width-10"
+        })
+        }}
+    {% else %}
+      {{ govukInput({
+        id: "retry_delay",
+        name: "retry_delay",
+        hint: { text: "Duration (in seconds) until which emitted event sweeper should ignore retrying emitting events" },
+        label: { text: "Retry Delay" },
+        inputmode: "numeric",
+        pattern: "[0-9]+",
+        spellcheck: false,
+        suffix: {
+          text: "seconds"
+        },
+        classes: "govuk-input--width-10"
+        })
+        }}
+    {% endif %}
+    {{ govukButton({
+      text: "Emit events"
+      })
+      }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">GOV.UK Pay platform</span>
+  <h1 class="govuk-heading-m">Failed</h1>
+  <p class="govuk-body">
+    Calling connector to {{ action }} events failed due to: {{ error }}
+  </p>
+{% endblock %}

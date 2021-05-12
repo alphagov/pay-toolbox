@@ -23,6 +23,7 @@ const platform = require('./modules/platform/dashboard.http')
 const paymentLinks = require('./modules/payment_links/payment_links.http')
 const ledgerPayouts = require('./modules/ledger_payouts/payout.http')
 const performance = require('./modules/statistics/performance.http')
+const events = require('./modules/events')
 
 // @TODO(sfount) remove `default`s on update to import export syntax
 const users = require('./modules/users/users.http').default
@@ -151,6 +152,13 @@ router.get('/api/platform/timeseries', platform.timeseries)
 router.get('/api/platform/aggregate', platform.aggregate)
 router.get('/api/platform/ticker', platform.ticker)
 router.get('/api/platform/services', platform.services)
+
+router.get('/events', auth.secured, events.emitByIdPage)
+router.post('/events/by_id', auth.secured, events.emitById)
+router.get('/events-by-date', auth.secured, events.emitByDatePage)
+router.post('/events/by_date', auth.secured, events.emitByDate)
+router.get('/parity-checker', auth.secured, events.parityCheckerPage)
+router.post('/parity-checker', auth.secured, events.parityCheck)
 
 router.get('/logout', auth.secured, auth.revokeSession)
 
