@@ -306,6 +306,35 @@
     </div>
   {% endif %}
 
+    {% if account.send_payer_ip_address_to_gateway === true %}
+    <div>
+      <h1 class="govuk-heading-s">Sending payer IP address to gateway is enabled</h1>
+      <p class="govuk-body">If enabled, the paying user's IP address is sent to the payment gateway for fraud prevention purposes. This is not implemented for Stripe accounts.</p>
+      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_payer_ip_address_to_gateway">
+        {{ govukButton({
+          text: "Disable sending payer IP address to gateway"
+          })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    </div>
+  {% endif %}
+
+    {% if account.send_payer_ip_address_to_gateway === false %}
+    <div>
+      <h1 class="govuk-heading-s">Enable sending payer IP address to gateway</h1>
+      <p class="govuk-body">If enabled, the paying user's IP address is sent to the payment gateway for fraud prevention purposes. This is not implemented for Stripe accounts.</p>
+      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_payer_ip_address_to_gateway">
+        {{ govukButton({
+          text: "Enable sending payer IP address to gateway",
+          classes: "govuk-button--warning"
+          })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    </div>
+  {% endif %}
+
   {% if account.payment_provider === 'worldpay' %}
     {% set 3dsFlexEnabled = account.worldpay_3ds_flex %}
     {% set exemptionEngineEnabled = account.worldpay_3ds_flex and account.worldpay_3ds_flex.exemption_engine_enabled %}

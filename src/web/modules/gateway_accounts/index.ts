@@ -31,6 +31,7 @@ export default {
   toggleBlockPrepaidCards: http.toggleBlockPrepaidCards,
   toggleMotoPayments: http.toggleMotoPayments,
   toggleAllowTelephonePaymentNotifications: http.toggleAllowTelephonePaymentNotifications,
+  toggleSendPayerIpAddressToGateway: http.toggleSendPayerIpAddressToGateway,
   updateStripeStatementDescriptorPage: http.updateStripeStatementDescriptorPage,
   updateStripeStatementDescriptor: http.updateStripeStatementDescriptor,
   updateStripePayoutDescriptorPage: http.updateStripePayoutDescriptorPage,
