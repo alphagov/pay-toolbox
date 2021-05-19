@@ -234,6 +234,8 @@ const connectorMethods = function connectorMethods (instance) {
     refunds,
     getChargeByGatewayTransactionId,
     historicalEventEmitter,
+    parityCheck,
+    historicalEventEmitterByDate,
     updateCorporateSurcharge,
     updateEmailBranding,
     toggleBlockPrepaidCards,
