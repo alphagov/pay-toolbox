@@ -32,7 +32,7 @@ stripe.setApiVersion('2018-09-24')
 // @ts-ignore
 if (config.server.HTTPS_PROXY) stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
 
-const overview = async function overview(req: Request, res: Response): Promise<void> {
+async function overview(req: Request, res: Response): Promise<void> {
   const filters = extractFiltersFromQuery(req.query)
   const searchParams = toAccountSearchParams(filters)
 
@@ -49,7 +49,7 @@ const overview = async function overview(req: Request, res: Response): Promise<v
   })
 }
 
-const listCSVWithAdminEmails = async function listCSVWithAdminEmails(req: Request, res: Response): Promise<void> {
+async function listCSVWithAdminEmails(req: Request, res: Response): Promise<void> {
   const filters = extractFiltersFromQuery(req.query)
   const data = await createCsvWithAdminEmailsData(filters)
   res.set('Content-Type', 'text/csv')
@@ -57,7 +57,7 @@ const listCSVWithAdminEmails = async function listCSVWithAdminEmails(req: Reques
   res.status(200).send(formatWithAdminEmails(data))
 }
 
-const listCSV = async function listCSV(req: Request, res: Response): Promise<void> {
+async function listCSV(req: Request, res: Response): Promise<void> {
   const filters = extractFiltersFromQuery(req.query)
   const data = await createCsvData(filters)
   res.set('Content-Type', 'text/csv')
@@ -65,7 +65,7 @@ const listCSV = async function listCSV(req: Request, res: Response): Promise<voi
   res.status(200).send(format(data))
 }
 
-const overviewDirectDebit = async function overviewDirectDebit(
+async function overviewDirectDebit(
   req: Request,
   res: Response
 ): Promise<void> {
@@ -73,7 +73,7 @@ const overviewDirectDebit = async function overviewDirectDebit(
   res.render('gateway_accounts/overview', { accounts, messages: req.flash('info') })
 }
 
-const create = async function create(req: Request, res: Response): Promise<void> {
+async function create(req: Request, res: Response): Promise<void> {
   const linkedService = req.query.service
   const context: {
     linkedCredentials: string;
@@ -113,12 +113,12 @@ const create = async function create(req: Request, res: Response): Promise<void>
   res.render('gateway_accounts/create', context)
 }
 
-const confirm = async function confirm(req: Request, res: Response): Promise<void> {
+async function confirm(req: Request, res: Response): Promise<void> {
   const account = new GatewayAccountFormModel(req.body)
   res.render('gateway_accounts/confirm', { account, request: req.body, csrf: req.csrfToken() })
 }
 
-const writeAccount = async function writeAccount(req: Request, res: Response): Promise<void> {
+async function writeAccount(req: Request, res: Response): Promise<void> {
   const account = new GatewayAccountFormModel(req.body)
   const linkedService = req.body.systemLinkedService
 
@@ -177,7 +177,7 @@ const writeAccount = async function writeAccount(req: Request, res: Response): P
   })
 }
 
-const detail = async function detail(req: Request, res: Response): Promise<void> {
+async function detail(req: Request, res: Response): Promise<void> {
   const { id } = req.params
   let services = {}
   const isDirectDebitID = id.match(/^DIRECT_DEBIT:/)
@@ -205,7 +205,7 @@ const detail = async function detail(req: Request, res: Response): Promise<void>
   })
 }
 
-const apiKeys = async function apiKeys(req: Request, res: Response): Promise<void> {
+async function apiKeys(req: Request, res: Response): Promise<void> {
   const gatewayAccountId = req.params.id
 
   const account = await getAccount(gatewayAccountId)
@@ -213,7 +213,7 @@ const apiKeys = async function apiKeys(req: Request, res: Response): Promise<voi
   res.render('gateway_accounts/api_keys', { account, tokens, gatewayAccountId, messages: req.flash('info') })
 }
 
-const deleteApiKey = async function deleteApiKey(req: Request, res: Response): Promise<void> {
+async function deleteApiKey(req: Request, res: Response): Promise<void> {
   const { accountId, tokenId } = req.params
 
   await PublicAuth.deleteApiToken(accountId, tokenId)
@@ -223,13 +223,13 @@ const deleteApiKey = async function deleteApiKey(req: Request, res: Response): P
   res.redirect(`/gateway_accounts/${accountId}/api_keys`)
 }
 
-const getAccount = async function getAccount(id: string): Promise<any> {
+async function getAccount(id: string): Promise<any> {
   const isDirectDebitID = id.match(/^DIRECT_DEBIT:/)
   const readAccountMethod = isDirectDebitID ? DirectDebitConnector.account : Connector.account
   return readAccountMethod(id)
 }
 
-const surcharge = async function surcharge(req: Request, res: Response): Promise<void> {
+async function surcharge(req: Request, res: Response): Promise<void> {
   let service
   const { id } = req.params
   const account = await getAccount(id)
@@ -243,7 +243,7 @@ const surcharge = async function surcharge(req: Request, res: Response): Promise
   res.render('gateway_accounts/surcharge', { account, service, csrf: req.csrfToken() })
 }
 
-const updateSurcharge = async function updateSurcharge(req: Request, res: Response): Promise<void> {
+async function updateSurcharge(req: Request, res: Response): Promise<void> {
   const { id } = req.params
   const surcharges = req.body
 
@@ -252,14 +252,14 @@ const updateSurcharge = async function updateSurcharge(req: Request, res: Respon
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-const emailBranding = async function emailBranding(req: Request, res: Response): Promise<void> {
+async function emailBranding(req: Request, res: Response): Promise<void> {
   const { id } = req.params
   const account = await getAccount(id)
 
   res.render('gateway_accounts/email_branding', { account, csrf: req.csrfToken() })
 }
 
-const updateEmailBranding = async function updateEmailBranding(req: Request, res: Response):
+async function updateEmailBranding(req: Request, res: Response):
   Promise<void> {
   const { id } = req.params
   const notifySettings = req.body
@@ -271,7 +271,7 @@ const updateEmailBranding = async function updateEmailBranding(req: Request, res
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-const toggleBlockPrepaidCards = async function toggleBlockPrepaidCards(
+async function toggleBlockPrepaidCards(
   req: Request,
   res: Response
 ): Promise<void> {
@@ -282,7 +282,7 @@ const toggleBlockPrepaidCards = async function toggleBlockPrepaidCards(
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-const toggleMotoPayments = async function toggleMotoPayments(
+async function toggleMotoPayments(
   req: Request,
   res: Response
 ): Promise<void> {
@@ -293,7 +293,7 @@ const toggleMotoPayments = async function toggleMotoPayments(
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-const toggleWorldpayExemptionEngine = async function toggleWorldpayExemptionEngine(req: Request, res: Response): Promise<void> {
+async function toggleWorldpayExemptionEngine(req: Request, res: Response): Promise<void> {
   const { id } = req.params
 
   const result = await Connector.toggleWorldpayExemptionEngine(id)
@@ -301,7 +301,7 @@ const toggleWorldpayExemptionEngine = async function toggleWorldpayExemptionEngi
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-const toggleAllowTelephonePaymentNotifications = async function toggleAllowTelephonePaymentNotifications(
+async function toggleAllowTelephonePaymentNotifications(
   req: Request,
   res: Response
 ): Promise<void> {
@@ -312,7 +312,18 @@ const toggleAllowTelephonePaymentNotifications = async function toggleAllowTelep
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-const updateStripeStatementDescriptorPage = async function updateStripeStatementDescriptorPage(
+async function toggleSendPayerIpAddressToGateway(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { id } = req.params
+  const enabled = await Connector.toggleSendPayerIpAddressToGateway(id)
+
+  req.flash('info', `Senging payer IP address to gateway ${enabled ? 'enabled' : 'disabled'}`)
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
+async function updateStripeStatementDescriptorPage(
   req: Request,
   res: Response
 ): Promise<void> {
@@ -322,7 +333,7 @@ const updateStripeStatementDescriptorPage = async function updateStripeStatement
   res.render('gateway_accounts/stripe_statement_descriptor', { account, csrf: req.csrfToken() })
 }
 
-const updateStripePayoutDescriptorPage = async function updateStripePayoutDescriptorPage(
+async function updateStripePayoutDescriptorPage(
   req: Request,
   res: Response
 ): Promise<void> {
@@ -332,7 +343,7 @@ const updateStripePayoutDescriptorPage = async function updateStripePayoutDescri
   res.render('gateway_accounts/stripe_payout_descriptor', { account, csrf: req.csrfToken() })
 }
 
-const updateStripeStatementDescriptor = async function updateStripeStatementDescriptor(
+async function updateStripeStatementDescriptor(
   req: Request,
   res: Response
 ): Promise<void> {
@@ -361,7 +372,7 @@ const updateStripeStatementDescriptor = async function updateStripeStatementDesc
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-const updateStripePayoutDescriptor = async function updateStripePayoutDescriptor(
+async function updateStripePayoutDescriptor(
   req: Request,
   res: Response
 ): Promise<void> {
@@ -394,7 +405,7 @@ const search = async function search(req: Request, res: Response): Promise<void>
   res.render('gateway_accounts/search', { csrf: req.csrfToken() })
 }
 
-const searchRequest = async function searchRequest(req: Request, res: Response, next: NextFunction): Promise<void> {
+async function searchRequest(req: Request, res: Response, next: NextFunction): Promise<void> {
   const id = req.body.id.trim()
   try {
     await Connector.account(id)
@@ -409,7 +420,7 @@ const searchRequest = async function searchRequest(req: Request, res: Response, 
   }
 }
 
-const agentInitiatedMotoPage = async function agentInitiatedMotoPage(
+async function agentInitiatedMotoPage(
   req: Request,
   res: Response
 ): Promise<void> {
@@ -459,7 +470,7 @@ const agentInitiatedMotoPage = async function agentInitiatedMotoPage(
   res.render('gateway_accounts/agent_initiated_moto', context)
 }
 
-const createAgentInitiatedMotoProduct = async function createAgentInitiatedMotoProduct(
+async function createAgentInitiatedMotoProduct(
   req: Request,
   res: Response
 ): Promise<void> {
@@ -552,6 +563,7 @@ export default {
   toggleBlockPrepaidCards: wrapAsyncErrorHandler(toggleBlockPrepaidCards),
   toggleMotoPayments: wrapAsyncErrorHandler(toggleMotoPayments),
   toggleAllowTelephonePaymentNotifications: wrapAsyncErrorHandler(toggleAllowTelephonePaymentNotifications),
+  toggleSendPayerIpAddressToGateway: wrapAsyncErrorHandler(toggleSendPayerIpAddressToGateway),
   updateStripeStatementDescriptorPage: wrapAsyncErrorHandler(updateStripeStatementDescriptorPage),
   updateStripeStatementDescriptor: wrapAsyncErrorHandler(updateStripeStatementDescriptor),
   updateStripePayoutDescriptorPage: wrapAsyncErrorHandler(updateStripePayoutDescriptorPage),

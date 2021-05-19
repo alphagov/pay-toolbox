@@ -41,6 +41,8 @@ export interface GatewayAccount {
 
   allow_moto: boolean;
 
+  send_payer_ip_address_to_gateway: boolean;
+
   integration_version_3ds: number;
 
   corporate_prepaid_credit_card_surcharge_amount: number;
