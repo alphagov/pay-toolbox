@@ -1,6 +1,8 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
 {% extends "layout/layout.njk" %}
 
 {% block main %}
@@ -11,7 +13,6 @@
     range. The historical event emitter task doesn't re-emit events. To re-emit events, the relevant emitted events records
     need to be cleared (not currently supported by Toolbox).
   </p>
-
   <form method="POST" action="/events/by_date">
     {% if validationErrors.noStartDate %} 
       {{ govukInput({
@@ -54,6 +55,12 @@
         })
       }}
     {% endif%}
+
+    {{ govukDetails({
+      summaryText: "Help with date formats",
+      text: "You should use a zoned date time such as 2021-05-19T09:23:55Z."
+      })
+    }}
 
     {% if validationErrors.noRetryDelay %} 
       {{ govukInput({
