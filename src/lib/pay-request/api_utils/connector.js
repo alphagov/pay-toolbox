@@ -99,10 +99,10 @@ const connectorMethods = function connectorMethods (instance) {
     return axiosInstance.get(`/v1/api/charges/gateway_transaction/${gatewayTransactionId}`)
   }
 
-  function historicalEventEmitter(startId, endId, recordType, retryDelayInSeconds) {
+  function historicalEventEmitter(startId, maxId, recordType, retryDelayInSeconds) {
     const params = {
       start_id: startId,
-      end_id: endId,
+      max_id: maxId,
       record_type: recordType,
       do_not_retry_emit_until: retryDelayInSeconds
     }
@@ -118,14 +118,14 @@ const connectorMethods = function connectorMethods (instance) {
     return axiosInstance.post('/v1/tasks/historical-event-emitter-by-date', null, { params })
   }
 
-  function parityCheck(startId, endId, doNotReprocessValidRecords, parityCheckStatus, 
+  function parityCheck(startId, maxId, doNotReprocessValidRecords, parityCheckStatus, 
     retryDelayInSeconds, recordType) {
     const params = {
       start_id: startId,
-      end_id: endId,
+      max_id: maxId,
       do_not_reprocess_valid_records: doNotReprocessValidRecords,
       parity_check_status: parityCheckStatus,
-      retry_delay_in_seconds: retryDelayInSeconds,
+      do_not_retry_emit_until: retryDelayInSeconds,
       record_type: recordType
     }
     return axiosInstance.post('/v1/tasks/parity-checker', null, { params })
