@@ -50,6 +50,7 @@ const configureSecureHeaders = function configureSecureHeaders(instance) {
   instance.use(helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: [ '\'self\'' ],
+      scriptSrc: [ '\'self\'', '\'unsafe-eval\'' ],
       imgSrc: [ '*.githubusercontent.com', '\'self\'', 'data:' ],
       styleSrc: [ '\'self\'', '\'unsafe-inline\'' ]
     }

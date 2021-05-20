@@ -63,7 +63,7 @@ export async function fetchTransactionVolumesByHour(
 
 export async function fetchAggregateVolumes(date: moment.Moment, limitTime?: moment.Moment): Promise<AggregateVolumesResponse> {
   const timestamp = moment()
-  const limit = limitTime ? `&limit=${limitTime.format('YYYY-MM-DD')}` : ''
+  const limit = limitTime ? `&limit=${limitTime.format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z` : ''
 
   const [ completedResponse, allResponse ] = await Promise.all([
     fetch(`/api/platform/aggregate?date=${date.utc().format()}&state=SUCCESS${limit}`),
@@ -83,6 +83,12 @@ export async function fetchAggregateVolumes(date: moment.Moment, limitTime?: mom
   }
 }
 
+async function sleep() {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, 5000)
+  })
+}
+
 export async function fetchEventTicker(fromDate: moment.Moment, toDate: moment.Moment, historicFetch: boolean, lastFetchedEvents: moment.Moment): Promise<EventTickerResponse> {
   const fromDateString = `${fromDate.format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
   const toDateString = `${toDate.format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
@@ -92,6 +98,7 @@ export async function fetchEventTicker(fromDate: moment.Moment, toDate: moment.M
   )
 
   if (response.ok) {
+
     const data = await response.json()
 
     const parsed = data

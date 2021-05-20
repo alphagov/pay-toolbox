@@ -3,6 +3,7 @@
 
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 
+// @FIXME(sfount) properly name and hash browser js
 /** @type WebpackConfig */
 const browser = {
   entry: {
@@ -11,7 +12,7 @@ const browser = {
   output: {
     publicPath: "",
     path: `${__dirname}/dist/public`,
-    filename: '[name].[contenthash].js'
+    filename: '[name].js'
   },
   resolve: {
     extensions: [ '.ts', '.tsx', '.js', '.jsx' ]
