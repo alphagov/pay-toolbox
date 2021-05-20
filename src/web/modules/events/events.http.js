@@ -15,7 +15,7 @@ async function parityCheckerPage(req, res) {
 }
 
 async function emitById(req, res) {
-  const { start_id: startId, end_id: endId, record_type: recordType, retry_delay: retryDelay} = req.body
+  const { start_id: startId, max_id: maxId, record_type: recordType, retry_delay: retryDelay} = req.body
 
   const validationErrors = {}
   if (!startId) {
@@ -31,18 +31,18 @@ async function emitById(req, res) {
   }
 
   try{
-    await Connector.historicalEventEmitter(startId, endId, recordType, retryDelay)
-    logger.info(`Emitting events successful between ${startId} and ${endId}`)
+    await Connector.historicalEventEmitter(startId, maxId, recordType, retryDelay)
+    logger.info(`Emitting events successful between ${startId} and ${maxId}`)
 
-    res.render('events/success', { startParam: startId, endParam: endId, action: "emit" })
+    res.render('events/success', { startParam: startId, endParam: maxId, action: "emit" })
   } catch(err) {
-    logger.warn(`Emitting events failed between ${startId} and ${endId} because of: ${err.message}`)
+    logger.warn(`Emitting events failed between ${startId} and ${maxId} because of: ${err.message}`)
     res.render('events/failure', { error: err.message, action: "emit" })
   }
 }
 
 async function emitByDate(req, res) {
-  const { start_date: startDate, end_date: endDate, record_type: recordType, retry_delay: retryDelay } = req.body
+  const { start_date: startDate, end_date: endDate, retry_delay: retryDelay } = req.body
   
   const validationErrors = {}
   if (!startDate) {
@@ -73,7 +73,7 @@ async function emitByDate(req, res) {
 }
 
 async function parityCheck(req, res) {
-  const { start_id: startId, end_id: endId, do_not_reprocess_valid_records: doNotReprocessValidRecords, parity_check_status: parityCheckStatus, record_type: recordType, retry_delay: retryDelay} = req.body
+  const { start_id: startId, max_id: maxId, do_not_reprocess_valid_records: doNotReprocessValidRecords, parity_check_status: parityCheckStatus, record_type: recordType, retry_delay: retryDelay} = req.body
 
   const validationErrors = {}
   if (!startId) {
@@ -89,12 +89,12 @@ async function parityCheck(req, res) {
   }
 
   try{
-    await Connector.parityCheck(startId, endId, doNotReprocessValidRecords, parityCheckStatus, retryDelay, recordType)
-    logger.info(`Parity checking events successful between ${startId} and ${endId}`)
+    await Connector.parityCheck(startId, maxId, doNotReprocessValidRecords, parityCheckStatus, retryDelay, recordType)
+    logger.info(`Parity checking events successful between ${startId} and ${maxId}`)
 
-    res.render('events/success', { startParam: startId, endParam: endId, action: "parity check" })
+    res.render('events/success', { startParam: startId, endParam: maxId, action: "parity check" })
   } catch(err) {
-    logger.warn(`Emitting events failed between ${startId} and ${endId} because of: ${err.message}`)
+    logger.warn(`Emitting events failed between ${startId} and ${maxId} because of: ${err.message}`)
     res.render('events/failure', { error: err.message, action: "parity check" })
   }
 }
