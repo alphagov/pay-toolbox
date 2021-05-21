@@ -319,7 +319,7 @@ async function toggleSendPayerIpAddressToGateway(
   const { id } = req.params
   const enabled = await Connector.toggleSendPayerIpAddressToGateway(id)
 
-  req.flash('info', `Senging payer IP address to gateway ${enabled ? 'enabled' : 'disabled'}`)
+  req.flash('info', `Sending payer IP address to gateway ${enabled ? 'enabled' : 'disabled'}`)
   res.redirect(`/gateway_accounts/${id}`)
 }
 
