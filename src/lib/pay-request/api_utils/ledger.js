@@ -138,7 +138,7 @@ const ledgerMethods = function ledgerMethods(instance) {
       ...state && { state }
 
     }
-    return axiosInstance.get('/v1/report/performance-report', { params })
+    return axiosInstance.get('/v1/report/performance-report-legacy', { params })
       .then(utilExtractData)
   }
 

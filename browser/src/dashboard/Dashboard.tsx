@@ -67,6 +67,10 @@ let tick: number = null
 let aggregateTick: number = null
 const aggregateSyncFrequency = 30 * 60 * 1000
 
+// @FIXME(sfount) having state outside of component props is risky in the long run
+// re-structure this so it's out of the top level components responsibility
+let fetching = false
+
 export class Dashboard extends React.Component<DashboardProps, DashboardState> {
   interval?: NodeJS.Timeout
 
@@ -110,13 +114,6 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
     this.setAggregateVolumes(volumes)
 
     await fetchServiceInfo()
-    const eventTicker = await fetchEventTicker(
-      moment().utc().subtract(1, 'minutes'),
-      moment().utc(),
-      true,
-      this.state.lastFetchedEvents
-    )
-    this.setEventTicker(eventTicker)
 
     tick = Date.now()
     aggregateTick = Date.now()
@@ -130,11 +127,13 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
       this.aggregateSync()
     }
 
-    if (millsecondsSincePreviousFetch > (this.props.tickInterval * 1000 * 2)) {
+    if ((millsecondsSincePreviousFetch > (this.props.tickInterval * 1000 * 2)) && !fetching) {
       tick = Date.now()
       const fromDate = this.state.lastFetchedEvents
       const toDate = this.state.lastFetchedEvents.clone().add(this.props.tickInterval, 'seconds').utc()
+      fetching = true
       const eventTicker = await fetchEventTicker(fromDate, toDate, false, this.state.lastFetchedEvents)
+      fetching = false
       this.setEventTicker(eventTicker)
     }
     this.processQueuedEvents(Date.now())

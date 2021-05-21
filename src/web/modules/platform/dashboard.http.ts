@@ -49,10 +49,10 @@ export async function aggregate(req: Request, res: Response, next: NextFunction)
 
     const toDate = limit && limit.length ?
       limit :
-      baseDate.utc().endOf('day').format("YYYY-MM-DD")
+      baseDate.utc().endOf('day').format()
 
     const result = await Ledger.paymentVolumesAggregate(
-      baseDate.utc().startOf('day').format("YYYY-MM-DD"),
+      baseDate.utc().startOf('day').format(),
       toDate,
       state
     )

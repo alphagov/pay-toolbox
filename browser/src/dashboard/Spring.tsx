@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useSpring, animated, useTransition } from 'react-spring'
+import { useSpring, animated, useTransition } from 'react-spring-conflict'
 
 // this top level method has to be any type right now as of
 // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20356
