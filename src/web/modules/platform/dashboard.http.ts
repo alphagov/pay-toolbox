@@ -78,10 +78,19 @@ export async function services(req: Request, res: Response, next: NextFunction):
     const services = await AdminUsers.services()
 
     const index = services.reduce((aggregate: any, service: any) => {
+      const now = moment()
+      if (service.went_live_date) {
+        const numberOfDaysOld = now.diff(moment(service.went_live_date), 'days')
+        service.is_recent = numberOfDaysOld < 30
+      }
       const mapped = {
         ...aggregate,
         ...service.gateway_account_ids.reduce((aggregate: any, accountId: string) => {
-          aggregate[accountId] = service.service_name.en
+          aggregate[accountId] = {
+            name: service.service_name.en,
+            went_live_date: service.went_live_date,
+            is_recent: service.is_recent
+          }
           return aggregate
         }, {})
       }

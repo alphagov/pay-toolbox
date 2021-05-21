@@ -71,6 +71,8 @@ export interface Event {
   payment_provider: string
   type: string,
   service_name?: string
+  went_live_date?: string
+  is_recent?: boolean
   card_brand?: string
   timestamp?: number
   historic?: boolean

@@ -91,16 +91,20 @@ export class EventCard extends React.Component<EventCardProps, {}> {
     }
 
     let icon: JSX.Element
+    let recentTag: JSX.Element
 
     if (this.props.event.event_type === 'PAYMENT_CREATED') {
       icon = <CardImage image={paymentProviderIcon} />
     } else {
       icon = <CardIcon icon={statusIcon} />
     }
-
+    if (this.props.event.is_recent) {
+      recentTag = <div style={{ textAlign: 'left', marginBottom: '8px', marginLeft: '8px', marginTop: '16px' }}><span className="govuk-tag govuk-tag--blue">new service</span></div>
+    }
     return (
       <div>
         <OpacitySpring>
+          { recentTag }
           <div className="event-card govuk-!-margin-bottom-2" style={{ backgroundColor: profile.backgroundColour }}>
             <div style={{ textAlign: 'right', width: '100%' }}>
               <span className="govuk-body-s" style={{ color: profile.colour, opacity: 0.7 }}>

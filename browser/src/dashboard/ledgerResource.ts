@@ -29,7 +29,7 @@ export interface DailyVolumeReport {
 }
 
 export const cachedSuccess: {[ key: string]: boolean} = {}
-export let services: {[key: string]: string} = {}
+export let services: {[key: string]: { name: string, went_live_date?: string, is_recent?: boolean } } = {}
 
 export async function fetchTransactionVolumesByHour(
   date: moment.Moment,
@@ -103,7 +103,10 @@ export async function fetchEventTicker(fromDate: moment.Moment, toDate: moment.M
         return !cachedSuccess[event.resource_external_id]
       })
       .map((event: Event) => {
-        event.service_name = services[event.gateway_account_id]
+        const service = services[event.gateway_account_id]
+        event.service_name = service.name
+        event.went_live_date = service.went_live_date
+        event.is_recent = service.is_recent
         event.timestamp = moment(event.event_date).valueOf()
         event.historic = historicFetch
         event.key = event.resource_external_id + event.timestamp + event.event_type + event.historic
