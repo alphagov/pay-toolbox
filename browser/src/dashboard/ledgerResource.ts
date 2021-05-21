@@ -83,12 +83,6 @@ export async function fetchAggregateVolumes(date: moment.Moment, limitTime?: mom
   }
 }
 
-async function sleep() {
-  return new Promise((resolve, reject) => {
-    setTimeout(resolve, 5000)
-  })
-}
-
 export async function fetchEventTicker(fromDate: moment.Moment, toDate: moment.Moment, historicFetch: boolean, lastFetchedEvents: moment.Moment): Promise<EventTickerResponse> {
   const fromDateString = `${fromDate.format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
   const toDateString = `${toDate.format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
