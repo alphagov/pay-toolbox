@@ -5,20 +5,18 @@ updates:
   schedule:
     interval: daily
     time: "03:00"
-  open-pull-requests-limit: 10
+  open-pull-requests-limit: 5
   labels:
   - dependencies
   - govuk-pay
   - javascript
+  allow:
+  - dependency-type: "production"
   ignore:
   - dependency-name: aws-sdk
     versions:
     - ">= 2.861.a"
     - "< 2.862"
-  - dependency-name: react
-    versions:
-    - ">= 17.a"
-    - "< 18"
   - dependency-name: stripe
     versions:
     - "> 7.15.0"
@@ -26,33 +24,6 @@ updates:
     versions:
     - ">= 7.3.0.a"
     - "< 7.3.1"
-  - dependency-name: "@types/react"
-    versions:
-    - ">= 16.14.a"
-    - "< 16.15"
-  - dependency-name: "@types/react"
-    versions:
-    - "> 16.9.43"
-    - "< 16.10"
-  - dependency-name: "@types/react"
-    versions:
-    - ">= 17.a"
-    - "< 18"
-  - dependency-name: "@types/react-dom"
-    versions:
-    - ">= 17.a"
-    - "< 18"
-  - dependency-name: "@types/stripe"
-    versions:
-    - "> 6.25.8"
-  - dependency-name: "@types/stripe"
-    versions:
-    - ">= 6.26.5.a"
-    - "< 6.26.6"
-  - dependency-name: "@types/stripe"
-    versions:
-    - ">= 6.26.6.a"
-    - "< 6.26.7"
 - package-ecosystem: docker
   directory: "/"
   schedule:
