@@ -13,10 +13,6 @@ updates:
   allow:
   - dependency-type: "production"
   ignore:
-  - dependency-name: aws-sdk
-    versions:
-    - ">= 2.861.a"
-    - "< 2.862"
   - dependency-name: stripe
     versions:
     - "> 7.15.0"
