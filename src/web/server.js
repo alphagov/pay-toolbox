@@ -2,7 +2,6 @@ const path = require('path')
 const fs = require('fs')
 const express = require('express')
 const helmet = require('helmet')
-const bodyParser = require('body-parser')
 const flash = require('connect-flash')
 const sessions = require('client-sessions')
 const nunjucks = require('nunjucks')
@@ -65,8 +64,8 @@ const configureRequestParsing = function configureRequestParsing(instance) {
     instance.enable('trust proxy')
   }
 
-  instance.use(bodyParser.urlencoded({ extended: false }))
-  instance.use(bodyParser.json({ strict: true, limit: '15kb' }))
+  instance.use(express.urlencoded({ extended: false }))
+  instance.use(express.json({ strict: true, limit: '15kb' }))
   instance.use(flash())
 }
 
