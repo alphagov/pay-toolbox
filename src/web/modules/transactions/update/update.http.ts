@@ -2,7 +2,8 @@ import crypto from 'crypto'
 import { Request, Response } from 'express'
 import { parseString } from 'fast-csv'
 import { Parser } from 'json2csv'
-import { S3, ECS } from 'aws-sdk'
+import { S3 } from '@aws-sdk/client-s3'
+import { ECS } from '@aws-sdk/client-ecs'
 import moment from 'moment'
 import logger from '../../../../lib/logger'
 import { aws, common } from '../../../../config'
@@ -15,9 +16,9 @@ type TransactionRow = {
   parent_transaction_id: string;
   reason: string;
   admin_github_id: string;
-  captured_date?: string, 
-  refund_status?: string, 
-  refund_amount_refunded?: string, 
+  captured_date?: string,
+  refund_status?: string,
+  refund_amount_refunded?: string,
   refund_amount_available?: string,
   reproject_domain_object?: string
 }
@@ -45,7 +46,7 @@ const uploadToS3 = async function uploadToS3(content: string, user: any): Promis
   // The AWS SDK automatically uses the AWS credentials from the environment when deployed.
   // For local testing, set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables.
   try {
-    const s3 = new S3()
+    const s3 = new S3({})
     const key = (user && user.username || '') + moment().format('x')
     logger.info(`Uploading transactions file to S3 with key ${key}`)
     const response = await s3.putObject({
@@ -53,7 +54,7 @@ const uploadToS3 = async function uploadToS3(content: string, user: any): Promis
       Body: content,
       Key: key,
       ServerSideEncryption: 'AES256'
-    }).promise();
+    })
     logger.info('Upload to S3 completed', {
       fileVersionId: response.VersionId,
       fileExpiration: response.Expiration
@@ -67,7 +68,7 @@ const uploadToS3 = async function uploadToS3(content: string, user: any): Promis
 
 const runEcsTask = async function runEcsTask(fileKey: string, jobId: string): Promise<string> {
   try {
-    const ecs = new ECS()
+    const ecs = new ECS({})
     const response = await ecs.runTask({
       taskDefinition: aws.AWC_ECS_UPDATE_TRANSACTIONS_TASK_DEFINITION,
       cluster: common.ENVIRONMENT,
@@ -82,7 +83,7 @@ const runEcsTask = async function runEcsTask(fileKey: string, jobId: string): Pr
           }
         ]
       }
-    }).promise()
+    })
     logger.info('Run ECS task completed', {
       numberOfFailures: response.failures.length,
       numberOfTasksStarted: response.tasks.length
@@ -166,7 +167,7 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
           if (!row.captured_date) {
             return cb(null, false, `captured_date is required when event_name is '${row.event_name}'`)
           }
-          
+
           if (!row.refund_status) {
             return cb(null, false, `refund_status is required when event_name is '${row.event_name}'`)
           }
