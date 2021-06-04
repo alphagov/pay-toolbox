@@ -61,7 +61,7 @@
     "passport": "^0.4.1",
     "passport-github": "1.1.0",
     "qs": "6.10.1",
-    "sass": "^1.32.12",
+    "sass": "^1.34.1",
     "stripe": "7.15.0",
     "stripe-latest": "npm:stripe@^8.135.0",
     "winston": "^3.3.3"
