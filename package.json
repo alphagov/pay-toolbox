@@ -61,7 +61,6 @@
     "passport": "^0.4.1",
     "passport-github": "1.1.0",
     "qs": "6.10.1",
-    "sass": "^1.34.1",
     "stripe": "7.15.0",
     "stripe-latest": "npm:stripe@^8.135.0",
     "winston": "^3.3.3"
@@ -104,6 +103,7 @@
     "react-dom": "^16.14.0",
     "react-inlinesvg": "2.3.0",
     "react-spring-conflict": "npm:react-spring@9.1.2",
+    "sass": "^1.34.1",
     "sinon": "^10.0.1",
     "supertest": "^6.1.3",
     "ts-loader": "^9.1.2",
