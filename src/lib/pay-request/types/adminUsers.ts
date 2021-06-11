@@ -27,7 +27,7 @@ export interface Service {
 
   created_date: string;
 
-  custom_branding: { 
+  custom_branding: {
     [key: string]: any;
    }
 
@@ -66,5 +66,5 @@ export interface User {
 
 export interface StripeAgreement {
   ip_address: string;
-  agreement_time: string;
+  agreement_time: string | number;
 }

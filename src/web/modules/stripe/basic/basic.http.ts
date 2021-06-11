@@ -6,7 +6,7 @@ import { AdminUsers } from '../../../../lib/pay-request'
 import { ValidationError as CustomValidationError, IOValidationError } from '../../../../lib/errors'
 import { wrapAsyncErrorHandler } from '../../../../lib/routes'
 import { formatErrorsForTemplate, ClientFormError } from '../../common/validationErrorFormat'
-import { Service } from '../../../../lib/pay-request/types/adminUsers'
+import { Service, StripeAgreement } from '../../../../lib/pay-request/types/adminUsers'
 import AccountDetails from './basicAccountDetails.model'
 import { setupProductionStripeAccount } from './account'
 const { StripeError } = Stripe.errors
@@ -78,7 +78,8 @@ const submitAccountCreate = async function submitAccountCreate(
     const service: Service = await AdminUsers.service(systemLinkService)
     const accountDetails: AccountDetails = new AccountDetails(req.body)
 
-    const stripeAccount = await setupProductionStripeAccount(systemLinkService, accountDetails)
+    const stripeAgreement: StripeAgreement = await AdminUsers.serviceStripeAgreement(systemLinkService)
+    const stripeAccount = await setupProductionStripeAccount(systemLinkService, accountDetails, stripeAgreement)
     res.render('stripe/success', { response: stripeAccount, systemLinkService, service })
   } catch (error) {
     let errors

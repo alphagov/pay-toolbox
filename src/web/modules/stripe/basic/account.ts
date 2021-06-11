@@ -16,7 +16,7 @@ if (config.server.HTTPS_PROXY) {
 }
 stripe.setApiVersion('2018-09-24')
 
-export async function setupProductionStripeAccount(serviceExternalId: string, stripeAccountDetails: AccountDetails): Promise<Stripe.accounts.IAccount> {
+export async function setupProductionStripeAccount(serviceExternalId: string, stripeAccountDetails: AccountDetails, stripeAgreement: StripeAgreement): Promise<Stripe.accounts.IAccount> {
   if (!STRIPE_ACCOUNT_API_KEY) {
     throw new CustomValidationError('Stripe API Key was not configured for this Toolbox instance')
   }
@@ -24,8 +24,6 @@ export async function setupProductionStripeAccount(serviceExternalId: string, st
   if (!service.merchant_details) {
     throw new CustomValidationError('Service has no organisation details set')
   }
-
-  const stripeAgreement: StripeAgreement = await AdminUsers.serviceStripeAgreement(serviceExternalId)
 
   logger.info('Requesting new Stripe account from stripe API')
   const stripeAccount = await stripe.accounts.create({
