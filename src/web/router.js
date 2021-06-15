@@ -11,6 +11,7 @@ const healthcheck = require('./../lib/healthcheck')
 const landing = require('./modules/landing/landing.http')
 const statistics = require('./modules/statistics/statistics.http')
 const gatewayAccounts = require('./modules/gateway_accounts').default
+const switchPSP = require('./modules/gateway_accounts/switch_psp/switch_psp.http')
 const services = require('./modules/services').default
 const charges = require('./modules/transactions/legacy')
 const discrepancies = require('./modules/discrepancies')
@@ -76,6 +77,8 @@ router.get('/gateway_accounts/:id/stripe_payout_descriptor', auth.secured, gatew
 router.post('/gateway_accounts/:id/stripe_payout_descriptor', auth.secured, gatewayAccounts.updateStripePayoutDescriptor)
 router.get('/gateway_accounts/:id/agent_initiated_moto', auth.secured, gatewayAccounts.agentInitiatedMotoPage)
 router.post('/gateway_accounts/:id/agent_initiated_moto', auth.secured, gatewayAccounts.createAgentInitiatedMotoProduct)
+router.get('/gateway_accounts/:id/switch_psp', auth.secured, switchPSP.switchPSPPage)
+router.post('/gateway_accounts/:id/switch_psp', auth.secured, switchPSP.postSwitchPSP)
 
 router.get('/gateway_accounts/:accountId/payment_links', auth.secured, paymentLinks.list)
 router.get('/gateway_accounts/:accountId/payment_links/csv', auth.secured, paymentLinks.listCSV)

@@ -1,0 +1,73 @@
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">{{ service.service_name and service.service_name.en }} ({{ account.payment_provider | capitalize }})
+  <h1 class="govuk-heading-m">Set up provider switching</h1>
+
+  <p class="govuk-body">You can set an account up for switching payment service provider.</p>
+
+  <p class="govuk-body">This will add a new credentials record to the account and enable the switching feature flag.</p>
+  <p class="govuk-body">The service should have been contacted and requested moving to a selected provider specifically.</p>
+
+  {% if account.provider_switch_enabled %}
+  {{ govukWarningText({
+    text: "This account is already flagged as switching payment service provider.",
+    iconFallbackText: "Warning"
+  }) }}
+  {% endif %}
+
+  {% if account.payment_provider === 'sandbox' %}
+  {{ govukWarningText({
+    text: "This is a sandbox account. Switching payment service provider is designed for live provider accounts.",
+    iconFallbackText: "Warning"
+  }) }}
+  {% endif %}
+
+  <form method="POST">
+    {% set statementDescriptorHtml %}
+      {{ govukInput({
+        id: "statementDescriptor",
+        name: "statementDescriptor",
+        classes: "govuk-!-width-one-third",
+        type: "text",
+        value: service.merchant_details and service.merchant_details.name,
+        label: {
+          text: "Statement descriptor"
+        },
+        hint: {
+          text: "This is the description to appear on a paying user's bank statement and is usally the name of the organisation accepting payments."
+        }
+      }) }}
+    {% endset %}
+    {{ govukRadios({
+      idPrefix: "paymentProvider",
+      name: "paymentProvider",
+      fieldset: {
+        legend: {
+          text: "Payment provider",
+          isPageHeading: false
+        }
+      },
+      hint: {
+        text: "The payment provider that the service will be moving to."
+      },
+      items: [
+        { value: "worldpay", text: "Worldpay", hint: { text: "Government Banking’s provider. The service needs an agreement with Government Banking to use their contract." } },
+        { value: "stripe", text: "Stripe", hint: { text: "GOV.UK Pay’s provider." }, conditional: { html: statementDescriptorHtml } }
+      ]
+    }) }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+    {{ govukButton({ text: "Enable provider switching" }) }}
+  </form>
+
+  <script src="/javascripts/govuk-frontend.js"></script>
+  <script>GOVUKFrontend.initAll()</script>
+{% endblock %}
+

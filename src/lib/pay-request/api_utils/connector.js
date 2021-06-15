@@ -118,7 +118,7 @@ const connectorMethods = function connectorMethods (instance) {
     return axiosInstance.post('/v1/tasks/historical-event-emitter-by-date', null, { params })
   }
 
-  function parityCheck(startId, maxId, doNotReprocessValidRecords, parityCheckStatus, 
+  function parityCheck(startId, maxId, doNotReprocessValidRecords, parityCheckStatus,
     retryDelayInSeconds, recordType) {
     const params = {
       start_id: startId,
@@ -225,6 +225,23 @@ const connectorMethods = function connectorMethods (instance) {
     return toggledValue
   }
 
+  function addGatewayAccountCredentialsForSwitch(id, paymentProvider, credentials) {
+    const url = `/v1/api/accounts/${id}/credentials`
+    return axiosInstance.post(url, {
+      payment_provider: paymentProvider,
+      ...credentials && { credentials }
+    })
+  }
+
+  function enableSwitchFlagOnGatewayAccount(id) {
+    const url = `/v1/api/accounts/${id}`
+    return axiosInstance.patch(url, {
+      op: 'replace',
+      path: 'provider_switch_enabled',
+      value: true
+    })
+  }
+
   return {
     performanceReport,
     gatewayAccountPerformanceReport,
@@ -254,7 +271,9 @@ const connectorMethods = function connectorMethods (instance) {
     toggleAllowTelephonePaymentNotifications,
     toggleSendPayerIpAddressToGateway,
     updateStripeSetupValues,
-    toggleWorldpayExemptionEngine
+    toggleWorldpayExemptionEngine,
+    addGatewayAccountCredentialsForSwitch,
+    enableSwitchFlagOnGatewayAccount
   }
 }
 

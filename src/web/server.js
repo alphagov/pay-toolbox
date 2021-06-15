@@ -45,11 +45,16 @@ const configureSecureHeaders = function configureSecureHeaders(instance) {
     hsts: false,
     xssFilter: false
   } : {}
+  const initGOVUKFrontendSnippet = '\'sha256-tqCUU2yHjDH9fiULK1QKKUFdNg//3tfcIB2bl/5yKI4=\''
   instance.use(helmet(helmetOptions))
   instance.use(helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: [ '\'self\'' ],
-      scriptSrc: [ '\'self\'', '\'unsafe-eval\'' ],
+      scriptSrc: [
+        '\'self\'',
+        '\'unsafe-eval\'',
+        initGOVUKFrontendSnippet
+      ],
       imgSrc: [ '*.githubusercontent.com', '\'self\'', 'data:' ],
       styleSrc: [ '\'self\'', '\'unsafe-inline\'' ]
     }
@@ -74,6 +79,7 @@ const configureServingPublicStaticFiles = function configureServingPublicStaticF
   instance.use('/public', express.static(path.join(__dirname, '../public'), cache))
   instance.use('/assets/fonts', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/govuk/assets/fonts'), cache))
   instance.use('/images/favicon.ico', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/govuk/assets/images/', 'favicon.ico'), cache))
+  instance.use('/javascripts/govuk-frontend.js', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/govuk/all.js'), cache))
 }
 
 const configureClientSessions = function configureClientSessions(instance) {
