@@ -36,7 +36,7 @@
     "@aws-sdk/client-ecs": "~3.17.0",
     "@aws-sdk/client-s3": "~3.17.0",
     "@govuk-pay/pay-js-commons": "3.1.0",
-    "@sentry/node": "^6.5.0",
+    "@sentry/node": "^6.7.0",
     "axios": "0.21.1",
     "class-validator": "0.13.1",
     "client-sessions": "^0.8.0",
