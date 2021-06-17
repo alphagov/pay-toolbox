@@ -15,10 +15,16 @@ export async function postSwitchPSP(req: Request, res: Response, next: NextFunct
   let credentials: { stripe_account_id?: string }
 
   try {
+    const account = await Connector.accountWithCredentials(req.params.id)
     const service = await AdminUsers.gatewayAccountServices(gatewayAccountId)
 
     if (!req.body.paymentProvider) {
       req.flash('error', 'Payment provider is required')
+      return res.redirect(`/gateway_accounts/${gatewayAccountId}/switch_psp`)
+    }
+
+    if (account.provider_switch_enabled) {
+      req.flash('error', 'Cannot configure account that is already switching provider')
       return res.redirect(`/gateway_accounts/${gatewayAccountId}/switch_psp`)
     }
 
