@@ -153,7 +153,12 @@
         <dd class="govuk-summary-list__actions"></dd>
       </div>
     {% endif %}
-  </dl>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Switching PSP</dt>
+        <dd class="govuk-summary-list__value">{{ 'Enabled' if account.provider_switch_enabled else 'Disabled' }}</dd>
+        <dd class="govuk-summary-list__actions"></dd>
+      </div>
+    </dl>
 
   <div>
     {{ govukButton({
