@@ -1,5 +1,6 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "common/json.njk" import json %}
 {% extends "layout/layout.njk" %}
 
@@ -316,7 +317,7 @@
     </div>
   {% endif %}
 
-    {% if account.send_payer_ip_address_to_gateway === true %}
+  {% if account.send_payer_ip_address_to_gateway === true %}
     <div>
       <h1 class="govuk-heading-s">Sending payer IP address to gateway is enabled</h1>
       <p class="govuk-body">If enabled, the paying user's IP address is sent to the payment gateway for fraud prevention purposes. This is not implemented for Stripe accounts.</p>
@@ -331,7 +332,7 @@
     </div>
   {% endif %}
 
-    {% if account.send_payer_ip_address_to_gateway === false %}
+  {% if account.send_payer_ip_address_to_gateway === false %}
     <div>
       <h1 class="govuk-heading-s">Enable sending payer IP address to gateway</h1>
       <p class="govuk-body">If enabled, the paying user's IP address is sent to the payment gateway for fraud prevention purposes. This is not implemented for Stripe accounts.</p>
@@ -346,6 +347,39 @@
       </form>
     </div>
   {% endif %}
+
+  <div>
+    <h1 class="govuk-heading-s">
+      {% if account.send_payer_email_to_gateway %}
+        Sending payer email to gateway is enabled
+      {% else %}
+        Enable sending payer email to gateway
+      {% endif %}
+    </h1>
+
+    <p class="govuk-body">If enabled, the paying user's email is sent to the payment gateway for fraud prevention purposes. This is not implemented for Stripe accounts.</p>
+
+    {{ govukWarningText({
+      text: "Ensure that the service does not have the setting enabled in Worldpay that will send emails to the payer.",
+      iconFallbackText: "Warning"
+    }) }}
+
+    <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_payer_email_to_gateway">
+      {% if account.send_payer_email_to_gateway %}
+        {{ govukButton({
+          text: "Disable sending payer email to gateway"
+          })
+        }}
+      {% else %}
+        {{ govukButton({
+          text: "Enable sending payer email to gateway",
+          classes: "govuk-button--warning"
+          })
+        }}
+      {% endif %}  
+      <input type="hidden" name="_csrf" value="{{ csrf }}">
+    </form>
+  </div>
 
   {% if account.payment_provider === 'worldpay' %}
     {% set 3dsFlexEnabled = account.worldpay_3ds_flex %}

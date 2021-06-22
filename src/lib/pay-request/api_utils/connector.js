@@ -213,6 +213,17 @@ const connectorMethods = function connectorMethods (instance) {
     return !gatewayAccount.send_payer_ip_address_to_gateway
   }
 
+  async function toggleSendPayerEmailToGateway (id) {
+    const gatewayAccount = await accountWithCredentials(id)
+    const url = `/v1/api/accounts/${gatewayAccount.gateway_account_id}`
+    await axiosInstance.patch(url, {
+      op: 'replace',
+      path: 'send_payer_email_to_gateway',
+      value: !gatewayAccount.send_payer_email_to_gateway
+    })
+    return !gatewayAccount.send_payer_email_to_gateway
+  }
+
   async function toggleWorldpayExemptionEngine(id) {
     const gatewayAccount = await account(id)
     const url = `/v1/api/accounts/${gatewayAccount.gateway_account_id}`
@@ -270,6 +281,7 @@ const connectorMethods = function connectorMethods (instance) {
     toggleMotoPayments,
     toggleAllowTelephonePaymentNotifications,
     toggleSendPayerIpAddressToGateway,
+    toggleSendPayerEmailToGateway,
     updateStripeSetupValues,
     toggleWorldpayExemptionEngine,
     addGatewayAccountCredentialsForSwitch,
