@@ -32,6 +32,7 @@ export default {
   toggleMotoPayments: http.toggleMotoPayments,
   toggleAllowTelephonePaymentNotifications: http.toggleAllowTelephonePaymentNotifications,
   toggleSendPayerIpAddressToGateway: http.toggleSendPayerIpAddressToGateway,
+  toggleSendPayerEmailToGateway: http.toggleSendPayerEmailToGateway,
   updateStripeStatementDescriptorPage: http.updateStripeStatementDescriptorPage,
   updateStripeStatementDescriptor: http.updateStripeStatementDescriptor,
   updateStripePayoutDescriptorPage: http.updateStripePayoutDescriptorPage,
