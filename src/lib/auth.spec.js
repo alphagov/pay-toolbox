@@ -25,10 +25,18 @@ describe('Authorisation middleware', () => {
     }
     const nextSpy = chai.spy()
 
+    requestMock.originalUrl = '/path/to/some/resource'
     requestMock.isAuthenticated = () => false
     auth.secured(requestMock, responseSpy, nextSpy)
 
+    expect(requestMock.session.authBlockedRedirectUrl).to.equal('/path/to/some/resource')
     expect(responseSpy.redirect).to.have.been.called.with('/auth')
+  })
+
+  it('secured middleware should clear redirect url on successful auth to avoid sessin pollution', () => {
+    requestMock.isAuthenticated = () => true
+    auth.secured(requestMock, chai.spy(), chai.spy())
+    expect(requestMock.session.authBlockedRedirectUrl).to.equal(undefined)
   })
 
   it('unauthorised HTTP route should reject with 403 given aunauthenticated request', () => {

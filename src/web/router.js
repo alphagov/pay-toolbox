@@ -35,7 +35,12 @@ const storage = multer.memoryStorage()
 const upload = multer({ storage })
 
 router.get('/auth', passport.authenticate('github'))
-router.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/auth/unauthorised', successRedirect: '/' }))
+router.get('/auth/github/callback', (req, res, next) => {
+  passport.authenticate('github', {
+    failureRedirect: '/auth/unauthorised',
+    successRedirect: req.session && req.session.authBlockedRedirectUrl || '/'
+  })(req, res, next)
+})
 router.get('/auth/unauthorised', auth.unauthorised)
 
 router.get('/', auth.secured, landing.root)

@@ -7,10 +7,14 @@ const { disableAuth } = require('./../config')
 // `secured` will be rejected without these headers.
 const secured = function secured(req, res, next) {
   if ((req.session && req.isAuthenticated()) || disableAuth) {
+    delete req.session.authBlockedRedirectUrl
     next()
     return
   }
   logger.info('Unauthenticated request to resource, redirecting to auth')
+  if (req.session) {
+    req.session.authBlockedRedirectUrl = req.originalUrl
+  }
   res.redirect('/auth')
 }
 
