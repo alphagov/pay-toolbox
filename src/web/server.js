@@ -84,11 +84,11 @@ const configureServingPublicStaticFiles = function configureServingPublicStaticF
 
 const configureClientSessions = function configureClientSessions(instance) {
   const serverBehindProxy = server.HTTP_PROXY
-  const twelveHoursInMillis = 12 * 60 * 60 * 1000
+  const thirtyMinutesInMillis = 30 * 60 * 1000
   instance.use(sessions({
     cookieName: 'session',
     secret: server.COOKIE_SESSION_ENCRYPTION_SECRET,
-    duration: server.SESSION_COOKIE_DURATION_IN_MILLIS || twelveHoursInMillis,
+    duration: server.SESSION_COOKIE_DURATION_IN_MILLIS || thirtyMinutesInMillis,
     activeDuration: 5 * 60 * 1000,
     cookie: {
       secureProxy: serverBehindProxy
