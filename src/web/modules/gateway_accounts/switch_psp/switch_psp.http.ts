@@ -28,6 +28,16 @@ export async function postSwitchPSP(req: Request, res: Response, next: NextFunct
       return res.redirect(`/gateway_accounts/${gatewayAccountId}/switch_psp`)
     }
 
+    const {gateway_account_credentials} = account;
+    const hasActiveCredentials = gateway_account_credentials && gateway_account_credentials.filter((credential: any) => {
+      return credential.state === 'ACTIVE'
+    }).length === 1
+
+    if (!hasActiveCredentials) {
+      req.flash('error', 'Current payment provider on account is not fully configured. Can only enable provider switching on fully configured account')
+      return res.redirect(`/gateway_accounts/${gatewayAccountId}/switch_psp`)
+    }
+
     if (req.body.paymentProvider === 'stripe') {
       if (!req.body.statementDescriptor) {
         req.flash('error', 'Statement descriptor is required for switching to Stripe')
@@ -40,8 +50,8 @@ export async function postSwitchPSP(req: Request, res: Response, next: NextFunct
       credentials = { stripe_account_id: stripeAccount.id }
     }
 
-    await Connector.addGatewayAccountCredentialsForSwitch(gatewayAccountId, req.body.paymentProvider, credentials)
     await Connector.enableSwitchFlagOnGatewayAccount(gatewayAccountId)
+    await Connector.addGatewayAccountCredentialsForSwitch(gatewayAccountId, req.body.paymentProvider, credentials)
 
     req.flash('info', 'Switching PSP enabled for gateway account')
     res.redirect(`/gateway_accounts/${req.params.id}`)
