@@ -5,7 +5,7 @@
 <div class="filter govuk-grid-row">
   <form clas="govuk-clearfix" method="GET" action="/gateway_accounts" novalidate="novalidate">
 
-    <div class="govuk-grid-column-one-third inputs-less-margin">
+    <div class="govuk-grid-column-one-quarter inputs-less-margin">
       {{ booleanFilterSelect({
           id: "live",
           name: "live",
@@ -17,7 +17,7 @@
       }}
     </div>
 
-    <div class="govuk-grid-column-one-third inputs-less-margin">
+    <div class="govuk-grid-column-one-quarter inputs-less-margin">
       {{ govukSelect({
         id: "provider",
         name: "provider",
@@ -58,7 +58,7 @@
     }}
     </div>
 
-    <div class="govuk-grid-column-one-third inputs-less-margin">
+    <div class="govuk-grid-column-one-quarter inputs-less-margin">
       {{ booleanFilterSelect({
           id: "three-ds",
           name: "three_ds",
@@ -70,7 +70,7 @@
       }}
     </div>
 
-    <div class="govuk-grid-column-one-third inputs-less-margin">
+    <div class="govuk-grid-column-one-quarter inputs-less-margin">
       {{ booleanFilterSelect({
           id: "apple-pay",
           name: "apple_pay",
@@ -82,7 +82,7 @@
       }}
     </div>
 
-    <div class="govuk-grid-column-one-third inputs-less-margin">
+    <div class="govuk-grid-column-one-quarter inputs-less-margin">
       {{ booleanFilterSelect({
           id: "google-pay",
           name: "google_pay",
@@ -94,7 +94,7 @@
       }}
     </div>
 
-    <div class="govuk-grid-column-one-third inputs-less-margin">
+    <div class="govuk-grid-column-one-quarter inputs-less-margin">
       {{ booleanFilterSelect({
           id: "moto",
           name: "moto",
@@ -102,6 +102,18 @@
           trueOptionText: "Enabled",
           falseOptionText: "Disabled",
           currentValue: filters.moto
+        })
+      }}
+    </div>
+
+    <div class="govuk-grid-column-one-quarter inputs-less-margin">
+      {{ booleanFilterSelect({
+          id: "switching_psp",
+          name: "switching_psp",
+          label: "Switching PSP",
+          trueOptionText: "Yes",
+          falseOptionText: "No",
+          currentValue: filters.switching_psp
         })
       }}
     </div>

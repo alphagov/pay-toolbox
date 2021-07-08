@@ -3,6 +3,7 @@ import { Connector, AdminUsers } from '../../../../lib/pay-request'
 import AccountDetails from '../../stripe/basic/basicAccountDetails.model'
 import { setupProductionStripeAccount } from '../../stripe/basic/account'
 import { StripeAgreement } from '../../../../lib/pay-request/types/adminUsers'
+import logger from "../../../../lib/logger";
 
 export async function switchPSPPage(req: Request, res: Response, next: NextFunction) {
   const account = await Connector.accountWithCredentials(req.params.id)
@@ -52,6 +53,13 @@ export async function postSwitchPSP(req: Request, res: Response, next: NextFunct
 
     await Connector.enableSwitchFlagOnGatewayAccount(gatewayAccountId)
     await Connector.addGatewayAccountCredentialsForSwitch(gatewayAccountId, req.body.paymentProvider, credentials)
+
+    logger.info('Provider switch enabled for gateway account', {
+      gateway_account_id: account.gateway_account_id,
+      gateway_account_type: account.type,
+      provider: account.payment_provider,
+      new_payment_provider: req.body.paymentProvider
+    })
 
     req.flash('info', 'Switching PSP enabled for gateway account')
     res.redirect(`/gateway_accounts/${req.params.id}`)
