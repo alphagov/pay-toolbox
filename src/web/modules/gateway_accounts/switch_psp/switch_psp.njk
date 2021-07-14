@@ -3,8 +3,9 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
-
 {% extends "layout/layout.njk" %}
+
+{% set isTestData = not account.live %}
 
 {% block main %}
   <span class="govuk-caption-m">{{ service.service_name and service.service_name.en }} ({{ account.payment_provider | capitalize }})
@@ -59,7 +60,7 @@
       },
       items: [
         { value: "worldpay", text: "Worldpay", hint: { text: "Government Banking’s provider. The service needs an agreement with Government Banking to use their contract." } },
-        { value: "stripe", text: "Stripe", hint: { text: "GOV.UK Pay’s provider." }, conditional: { html: statementDescriptorHtml } }
+        { value: "stripe", text: "Stripe", hint: { text: "GOV.UK Pay’s provider." }, conditional: { html: statementDescriptorHtml } if not isTestData }
       ]
     }) }}
 

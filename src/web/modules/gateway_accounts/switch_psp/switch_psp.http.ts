@@ -5,6 +5,8 @@ import { setupProductionStripeAccount } from '../../stripe/basic/account'
 import { StripeAgreement } from '../../../../lib/pay-request/types/adminUsers'
 import logger from "../../../../lib/logger";
 
+import stripeTestAccount from '../../stripe/basic/test-account.http'
+
 export async function switchPSPPage(req: Request, res: Response, next: NextFunction) {
   const account = await Connector.accountWithCredentials(req.params.id)
   const service = await AdminUsers.gatewayAccountServices(account.gateway_account_id)
@@ -40,15 +42,28 @@ export async function postSwitchPSP(req: Request, res: Response, next: NextFunct
     }
 
     if (req.body.paymentProvider === 'stripe') {
-      if (!req.body.statementDescriptor) {
-        req.flash('error', 'Statement descriptor is required for switching to Stripe')
-        return res.redirect(`/gateway_accounts/${req.params.id}/switch_psp`)
+      if (account.live) {
+        // use legacy production stripe account setup, not possible in non-live production environment
+        if (!req.body.statementDescriptor) {
+          req.flash('error', 'Statement descriptor is required for switching to Stripe')
+          return res.redirect(`/gateway_accounts/${req.params.id}/switch_psp`)
+        }
+        const accountDetails = new AccountDetails(req.body)
+        const switchProxyAgreement: StripeAgreement = { ip_address: req.ip, agreement_time: Date.now() }
+        const stripeAccount = await setupProductionStripeAccount(service.external_id, accountDetails, switchProxyAgreement)
+        credentials = { stripe_account_id: stripeAccount.id }
+      } else {
+        // use new stripe account setup and fully configure it for
+        const stripeAccount = await stripeTestAccount.createStripeTestAccount(service.service_name.en)
+
+        await Connector.updateStripeSetupValues(account.gateway_account_id, [
+          'bank_account',
+          'company_number',
+          'responsible_person',
+          'vat_number'
+        ])
+        credentials = { stripe_account_id: stripeAccount.id }
       }
-      const accountDetails = new AccountDetails(req.body)
-      const ipAddress = (req.headers['x-forwarded-for'] && req.headers['x-forwarded-for'].toString()) || (req.socket.remoteAddress && req.socket.remoteAddress.toString())
-      const switchProxyAgreement: StripeAgreement = { ip_address: ipAddress, agreement_time: Date.now() }
-      const stripeAccount = await setupProductionStripeAccount(service.external_id, accountDetails, switchProxyAgreement)
-      credentials = { stripe_account_id: stripeAccount.id }
     }
 
     await Connector.enableSwitchFlagOnGatewayAccount(gatewayAccountId)
