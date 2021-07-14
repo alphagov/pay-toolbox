@@ -1,4 +1,3 @@
-import logger from '../../../../lib/logger'
 import { NextFunction, Request, Response } from 'express'
 import { Connector, AdminUsers } from '../../../../lib/pay-request'
 import AccountDetails from '../../stripe/basic/basicAccountDetails.model'
@@ -50,8 +49,7 @@ export async function postSwitchPSP(req: Request, res: Response, next: NextFunct
           return res.redirect(`/gateway_accounts/${req.params.id}/switch_psp`)
         }
         const accountDetails = new AccountDetails(req.body)
-        const ipAddress = (req.headers['x-forwarded-for'] && req.headers['x-forwarded-for'].toString()) || (req.socket.remoteAddress && req.socket.remoteAddress.toString())
-        const switchProxyAgreement: StripeAgreement = { ip_address: ipAddress, agreement_time: Date.now() }
+        const switchProxyAgreement: StripeAgreement = { ip_address: req.ip, agreement_time: Date.now() }
         const stripeAccount = await setupProductionStripeAccount(service.external_id, accountDetails, switchProxyAgreement)
         credentials = { stripe_account_id: stripeAccount.id }
       } else {
@@ -78,7 +76,6 @@ export async function postSwitchPSP(req: Request, res: Response, next: NextFunct
       new_payment_provider: req.body.paymentProvider
     })
 
-    logger.info(`Switching PSP enabled for gateway account ${req.params.id}`)
     req.flash('info', 'Switching PSP enabled for gateway account')
     res.redirect(`/gateway_accounts/${req.params.id}`)
   } catch (error) {
