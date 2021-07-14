@@ -127,5 +127,6 @@ async function createRepresentative(connectAccountId: string) {
 
 export default {
     createTestAccount: wrapAsyncErrorHandler(createTestAccount),
-    createTestAccountConfirm: wrapAsyncErrorHandler(createTestAccountConfirm)
+    createTestAccountConfirm: wrapAsyncErrorHandler(createTestAccountConfirm),
+    createStripeTestAccount
 }
