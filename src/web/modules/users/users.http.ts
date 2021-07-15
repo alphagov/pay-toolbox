@@ -6,7 +6,7 @@ import UpdateEmailFormRequest from './UpdateEmailForm'
 import UpdatePhoneNumberFormRequest from './UpdatePhoneNumberForm'
 
 import { formatErrorsForTemplate, ClientFormError } from '../common/validationErrorFormat'
-import { IOValidationError } from '../../../lib/errors'
+import { EntityNotFoundError, IOValidationError } from '../../../lib/errors'
 
 const show = async function show(req: Request, res: Response): Promise<void> {
   const payUser = await AdminUsers.user(req.params.id)
@@ -171,11 +171,21 @@ const searchPage = async function searchPage(
 
 const search = async function search(
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> {
-  const email = req.body.email && req.body.email.trim()
-  const user = await AdminUsers.findUser(email)
-  res.redirect(`/users/${user.external_id}`)
+  const search = req.body.search && req.body.search.trim()
+  try {
+    const user = await AdminUsers.findUser(search)
+    res.redirect(`/users/${user.external_id}`)
+  } catch (err) {
+    if (err instanceof EntityNotFoundError) {
+      const user = await AdminUsers.user(search)
+      return res.redirect(`/users/${user.external_id}`)
+    }
+    next(err)
+  }
+  
 }
 
 export default {
