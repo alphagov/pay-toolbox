@@ -51,7 +51,7 @@
     "govuk-frontend": "^3.13.0",
     "helmet": "^4.6.0",
     "https-proxy-agent": "5.0.0",
-    "joi": "^17.4.1",
+    "joi": "^17.4.2",
     "json2csv": "^5.0.6",
     "lodash": "4.17.21",
     "moment": "^2.29.1",
