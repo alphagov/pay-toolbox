@@ -350,7 +350,6 @@ async function updateStripePayoutDescriptorPage(
 ): Promise<void> {
   const { id } = req.params
   const account = await getAccount(id)
-
   res.render('gateway_accounts/stripe_payout_descriptor', { account, csrf: req.csrfToken() })
 }
 
@@ -360,10 +359,14 @@ async function updateStripeStatementDescriptor(
 ): Promise<void> {
   const { statement_descriptor } = req.body
   const { id } = req.params
-  const account = await Connector.accountWithCredentials(id)
+  const { stripe_account_id } = await Connector.stripe(id)
 
   if (!statement_descriptor) {
     throw new Error('Cannot update empty state descriptor')
+  }
+
+  if (!stripe_account_id) {
+    throw new Error('Invalid Stripe account configuration')
   }
 
   // @ts-ignore
@@ -375,7 +378,7 @@ async function updateStripeStatementDescriptor(
     }
   }
   await stripe.accounts.update(
-    account.credentials.stripe_account_id,
+    stripe_account_id,
     // @ts-ignore
     updateParams
   )
@@ -389,10 +392,14 @@ async function updateStripePayoutDescriptor(
 ): Promise<void> {
   const { statement_descriptor } = req.body
   const { id } = req.params
-  const account = await Connector.accountWithCredentials(id)
+  const { stripe_account_id } = await Connector.stripe(id)
 
   if (!statement_descriptor) {
     throw new Error('Cannot update empty state descriptor')
+  }
+
+  if (!stripe_account_id) {
+    throw new Error('Invalid Stripe account configuration')
   }
 
   // @ts-ignore
@@ -404,7 +411,7 @@ async function updateStripePayoutDescriptor(
     }
   }
   await stripe.accounts.update(
-    account.credentials.stripe_account_id,
+    stripe_account_id,
     // @ts-ignore
     updateParams
   )
