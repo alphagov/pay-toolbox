@@ -121,6 +121,7 @@ async function confirm(req: Request, res: Response): Promise<void> {
 async function writeAccount(req: Request, res: Response): Promise<void> {
   const account = new GatewayAccountFormModel(req.body)
   const linkedService = req.body.systemLinkedService
+  account.serviceId = linkedService
 
   let gatewayAccountIdDerived: string
   let createdAccount: object
