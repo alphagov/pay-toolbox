@@ -88,7 +88,7 @@ async function createTestGatewayAccount(serviceId: string, serviceName: string, 
         provider: 'stripe',
         credentials: stripeConnectId
     })
-
+    account.serviceId = serviceId
     const cardAccount: CardGatewayAccount = await Connector.createAccount(account.formatPayload())
     const gatewayAccountIdDerived = String(cardAccount.gateway_account_id)
     logger.info(`Created new Gateway Account ${gatewayAccountIdDerived}`)

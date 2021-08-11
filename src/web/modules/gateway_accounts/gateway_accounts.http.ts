@@ -74,7 +74,7 @@ async function overviewDirectDebit(
 }
 
 async function create(req: Request, res: Response): Promise<void> {
-  const linkedService = req.query.service
+  const serviceId = req.query.service
   const context: {
     linkedCredentials: string;
     recovered?: object;
@@ -106,8 +106,8 @@ async function create(req: Request, res: Response): Promise<void> {
     delete req.session.recovered
   }
 
-  if (linkedService) {
-    const service = await AdminUsers.service(linkedService)
+  if (serviceId) {
+    const service = await AdminUsers.service(serviceId)
     context.service = service
   }
   res.render('gateway_accounts/create', context)
@@ -120,7 +120,8 @@ async function confirm(req: Request, res: Response): Promise<void> {
 
 async function writeAccount(req: Request, res: Response): Promise<void> {
   const account = new GatewayAccountFormModel(req.body)
-  const linkedService = req.body.systemLinkedService
+  const serviceId = req.body.systemLinkedService
+  account.serviceId = serviceId
 
   let gatewayAccountIdDerived: string
   let createdAccount: object
@@ -139,18 +140,18 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
   logger.info(`Created new Gateway Account ${gatewayAccountIdDerived}`)
 
   // connect system linked services to the created account
-  if (linkedService) {
+  if (serviceId) {
     await AdminUsers.updateServiceGatewayAccount(
-      linkedService,
+      serviceId,
       gatewayAccountIdDerived
     )
-    logger.info(`Service ${linkedService} linked to new Gateway Account ${gatewayAccountIdDerived}`)
+    logger.info(`Service ${serviceId} linked to new Gateway Account ${gatewayAccountIdDerived}`)
 
-    const serviceDetails = await AdminUsers.service(linkedService)
+    const serviceDetails = await AdminUsers.service(serviceId)
     const isUpdateServiceToLive = account.isLive() && serviceDetails.current_go_live_stage !== 'LIVE'
 
-    await AdminUsers.updateServiceDetails(linkedService, isUpdateServiceToLive, account.sector, account.internalFlag)
-    logger.info(`Service ${linkedService} - 'sector' updated to '${account.sector}', 'internal' updated to ${account.internalFlag}`)
+    await AdminUsers.updateServiceDetails(serviceId, isUpdateServiceToLive, account.sector, account.internalFlag)
+    logger.info(`Service ${serviceId} - 'sector' updated to '${account.sector}', 'internal' updated to ${account.internalFlag}`)
   }
 
   const stripeAccountStatementDescriptors: {
@@ -167,7 +168,7 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
   // note payment_provider is not returned in the object returned from createAccount
   res.render('gateway_accounts/createSuccess', {
     account: createdAccount,
-    linkedService,
+    linkedService: serviceId,
     gatewayAccountIdDerived,
     provider: account.provider,
     isLive: account.isLive(),

@@ -14,8 +14,10 @@ export interface GatewayAccountRequest {
   credentials?: object;
 
   sector: string,
-  
-  internalFlag: boolean
+
+  internalFlag: boolean,
+
+  service_id: string
 }
 
 export interface GatewayAccount {
@@ -57,7 +59,7 @@ export interface GatewayAccount {
     [key: string]: EmailNotificationSettings;
   };
 
-  notify_settings: { 
+  notify_settings: {
     [key: string]: any;
    }
 }

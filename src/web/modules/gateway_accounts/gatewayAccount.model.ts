@@ -71,7 +71,9 @@ class GatewayAccount extends Validated {
   @IsNotEmpty({ message: 'Please select a sector' })
   public sector: string;
 
-  public internalFlag: boolean; 
+  public internalFlag: boolean;
+
+  public serviceId: string;
 
   public validate(): void {
     super.validate()
@@ -119,7 +121,8 @@ class GatewayAccount extends Validated {
       service_name: this.serviceName,
       analytics_id: this.analyticsId,
       sector: this.sector,
-      internalFlag: this.internalFlag
+      internalFlag: this.internalFlag,
+      service_id: this.serviceId
     }
 
     if (this.isLive() || this.provider === 'stripe' ) {
@@ -132,6 +135,10 @@ class GatewayAccount extends Validated {
       payload.credentials = {
         stripe_account_id: this.credentials
       }
+    }
+
+    if (!this.serviceId) {
+      throw new Error('Service ID must be set for gateway account request')
     }
     return payload
   }
