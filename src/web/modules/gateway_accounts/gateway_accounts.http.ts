@@ -335,6 +335,17 @@ async function toggleSendPayerEmailToGateway(
   res.redirect(`/gateway_accounts/${id}`)
 }
 
+async function toggleSendReferenceToGateway(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { id } = req.params
+  const enabled = await Connector.toggleSendReferenceToGateway(id)
+
+  req.flash('info', `Sending reference (instead of description) to gateway ${enabled ? 'enabled' : 'disabled'}`)
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
 async function updateStripeStatementDescriptorPage(
   req: Request,
   res: Response
@@ -584,6 +595,7 @@ export default {
   toggleAllowTelephonePaymentNotifications: wrapAsyncErrorHandler(toggleAllowTelephonePaymentNotifications),
   toggleSendPayerIpAddressToGateway: wrapAsyncErrorHandler(toggleSendPayerIpAddressToGateway),
   toggleSendPayerEmailToGateway: wrapAsyncErrorHandler(toggleSendPayerEmailToGateway),
+  toggleSendReferenceToGateway: wrapAsyncErrorHandler(toggleSendReferenceToGateway),
   updateStripeStatementDescriptorPage: wrapAsyncErrorHandler(updateStripeStatementDescriptorPage),
   updateStripeStatementDescriptor: wrapAsyncErrorHandler(updateStripeStatementDescriptor),
   updateStripePayoutDescriptorPage: wrapAsyncErrorHandler(updateStripePayoutDescriptorPage),

@@ -33,6 +33,7 @@ export default {
   toggleAllowTelephonePaymentNotifications: http.toggleAllowTelephonePaymentNotifications,
   toggleSendPayerIpAddressToGateway: http.toggleSendPayerIpAddressToGateway,
   toggleSendPayerEmailToGateway: http.toggleSendPayerEmailToGateway,
+  toggleSendReferenceToGateway: http.toggleSendReferenceToGateway,
   updateStripeStatementDescriptorPage: http.updateStripeStatementDescriptorPage,
   updateStripeStatementDescriptor: http.updateStripeStatementDescriptor,
   updateStripePayoutDescriptorPage: http.updateStripePayoutDescriptorPage,
