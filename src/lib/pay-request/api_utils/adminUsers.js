@@ -93,6 +93,15 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     throw new NotImplementedError(`Remove user from service end point not configured [user=${userId}] [service=${serviceId}]`)
   }
 
+  const addAdminUserToService = function addAdminUserToService(serviceId, userId) {
+    const path = `/v1/api/users/${userId}/services`
+    const request = {
+      service_external_id: serviceId,
+      role_name: 'super-admin'
+    }
+    return axiosInstance.post(path, request).then(utilExtractData)
+  }
+
   const resetUserSecondFactor = function resetUserSecondFactor(id) {
     const path = `/v1/api/users/${id}/reset-second-factor`
     return axiosInstance.post(path).then(utilExtractData)
@@ -273,7 +282,8 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     toggleExperimentalFeaturesEnabledFlag,
     toggleAgentInitiatedMotoEnabledFlag,
     adminEmailsForGatewayAccounts,
-    toggleArchiveService
+    toggleArchiveService,
+    addAdminUserToService
   }
 }
 

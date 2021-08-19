@@ -54,6 +54,10 @@
   {% endfor %}
 </dl>
 
+<div>
+  <a class="govuk-button govuk-button--secondary" href="/users/{{ payUser.external_id }}/addToService">Add user to internal service</a>
+</div>
+
 {{ json("User details source", payUser) }}
 
 {% endblock %}

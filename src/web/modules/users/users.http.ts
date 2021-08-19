@@ -188,6 +188,26 @@ const search = async function search(
   
 }
 
+const addAdminUserToServicePage = async function addAdminUserToServicePage(req: Request, res: Response) {
+  const { userId } = req.params
+  const payUser = await AdminUsers.user(userId)
+  res.render('users/addToServices.njk', { payUser, csrf: req.csrfToken() })
+}
+
+const addAdminUserToService = async function addAdminUserToService(req: Request, res: Response, next: NextFunction) {
+  const { userId } = req.params
+  const { serviceId } = req.body
+  const service = await AdminUsers.service(serviceId)
+
+  if (service.internal !== true) {
+    throw new Error('You cannot add an admin user to a non-internal service')
+  }
+
+  await AdminUsers.addAdminUserToService(serviceId, userId)
+  req.flash(`Added user to ${service.service_name.en}`)
+  res.redirect(`/users/${userId}`)
+}
+
 export default {
   show: wrapAsyncErrorHandler(show),
   updateEmailForm: wrapAsyncErrorHandler(updateEmailForm),
@@ -198,5 +218,7 @@ export default {
   search: wrapAsyncErrorHandler(search),
   searchPage: wrapAsyncErrorHandler(searchPage),
   updateEmail,
-  updatePhoneNumber
+  updatePhoneNumber,
+  addAdminUserToServicePage: wrapAsyncErrorHandler(addAdminUserToServicePage),
+  addAdminUserToService: wrapAsyncErrorHandler(addAdminUserToService),
 }

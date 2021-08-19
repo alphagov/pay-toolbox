@@ -132,6 +132,9 @@ router.post('/users/:id/phone', auth.secured, users.updatePhoneNumber)
 router.get('/users/:id/email', auth.secured, users.updateEmailForm)
 router.post('/users/:id/email', auth.secured, users.updateEmail)
 
+router.get('/users/:userId/addToService', auth.secured, users.addAdminUserToServicePage)
+router.post('/users/:userId/addToService', auth.secured, users.addAdminUserToService)
+
 // @TODO(sfount) PATCH and DELETE respectively
 router.get('/users/:id/toggle', auth.secured, users.toggleUserEnabled)
 router.get('/users/:userId/service/:serviceId/delete', auth.secured, users.removeUserFromService)
