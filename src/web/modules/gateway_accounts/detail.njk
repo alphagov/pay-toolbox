@@ -403,6 +403,35 @@
     <div>
   {% endif %}
 
+  {% if account.send_reference_to_gateway === true %}
+    <div>
+      <h1 class="govuk-heading-s">Sending reference to gateway is enabled</h1>
+      <p class="govuk-body">If enabled, the payment <b>reference</b> is sent to gateway, otherwise <b>description</b> is sent to gateway. Only applicable for Worldpay accounts</p>
+      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_reference_to_gateway">
+        {{ govukButton({
+          text: "Disable sending reference to gateway"
+          })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    </div>
+  {% endif %}
+
+  {% if account.send_reference_to_gateway === false %}
+    <div>
+      <h1 class="govuk-heading-s">Enable sending reference to gateway</h1>
+      <p class="govuk-body">If enabled, the payment <b>reference</b> is sent to gateway, otherwise <b>description</b> is sent to gateway. Only applicable for Worldpay accounts</p>
+      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_reference_to_gateway">
+        {{ govukButton({
+          text: "Enable sending reference to gateway",
+          classes: "govuk-button--warning"
+          })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    </div>
+  {% endif %}
+
   {{ json("Gateway account details source", account) }}
   {{ json("Accepted cards source", acceptedCards) }}
   {{ json("Gateway account services source", services) }}
