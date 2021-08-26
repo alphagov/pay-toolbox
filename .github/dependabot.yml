@@ -24,10 +24,6 @@ updates:
   - dependency-name: stripe
     versions:
     - "> 7.15.0"
-  - dependency-name: stripe
-    versions:
-    - ">= 7.3.0.a"
-    - "< 7.3.1"
 - package-ecosystem: docker
   directory: "/"
   schedule:
