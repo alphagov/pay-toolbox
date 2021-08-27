@@ -14,4 +14,6 @@ export interface Product {
   reference_label: string;
 
   language: string;
+
+  require_captcha: boolean;
 }
