@@ -81,7 +81,7 @@
           {% for link in group.links %}
           <tr class="govuk-table__row">
             <td class="govuk-table__cell">
-              <span>{{ (link.product.name or "(No name)") | truncate(30) }}</span>
+              <span><a class="govuk-link govuk-link--no-visited-state" href="/payment_links/{{ link.product.external_id }}">{{ (link.product.name or "(No name)") | truncate(30) }}</a></span>
             </td>
             <td class="govuk-table__cell">
               <strong class="govuk-tag">{{ link.product.status }}</strong>

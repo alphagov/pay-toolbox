@@ -1,16 +1,20 @@
 import { EntityNotFoundError } from '../../errors'
-const { redactProductTokensFromProducts, redactProductTokensFromPaymentLinksWithUsage } = require('./redact')
+const {
+  redactProductTokensFromProducts,
+  redactProductTokensFromPaymentLinksWithUsage,
+  redactProductTokenFromProduct
+} = require('./redact')
 
 const productsMethods = function productsMethods(instance) {
   const axiosInstance = instance || this
   const utilExtractData = (response) => response.data
 
-  const paymentLinksByGatewayAccount = function paymentLinksByGatewayAccount(id) {
+  function paymentLinksByGatewayAccount(id) {
     return axiosInstance.get(`/v1/api/gateway-account/${id}/products`)
       .then(utilExtractData)
   }
 
-  const paymentLinksByGatewayAccountAndType = function paymentLinksByGatewayAccountAndType(id, productType) {
+  function paymentLinksByGatewayAccountAndType(id, productType) {
     const queryParams = {
       params: {
         type: productType
@@ -19,9 +23,9 @@ const productsMethods = function productsMethods(instance) {
     return axiosInstance.get(`/v1/api/gateway-account/${id}/products`, queryParams)
       .then(utilExtractData)
       .then(redactProductTokensFromProducts)
-   }
+  }
 
-  const paymentLinksWithUsage = function paymentLinksWithUsage(gatewayAccountId) {
+  function paymentLinksWithUsage(gatewayAccountId) {
     const queryParams = {
       params: {
         ...gatewayAccountId && { gatewayAccountId }
@@ -32,15 +36,35 @@ const productsMethods = function productsMethods(instance) {
       .then(redactProductTokensFromPaymentLinksWithUsage)
   }
 
-  const createProduct = function createProduct(createProductRequest) {
+  function createProduct(createProductRequest) {
     return axiosInstance.post('/v1/api/products', createProductRequest).then(utilExtractData)
+  }
+
+  function getProduct(id) {
+    return axiosInstance.get(`/v1/api/products/${id}`)
+      .then(utilExtractData)
+      .then(redactProductTokenFromProduct)
+  }
+
+  async function toggleRequireCaptcha(id) {
+    const product = await getProduct(id)
+    const url = `/v2/api/gateway-account/${product.gateway_account_id}/products/${id}`
+    const value = !product.require_captcha
+    await axiosInstance.patch(url, [{
+      op: 'replace',
+      path: 'require_captcha',
+      value: value
+    }]);
+    return value
   }
 
   return {
     paymentLinksByGatewayAccount,
     paymentLinksByGatewayAccountAndType,
     paymentLinksWithUsage,
-    createProduct
+    createProduct,
+    getProduct,
+    toggleRequireCaptcha
   }
 }
 

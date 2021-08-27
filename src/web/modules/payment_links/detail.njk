@@ -1,0 +1,121 @@
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "common/json.njk" import json %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <h1 class="govuk-heading-m">Payment link details</h1>
+
+  {% for message in messages %}
+    <div class="govuk-error-summary success-summary" role="alert">
+      <h2 class="govuk-error-summary__title">{{message}}</h2>
+    </div>
+  {% endfor %}
+
+  <dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Name</dt>
+      <dd class="govuk-summary-list__value">{{ paymentLink.name }}</dd>
+      <dd class="govuk-summary-list__actions"></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Description</dt>
+      <dd class="govuk-summary-list__value">
+        {% if paymentLink.description %}
+        {{ paymentLink.description }}
+        {% else %}
+        <i>(None set)</i>
+        {% endif %}
+      </dd>
+      <dd class="govuk-summary-list__actions"></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">URL</dt>
+      <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="{{ url }}">{{ url }}</a></dd>
+      <dd class="govuk-summary-list__actions"></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Gateway account</dt>
+      <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ paymentLink.gateway_account_id }}">{{ paymentLink.gateway_account_id }}</a></dd>
+      <dd class="govuk-summary-list__actions"></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Language</dt>
+      <dd class="govuk-summary-list__value">{{ paymentLink.language }}</dd>
+      <dd class="govuk-summary-list__actions"></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Amount</dt>
+      <dd class="govuk-summary-list__value">
+        {% if paymentLink.price %}
+        {{ paymentLink.price | currency }}
+        {% else %}
+        <i>(User can choose)</i>
+        {% endif %}
+      </dd>
+      <dd class="govuk-summary-list__actions"></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Reference enabled</dt>
+      <dd class="govuk-summary-list__value">{{ paymentLink.reference_enabled | string | capitalize }}</dd>
+      <dd class="govuk-summary-list__actions"></dd>
+    </div>
+
+    {% if paymentLink.reference_enabled %}
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Reference label</dt>
+      <dd class="govuk-summary-list__value">
+        {% if paymentLink.reference_label %}
+        {{ paymentLink.reference_label }}
+        {% else %}
+        <i>(None set)</i>
+        {% endif %}
+      </dd>
+      <dd class="govuk-summary-list__actions"></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Reference hint</dt>
+      <dd class="govuk-summary-list__value">
+        {% if paymentLink.reference_hint %}
+        {{ paymentLink.reference_hint }}
+        {% else %}
+        <i>(None set)</i>
+        {% endif %}
+      </dd>
+      <dd class="govuk-summary-list__actions"></dd>
+    </div>
+    {% endif%}
+  </dl>
+
+  <div>
+    <h1 class="govuk-heading-s">
+      {% if paymentLink.require_captcha %}
+        Require CAPTCHA is enabled
+      {% else %}
+        Require CAPTCHA is disabled
+      {% endif %}
+    </h1>
+
+    <p class="govuk-body">If enabled, a CAPTCHA widget will be displayed on the payment link pages which must be completed before proceeding to the card details page.<p> 
+    <p class="govuk-body">This can be enabled if we suspect payment link is being accessed by bots for the purpose of card testing.<p>
+
+    <form method="POST" action="/payment_links/{{ paymentLink.external_id }}/toggle_require_captcha">
+      {% if paymentLink.require_captcha %}
+        {{ govukButton({
+          text: "Disable require CAPTCHA"
+          })
+        }}
+      {% else %}
+        {{ govukButton({
+          text: "Enable require CAPTCHA",
+          classes: "govuk-button--warning"
+          })
+        }}
+      {% endif %}  
+      <input type="hidden" name="_csrf" value="{{ csrf }}">
+    </form>
+  </div>
+
+  {{ json("Payment link source", paymentLink) }}
+{% endblock %}

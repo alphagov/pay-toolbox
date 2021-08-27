@@ -3,12 +3,13 @@ import { Request, Response, NextFunction } from 'express'
 import { Products, AdminUsers, Connector } from '../../../lib/pay-request'
 import { aggregateServicesByGatewayAccountId } from '../../../lib/gatewayAccounts'
 import { format } from './csv'
-function indexPaymentLinksByType(paymentLink: any): any {
-  const index = paymentLink.product._links.reduce((aggregate: any, linkDetails: any) => {
+
+function indexPaymentLinkByType(paymentLink: any): any {
+  const index = paymentLink._links.reduce((aggregate: any, linkDetails: any) => {
     aggregate[linkDetails.rel] = linkDetails.href
     return aggregate
   }, {})
-  paymentLink.product._indexedLinks = index
+  paymentLink._indexedLinks = index
   return paymentLink
 }
 
@@ -36,7 +37,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
 }
 
 export async function listCSV(req: Request, res: Response, next: NextFunction): Promise<void> {
-   try {
+  try {
     const { accountId } = req.params
     const sort = req.query.sort as string || 'last_payment_date'
     const live = req.query.live === undefined ? true : req.query.live && req.query.live !== "false"
@@ -44,17 +45,45 @@ export async function listCSV(req: Request, res: Response, next: NextFunction): 
     const usageReportResults = await fetchUsageContext(sort, filterLiveAccounts, accountId)
     const flatLinksList = usageReportResults.groupedPaymentLinks
       .reduce((aggregate: any, groupedList: any) => {
-        aggregate = [ ...aggregate, ...groupedList.links ]
+        aggregate = [...aggregate, ...groupedList.links]
         return aggregate
       }, [])
 
     const name = accountId || 'platform'
     res.set('Content-Type', 'text/csv')
-    res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_payment_links_usage_${ name }.csv"`)
+    res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_payment_links_usage_${name}.csv"`)
     res.status(200).send(format(flatLinksList))
-   } catch(error) {
-     next(error)
-   }
+  } catch (error) {
+    next(error)
+  }
+}
+
+export async function detail(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { id } = req.params
+    const paymentLink = indexPaymentLinkByType(await Products.getProduct(id))
+
+    res.render('payment_links/detail', {
+      paymentLink,
+      url: paymentLink._indexedLinks.friendly || paymentLink._indexedLinks.pay,
+      messages: req.flash('info'),
+      csrf: req.csrfToken()
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export async function toggleRequireCaptcha(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { id } = req.params
+    const enabled = await Products.toggleRequireCaptcha(id)
+
+    req.flash('info', `Require CAPTCHA ${enabled ? 'enabled' : 'disabled'}`)
+    res.redirect(`/payment_links/${id}`)
+  } catch (error) {
+    next(error)
+  }
 }
 
 interface PaymentLinkUsageContext {
@@ -65,9 +94,9 @@ async function fetchUsageContext(sortKey: string, filterLiveAccounts: Boolean, a
   let serviceRequest, liveAccountsRequest
   if (accountId) {
     serviceRequest = AdminUsers.gatewayAccountServices(accountId)
-      .then((service: any) => [ service ])
+      .then((service: any) => [service])
     liveAccountsRequest = Connector.account(accountId)
-    .then((account: any) => [ account ])
+      .then((account: any) => [account])
   } else {
     serviceRequest = AdminUsers.services()
     liveAccountsRequest = Connector.accounts({ type: 'live' })
@@ -83,7 +112,10 @@ async function fetchUsageContext(sortKey: string, filterLiveAccounts: Boolean, a
   const liveAccounts = liveAccountsResponse.map((account: any) => account.gateway_account_id)
 
   const paymentLinks = paymentLinksResponse
-    .map(indexPaymentLinksByType)
+    .map((paymentLink: any) => {
+      indexPaymentLinkByType(paymentLink.product)
+      return paymentLink
+    })
     .filter((link: any) => !filterLiveAccounts || liveAccounts.includes(link.product.gateway_account_id))
     .map((link: any) => {
       const service = serviceGatewayAccountIndex[link.product.gateway_account_id]
