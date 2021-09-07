@@ -17,8 +17,6 @@ import DirectDebitGatewayAccount from '../../../lib/pay-request/types/directDebi
 import { GatewayAccount as CardGatewayAccount } from '../../../lib/pay-request/types/connector'
 import { ClientFormError } from '../common/validationErrorFormat'
 import * as config from '../../../config'
-import Stripe from 'stripe'
-import HTTPSProxyAgent from 'https-proxy-agent'
 import { format } from './csv'
 import { formatWithAdminEmails } from './csv_with_admin_emails'
 import { createCsvWithAdminEmailsData, createCsvData } from './csv_data'
@@ -26,11 +24,7 @@ import CreateAgentInitiatedMotoProductFormRequest from './CreateAgentInitiatedMo
 import { formatErrorsForTemplate } from '../common/validationErrorFormat'
 import { EntityNotFoundError, IOValidationError } from '../../../lib/errors'
 
-const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY)
-stripe.setApiVersion('2018-09-24')
-
-// @ts-ignore
-if (config.server.HTTPS_PROXY) stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
+import * as stripeClient from '../../../lib/stripe/stripe.client'
 
 async function overview(req: Request, res: Response): Promise<void> {
   const filters = extractFiltersFromQuery(req.query)
@@ -160,7 +154,7 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
   } = {}
 
   if (account.provider === 'stripe') {
-    const stripeAccountDetails = await stripe.accounts.retrieve(account.credentials);
+    const stripeAccountDetails = await stripeClient.getStripeLegacyApiVersion().accounts.retrieve(account.credentials);
     stripeAccountStatementDescriptors.payoutStatementDescriptor = stripeAccountDetails.payout_statement_descriptor
     stripeAccountStatementDescriptors.statementDescriptor = stripeAccountDetails.statement_descriptor
   }
@@ -389,7 +383,7 @@ async function updateStripeStatementDescriptor(
       }
     }
   }
-  await stripe.accounts.update(
+  await stripeClient.getStripeLegacyApiVersion().accounts.update(
     stripe_account_id,
     // @ts-ignore
     updateParams
@@ -422,7 +416,7 @@ async function updateStripePayoutDescriptor(
       }
     }
   }
-  await stripe.accounts.update(
+  await stripeClient.getStripeLegacyApiVersion().accounts.update(
     stripe_account_id,
     // @ts-ignore
     updateParams

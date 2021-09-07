@@ -16,15 +16,16 @@ import { stripeTestResponsiblePersonDetails } from '../model/person.model'
 
 const Stripe = require('stripe-latest')
 const { StripeError } = Stripe.errors
-const STRIPE_ACCOUNT_TEST_API_KEY: string = process.env.STRIPE_ACCOUNT_TEST_API_KEY || ''
-const stripe = new Stripe(STRIPE_ACCOUNT_TEST_API_KEY, {
-    apiVersion: '2020-08-27',
-})
 
+const STRIPE_ACCOUNT_TEST_API_KEY: string = process.env.STRIPE_ACCOUNT_TEST_API_KEY || ''
+
+const stripeConfig = {}
 if (config.server.HTTPS_PROXY) {
-    // @ts-ignore
-    stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
+  // @ts-ignore
+  stripeConfig.httpAgent = new HTTPSProxyAgent(config.server.HTTPS_PROXY)
 }
+
+const stripe = new Stripe(STRIPE_ACCOUNT_TEST_API_KEY, {...stripeConfig, 'apiVersion': '2020-08-27'})
 
 const createTestAccount = async function createTestAccount(req: Request, res: Response): Promise<void> {
     if (!STRIPE_ACCOUNT_TEST_API_KEY) {

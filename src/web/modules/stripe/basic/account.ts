@@ -1,20 +1,12 @@
 import Stripe from 'stripe'
-import HTTPSProxyAgent from 'https-proxy-agent'
-import * as config from '../../../../config'
 import { AdminUsers } from '../../../../lib/pay-request'
 import AccountDetails from './basicAccountDetails.model'
 import { Service, StripeAgreement } from '../../../../lib/pay-request/types/adminUsers'
 import { ValidationError as CustomValidationError } from '../../../../lib/errors'
 
 import logger from '../../../../lib/logger'
+import * as stripeClient from '../../../../lib/stripe/stripe.client'
 const STRIPE_ACCOUNT_API_KEY: string = process.env.STRIPE_ACCOUNT_API_KEY || ''
-const stripe = new Stripe(STRIPE_ACCOUNT_API_KEY)
-
-if (config.server.HTTPS_PROXY) {
-  // @ts-ignore
-  stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
-}
-stripe.setApiVersion('2018-09-24')
 
 export async function setupProductionStripeAccount(serviceExternalId: string, stripeAccountDetails: AccountDetails, stripeAgreement: StripeAgreement): Promise<Stripe.accounts.IAccount> {
   if (!STRIPE_ACCOUNT_API_KEY) {
@@ -26,7 +18,7 @@ export async function setupProductionStripeAccount(serviceExternalId: string, st
   }
 
   logger.info('Requesting new Stripe account from stripe API')
-  const stripeAccount = await stripe.accounts.create({
+  const stripeAccount = await stripeClient.getStripeLegacyApiVersion().accounts.create({
     type: 'custom',
     country: 'GB',
     business_name: service.merchant_details.name,
