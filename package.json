@@ -63,7 +63,7 @@
     "qs": "6.10.1",
     "sass": "^1.39.0",
     "stripe": "7.15.0",
-    "stripe-latest": "npm:stripe@8.167.0",
+    "stripe-latest": "npm:stripe@^8.174.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {
