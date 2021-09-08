@@ -1,15 +1,8 @@
 import Stripe from 'stripe'
-import HTTPSProxyAgent from 'https-proxy-agent'
-
-import * as config from '../../../config'
 
 import logger = require('../../../lib/logger');
 
-const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY)
-stripe.setApiVersion('2018-09-24')
-
-// @ts-ignore
-if (config.server.HTTPS_PROXY) stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
+import * as stripeClient from '../../../lib/stripe/stripe.client'
 
 const MAX_PAGE_SIZE = 100
 
@@ -26,7 +19,7 @@ const getPage = async function getPage(
   }
 
   // @ts-ignore
-  const result = await stripe.balanceTransactions.list(limits, { stripe_account: accountId })
+  const result = await stripeClient.getStripeLegacyApiVersion().balanceTransactions.list(limits, { stripe_account: accountId })
 
   logger.info(`[pages] fetched ${result.data.length} transactions for ${payoutId} [has_more=${result.has_more}]`)
   return result

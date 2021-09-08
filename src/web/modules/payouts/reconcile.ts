@@ -1,19 +1,13 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 import Stripe from 'stripe'
-import HTTPSProxyAgent from 'https-proxy-agent'
 import _ from 'lodash'
 
-import * as config from '../../../config'
 import { renderCSV, PayTransactionCSVEntity, PaymentType } from './csv'
 import { reconcilePayment, reconcileRefund } from './payTransaction'
 import { getTransactionsForPayout } from './page'
 
-const stripe = new Stripe(process.env.STRIPE_ACCOUNT_API_KEY)
-stripe.setApiVersion('2018-09-24')
-
-// @ts-ignore
-if (config.server.HTTPS_PROXY) stripe.setHttpAgent(new HTTPSProxyAgent(config.server.HTTPS_PROXY))
+import * as stripeClient from '../../../lib/stripe/stripe.client'
 
 const verifyReconciledTotals = async function verifyReconciledTotals(
   payout: Stripe.payouts.IPayout,
@@ -88,12 +82,12 @@ export async function getPayoutsForAccount(
     ...endingBefore && { ending_before: endingBefore }
   }
 
-  return stripe.payouts.list(options, { stripe_account: stripeAccountId })
+  return stripeClient.getStripeLegacyApiVersion().payouts.list(options, { stripe_account: stripeAccountId })
 }
 
 export async function getPayout(
   payoutId: string,
   stripeAccountId: string
 ): Promise<Stripe.payouts.IPayout> {
-  return stripe.payouts.retrieve(payoutId, { stripe_account: stripeAccountId })
+  return stripeClient.getStripeLegacyApiVersion().payouts.retrieve(payoutId, { stripe_account: stripeAccountId })
 }
