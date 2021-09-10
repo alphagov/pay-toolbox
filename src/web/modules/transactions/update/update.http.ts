@@ -50,7 +50,7 @@ const uploadToS3 = async function uploadToS3(content: string, user: any): Promis
     const key = (user && user.username || '') + moment().format('x')
     logger.info(`Uploading transactions file to S3 with key ${key}`)
     const response = await s3.putObject({
-      Bucket: aws.AWS_S3_UPDATE_TRANSACTIONS_BUCKET_NAME,
+      Bucket: aws.AWS_S3_UPDATE_TRANSACTIONS_V2_BUCKET_NAME,
       Body: content,
       Key: key,
       ServerSideEncryption: 'AES256'
@@ -70,8 +70,16 @@ const runEcsTask = async function runEcsTask(fileKey: string, jobId: string): Pr
   try {
     const ecs = new ECS({})
     const response = await ecs.runTask({
-      taskDefinition: aws.AWC_ECS_UPDATE_TRANSACTIONS_TASK_DEFINITION,
-      cluster: common.ENVIRONMENT,
+      taskDefinition: aws.AWC_ECS_UPDATE_TRANSACTIONS_V2_TASK_DEFINITION,
+      launchType: "FARGATE",
+      networkConfiguration: {
+        awsvpcConfiguration: {
+          subnets: aws.AWS_VPC_UPDATE_TRANSACTIONS_V2_SUBNET_IDS.split(","),
+          securityGroups: aws.AWS_VPC_UPDATE_TRANSACTIONS_V2_SECURITY_GROUP_IDS.split(","),
+          assignPublicIp: "DISABLED"
+        }
+      },
+      cluster: `${common.ENVIRONMENT}-fargate`,
       overrides: {
         containerOverrides: [
           {
