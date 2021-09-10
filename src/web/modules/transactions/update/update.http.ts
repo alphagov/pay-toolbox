@@ -70,7 +70,7 @@ const runEcsTask = async function runEcsTask(fileKey: string, jobId: string): Pr
   try {
     const ecs = new ECS({})
     const response = await ecs.runTask({
-      taskDefinition: aws.AWC_ECS_UPDATE_TRANSACTIONS_FARGATE_TASK_DEFINITION,
+      taskDefinition: aws.AWS_ECS_UPDATE_TRANSACTIONS_FARGATE_TASK_DEFINITION,
       launchType: "FARGATE",
       networkConfiguration: {
         awsvpcConfiguration: {
