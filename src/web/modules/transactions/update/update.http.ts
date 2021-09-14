@@ -20,7 +20,8 @@ type TransactionRow = {
   refund_status?: string,
   refund_amount_refunded?: string,
   refund_amount_available?: string,
-  reproject_domain_object?: string
+  reproject_domain_object?: string,
+  requires_3ds?: boolean
 }
 
 export async function fileUpload(req: Request, res: Response): Promise<void> {
@@ -132,6 +133,11 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
         } else {
           row.event_date = `${moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
         }
+
+        if (row.requires_3ds) {
+          row.requires_3ds = (row.requires_3ds === true)
+        }
+
         return row
       })
       .validate((row, cb) => {
