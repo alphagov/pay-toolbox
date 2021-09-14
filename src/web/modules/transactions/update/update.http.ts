@@ -135,7 +135,7 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
         }
 
         if (row.requires_3ds) {
-          row.requires_3ds = (row.requires_3ds === true)
+          row.requires_3ds = (row.requires_3ds === true || row.requires_3ds === 'true')
         }
 
         return row
