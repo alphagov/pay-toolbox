@@ -40,7 +40,7 @@ pipeline {
         }
       }
     }
-   stage('Push and deploy') {
+   stage('Push') {
       stages {
         // @TODO(sfount) investigate using built-in Jenkins `docker.build()` and
         //               `docker.push()` commands in steps
@@ -51,14 +51,6 @@ pipeline {
             }
           }
           post { failure { postMetric("toolbox.docker-tag.failure", 1) } }
-        }
-        stage('Deploy') {
-          when {
-            branch 'master'
-          }
-          steps {
-            deployEcs("toolbox")
-          }
         }
       }
     }
