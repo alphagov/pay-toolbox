@@ -48,7 +48,7 @@
     "express": "4.17.1",
     "fast-csv": "^4.3.6",
     "google-libphonenumber": "~3.2.21",
-    "govuk-frontend": "^3.13.1",
+    "govuk-frontend": "^3.14.0",
     "helmet": "^4.6.0",
     "https-proxy-agent": "5.0.0",
     "joi": "^17.4.2",
