@@ -58,7 +58,6 @@ router.get('/statistics/performance-data', auth.secured, performance.downloadDat
 router.get('/gateway_accounts', auth.secured, gatewayAccounts.overview)
 router.get('/gateway_accounts/csv', auth.secured, gatewayAccounts.listCSV)
 router.get('/gateway_accounts/csvWithAdminEmails', auth.secured, gatewayAccounts.listCSVWithAdminEmails)
-router.get('/gateway_accounts/direct_debit', auth.secured, gatewayAccounts.overviewDirectDebit)
 router.get('/gateway_accounts/create', auth.secured, gatewayAccounts.create.http, gatewayAccounts.create.exceptions)
 router.get('/gateway_accounts/search', auth.secured, gatewayAccounts.search)
 router.post('/gateway_accounts/search', auth.secured, gatewayAccounts.searchRequest)

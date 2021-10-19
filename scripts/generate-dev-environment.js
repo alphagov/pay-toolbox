@@ -4,7 +4,6 @@ const ENV_FILE = '.env'
 
 const LOCAL_URL_MAP =`ADMINUSERS_URL=http://localhost:9700
 CONNECTOR_URL=http://localhost:9300
-DIRECT_DEBIT_CONNECTOR_URL=http://localhost:10100
 PRODUCTS_URL=http://localhost:18000
 PUBLIC_AUTH_URL=http://localhost:9600
 LEDGER_URL=http://localhost:10700
@@ -12,7 +11,6 @@ SELFSERVICE_URL=http://localhost:9400`
 
 const TUNNEL_URL_MAP =`ADMINUSERS_URL=https://localhost:9001
 CONNECTOR_URL=https://localhost:9003
-DIRECT_DEBIT_CONNECTOR_URL=https://localhost:9004
 PRODUCTS_URL=https://localhost:9005
 PUBLIC_AUTH_URL=https://localhost:9006
 LEDGER_URL=https://localhost:9007
@@ -20,7 +18,6 @@ SELFSERVICE_URL=https://selfservice.pymnt.uk`
 
 const DOCKER_URL_MAP =`ADMINUSERS_URL=https://docker.for.mac.localhost:9001
 CONNECTOR_URL=https://docker.for.mac.localhost:9003
-DIRECT_DEBIT_CONNECTOR_URL=https://docker.for.mac.localhost:9004
 PRODUCTS_URL=https://docker.for.mac.localhost:9005
 PUBLIC_AUTH_URL=https://docker.for.mac.localhost:9006
 LEDGER_URL=https://docker.for.mac.localhost:9007

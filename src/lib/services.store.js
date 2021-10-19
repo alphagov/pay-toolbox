@@ -12,12 +12,6 @@ const CONNECTOR = {
   target: services.CONNECTOR_URL
 }
 
-const DIRECTDEBITCONNECTOR = {
-  key: 'DIRECTDEBITCONNECTOR',
-  name: 'Direct Debit Connector',
-  target: services.DIRECT_DEBIT_CONNECTOR_URL
-}
-
 const PRODUCTS = {
   key: 'PRODUCTS',
   name: 'Products',
@@ -39,7 +33,6 @@ const LEDGER = {
 const data = [
   ADMINUSERS,
   CONNECTOR,
-  DIRECTDEBITCONNECTOR,
   PRODUCTS,
   PUBLICAUTH,
   LEDGER
@@ -61,5 +54,5 @@ const lookup = async function lookup(serviceKey) {
 }
 
 module.exports = {
-  data, lookup, ADMINUSERS, CONNECTOR, DIRECTDEBITCONNECTOR, PRODUCTS, PUBLICAUTH, LEDGER
+  data, lookup, ADMINUSERS, CONNECTOR, PRODUCTS, PUBLICAUTH, LEDGER
 }
