@@ -124,12 +124,11 @@ const buildPayBaseClient = function buildPayBaseClient(service) {
 //                base - could eventually cause performance issues
 const AdminUsers = buildPayBaseClient(serviceStore.ADMINUSERS)
 const Connector = buildPayBaseClient(serviceStore.CONNECTOR)
-const DirectDebitConnector = buildPayBaseClient(serviceStore.DIRECTDEBITCONNECTOR)
 const Products = buildPayBaseClient(serviceStore.PRODUCTS)
 const PublicAuth = buildPayBaseClient(serviceStore.PUBLICAUTH)
 const Ledger = buildPayBaseClient(serviceStore.LEDGER)
 
-const clients = [ AdminUsers, Connector, DirectDebitConnector, Products, PublicAuth, Ledger ]
+const clients = [ AdminUsers, Connector, Products, PublicAuth, Ledger ]
 
 // make a GET request to all supported clients - for now supress throwing the
 // error upwards as the calling code probably wants all results
@@ -146,5 +145,5 @@ const broadcast = async function broadcast(path) {
 }
 
 module.exports = {
-  broadcast, AdminUsers, Connector, PublicAuth, Products, DirectDebitConnector, Ledger
+  broadcast, AdminUsers, Connector, PublicAuth, Products, Ledger
 }

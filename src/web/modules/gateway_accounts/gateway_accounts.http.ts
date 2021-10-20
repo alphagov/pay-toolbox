@@ -5,7 +5,7 @@ import { stringify } from 'qs'
 import logger from '../../../lib/logger'
 
 import {
-  Connector, DirectDebitConnector, AdminUsers, PublicAuth, Products
+  Connector, AdminUsers, PublicAuth, Products
 } from '../../../lib/pay-request'
 import { wrapAsyncErrorHandler } from '../../../lib/routes'
 import { extractFiltersFromQuery, toAccountSearchParams } from '../../../lib/gatewayAccounts'
@@ -57,14 +57,6 @@ async function listCSV(req: Request, res: Response): Promise<void> {
   res.set('Content-Type', 'text/csv')
   res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_gateway_accounts_${stringify(filters)}.csv"`)
   res.status(200).send(format(data))
-}
-
-async function overviewDirectDebit(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const { accounts } = await DirectDebitConnector.accounts()
-  res.render('gateway_accounts/overview', { accounts, messages: req.flash('info') })
 }
 
 async function create(req: Request, res: Response): Promise<void> {
@@ -120,11 +112,7 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
   let gatewayAccountIdDerived: string
   let createdAccount: object
   if (account.isDirectDebit) {
-    const directDebitAccount: DirectDebitGatewayAccount = await DirectDebitConnector.createAccount(
-      account.formatPayload()
-    )
-    createdAccount = directDebitAccount
-    gatewayAccountIdDerived = directDebitAccount.gateway_account_external_id
+    throw new Error(`Adding a direct debit account is no longer supported`)
   } else {
     const cardAccount: CardGatewayAccount = await Connector.createAccount(account.formatPayload())
     createdAccount = cardAccount
@@ -179,7 +167,7 @@ async function detail(req: Request, res: Response): Promise<void> {
 
   let account, acceptedCards
   if (isDirectDebitID) {
-    account = await DirectDebitConnector.account(id)
+    throw new Error(`Direct debit accounts are no longer supported`)
   } else {
     [account, acceptedCards] = await Promise.all([Connector.accountWithCredentials(id), Connector.acceptedCardTypes(id)])
   }
@@ -220,7 +208,10 @@ async function deleteApiKey(req: Request, res: Response): Promise<void> {
 
 async function getAccount(id: string): Promise<any> {
   const isDirectDebitID = id.match(/^DIRECT_DEBIT:/)
-  const readAccountMethod = isDirectDebitID ? DirectDebitConnector.account : Connector.account
+  if (isDirectDebitID) {
+    throw new Error(`Direct debit accounts are no longer supported`)
+  }
+  const readAccountMethod = Connector.account
   return readAccountMethod(id)
 }
 
@@ -573,7 +564,6 @@ export default {
   overview: wrapAsyncErrorHandler(overview),
   listCSV: wrapAsyncErrorHandler(listCSV),
   listCSVWithAdminEmails: wrapAsyncErrorHandler(listCSVWithAdminEmails),
-  overviewDirectDebit: wrapAsyncErrorHandler(overviewDirectDebit),
   create: wrapAsyncErrorHandler(create),
   confirm: wrapAsyncErrorHandler(confirm),
   writeAccount: wrapAsyncErrorHandler(writeAccount),
