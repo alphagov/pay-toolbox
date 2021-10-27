@@ -41,5 +41,6 @@ export default {
   searchRequest: http.searchRequest,
   agentInitiatedMotoPage: http.agentInitiatedMotoPage,
   createAgentInitiatedMotoProduct: http.createAgentInitiatedMotoProduct,
-  toggleWorldpayExemptionEngine: http.toggleWorldpayExemptionEngine
+  toggleWorldpayExemptionEngine: http.toggleWorldpayExemptionEngine,
+  toggleRequiresAdditionalKycData: http.toggleRequiresAdditionalKycData
 }
