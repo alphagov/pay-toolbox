@@ -230,6 +230,34 @@
    {% endif %}
   </div>
 
+  {% if account.payment_provider == 'stripe' %}
+    <div>
+      <h1 class="govuk-heading-s">Enable additional KYC data</h1>
+      {% if account.requires_additional_kyc_data === false %}
+        <p class="govuk-body">Please ensure the service has been notified of the additional KYC data requirement.</p>
+        <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_requires_additional_kyc_data">
+          {{ govukButton({
+            text: "Enable requiring KYC data",
+            classes: "govuk-button--warning"
+          }) }}
+          <input type="hidden" name="_csrf" value="{{ csrf }}">
+        </form>
+      {% endif %}
+      {% if account.requires_additional_kyc_data === true %}
+        {{ govukWarningText({
+          text: "This account is flagged for requiring additional KYC data.",
+          iconFallbackText: "Warning"
+        }) }}
+        <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_requires_additional_kyc_data">
+          {{ govukButton({
+            text: "Disable requiring KYC data"
+          }) }}
+          <input type="hidden" name="_csrf" value="{{ csrf }}">
+        </form>
+      {% endif %}
+    </div>
+  {% endif %}
+
   {% if account.allow_moto === false %}
     <div>
       <h1 class="govuk-heading-s">Enable MOTO payments</h1>

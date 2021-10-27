@@ -331,6 +331,23 @@ async function toggleSendReferenceToGateway(
   res.redirect(`/gateway_accounts/${id}`)
 }
 
+async function toggleRequiresAdditionalKycData(
+    req: Request,
+    res: Response
+): Promise<void> {
+  const { id } = req.params
+  const account = await getAccount(id)
+  const enabled = await Connector.toggleRequiresAdditionalKycData(account.gateway_account_id, !account.requires_additional_kyc_data)
+
+  logger.info('Requires additional KYC data flag updated for gateway account', {
+    enabled: enabled,
+    gateway_account_id: account.gateway_account_id,
+    gateway_account_type: account.type
+  })
+  req.flash('info', `Requires additional KYC data ${enabled ? 'enabled' : 'disabled'} for gateway account`)
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
 async function updateStripeStatementDescriptorPage(
   req: Request,
   res: Response
@@ -588,5 +605,6 @@ export default {
   searchRequest: wrapAsyncErrorHandler(searchRequest),
   agentInitiatedMotoPage: wrapAsyncErrorHandler(agentInitiatedMotoPage),
   createAgentInitiatedMotoProduct: wrapAsyncErrorHandler(createAgentInitiatedMotoProduct),
-  toggleWorldpayExemptionEngine: wrapAsyncErrorHandler(toggleWorldpayExemptionEngine)
+  toggleWorldpayExemptionEngine: wrapAsyncErrorHandler(toggleWorldpayExemptionEngine),
+  toggleRequiresAdditionalKycData: wrapAsyncErrorHandler(toggleRequiresAdditionalKycData)
 }

@@ -247,6 +247,16 @@ const connectorMethods = function connectorMethods (instance) {
     return toggledValue
   }
 
+  async function toggleRequiresAdditionalKycData (gatewayAccountId, requiresKycFlag) {
+    const url = `/v1/api/accounts/${gatewayAccountId}`
+    await axiosInstance.patch(url, {
+      op: 'replace',
+      path: 'requires_additional_kyc_data',
+      value: requiresKycFlag
+    })
+    return requiresKycFlag
+  }
+
   function addGatewayAccountCredentialsForSwitch(id, paymentProvider, credentials) {
     const url = `/v1/api/accounts/${id}/credentials`
     return axiosInstance.post(url, {
@@ -297,7 +307,8 @@ const connectorMethods = function connectorMethods (instance) {
     updateStripeSetupValues,
     toggleWorldpayExemptionEngine,
     addGatewayAccountCredentialsForSwitch,
-    enableSwitchFlagOnGatewayAccount
+    enableSwitchFlagOnGatewayAccount,
+    toggleRequiresAdditionalKycData
   }
 }
 
