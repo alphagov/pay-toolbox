@@ -30,14 +30,6 @@
     }}
 
     {{ govukInput({
-      id: "corporate_prepaid_credit_card_surcharge_amount",
-      name: "corporate_prepaid_credit_card_surcharge_amount",
-      value: account.corporate_prepaid_credit_card_surcharge_amount or "0",
-      label: { text: "Corporate prepaid credit card surcharge amount" }
-      })
-    }}
-
-    {{ govukInput({
       id: "corporate_prepaid_debit_card_surcharge_amount",
       name: "corporate_prepaid_debit_card_surcharge_amount",
       value: account.corporate_prepaid_debit_card_surcharge_amount or "0",

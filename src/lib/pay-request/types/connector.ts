@@ -47,8 +47,6 @@ export interface GatewayAccount {
 
   integration_version_3ds: number;
 
-  corporate_prepaid_credit_card_surcharge_amount: number;
-
   corporate_prepaid_debit_card_surcharge_amount: number;
 
   corporate_credit_card_surcharge_amount: number;
