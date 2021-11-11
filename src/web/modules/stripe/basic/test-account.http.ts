@@ -64,8 +64,7 @@ const createTestAccountConfirm = async function createTestAccountConfirm(req: Re
             provider: 'stripe',
             isLive: false,
             isStripe: true,
-            stripeConnectAccountId: stripeAccount.id,
-            selfServiceBaseUrl: config.services.SELFSERVICE_URL
+            stripeConnectAccountId: stripeAccount.id
         })
     } catch (error) {
         if (error instanceof StripeError) {

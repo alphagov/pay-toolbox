@@ -23,21 +23,6 @@ A {{ account.type | upper }} Gateway account has been created through Admin User
 
 {% if isStripe and not isLive %}
     <p class="govuk-body">In Zendesk, respond to the request using "Stripe test account" macro</p>
-    <p class="govuk-body">Replace the placeholders in the macro with the following:</p>
-
-    {{ govukTable({
-            head: [
-                { text: "Zendesk macro placeholder"},
-                { text: "Value"}
-            ],
-            rows:
-            [
-                [ { text: "***STRIPE_TEST_ACCOUNT_URL***" },
-                  { text: selfServiceBaseUrl + "/account/" + account.external_id + "/dashboard", classes: "stripe-go-live-url-table-cell"  } ]
-            ]
-            })
-    }}
-
 {% else %}
     <p class="govuk-body">In Zendesk, respond to the request to go live using the appropriate Zendesk macro (either “Stripe account” or “non-Stripe”).</p>
     <p class="govuk-body">Replace the placeholders in the macro with the following:</p>
