@@ -1,4 +1,3 @@
-import Stripe from 'stripe'
 import { Request, Response } from 'express'
 
 import logger from '../../../../lib/logger'
@@ -9,6 +8,7 @@ import { formatErrorsForTemplate, ClientFormError } from '../../common/validatio
 import { Service, StripeAgreement } from '../../../../lib/pay-request/types/adminUsers'
 import AccountDetails from './basicAccountDetails.model'
 import { setupProductionStripeAccount } from './account'
+const Stripe = require('stripe-latest')
 const { StripeError } = Stripe.errors
 
 const createAccountForm = async function createAccountForm(

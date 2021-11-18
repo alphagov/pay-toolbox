@@ -45,6 +45,7 @@ export interface Service {
     address_postcode: string;
     telephone_number: string;
     email: string;
+    url: string
   };
 }
 
