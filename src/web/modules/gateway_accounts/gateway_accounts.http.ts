@@ -178,11 +178,16 @@ async function detail(req: Request, res: Response): Promise<void> {
     logger.warn(`Services request for gateway account ${id} returned "${error.message}"`)
   }
 
+  const activeCredential = account.gateway_account_credentials && account.gateway_account_credentials.find((credential: any) => {
+    return credential.state === 'ACTIVE'
+  })
+
   res.render('gateway_accounts/detail', {
     account,
     acceptedCards,
     gatewayAccountId: id,
     services,
+    activeCredential,
     messages: req.flash('info'),
     csrf: req.csrfToken()
   })
