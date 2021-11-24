@@ -55,7 +55,8 @@ export async function setupProductionStripeAccount(serviceExternalId: string, st
     },
     business_profile: {
       mcc: 9399,
-      url: service.merchant_details.url
+      url: service.merchant_details.url,
+      product_description: `Payments for public sector services for organisation ${service.merchant_details.name}`
     },
     capabilities: {
       card_payments: {requested: true},
