@@ -8,7 +8,7 @@ import { formatErrorsForTemplate, ClientFormError } from '../../common/validatio
 import { Service, StripeAgreement } from '../../../../lib/pay-request/types/adminUsers'
 import AccountDetails from './basicAccountDetails.model'
 import { setupProductionStripeAccount } from './account'
-const Stripe = require('stripe-latest')
+const Stripe = require('stripe')
 const { StripeError } = Stripe.errors
 
 const createAccountForm = async function createAccountForm(

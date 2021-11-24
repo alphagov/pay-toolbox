@@ -170,8 +170,8 @@
     {# @TODO(sfount) use standard enum for provider type #}
     {% if account.payment_provider == 'stripe' %}
     {{ govukButton({
-    text: "Manage Payouts",
-    href: "/services/" + services.external_id + "/gateway_account/" + gatewayAccountId + "/payouts"
+    text: "View Payouts",
+    href: "/payouts?account=" + gatewayAccountId
     })
     }}
     {{ govukButton({

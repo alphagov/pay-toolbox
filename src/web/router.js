@@ -16,7 +16,6 @@ const services = require('./modules/services').default
 const charges = require('./modules/transactions/legacy')
 const discrepancies = require('./modules/discrepancies')
 const stripe = require('./modules/stripe')
-const payouts = require('./modules/payouts/payouts.http')
 const transactions = require('./modules/transactions/transactions.http')
 const updateTransactions = require('./modules/transactions/update/update.http')
 const parity = require('./modules/transactions/discrepancies/validateLedger.http')
@@ -106,10 +105,6 @@ router.get('/services/:id/toggle_agent_initiated_moto_enabled', auth.secured, se
 router.get('/services/:id/toggle_archived_status', auth.secured, services.toggleArchiveService)
 router.get('/services/:id/organisation', auth.secured, services.updateOrganisationForm)
 router.post('/services/:id/organisation', auth.secured, services.updateOrganisation)
-
-router.get('/services/:serviceId/gateway_account/:gatewayAccountId/payouts', auth.secured, payouts.show)
-router.get('/services/:serviceId/gateway_account/:gatewayAccountId/payouts/csv', auth.secured, payouts.listPayoutsCsv)
-router.get('/services/:serviceId/gateway_account/:gatewayAccountId/payouts/:payoutId', auth.secured, payouts.csv)
 
 router.get('/discrepancies/search', auth.secured, discrepancies.search)
 router.post('/discrepancies/search', auth.secured, discrepancies.getDiscrepancyReport)
