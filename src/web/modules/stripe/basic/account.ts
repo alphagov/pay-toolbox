@@ -2,21 +2,10 @@ import { AdminUsers } from '../../../../lib/pay-request'
 import AccountDetails from './basicAccountDetails.model'
 import { Service, StripeAgreement } from '../../../../lib/pay-request/types/adminUsers'
 import { ValidationError as CustomValidationError } from '../../../../lib/errors'
-import * as config from '../../../../config'
 import logger from '../../../../lib/logger'
-import HTTPSProxyAgent from "https-proxy-agent"
+import * as stripeClient from '../../../../lib/stripe/stripe.client'
 
 const STRIPE_ACCOUNT_API_KEY: string = process.env.STRIPE_ACCOUNT_API_KEY || ''
-
-const Stripe = require('stripe-latest')
-
-const stripeConfig = {}
-if (config.server.HTTPS_PROXY) {
-  // @ts-ignore
-  stripeConfig.httpAgent = new HTTPSProxyAgent(config.server.HTTPS_PROXY)
-}
-
-const stripe = new Stripe(STRIPE_ACCOUNT_API_KEY, {...stripeConfig, 'apiVersion': '2020-08-27'})
 
 // @ts-ignore
 export async function setupProductionStripeAccount(serviceExternalId: string, stripeAccountDetails: AccountDetails, stripeAgreement: StripeAgreement): Promise<Stripe.accounts.IAccount> {
@@ -30,7 +19,7 @@ export async function setupProductionStripeAccount(serviceExternalId: string, st
 
   logger.info('Requesting new Stripe account from stripe API')
 
-  const stripeAccount = await stripe.accounts.create({
+  const stripeAccount = await stripeClient.getStripeApi().accounts.create({
     type: 'custom',
     country: 'GB',
     business_type: 'government_entity',

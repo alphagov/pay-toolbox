@@ -14,7 +14,7 @@ import { accounts } from "stripe";
 import { stripeTestAccountDetails } from '../model/account.model'
 import { stripeTestResponsiblePersonDetails } from '../model/person.model'
 
-const Stripe = require('stripe-latest')
+const Stripe = require('stripe')
 const { StripeError } = Stripe.errors
 
 const STRIPE_ACCOUNT_TEST_API_KEY: string = process.env.STRIPE_ACCOUNT_TEST_API_KEY || ''

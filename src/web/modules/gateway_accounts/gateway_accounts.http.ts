@@ -13,7 +13,6 @@ import { extractFiltersFromQuery, toAccountSearchParams } from '../../../lib/gat
 import GatewayAccountFormModel from './gatewayAccount.model'
 import { Service } from '../../../lib/pay-request/types/adminUsers'
 import { Product } from '../../../lib/pay-request/types/products'
-import DirectDebitGatewayAccount from '../../../lib/pay-request/types/directDebitConnector'
 import { GatewayAccount as CardGatewayAccount } from '../../../lib/pay-request/types/connector'
 import { ClientFormError } from '../common/validationErrorFormat'
 import * as config from '../../../config'
@@ -142,7 +141,7 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
   } = {}
 
   if (account.provider === 'stripe') {
-    const stripeAccountDetails = await stripeClient.getStripeLegacyApiVersion().accounts.retrieve(account.credentials);
+    const stripeAccountDetails = await stripeClient.getStripeApi().accounts.retrieve(account.credentials);
     stripeAccountStatementDescriptors.payoutStatementDescriptor = stripeAccountDetails.payout_statement_descriptor
     stripeAccountStatementDescriptors.statementDescriptor = stripeAccountDetails.statement_descriptor
   }
@@ -396,7 +395,7 @@ async function updateStripeStatementDescriptor(
       }
     }
   }
-  await stripeClient.getStripeLegacyApiVersion().accounts.update(
+  await stripeClient.getStripeApi().accounts.update(
     stripe_account_id,
     // @ts-ignore
     updateParams
@@ -429,7 +428,7 @@ async function updateStripePayoutDescriptor(
       }
     }
   }
-  await stripeClient.getStripeLegacyApiVersion().accounts.update(
+  await stripeClient.getStripeApi().accounts.update(
     stripe_account_id,
     // @ts-ignore
     updateParams
