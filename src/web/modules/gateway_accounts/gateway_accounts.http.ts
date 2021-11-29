@@ -141,9 +141,9 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
   } = {}
 
   if (account.provider === 'stripe') {
-    const stripeAccountDetails = await stripeClient.getStripeApi().accounts.retrieve(account.credentials);
-    stripeAccountStatementDescriptors.payoutStatementDescriptor = stripeAccountDetails.payout_statement_descriptor
-    stripeAccountStatementDescriptors.statementDescriptor = stripeAccountDetails.statement_descriptor
+    const stripeAccountDetails = await stripeClient.getStripeApi().accounts.retrieve(account.credentials)
+    stripeAccountStatementDescriptors.payoutStatementDescriptor = stripeAccountDetails.settings.payouts.statement_descriptor
+    stripeAccountStatementDescriptors.statementDescriptor = stripeAccountDetails.settings.payments.statement_descriptor
   }
 
   // note payment_provider is not returned in the object returned from createAccount
