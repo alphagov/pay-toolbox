@@ -28,7 +28,7 @@
  </div>
 
  {{ govukButton({
-    text: "Create Pay Live Gateway Account for " + response.business_name + "(" + service.name + ")",
+    text: "Create Pay Live Gateway Account for " + response.business_profile.name + "(" + service.name + ")",
     href: "/gateway_accounts/create?service=" + systemLinkService + "&credentials=" + response.id
     })
     }}
