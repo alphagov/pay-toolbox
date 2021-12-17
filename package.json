@@ -58,7 +58,7 @@
     "morgan": "^1.10.0",
     "multer": "1.4.4",
     "nunjucks": "3.2.3",
-    "passport": "^0.5.1",
+    "passport": "^0.5.2",
     "passport-github": "1.1.0",
     "qs": "6.10.2",
     "sass": "^1.45.0",
