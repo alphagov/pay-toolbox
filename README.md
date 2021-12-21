@@ -33,6 +33,10 @@ npm run dev
 * Press The `green play` button (`F5` MacOS). This will run the app in debug mode.
 * Add breakpoints to any file you want to debug - click in the left hand column and a red dot will appear.
 
+If the above doesn't work, try the following:
+* Open the search command box and enter `Debug npm script`
+* Select `dev tsc-watch --noClear --onSuccess "./scripts/run-dev"`
+
 ## Key runtime environment variables
 
 | Variable                 | Description                               |
