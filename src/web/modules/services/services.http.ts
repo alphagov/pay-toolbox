@@ -66,8 +66,10 @@ const detail = async function detail(req: Request, res: Response): Promise<void>
     user.role = currentServicesRole.role && currentServicesRole.role.name
   })
 
+  const adminEmails = users.filter((user) => user.role.toLowerCase() == 'admin').map((user) => user.email).toString()
+
   res.render('services/detail', {
-    service, users, serviceId, messages
+    service, users, serviceId, messages, adminEmails
   })
 }
 

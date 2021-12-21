@@ -62,6 +62,7 @@ interface ServiceRole {
 
 export interface User {
   service_roles: ServiceRole[];
+  email: string;
   role?: string; // role alias if it has been parsed
 }
 
