@@ -65,14 +65,6 @@ pipeline {
             tagDeployment("toolbox")
           }
         }
-        stage('Deploy notification') {
-          when {
-            branch 'master'
-          }
-          steps {
-            triggerGraphiteDeployEvent("toolbox")
-          }
-        }
       }
     }
   }
