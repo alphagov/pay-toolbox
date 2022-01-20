@@ -1,6 +1,7 @@
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "common/booleanFilterSelect.njk" import booleanFilterSelect %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
 
 <div class="filter govuk-grid-row">
   <form clas="govuk-clearfix" method="GET" action="/gateway_accounts" novalidate="novalidate">
@@ -114,6 +115,16 @@
           trueOptionText: "Yes",
           falseOptionText: "No",
           currentValue: filters.switching_psp
+        })
+      }}
+    </div>
+
+        <div class="govuk-grid-column-one-quarter inputs-less-margin">
+      {{ govukInput({
+          id: "payment_provider_account_id",
+          name: "payment_provider_account_id",
+          label: {text: "Account or Merchant ID"},
+          value: filters.payment_provider_account_id
         })
       }}
     </div>
