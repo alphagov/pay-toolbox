@@ -449,13 +449,19 @@ async function searchRequest(req: Request, res: Response, next: NextFunction): P
   }
   catch (err) {
     if (err instanceof EntityNotFoundError) {
-      try {  
-      const accountByExternalId = await Connector.accountByExternalId(id)
-      return res.redirect(`/gateway_accounts/${accountByExternalId.gateway_account_id}`)
+      try {
+        const accountByExternalId = await Connector.accountByExternalId(id)
+        return res.redirect(`/gateway_accounts/${accountByExternalId.gateway_account_id}`)
       }
-      catch(err) {
+      catch (err) {
         if (err instanceof EntityNotFoundError) {
-          return res.redirect(`/gateway_accounts?payment_provider_account_id=${id}`)
+          const accountByPaymentProviderAccountId = await Connector.accounts({ payment_provider_account_id: id })
+          if (accountByPaymentProviderAccountId['accounts'].length === 1) {
+            return res.redirect(`/gateway_accounts/${accountByPaymentProviderAccountId['accounts'][0]['gateway_account_id']}`)
+          }
+          if (accountByPaymentProviderAccountId['accounts'].length > 1) {
+            return res.redirect(`/gateway_accounts?payment_provider_account_id=${id}&live=all`)
+          }
         }
       }
     }
