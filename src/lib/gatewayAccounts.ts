@@ -23,6 +23,7 @@ export function extractFiltersFromQuery(query: ParsedQs): Filters {
     google_pay: query.google_pay as BooleanFilterOption || BooleanFilterOption.All,
     moto: query.moto as BooleanFilterOption || BooleanFilterOption.All,
     switching_psp: query.switching_psp as BooleanFilterOption || BooleanFilterOption.All,
+    payment_provider_account_id: query.payment_provider_account_id as string
   }
 }
 
@@ -33,7 +34,8 @@ export interface Filters {
   apple_pay: BooleanFilterOption,
   google_pay: BooleanFilterOption,
   moto: BooleanFilterOption,
-  switching_psp: BooleanFilterOption
+  switching_psp: BooleanFilterOption,
+  payment_provider_account_id: string
 }
 
 
@@ -41,6 +43,7 @@ export function toAccountSearchParams(filters: Filters) {
   return {
     type: filters.live === BooleanFilterOption.True && 'live' || filters.live === BooleanFilterOption.False && 'test' || null,
     payment_provider: filters.provider,
+    payment_provider_account_id: filters.payment_provider_account_id,
     requires_3ds: toNullableBooleanString(filters.three_ds),
     apple_pay_enabled: toNullableBooleanString(filters.apple_pay),
     google_pay_enabled: toNullableBooleanString(filters.google_pay),

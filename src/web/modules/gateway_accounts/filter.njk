@@ -126,3 +126,10 @@
     </div>
   </form>
 </div>
+
+{% if filters.payment_provider_account_id %}
+  <div class="govuk-body">
+    <span>Filtered by Stripe account ID or Worldpay merchant ID</span>
+    <span><strong class="govuk-tag">{{ filters.payment_provider_account_id }}</strong></span>
+  </div>
+ {% endif %}
