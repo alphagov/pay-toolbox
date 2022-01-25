@@ -131,7 +131,10 @@ const ledgerMethods = function ledgerMethods(instance) {
       .then(utilExtractData)
   }
 
-  const paymentVolumesAggregate = function paymentVolumesAggregate(fromDate, toDate, state) {
+  // This is used by live payments dashboard to get accurate inflight payment data. This should not
+  // be used for querying over a large date range as this directly queries the transaction table
+  // in ledger which will result in poor performance.
+  function paymentVolumesAggregateLegacy(fromDate, toDate, state) {
     const params = {
       from_date: fromDate,
       to_date: toDate,
@@ -139,6 +142,17 @@ const ledgerMethods = function ledgerMethods(instance) {
 
     }
     return axiosInstance.get('/v1/report/performance-report-legacy', { params })
+      .then(utilExtractData)
+  }
+
+   function paymentVolumesAggregate(fromDate, toDate, state) {
+    const params = {
+      from_date: fromDate,
+      to_date: toDate,
+      ...state && { state }
+
+    }
+    return axiosInstance.get('/v1/report/performance-report', { params })
       .then(utilExtractData)
   }
 
@@ -185,6 +199,7 @@ const ledgerMethods = function ledgerMethods(instance) {
     transactionsByGatewayTransactionId,
     relatedTransactions,
     paymentVolumesByHour,
+    paymentVolumesAggregateLegacy,
     paymentVolumesAggregate,
     eventTicker,
     gatewayMonthlyPerformanceReport,

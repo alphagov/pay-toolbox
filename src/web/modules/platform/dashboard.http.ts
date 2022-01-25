@@ -51,7 +51,7 @@ export async function aggregate(req: Request, res: Response, next: NextFunction)
       limit :
       baseDate.utc().endOf('day').format()
 
-    const result = await Ledger.paymentVolumesAggregate(
+    const result = await Ledger.paymentVolumesAggregateLegacy(
       baseDate.utc().startOf('day').format(),
       toDate,
       state
