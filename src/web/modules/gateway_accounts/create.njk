@@ -44,8 +44,7 @@
         }
       },
       items: [
-        { value: "card", text: "Card", checked: recovered.paymentMethod and recovered.paymentMethod === "card" or true },
-        { value: "direct-debit", text: "Direct debit", checked: recovered.paymentMethod === "direct-debit" }
+        { value: "card", text: "Card", checked: recovered.paymentMethod and recovered.paymentMethod === "card" or true }
       ]
     })
     }}
@@ -66,23 +65,6 @@
         { value: "smartpay", text: "Smartpay", checked: recovered.provider === "smartpay" },
         { value: "epdq", text: "Epdq", checked: recovered.provider === "epdq" },
         { value: "stripe", text: "Stripe", checked: recovered.provider === "stripe" }
-      ]
-    })
-    }}
-
-    {{ govukRadios({
-      classes: "govuk-radios--inline",
-      idPrefix: "provider",
-      name: "provider",
-      fieldset: {
-        legend: {
-          text: "Direct debit provider",
-          isPageHeading: false
-        }
-      },
-      items: [
-        { value: "direct-debit-sandbox", text: "Sandbox", checked: recovered.provider === "direct-debit-sandbox" },
-        { value: "gocardless", text: "Gocardless", checked: recovered.provider === "gocardless" }
       ]
     })
     }}

@@ -92,26 +92,24 @@ describe('Gateway Accounts', () => {
       }).to.throw(IOValidationError)
     })
 
-    it('rejects when paymentMethod is card and non-card provider given', () => {
+    it('rejects when non-card provider given', () => {
       expect(() => {
         const details = _.cloneDeep(validGatewayAccountDetails)
-        details.paymentMethod = 'card'
         details.provider = 'gocardless'
 
         // eslint-disable-next-line no-new
         new GatewayAccount(details)
-      }).to.throw(ValidationError)
+      }).to.throw(Error)
     })
 
-    it('rejects when paymentMethod is direct-debit and non-direct-debit provider given', () => {
+    it('rejects when paymentMethod is direct-debit ', () => {
       expect(() => {
         const details = _.cloneDeep(validGatewayAccountDetails)
         details.paymentMethod = 'direct-debit'
-        details.provider = 'stripe'
 
         // eslint-disable-next-line no-new
         new GatewayAccount(details)
-      }).to.throw(ValidationError)
+      }).to.throw(Error)
     })
 
     it('rejects when account is live and provider is card sandbox', () => {
@@ -120,18 +118,6 @@ describe('Gateway Accounts', () => {
         details.live = 'live'
         details.paymentMethod = 'card'
         details.provider = 'card-sandbox'
-
-        // eslint-disable-next-line no-new
-        new GatewayAccount(details)
-      }).to.throw(ValidationError)
-    })
-
-    it('rejects when account is live and provider is direct-debit sandbox', () => {
-      expect(() => {
-        const details = _.cloneDeep(validGatewayAccountDetails)
-        details.live = 'live'
-        details.paymentMethod = 'direct-debit'
-        details.provider = 'direct-debit-sandbox'
 
         // eslint-disable-next-line no-new
         new GatewayAccount(details)

@@ -14,8 +14,7 @@ const liveStatus = {
 }
 
 const sandbox = {
-  card: 'card-sandbox',
-  directDebit: 'direct-debit-sandbox'
+  card: 'card-sandbox'
 }
 
 const cardProviders = {
@@ -26,14 +25,8 @@ const cardProviders = {
   stripe: 'stripe'
 }
 
-const directDebitProviders = {
-  sandbox: sandbox.directDebit,
-  goCardless: 'gocardless'
-}
-
 const paymentMethod = {
-  card: 'card',
-  directDebit: 'direct-debit'
+  card: 'card'
 }
 
 class GatewayAccount extends Validated {
@@ -54,7 +47,7 @@ class GatewayAccount extends Validated {
   @IsNotEmpty({ message: 'Please enter a service name' })
   public serviceName: string;
 
-  @IsIn([ ...Object.values(cardProviders), ...Object.values(directDebitProviders) ])
+  @IsIn([ ...Object.values(cardProviders) ])
   @IsString()
   @IsNotEmpty()
   public provider: string;
@@ -64,8 +57,6 @@ class GatewayAccount extends Validated {
   public analyticsId: string;
 
   public credentials: string;
-
-  public isDirectDebit: boolean;
 
   @IsString()
   @IsNotEmpty({ message: 'Please select a sector' })
@@ -81,9 +72,6 @@ class GatewayAccount extends Validated {
     if (this.paymentMethod === paymentMethod.card
       && !Object.values(cardProviders).includes(this.provider)) {
       throw new ValidationError(`For Card accounts, provider must be one of ${Object.values(cardProviders)}`)
-    } else if (this.paymentMethod === paymentMethod.directDebit
-      && !Object.values(directDebitProviders).includes(this.provider)) {
-      throw new ValidationError(`For Direct Debit accounts, provider must be one of ${Object.values(directDebitProviders).toString()}`)
     }
 
     if (this.live === liveStatus.live && Object.values(sandbox).includes(this.provider)) {
@@ -104,7 +92,6 @@ class GatewayAccount extends Validated {
     this.provider = formValues.provider
     this.analyticsId = formValues.analyticsId
     this.credentials = formValues.credentials
-    this.isDirectDebit = this.paymentMethod === paymentMethod.directDebit
     this.sector = formValues.sector
     this.internalFlag = formValues.internalFlag === "true"
     this.validate()

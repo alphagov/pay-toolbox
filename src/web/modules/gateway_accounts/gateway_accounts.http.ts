@@ -108,15 +108,8 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
   const serviceId = req.body.systemLinkedService
   account.serviceId = serviceId
 
-  let gatewayAccountIdDerived: string
-  let createdAccount: object
-  if (account.isDirectDebit) {
-    throw new Error(`Adding a direct debit account is no longer supported`)
-  } else {
-    const cardAccount: CardGatewayAccount = await Connector.createAccount(account.formatPayload())
-    createdAccount = cardAccount
-    gatewayAccountIdDerived = String(cardAccount.gateway_account_id)
-  }
+  const createdAccount: CardGatewayAccount = await Connector.createAccount(account.formatPayload())
+  const gatewayAccountIdDerived = String(createdAccount.gateway_account_id)
 
   logger.info(`Created new Gateway Account ${gatewayAccountIdDerived}`)
 
