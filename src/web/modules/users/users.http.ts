@@ -88,7 +88,7 @@ const updateEmail = async function updateEmail(
     const updateRequest = new UpdateEmailFormRequest(req.body)
 
     await AdminUsers.updateUserEmail(id, updateRequest.email)
-    req.flash('info', 'Updated phone number ')
+    req.flash('info', 'Updated email')
     res.redirect(`/users/${id}`)
   } catch (error) {
     if (error instanceof IOValidationError) {
