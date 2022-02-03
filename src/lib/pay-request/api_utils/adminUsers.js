@@ -55,7 +55,7 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     const path = `/v1/api/users/${id}`
     const payload = {
       op: 'replace',
-      path: 'username',
+      path: 'email',
       value: email
     }
     return axiosInstance.patch(path, payload).then(utilExtractData)
