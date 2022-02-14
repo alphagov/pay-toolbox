@@ -53,6 +53,8 @@ export interface GatewayAccount {
 
   corporate_debit_card_surcharge_amount: number;
 
+  gateway_account_credentials: GatewayAccountCredential[]
+
   email_notifications: {
     [key: string]: EmailNotificationSettings;
   };
@@ -60,6 +62,16 @@ export interface GatewayAccount {
   notify_settings: {
     [key: string]: any;
    }
+}
+
+export interface GatewayAccountCredential {
+  external_id: string;
+
+  payment_provider: string;
+
+  state: string;
+
+  credentials: object;
 }
 
 export interface EmailNotificationSettings {

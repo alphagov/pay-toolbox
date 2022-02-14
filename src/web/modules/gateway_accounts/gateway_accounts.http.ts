@@ -170,19 +170,23 @@ async function detail(req: Request, res: Response): Promise<void> {
     logger.warn(`Services request for gateway account ${id} returned "${error.message}"`)
   }
 
-  const activeCredential = account.gateway_account_credentials && account.gateway_account_credentials.find((credential: any) => {
-    return credential.state === 'ACTIVE'
-  })
+  const currentCredential = getCurrentCredential(account)
+
 
   res.render('gateway_accounts/detail', {
     account,
     acceptedCards,
     gatewayAccountId: id,
     services,
-    activeCredential,
+    currentCredential,
     messages: req.flash('info'),
     csrf: req.csrfToken()
   })
+}
+
+function getCurrentCredential(account: CardGatewayAccount) {
+  const credentials = account.gateway_account_credentials || []
+  return credentials.find(credential => credential.state === 'ACTIVE') || credentials[0]
 }
 
 async function apiKeys(req: Request, res: Response): Promise<void> {
@@ -280,7 +284,7 @@ async function toggleWorldpayExemptionEngine(req: Request, res: Response): Promi
   const { id } = req.params
 
   const result = await Connector.toggleWorldpayExemptionEngine(id)
-  req.flash('info', `Worldpay Exception Engine ${result ? 'enabled' : 'disabled' }`)
+  req.flash('info', `Worldpay Exception Engine ${result ? 'enabled' : 'disabled'}`)
   res.redirect(`/gateway_accounts/${id}`)
 }
 
@@ -329,8 +333,8 @@ async function toggleSendReferenceToGateway(
 }
 
 async function toggleRequiresAdditionalKycData(
-    req: Request,
-    res: Response
+  req: Request,
+  res: Response
 ): Promise<void> {
   const { id } = req.params
   const account = await getAccount(id)
