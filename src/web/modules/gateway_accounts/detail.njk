@@ -63,17 +63,17 @@
       <dd class="govuk-summary-list__value">{{ account.payment_provider | capitalize }}</dd>
       <dd class="govuk-summary-list__actions"></dd>
     </div>
-    {% if activeCredential and activeCredential.credentials.merchant_id %}
+    {% if currentCredential and currentCredential.credentials.merchant_id %}
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">PSP merchant ID</dt>
-      <dd class="govuk-summary-list__value">{{ activeCredential.credentials.merchant_id }}</dd>
+      <dd class="govuk-summary-list__value">{{ currentCredential.credentials.merchant_id }}</dd>
       <dd class="govuk-summary-list__actions"></dd>
     </div>
     {% endif %}
-    {% if activeCredential and activeCredential.credentials.stripe_account_id %}
+    {% if currentCredential and currentCredential.credentials.stripe_account_id %}
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Connected Stripe account</dt>
-      <dd class="govuk-summary-list__value"><a href="https://dashboard.stripe.com/connect/accounts/{{ activeCredential.credentials.stripe_account_id }}" class="govuk-link govuk-link--no-visited-state">{{ activeCredential.credentials.stripe_account_id }}</a></dd>
+      <dd class="govuk-summary-list__value"><a href="https://dashboard.stripe.com/connect/accounts/{{ currentCredential.credentials.stripe_account_id }}" class="govuk-link govuk-link--no-visited-state">{{ currentCredential.credentials.stripe_account_id }}</a></dd>
       <dd class="govuk-summary-list__actions"></dd>
     </div>
     {% endif %}
