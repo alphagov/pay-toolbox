@@ -1,12 +1,19 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "common/json.njk" import json %}
 {% extends "layout/layout.njk" %}
 
 {% set isTestData = not account.live %}
 
 {% block main %}
+  {% if currentCredential.state  === 'CREATED' %}
+    {{ govukNotificationBanner({
+      text: 'This account needs to be configured with PSP credentials or onboarding needs to be completed.'
+    }) }}
+  {% endif %}
+
   <span class="govuk-caption-m">{{ account.description or account.gateway_account_id }}</span>
   <h1 class="govuk-heading-m">Gateway account details</h1>
 
@@ -63,6 +70,13 @@
       <dd class="govuk-summary-list__value">{{ account.payment_provider | capitalize }}</dd>
       <dd class="govuk-summary-list__actions"></dd>
     </div>
+    {% if currentCredential and currentCredential.state %}
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Credentials state</dt>
+      <dd class="govuk-summary-list__value">{{ currentCredential.state }}</dd>
+      <dd class="govuk-summary-list__actions"></dd>
+    </div>
+    {% endif %}
     {% if currentCredential and currentCredential.credentials.merchant_id %}
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">PSP merchant ID</dt>
@@ -404,7 +418,7 @@
           classes: "govuk-button--warning"
           })
         }}
-      {% endif %}  
+      {% endif %}
       <input type="hidden" name="_csrf" value="{{ csrf }}">
     </form>
   </div>

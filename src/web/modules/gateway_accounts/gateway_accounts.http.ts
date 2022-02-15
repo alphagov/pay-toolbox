@@ -172,7 +172,6 @@ async function detail(req: Request, res: Response): Promise<void> {
 
   const currentCredential = getCurrentCredential(account)
 
-
   res.render('gateway_accounts/detail', {
     account,
     acceptedCards,
