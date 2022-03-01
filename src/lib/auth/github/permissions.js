@@ -5,10 +5,11 @@ const axios = require('axios')
 const config = require('../../../config')
 const logger = require('../../logger')
 
-const GITHUB_TEAMS_API_ENDPOINT = 'https://api.github.com/teams'
+const GITHUB_API_ENDPOINT = `https://api.github.com`
+const GITHUB_ALPHAGOV_ORGANISATION_ID = 596977
 
 const validateUserTeamMembership = async function validateUserTeamMembership(user, token, team) {
-  const url = `${GITHUB_TEAMS_API_ENDPOINT}/${team}/members/${user}`
+  const url = `${GITHUB_API_ENDPOINT}/organizations/${GITHUB_ALPHAGOV_ORGANISATION_ID}/team/${team}/memberships/${user}`
   const githubRestOptions = {
     headers: {
       Authorization: `token ${token}`
