@@ -2,14 +2,14 @@
 const { EntityNotFoundError } = require('../../errors')
 const lodash = require('lodash')
 
-const connectorMethods = function connectorMethods (instance) {
+const connectorMethods = function connectorMethods(instance) {
   const axiosInstance = instance || this
 
   // @TODO(sfount) extract and standardise this - there should be no need to
   // repeat this over and over
   const utilExtractData = (response) => response.data
 
-  function handleNotFound (entityName, entityId) {
+  function handleNotFound(entityName, entityId) {
     return (error) => {
       if (error.data.response && error.data.response.status === 404) {
         throw new EntityNotFoundError(entityName, entityId)
@@ -18,84 +18,82 @@ const connectorMethods = function connectorMethods (instance) {
     }
   }
 
-  function accounts (params) {
+  function accounts(params) {
     params = lodash.omitBy(params, lodash.isEmpty)
     return axiosInstance.get('/v1/api/accounts', { params }).then(utilExtractData)
   }
 
-  function account (id) {
+  function account(id) {
     return axiosInstance.get(`/v1/api/accounts/${id}`)
       .then(utilExtractData)
       .catch(handleNotFound('Account by id  ', id))
   }
 
-  function accountByExternalId (externalId) {
+  function accountByExternalId(externalId) {
     return axiosInstance.get(`/v1/frontend/accounts/external-id/${externalId}`)
       .then(utilExtractData)
       .catch(handleNotFound('Account by external id  ', externalId))
   }
 
-  function accountWithCredentials (id) {
+  function accountWithCredentials(id) {
     return axiosInstance.get(`/v1/frontend/accounts/${id}`).then(utilExtractData)
   }
 
-  function acceptedCardTypes (accountId) {
+  function acceptedCardTypes(accountId) {
     return axiosInstance.get(`/v1/frontend/accounts/${accountId}/card-types`).then(utilExtractData)
   }
 
-  function createAccount (accountDetails) {
+  function createAccount(accountDetails) {
     return axiosInstance.post('/v1/api/accounts', accountDetails).then(utilExtractData)
   }
 
-  function performanceReport () {
+  function performanceReport() {
     return axiosInstance.get('/v1/api/reports/performance-report').then(utilExtractData)
   }
 
-  function dailyPerformanceReport (date) {
+  function dailyPerformanceReport(date) {
     const params = { date }
     return axiosInstance.get('/v1/api/reports/daily-performance-report', { params }).then(utilExtractData)
   }
 
-  function gatewayAccountPerformanceReport () {
+  function gatewayAccountPerformanceReport() {
     return axiosInstance.get('/v1/api/reports/gateway-account-performance-report').then(utilExtractData)
   }
 
-  function searchTransactionsByChargeId (accountId, chargeId) {
+  function searchTransactionsByChargeId(accountId, chargeId) {
     return axiosInstance.get(`/v1/api/accounts/${accountId}/charges/${chargeId}/events`).then(utilExtractData)
   }
 
-  function getGatewayComparisons (chargeIds) {
+  function getGatewayComparisons(chargeIds) {
     return axiosInstance.post('/v1/api/discrepancies/report', chargeIds).then(utilExtractData)
   }
 
-  function getGatewayComparison (chargeId) {
+  function getGatewayComparison(chargeId) {
     return getGatewayComparisons([chargeId])
   }
 
-  function resolveDiscrepancy (chargeId) {
+  function resolveDiscrepancy(chargeId) {
     return axiosInstance.post('/v1/api/discrepancies/resolve', [chargeId]).then(utilExtractData)
   }
 
   // eslint-disable-next-line max-len
-  function searchTransactionsByReference (accountId, reference) {
+  function searchTransactionsByReference(accountId, reference) {
     return axiosInstance.get(`/v1/api/accounts/${accountId}/charges?reference=${reference}`).then(utilExtractData)
   }
 
-  function stripe (accountId) {
+  function stripe(accountId) {
     return axiosInstance.get(`/v1/api/accounts/${accountId}/stripe-account`).then(utilExtractData)
   }
 
-  function charge (accountId, externalChargeId) {
+  function charge(accountId, externalChargeId) {
     return axiosInstance.get(`/v1/api/accounts/${accountId}/charges/${externalChargeId}`).then(utilExtractData)
   }
 
-  function refunds (accountId, externalChargeId) {
+  function refunds(accountId, externalChargeId) {
     return axiosInstance.get(`/v1/api/accounts/${accountId}/charges/${externalChargeId}/refunds`).then(utilExtractData)
   }
 
-  function getChargeByGatewayTransactionId (
-    gatewayTransactionId
-  ) {
+  function getChargeByGatewayTransactionId(gatewayTransactionId) {
     return axiosInstance.get(`/v1/api/charges/gateway_transaction/${gatewayTransactionId}`)
   }
 
@@ -131,7 +129,7 @@ const connectorMethods = function connectorMethods (instance) {
     return axiosInstance.post('/v1/tasks/parity-checker', null, { params })
   }
 
-  async function updateCorporateSurcharge (id, surcharges) {
+  async function updateCorporateSurcharge(id, surcharges) {
     const url = `/v1/api/accounts/${id}`
     const results = Object.keys(surcharges)
       .filter((key) => key !== '_csrf')
@@ -145,7 +143,7 @@ const connectorMethods = function connectorMethods (instance) {
     }
   }
 
-  async function updateEmailBranding (id, notifySettings) {
+  async function updateEmailBranding(id, notifySettings) {
     const url = `/v1/api/accounts/${id}`
     await axiosInstance.patch(url, {
       op: 'replace',
@@ -154,7 +152,7 @@ const connectorMethods = function connectorMethods (instance) {
     })
   }
 
-  function updateStripeSetupValues (id, stripeSetupFields) {
+  function updateStripeSetupValues(id, stripeSetupFields) {
     const url = `/v1/api/accounts/${id}/stripe-setup`
     const payload = []
 
@@ -169,7 +167,11 @@ const connectorMethods = function connectorMethods (instance) {
     return axiosInstance.patch(url, payload)
   }
 
-  async function toggleBlockPrepaidCards (id) {
+  function stripeSetup(accountId) {
+    return axiosInstance.get(`/v1/api/accounts/${accountId}/stripe-setup`).then(utilExtractData)
+  }
+
+  async function toggleBlockPrepaidCards(id) {
     const gatewayAccount = await account(id)
     const url = `/v1/api/accounts/${id}`
     await axiosInstance.patch(url, {
@@ -180,7 +182,7 @@ const connectorMethods = function connectorMethods (instance) {
     return !gatewayAccount.block_prepaid_cards
   }
 
-  async function toggleMotoPayments (id) {
+  async function toggleMotoPayments(id) {
     const gatewayAccount = await account(id)
     const url = `/v1/api/accounts/${gatewayAccount.gateway_account_id}`
     await axiosInstance.patch(url, {
@@ -191,7 +193,7 @@ const connectorMethods = function connectorMethods (instance) {
     return !gatewayAccount.allow_moto
   }
 
-  async function toggleAllowTelephonePaymentNotifications (id) {
+  async function toggleAllowTelephonePaymentNotifications(id) {
     const gatewayAccount = await account(id)
     const url = `/v1/api/accounts/${gatewayAccount.gateway_account_id}`
     await axiosInstance.patch(url, {
@@ -202,7 +204,7 @@ const connectorMethods = function connectorMethods (instance) {
     return !gatewayAccount.allow_telephone_payment_notifications
   }
 
-  async function toggleSendPayerIpAddressToGateway (id) {
+  async function toggleSendPayerIpAddressToGateway(id) {
     const gatewayAccount = await accountWithCredentials(id)
     const url = `/v1/api/accounts/${gatewayAccount.gateway_account_id}`
     await axiosInstance.patch(url, {
@@ -213,7 +215,7 @@ const connectorMethods = function connectorMethods (instance) {
     return !gatewayAccount.send_payer_ip_address_to_gateway
   }
 
-  async function toggleSendPayerEmailToGateway (id) {
+  async function toggleSendPayerEmailToGateway(id) {
     const gatewayAccount = await accountWithCredentials(id)
     const url = `/v1/api/accounts/${gatewayAccount.gateway_account_id}`
     await axiosInstance.patch(url, {
@@ -224,7 +226,7 @@ const connectorMethods = function connectorMethods (instance) {
     return !gatewayAccount.send_payer_email_to_gateway
   }
 
-  async function toggleSendReferenceToGateway (id) {
+  async function toggleSendReferenceToGateway(id) {
     const gatewayAccount = await accountWithCredentials(id)
     const url = `/v1/api/accounts/${gatewayAccount.gateway_account_id}`
     await axiosInstance.patch(url, {
@@ -247,7 +249,7 @@ const connectorMethods = function connectorMethods (instance) {
     return toggledValue
   }
 
-  async function toggleRequiresAdditionalKycData (gatewayAccountId, requiresKycFlag) {
+  async function toggleRequiresAdditionalKycData(gatewayAccountId, requiresKycFlag) {
     const url = `/v1/api/accounts/${gatewayAccountId}`
     await axiosInstance.patch(url, {
       op: 'replace',
@@ -305,6 +307,7 @@ const connectorMethods = function connectorMethods (instance) {
     toggleSendPayerEmailToGateway,
     toggleSendReferenceToGateway,
     updateStripeSetupValues,
+    stripeSetup,
     toggleWorldpayExemptionEngine,
     addGatewayAccountCredentialsForSwitch,
     enableSwitchFlagOnGatewayAccount,

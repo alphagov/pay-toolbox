@@ -79,3 +79,7 @@ export interface EmailNotificationSettings {
 
   enabled: boolean;
 }
+
+export interface StripeSetup {
+  [task: string]: boolean;
+}

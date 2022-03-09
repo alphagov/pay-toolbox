@@ -13,7 +13,7 @@ import { extractFiltersFromQuery, toAccountSearchParams } from '../../../lib/gat
 import GatewayAccountFormModel from './gatewayAccount.model'
 import { Service } from '../../../lib/pay-request/types/adminUsers'
 import { Product } from '../../../lib/pay-request/types/products'
-import { GatewayAccount as CardGatewayAccount } from '../../../lib/pay-request/types/connector'
+import { GatewayAccount as CardGatewayAccount, StripeSetup } from '../../../lib/pay-request/types/connector'
 import { ClientFormError } from '../common/validationErrorFormat'
 import * as config from '../../../config'
 import { format } from './csv'
@@ -157,11 +157,11 @@ async function detail(req: Request, res: Response): Promise<void> {
   let services = {}
   const isDirectDebitID = id.match(/^DIRECT_DEBIT:/)
 
-  let account, acceptedCards
+  let account, acceptedCards, stripeSetup: StripeSetup
   if (isDirectDebitID) {
     throw new Error(`Direct debit accounts are no longer supported`)
   } else {
-    [account, acceptedCards] = await Promise.all([Connector.accountWithCredentials(id), Connector.acceptedCardTypes(id)])
+    [account, acceptedCards, stripeSetup] = await Promise.all([Connector.accountWithCredentials(id), Connector.acceptedCardTypes(id), Connector.stripeSetup(id)])
   }
 
   try {
@@ -172,12 +172,18 @@ async function detail(req: Request, res: Response): Promise<void> {
 
   const currentCredential = getCurrentCredential(account)
 
+  delete stripeSetup.additional_kyc_data
+  const outstandingStripeSetupTasks = Object.keys(stripeSetup)
+    .filter(task => stripeSetup[task] === false)
+    .map(task => task.replace(/_/g, " "))
+
   res.render('gateway_accounts/detail', {
     account,
     acceptedCards,
     gatewayAccountId: id,
     services,
     currentCredential,
+    outstandingStripeSetupTasks,
     messages: req.flash('info'),
     csrf: req.csrfToken()
   })
