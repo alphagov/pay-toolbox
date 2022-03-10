@@ -172,9 +172,8 @@ async function detail(req: Request, res: Response): Promise<void> {
 
   const currentCredential = getCurrentCredential(account)
 
-  delete stripeSetup.additional_kyc_data
   const outstandingStripeSetupTasks = Object.keys(stripeSetup)
-    .filter(task => stripeSetup[task] === false)
+    .filter(task => task != 'additional_kyc_data' && task != 'organisation_details' && stripeSetup[task] === false)
     .map(task => task.replace(/_/g, " "))
 
   res.render('gateway_accounts/detail', {
