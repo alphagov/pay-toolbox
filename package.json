@@ -3,8 +3,8 @@
   "version": "0.3.0",
   "description": "Internal administrative tools service for the GOV.UK Pay products.",
   "engines": {
-    "node": "^12.22.10",
-    "npm": "^7.5.4"
+    "node": "^16.14.0",
+    "npm": "^8.3.1"
   },
   "private": true,
   "main": "dist/index.js",
@@ -21,9 +21,6 @@
     "build:typescript": "tsc",
     "build:sass": "scripts/compile-assets",
     "build:copy": "copyfiles --up 1 src/**/*.njk dist/",
-    "preinstall": "echo \"Preinstall hook\" && exit 0",
-    "prepare": "npm run build:sass && npm run build-browser",
-    "postinstall": "echo \"postinstall set to run with prepare (only in dev)\" && exit 0",
     "version": "echo $npm_package_version"
   },
   "repository": {
