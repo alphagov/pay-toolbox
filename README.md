@@ -17,6 +17,9 @@ Getting Toolbox up and running for development.
 ```bash
 npm install
 
+# build server and browser assets
+npm run build
+
 # generate a dev environment file - run the version according to your needs
 node scripts/generate-dev-environment.js # default - target services running through SSH tunnel
 node scripts/generate-dev-environment.js local # target services running locally on your machine
