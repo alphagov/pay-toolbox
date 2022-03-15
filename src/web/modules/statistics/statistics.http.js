@@ -145,7 +145,7 @@ const byServices = async function byServices (req, res, next) {
     res.set('Content-Type', 'text/csv')
     res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_platform_transactions_by_service_month_${fromDate.format('YYYY-MM')}_${toDate.format('YYYY-MM')}.csv"`)
     res.write(parser.getHeader())
-    res.flush()
+    res.flushHeaders()
 
     const gatewayAccountReport = await Ledger.gatewayMonthlyPerformanceReport(fromDate.format("YYYY-MM-DD"), toDate.format("YYYY-MM-DD"))
 
