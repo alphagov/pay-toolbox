@@ -58,13 +58,26 @@ const productsMethods = function productsMethods(instance) {
     return value
   }
 
+  async function toggleNewPaymentLinkJourneyEnabled(id) {
+    const product = await getProduct(id)
+    const url = `/v2/api/gateway-account/${product.gateway_account_id}/products/${id}`
+    const value = !product.new_payment_link_journey_enabled
+    await axiosInstance.patch(url, [{
+      op: 'replace',
+      path: 'new_payment_link_journey_enabled',
+      value: value
+    }]);
+    return value
+  }
+
   return {
     paymentLinksByGatewayAccount,
     paymentLinksByGatewayAccountAndType,
     paymentLinksWithUsage,
     createProduct,
     getProduct,
-    toggleRequireCaptcha
+    toggleRequireCaptcha,
+    toggleNewPaymentLinkJourneyEnabled
   }
 }
 
