@@ -78,7 +78,10 @@ const handleDefault = function handleDefault(
   res: Response,
   next: NextFunction
 ): void {
-  logger.warn('Unhandled error caught by middleware stack', { error, excludeFromBreadcrumb: true })
+  logger.warn(`Unhandled error caught by middleware stack: ${error.message}`, {
+    stack: error.stack,
+    excludeFromBreadcrumb: true
+  })
 
   if (res.headersSent) {
     return next(error)
