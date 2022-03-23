@@ -8,6 +8,15 @@ on:
 permissions:
   contents: read
 
+concurrency: toolbox-post-merge
+
 jobs:
   tests:
     uses: ./.github/workflows/run-tests.yml
+
+  tag-release:
+    needs:
+      - tests
+    permissions:
+      contents: write
+    uses: alphagov/pay-ci/.github/workflows/_create-alpha-release-tag.yml@master
