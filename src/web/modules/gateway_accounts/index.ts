@@ -42,5 +42,6 @@ export default {
   agentInitiatedMotoPage: http.agentInitiatedMotoPage,
   createAgentInitiatedMotoProduct: http.createAgentInitiatedMotoProduct,
   toggleWorldpayExemptionEngine: http.toggleWorldpayExemptionEngine,
-  toggleRequiresAdditionalKycData: http.toggleRequiresAdditionalKycData
+  toggleRequiresAdditionalKycData: http.toggleRequiresAdditionalKycData,
+  toggleAllowAuthorisationApi: http.toggleAllowAuthorisationApi
 }

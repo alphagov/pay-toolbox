@@ -353,6 +353,17 @@ async function toggleRequiresAdditionalKycData(
   res.redirect(`/gateway_accounts/${id}`)
 }
 
+async function toggleAllowAuthorisationApi(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { id } = req.params
+  const enabled = await Connector.toggleAllowAuthorisationApi(id)
+
+  req.flash('info', `Use of the payment authorisation API is ${enabled ? 'enabled' : 'disabled'}`)
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
 async function updateStripeStatementDescriptorPage(
   req: Request,
   res: Response
@@ -624,5 +635,6 @@ export default {
   agentInitiatedMotoPage: wrapAsyncErrorHandler(agentInitiatedMotoPage),
   createAgentInitiatedMotoProduct: wrapAsyncErrorHandler(createAgentInitiatedMotoProduct),
   toggleWorldpayExemptionEngine: wrapAsyncErrorHandler(toggleWorldpayExemptionEngine),
-  toggleRequiresAdditionalKycData: wrapAsyncErrorHandler(toggleRequiresAdditionalKycData)
+  toggleRequiresAdditionalKycData: wrapAsyncErrorHandler(toggleRequiresAdditionalKycData),
+  toggleAllowAuthorisationApi: wrapAsyncErrorHandler(toggleAllowAuthorisationApi)
 }

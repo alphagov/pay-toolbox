@@ -77,6 +77,7 @@ router.post('/gateway_accounts/:id/toggle_send_payer_email_to_gateway', auth.sec
 router.post('/gateway_accounts/:id/toggle_worldpay_exemption_engine', auth.secured, gatewayAccounts.toggleWorldpayExemptionEngine)
 router.post('/gateway_accounts/:id/toggle_send_reference_to_gateway', auth.secured, gatewayAccounts.toggleSendReferenceToGateway)
 router.post('/gateway_accounts/:id/toggle_requires_additional_kyc_data', auth.secured, gatewayAccounts.toggleRequiresAdditionalKycData)
+router.post('/gateway_accounts/:id/toggle_allow_authorisation_api', auth.secured, gatewayAccounts.toggleAllowAuthorisationApi)
 router.get('/gateway_accounts/:id/stripe_statement_descriptor', auth.secured, gatewayAccounts.updateStripeStatementDescriptorPage)
 router.post('/gateway_accounts/:id/stripe_statement_descriptor', auth.secured, gatewayAccounts.updateStripeStatementDescriptor)
 router.get('/gateway_accounts/:id/stripe_payout_descriptor', auth.secured, gatewayAccounts.updateStripePayoutDescriptorPage)

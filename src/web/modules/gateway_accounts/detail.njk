@@ -394,6 +394,37 @@
     </div>
   {% endif %}
 
+    {% if account.allow_authorisation_api === false %}
+    <div>
+      <h1 class="govuk-heading-s">Use of the payment authorisation API is disabled</h1>
+      <p class="govuk-body">Allows creating MOTO payments with an authorisation_mode of ‘api‘. These payments are authorised by sending the card details in a POST request to Public API.</p>
+      <p class="govuk-body">Note that corporate card surcharges will not be applied to payments created in this way.</p>
+      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_allow_authorisation_api">
+        {{ govukButton({
+          text: "Enable use of the payment authorisation API",
+          classes: "govuk-button--warning"
+          })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    </div>
+  {% endif %}
+
+  {% if account.allow_authorisation_api === true %}
+    <div>
+      <h1 class="govuk-heading-s">Use of the payment authorisation API is enabled</h1>
+      <p class="govuk-body">Creating MOTO payments with an authorisation_mode of ‘api‘ is allowed for this account. These payments are authorised by sending the card details in a POST request to Public API.</p>
+      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_allow_authorisation_api">
+        {{ govukButton({
+          text: "Disable use of the payment authorisation API"
+          })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    </div>
+  {% endif %}
+
+
   {% if account.send_payer_ip_address_to_gateway === true %}
     <div>
       <h1 class="govuk-heading-s">Sending payer IP address to gateway is enabled</h1>
