@@ -6,6 +6,19 @@ const ledgerMethods = function ledgerMethods(instance) {
   const platformAdminQuery = 'override_account_id_restriction=true'
   const includeAllEventsQuery = 'include_all_events=true'
 
+  const paymentFilterStatusMap = {
+    all: [],
+    succeeded: ['success'],
+    failed: ['declined', 'timedout', 'cancelled', 'error'],
+    'in-progress': ['created', 'started', 'submitted', 'capturable']
+  }
+  const refundFilterStatusMap = {
+    all: [],
+    succeeded: ['success'],
+    failed: ['error'],
+    'in-progress': ['submitted']
+  }
+
   const handleNotFound = function handleNotFound(entityName, entityId) {
     return (error) => {
       if (error.data.response && error.data.response.status === 404) {
@@ -21,35 +34,41 @@ const ledgerMethods = function ledgerMethods(instance) {
       .catch(handleNotFound('Transaction', id))
   }
 
+  function resolvePaymentStates(statusFilter) {
+    return statusFilter ? paymentFilterStatusMap[statusFilter] : paymentFilterStatusMap.all
+  }
+
+  function resolveRefundStates(statusFilter) {
+    return statusFilter ? refundFilterStatusMap[statusFilter] : paymentFilterStatusMap.all
+  }
+
   const transactions = async function transactions(
     account,
     currentPage,
     currentStatus,
     filters,
-    fetchAsCSV = false
+    fetchAsCSV = false,
+    transactionType = 'PAYMENT'
   ) {
     const page = currentPage || 1
     const pageSize = 20
     const limitTotalSize = 5000
-    const externalStatusMap = {
-      all: [],
-      succeeded: ['success'],
-      failed: ['declined', 'timedout', 'cancelled', 'error'],
-      'in-progress': ['created', 'started', 'submitted', 'capturable']
-    }
-    const states = currentStatus ? externalStatusMap[currentStatus] : externalStatusMap.all
 
     const params = {
       page,
       override_account_id_restriction: true,
       display_size: pageSize,
-      payment_states: states.join(','),
-      transaction_type: fetchAsCSV ? '' : 'PAYMENT',
+      transaction_type: fetchAsCSV ? '' : transactionType,
       exact_reference_match: true,
       limit_total: true,
       limit_total_size: limitTotalSize,
       ...filters,
       ...account && { account_id: account }
+    }
+    if (transactionType === 'PAYMENT') {
+      params.payment_states = resolvePaymentStates(currentStatus).join(',')
+    } else if (transactionType === 'REFUND') {
+      params.refund_states = resolveRefundStates(currentStatus).join(',')
     }
 
     const headers = fetchAsCSV ? {

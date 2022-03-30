@@ -13,13 +13,13 @@
     {% endif %}
   </span>
 
-  <h1 class="govuk-heading-m">Transactions</h1>
+  <h1 class="govuk-heading-m">{% if transactionType == "REFUND" %}Refunds{% else %}Payments{% endif %}</h1>
 
   <div class="transactions-filter__container govuk-body">
     {% for status in ["succeeded", "failed", "in-progress", "all"] %}
       <a
         class="transactions-filter__item {% if selectedStatus === status %}selected{% endif %} no-decoration"
-        href="/transactions?status={{ status }}{% if service %}&account={{ accountId }}{% endif %}">
+        href="/transactions?status={{ status }}{% if service %}&account={{ accountId }}{% endif %}{% if transactionType %}&type={{ transactionType }}{% endif %}">
         <span>{{ status | capitalize }}</span>
       </a>
     {% endfor %}
