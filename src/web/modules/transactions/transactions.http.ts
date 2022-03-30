@@ -68,12 +68,13 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     let service, account
     const accountId = req.query.account
     const selectedStatus = req.query.status || PaymentListFilterStatus[PaymentListFilterStatus.all]
+    const transactionType = req.query.type && req.query.type.toString().toUpperCase() || 'PAYMENT'
     const filters = {
       ...req.query.reference && { reference: req.query.reference },
       ...req.query.gateway_transaction_id && { gateway_transaction_id: req.query.gateway_transaction_id },
       ...req.query.gateway_payout_id && { gateway_payout_id: req.query.gateway_payout_id }
     }
-    const response = await Ledger.transactions(accountId, req.query.page, selectedStatus, filters)
+    const response = await Ledger.transactions(accountId, req.query.page, selectedStatus, filters, false, transactionType)
 
     if (req.query.account) {
       service = await AdminUsers.gatewayAccountServices(accountId)
@@ -87,7 +88,8 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
       set: response,
       account,
       service,
-      accountId
+      accountId,
+      transactionType
     })
   } catch (error) {
     next(error)
