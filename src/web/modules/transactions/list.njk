@@ -4,6 +4,8 @@
 
 {% set isTestData = account and not (account.type === "live") %}
 
+{% set linkQueryParams %}{% if service %}&account={{ accountId }}{% endif %}{% if transactionType %}&type={{ transactionType }}{% endif %}{% endset %}
+
 {% block main %}
   <span class="govuk-caption-m">
     {% if service %}
@@ -19,7 +21,7 @@
     {% for status in ["succeeded", "failed", "in-progress", "all"] %}
       <a
         class="transactions-filter__item {% if selectedStatus === status %}selected{% endif %} no-decoration"
-        href="/transactions?status={{ status }}{% if service %}&account={{ accountId }}{% endif %}{% if transactionType %}&type={{ transactionType }}{% endif %}">
+        href="/transactions?status={{ status }}{{ linkQueryParams }}">
         <span>{{ status | capitalize }}</span>
       </a>
     {% endfor %}
@@ -112,7 +114,7 @@
       {% if set.page <= 1 %}
       disabled
       {% else %}
-      href="/transactions?page={{ set.page - 1 }}&status={{ selectedStatus }}{% if service %}&account={{ accountId }}{% endif %}"
+      href="/transactions?page={{ set.page - 1 }}&status={{ selectedStatus }}{{ linkQueryParams }}"
       {% endif %}
       class="govuk-button govuk-button--secondary">
       Previous
@@ -121,7 +123,7 @@
        {% if not(set._links.next_page) %}
          disabled
        {% else %}
-          href="/transactions?page={{ set.page + 1 }}&status={{ selectedStatus }}{% if service %}&account={{ accountId }}{% endif %}"
+          href="/transactions?page={{ set.page + 1 }}&status={{ selectedStatus }}{{ linkQueryParams }}"
        {% endif %}
        class="govuk-button govuk-button--secondary">
       Next
