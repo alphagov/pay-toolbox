@@ -2,8 +2,9 @@ import { Request, Response } from 'express'
 import { parse, ParsedQs, stringify } from 'qs'
 
 import logger from '../../../lib/logger'
-import { AdminUsers } from '../../../lib/pay-request'
+import { AdminUsers, Connector } from '../../../lib/pay-request'
 import { Service, User } from '../../../lib/pay-request/types/adminUsers'
+import { GatewayAccount } from '../../../lib/pay-request/types/connector'
 import { wrapAsyncErrorHandler } from '../../../lib/routes'
 import { sanitiseCustomBrandingURL } from './branding'
 import GatewayAccountRequest from './gatewayAccountRequest.model'
@@ -51,6 +52,14 @@ const performancePlatformCsv = async function performancePlatformCsv(req: Reques
   res.status(200).send(formatPerformancePlatformCsv(liveActiveServices))
 }
 
+const getServiceGatewayAccounts = async (gateway_account_ids: Array<string>) => {
+  const serviceGatewayAccounts = []
+  for (const id of gateway_account_ids) {
+    serviceGatewayAccounts.push(await Connector.account(id) as GatewayAccount)
+  }
+  return serviceGatewayAccounts
+}
+
 const detail = async function detail(req: Request, res: Response): Promise<void> {
   const serviceId = req.params.id
   const messages = req.flash('info')
@@ -66,10 +75,14 @@ const detail = async function detail(req: Request, res: Response): Promise<void>
     user.role = currentServicesRole.role && currentServicesRole.role.name
   })
 
+  const serviceGatewayAccounts = await getServiceGatewayAccounts(service.gateway_account_ids) 
+
   const adminEmails = users.filter((user) => user.role.toLowerCase() == 'admin').map((user) => user.email).toString()
 
+  console.log(serviceGatewayAccounts)
+
   res.render('services/detail', {
-    service, users, serviceId, messages, adminEmails
+    service, serviceGatewayAccounts, users, serviceId, messages, adminEmails
   })
 }
 

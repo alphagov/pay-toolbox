@@ -60,6 +60,7 @@ export interface Transaction {
   transaction_type: string;
   parent_transaction_id?: string;
   parent?: Transaction;
+  live: boolean;
 }
 
 export interface Event {

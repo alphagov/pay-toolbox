@@ -110,7 +110,11 @@
       {% if currentCredential and currentCredential.credentials.stripe_account_id %}
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Connected Stripe account</span></dt>
-        <dd class="govuk-summary-list__value"><a href="https://dashboard.stripe.com/connect/accounts/{{ currentCredential.credentials.stripe_account_id }}" class="govuk-link govuk-link--no-visited-state">{{ currentCredential.credentials.stripe_account_id }}</a></dd>
+        <dd class="govuk-summary-list__value">
+          <a class="govuk-link govuk-link--no-visited-state" target="_blank" href="{{ stripeDashboardUri }}">
+            {{ currentCredential.credentials.stripe_account_id }}
+          </a>
+        </dd>
         <dd class="govuk-summary-list__actions"></dd>
       </div>
       {% endif %}

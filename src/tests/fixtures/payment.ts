@@ -44,7 +44,8 @@ const transaction: Transaction = {
     amount_submitted: 0
   },
   transaction_id: 'rs7l0c6ka8b0hr2ho7omkpo6ot',
-  transaction_type: 'PAYMENT'
+  transaction_type: 'PAYMENT',
+  live: true
 }
 
 export default transaction

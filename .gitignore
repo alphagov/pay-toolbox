@@ -24,3 +24,6 @@ node_modules
 *.log
 
 .idea
+
+# ST4
+*.sublime-*
