@@ -64,6 +64,10 @@ export interface GatewayAccount {
    }
 }
 
+export interface Credentials {
+  stripe_account_id?: string;
+}
+
 export interface GatewayAccountCredential {
   external_id: string;
 
@@ -71,7 +75,7 @@ export interface GatewayAccountCredential {
 
   state: string;
 
-  credentials: object;
+  credentials: Credentials;
 }
 
 export interface EmailNotificationSettings {

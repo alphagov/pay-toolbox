@@ -59,7 +59,7 @@ const configureSecureHeaders = function configureSecureHeaders(instance) {
       styleSrc: [ '\'self\'', '\'unsafe-inline\'' ]
     }
   }))
-
+  instance.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }))
   instance.use(csurf())
 }
 

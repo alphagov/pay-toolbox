@@ -102,6 +102,7 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     const account = await Connector.account(transaction.gateway_account_id)
     const service = await AdminUsers.gatewayAccountServices(transaction.gateway_account_id)
     const relatedTransactions = []
+    let stripeDashboardUri = ''
 
     const transactionEvents = await Ledger.events(
       transaction.transaction_id,
@@ -124,12 +125,18 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     }
 
     const renderKey = transaction.transaction_type.toLowerCase()
+
+    if (transaction.gateway_transaction_id && account.payment_provider === 'stripe') {
+      stripeDashboardUri = `https://dashboard.stripe.com/${transaction.live ? '' : 'test/'}payments/${transaction.gateway_transaction_id}`
+    }
+
     res.render(`transactions/${renderKey}`, {
       transaction,
       relatedTransactions,
       account,
       service,
-      events
+      events,
+      stripeDashboardUri
     })
   } catch (error) {
     next(error)

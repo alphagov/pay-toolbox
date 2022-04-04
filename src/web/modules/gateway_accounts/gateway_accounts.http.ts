@@ -153,6 +153,9 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
 }
 
 async function detail(req: Request, res: Response): Promise<void> {
+
+  let stripeDashboardUri = ''
+
   const { id } = req.params
   let services = {}
   const isDirectDebitID = id.match(/^DIRECT_DEBIT:/)
@@ -176,6 +179,10 @@ async function detail(req: Request, res: Response): Promise<void> {
     .filter(task => task != 'additional_kyc_data' && task != 'organisation_details' && stripeSetup[task] === false)
     .map(task => task.replace(/_/g, " "))
 
+  if (currentCredential && currentCredential.credentials.stripe_account_id) {
+    stripeDashboardUri = `https://dashboard.stripe.com/${account.live ? '' : 'test/'}connect/accounts/${currentCredential.credentials.stripe_account_id}`
+  }
+
   res.render('gateway_accounts/detail', {
     account,
     acceptedCards,
@@ -183,6 +190,7 @@ async function detail(req: Request, res: Response): Promise<void> {
     services,
     currentCredential,
     outstandingStripeSetupTasks,
+    stripeDashboardUri,
     messages: req.flash('info'),
     csrf: req.csrfToken()
   })

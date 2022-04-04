@@ -132,7 +132,13 @@
         {% if transaction.gateway_transaction_id %}
         <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Provider transaction</span></th>
-          <td class="govuk-table__cell payment__cell">{{ transaction.gateway_transaction_id }}</td>
+          <td class="govuk-table__cell payment__cell">
+            {% if stripeDashboardUri %}
+              <a class="govuk-link govuk-link--no-visited-state" target="_blank" href="{{ stripeDashboardUri }}">{{ transaction.gateway_transaction_id }}</a>
+            {% else %}
+              {{ transaction.gateway_transaction_id }}
+            {% endif %}
+          </td>
         </tr>
         {% endif %}
         <tr class="govuk-table__row">

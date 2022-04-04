@@ -69,10 +69,10 @@
         </tr>
       </thead>
       <tbody class="govuk-table__body">
-        {% for id in service.gateway_account_ids %}
+        {% for account in serviceGatewayAccounts %}
         <tr class="govuk-table__row">
           <td class="govuk-table__cell">
-            <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ id }}">{{id}}</a>
+            <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ account.gateway_account_id }}">{{account.payment_provider}} ({{account.type}})</a>
           </td>
         </tr>
         {% endfor %}
