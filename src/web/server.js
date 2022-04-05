@@ -47,20 +47,22 @@ const configureSecureHeaders = function configureSecureHeaders(instance) {
   } : {}
   const initGOVUKFrontendSnippet = '\'sha256-tqCUU2yHjDH9fiULK1QKKUFdNg//3tfcIB2bl/5yKI4=\''
   instance.use(helmet(helmetOptions))
-  instance.use(helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: [ '\'self\'' ],
-      scriptSrc: [
-        '\'self\'',
-        '\'unsafe-eval\'',
-        initGOVUKFrontendSnippet
-      ],
-      imgSrc: [ '*.githubusercontent.com', '\'self\'', 'data:' ],
-      styleSrc: [ '\'self\'', '\'unsafe-inline\'' ]
-    }
+  instance.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        "default-src": [ "'self'" ],
+        "script-src": [
+          "'self'",
+          "'unsafe-eval'",
+          initGOVUKFrontendSnippet
+        ],
+        "img-src": [ "'self'", 'https://*.githubusercontent.com', 'data:' ],
+        "style-src": [ "'self'", "'unsafe-inline'" ]
+      } 
+    },
+    crossOriginResourcePolicy: { policy: "cross-origin" }
   }))
-  instance.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }))
-  instance.use(csurf())
+  instance.use(csurf())  
 }
 
 const configureRequestParsing = function configureRequestParsing(instance) {
