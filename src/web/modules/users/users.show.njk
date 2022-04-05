@@ -48,7 +48,7 @@
       <code title="{{ role.service.external_id }}">{{ role.service.external_id | truncate(10) }}</code>
     </dd>
     <dd class="govuk-summary-list__actions">
-      <a class="govuk-link govuk-link--no-visited-state" href="/users/{{ payUser.external_id }}/service/{{ role.service.external_id }}/delete">Remove user</a>
+      <a class="govuk-link govuk-link--no-visited-state" href="/users/{{ payUser.external_id }}/service/{{ role.service.external_id }}/delete-confirm">Remove user</a>
     </dd>
   </div>
   {% endfor %}

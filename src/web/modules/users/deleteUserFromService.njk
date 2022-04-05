@@ -1,0 +1,15 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <h1 class="govuk-heading-m">Remove user</h1>
+  <div>
+    <p class="govuk-body">Are you sure you want to remove user {{ payUser.email }} from {{ service.name }}?</p>
+  </div>  
+
+  <div>
+    <a href="/users/:userId/service/:serviceId/delete" class="govuk-button govuk-button--secondary">Yes</a>
+    <a href="/" class="govuk-button govuk-button--secondary">No</a>
+  </div>
+{% endblock %}
