@@ -151,6 +151,18 @@ const removeUserFromService = async function removeUserFromService(
   res.redirect(`/users/${userId}`)
 }
 
+const confirmRemoveUserFromService = async function confirmRemoveUserFromService(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { serviceId, userId } = req.params
+  const payUser = await AdminUsers.user(userId)
+  const service = await AdminUsers.service(serviceId)
+  const context = { payUser, serviceId, userId, service, _csrf: req.csrfToken() }
+
+  res.render('users/deleteUserFromService.njk', context)
+}
+
 const resetUserSecondFactor = async function resetUserSecondFactor(
   req: Request,
   res: Response
@@ -194,6 +206,7 @@ export default {
   updatePhoneNumberForm: wrapAsyncErrorHandler(updatePhoneNumberForm),
   toggleUserEnabled: wrapAsyncErrorHandler(toggleUserEnabled),
   removeUserFromService: wrapAsyncErrorHandler(removeUserFromService),
+  confirmRemoveUserFromService: wrapAsyncErrorHandler(confirmRemoveUserFromService),
   resetUserSecondFactor: wrapAsyncErrorHandler(resetUserSecondFactor),
   search: wrapAsyncErrorHandler(search),
   searchPage: wrapAsyncErrorHandler(searchPage),
