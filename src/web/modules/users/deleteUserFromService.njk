@@ -3,27 +3,22 @@
 {% extends "layout/layout.njk" %}
 
 {% block main %}
-  <h1 class="govuk-heading-m">Remove user</h1>
-  <div id="confirm-remove-user-dialog">
-    <div class="govuk-error-summary govuk-!-margin-top-6" role="group" aria-labelledby="error-summary" tabindex="-1">
-      <h2 class="govuk-error-summary__title" id="error-summary">
-        Are you sure you want to remove {{ payUser.email }} from {{ service.name }}?
-      </h2>
-      <form id="remove-team-member-form" method="post" action="/users/{{ userId }}/service/{{ serviceId }}/delete">
-        <input id="csrf" name="csrfToken" type="hidden" value="{{csrf}}"/>
+  <h1 class="govuk-heading-m">Are you sure you want to remove {{ payUser.email }} from {{ service.name }}?</h1>
+  <div id="confirm-remove-user-dialog" class="govuk-body">
+    <form id="remove-team-member-form" method="post" action="/users/{{ userId }}/service/{{ serviceId }}/delete">
+      <input id="csrf" name="csrfToken" type="hidden" value="{{csrf}}"/>
 
-        {{
-          govukButton({
-            text: "Yes, remove",
-            classes: "govuk-button--warning",
-            attributes: {
-              id: "remove-team-member-confirm"
-            }
-          })
-        }}
-        
-        <a href="/" class="govuk-button govuk-button--secondary">No</a>
-      </form>
-    </div>
+      {{
+        govukButton({
+          text: "Yes, remove",
+          classes: "govuk-button--warning",
+          attributes: {
+            id: "remove-team-member-confirm"
+          }
+        })
+      }}
+    
+      <a href="/" class="govuk-button govuk-button--secondary">No</a>
+    </form>
   </div>  
 {% endblock %}
