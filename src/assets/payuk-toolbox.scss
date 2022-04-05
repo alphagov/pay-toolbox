@@ -1,6 +1,25 @@
 /*  @TODO(sfount) only import scss from frontend that is required */
 @import "govuk-frontend/govuk/all";
 
+.target-to-show {
+  display: none;
+  position: relative;
+
+  &:target {
+    display: block;
+  }
+
+  .govuk-button {
+    margin-bottom: govuk-spacing(2);
+  }
+
+  &--cancel {
+    position: absolute;
+    right: govuk-spacing(3);
+    bottom: govuk-spacing(3);
+  }
+}
+
 .success-summary {
   border-color: govuk-colour("green");
 }

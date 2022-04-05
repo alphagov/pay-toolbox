@@ -48,10 +48,33 @@
       <code title="{{ role.service.external_id }}">{{ role.service.external_id | truncate(10) }}</code>
     </dd>
     <dd class="govuk-summary-list__actions">
-      <a class="govuk-link govuk-link--no-visited-state" href="/users/{{ payUser.external_id }}/service/{{ role.service.external_id }}/delete">Remove user</a>
+      <a class="govuk-link govuk-link--no-visited-state" href="#confirm-remove-user-dialog">Remove user</a>
     </dd>
   </div>
+  <div id="confirm-remove-user-dialog" class="target-to-show">
+    <div class="govuk-error-summary govuk-!-margin-top-6" role="group" aria-labelledby="error-summary" tabindex="-1">
+      <h2 class="govuk-error-summary__title" id="error-summary">
+        Are you sure you want to remove {{ payUser.email }} from {{ role.service.name }}?
+      </h2>
+      <form id="remove-team-member-form" method="post" action="/users/{{ payUser.external_id }}/service/{{ role.service.external_id }}/delete">
+        <input id="csrf" name="csrfToken" type="hidden" value="{{csrf}}"/>
+
+        {{
+          govukButton({
+            text: "Yes, remove",
+            classes: "govuk-button--warning",
+            attributes: {
+              id: "remove-team-member-confirm"
+            }
+          })
+        }}
+
+        <a class="govuk-link govuk-link--no-visited-state target-to-show--cancel" id="remove-team-member-cancel" href="#main">Cancel</a>
+      </form>
+    </div>
+  </div>
   {% endfor %}
+
 </dl>
 
 {{ json("User details source", payUser) }}
