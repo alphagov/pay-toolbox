@@ -82,7 +82,7 @@ const fields = [{
   label: 'Has corporate card surcharge',
   value: 'corporate_surcharge'
 }, {
-  label: 'Agent-initated MOTO payments are enabled',
+  label: 'Agent-initiated MOTO payments are enabled',
   value: 'service.agent_initiated_moto_enabled'
 }]
 
