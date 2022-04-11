@@ -10,7 +10,7 @@ import { EntityNotFoundError, IOValidationError } from '../../../lib/errors'
 
 const show = async function show(req: Request, res: Response): Promise<void> {
   const payUser = await AdminUsers.user(req.params.id)
-  const context = { payUser, messages: req.flash('info'), _csrf: req.csrfToken() }
+  const context = { payUser, messages: req.flash('info'), csrf: req.csrfToken() }
 
   res.render('users/users.show.njk', context)
 }
@@ -158,7 +158,7 @@ const confirmRemoveUserFromService = async function confirmRemoveUserFromService
   const { serviceId, userId } = req.params
   const payUser = await AdminUsers.user(userId)
   const service = await AdminUsers.service(serviceId)
-  const context = { payUser, serviceId, userId, service, _csrf: req.csrfToken() }
+  const context = { payUser, serviceId, userId, service, csrf: req.csrfToken() }
 
   res.render('users/deleteUserFromService.njk', context)
 }
