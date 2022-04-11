@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { wrapAsyncErrorHandler } from '../../../lib/routes'
 import { AdminUsers } from '../../../lib/pay-request'
+import logger from '../../../lib/logger'
 
 import UpdateEmailFormRequest from './UpdateEmailForm'
 import UpdatePhoneNumberFormRequest from './UpdatePhoneNumberForm'
@@ -10,7 +11,7 @@ import { EntityNotFoundError, IOValidationError } from '../../../lib/errors'
 
 const show = async function show(req: Request, res: Response): Promise<void> {
   const payUser = await AdminUsers.user(req.params.id)
-  const context = { payUser, messages: req.flash('info'), _csrf: req.csrfToken() }
+  const context = { payUser, messages: req.flash('info'), csrf: req.csrfToken() }
 
   res.render('users/users.show.njk', context)
 }
@@ -145,8 +146,10 @@ const removeUserFromService = async function removeUserFromService(
   res: Response
 ): Promise<void> {
   const { serviceId, userId } = req.params
+  logger.info("Removing user from service.", { user_external_id: userId, service_external_id: serviceId })
   await AdminUsers.removeUserFromService(serviceId, userId)
-
+  logger.info("Removed user from service.", { user_external_id: userId, service_external_id: serviceId })
+  
   req.flash('info', `User ${userId} removed from service ${serviceId}`)
   res.redirect(`/users/${userId}`)
 }
@@ -158,7 +161,7 @@ const confirmRemoveUserFromService = async function confirmRemoveUserFromService
   const { serviceId, userId } = req.params
   const payUser = await AdminUsers.user(userId)
   const service = await AdminUsers.service(serviceId)
-  const context = { payUser, serviceId, userId, service, _csrf: req.csrfToken() }
+  const context = { payUser, serviceId, userId, service, csrf: req.csrfToken() }
 
   res.render('users/deleteUserFromService.njk', context)
 }

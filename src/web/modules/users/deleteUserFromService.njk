@@ -6,7 +6,7 @@
   <h1 class="govuk-heading-m">Are you sure you want to remove {{ payUser.email }} from {{ service.name }}?</h1>
   <div id="confirm-remove-user-dialog" class="govuk-body">
     <form id="remove-team-member-form" method="post" action="/users/{{ userId }}/service/{{ serviceId }}/delete">
-      <input id="csrf" name="csrfToken" type="hidden" value="{{csrf}}"/>
+      <input id="csrf" name="_csrf" type="hidden" value="{{ csrf }}"/>
 
       {{
         govukButton({
