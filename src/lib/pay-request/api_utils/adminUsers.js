@@ -87,10 +87,8 @@ const adminUsersMethods = function adminUsersMethods(instance) {
 
   const removeUserFromService = function removeUserFromService(serviceId, userId) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // const path = `/v1/api/services/${serviceId}/users/${userId}`
-
-    // @TODO(sfount) make sure admin headers are correctly set to allow user to be removed
-    throw new NotImplementedError(`Remove user from service end point not configured [user=${userId}] [service=${serviceId}]`)
+    const path = `/v1/api/toolbox/services/${serviceId}/users/${userId}`
+    return axiosInstance.delete(path)
   }
 
   const resetUserSecondFactor = function resetUserSecondFactor(id) {

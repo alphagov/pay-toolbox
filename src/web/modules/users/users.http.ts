@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { wrapAsyncErrorHandler } from '../../../lib/routes'
 import { AdminUsers } from '../../../lib/pay-request'
+import logger from '../../../lib/logger'
 
 import UpdateEmailFormRequest from './UpdateEmailForm'
 import UpdatePhoneNumberFormRequest from './UpdatePhoneNumberForm'
@@ -145,8 +146,10 @@ const removeUserFromService = async function removeUserFromService(
   res: Response
 ): Promise<void> {
   const { serviceId, userId } = req.params
+  logger.info("Removing user from service.", { user_external_id: userId, service_external_id: serviceId })
   await AdminUsers.removeUserFromService(serviceId, userId)
-
+  logger.info("Removed user from service.", { user_external_id: userId, service_external_id: serviceId })
+  
   req.flash('info', `User ${userId} removed from service ${serviceId}`)
   res.redirect(`/users/${userId}`)
 }
