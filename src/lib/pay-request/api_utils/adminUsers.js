@@ -30,6 +30,15 @@ const adminUsersMethods = function adminUsersMethods(instance) {
       })
   }
 
+  const searchServices = (serviceNameSearchString, serviceMerchantNameSearchString) => {
+    const path = `/v1/api/services/search`
+    const payload = {
+      service_name: serviceNameSearchString,
+      service_merchant_name: serviceMerchantNameSearchString
+    }
+    return axiosInstance.post(path, payload).then(utilExtractData)
+  }
+
   const user = function user(id) {
     const path = `/v1/api/users/${id}`
     return axiosInstance.get(path)
@@ -258,6 +267,7 @@ const adminUsersMethods = function adminUsersMethods(instance) {
     services,
     serviceUsers,
     serviceStripeAgreement,
+    searchServices,
     updateServiceBranding,
     updateServiceGatewayAccount,
     gatewayAccountServices,
