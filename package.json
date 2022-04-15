@@ -47,7 +47,7 @@
     "google-libphonenumber": "~3.2.21",
     "govuk-frontend": "^3.14.0",
     "helmet": "^5.0.2",
-    "https-proxy-agent": "5.0.0",
+    "https-proxy-agent": "5.0.1",
     "joi": "^17.6.0",
     "json2csv": "^5.0.7",
     "lodash": "4.17.21",
