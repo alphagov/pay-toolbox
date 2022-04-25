@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { parse, ParsedQs, stringify } from 'qs'
+import { ParsedQs, stringify } from 'qs'
 
 import logger from '../../../lib/logger'
 import { AdminUsers, Connector } from '../../../lib/pay-request'
@@ -75,7 +75,7 @@ const detail = async function detail(req: Request, res: Response): Promise<void>
     user.role = currentServicesRole.role && currentServicesRole.role.name
   })
 
-  const serviceGatewayAccounts = await getServiceGatewayAccounts(service.gateway_account_ids) 
+  const serviceGatewayAccounts = await getServiceGatewayAccounts(service.gateway_account_ids)
 
   const adminEmails = users.filter((user) => user.role.toLowerCase() == 'admin').map((user) => user.email).toString()
 
@@ -144,8 +144,35 @@ const search = async function search(req: Request, res: Response): Promise<void>
 }
 
 const searchRequest = async function searchRequest(req: Request, res: Response): Promise<void> {
-  const serviceId = req.body.id.trim()
-  res.redirect(`/services/${serviceId}`)
+  const isAdminusersUuid = /^[0-9a-f]{8}[0-9a-f]{4}[1-5][0-9a-f]{3}[89ab][0-9a-f]{3}[0-9a-f]{12}$/
+  const filtered = !!req.body.options
+  const term = req.body.term.trim()
+  if (term !== '') {
+    if (isAdminusersUuid.test(term)) {
+      res.redirect(`/services/${term}`)
+    } else {
+      const data = await AdminUsers.searchServices(term, term)
+      const nameResults = data.name_results.map((serv: Service) => Object.assign(serv, {matched: 'name'}))
+      let merchantResults = data.merchant_results.map((serv: Service) => Object.assign(serv, {matched: 'merchant'}))
+
+      // remove results from merchantResults if we have already found the service in nameResults
+      const servIds = new Set(nameResults.map((serv: Service) => serv.id))
+      merchantResults = merchantResults.filter((serv: Service) => !servIds.has(serv.id))
+      const results = filtered
+      ? [...nameResults.filter((serv: Service) => serv.current_go_live_stage === 'LIVE'), ...merchantResults.filter((serv: Service) => serv.current_go_live_stage === 'LIVE')]
+      : [...nameResults, ...merchantResults]
+
+      res.render('services/search_results', {
+        term,
+        filtered,
+        results,
+        total: results.length.toLocaleString(),
+        csrf: req.csrfToken()
+      })
+    }
+  } else {
+    res.render('services/search', { csrf: req.csrfToken(), error: 'Please enter a search term' })
+  }
 }
 
 const toggleTerminalStateRedirectFlag = async function toggleTerminalStateRedirectFlag(

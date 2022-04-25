@@ -1,17 +1,51 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
 {% extends "layout/layout.njk" %}
 
 {% block main %}
+  {% if error %}
+    {{ govukErrorSummary({
+      titleText: "There is a problem",
+      errorList: [ { text: error } ]
+      })
+    }}
+  {% endif %}
+
   <span class="govuk-caption-m">GOV.UK Pay platform</span>
   <h1 class="govuk-heading-m">Find a service</h1>
 
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
   <form method="POST" action="/services/search">
     {{ govukInput({
-      id: "id",
-      name: "id",
-      label: { text: "Service external ID" }
+      id: "term",
+      name: "term",
+      hint: { text: "Service external ID, name or merchant" },
+      label: { text: "Search" }
       })
+    }}
+
+    {{ govukCheckboxes({
+        idPrefix: "options",
+        name: "options",
+        classes: "govuk-checkboxes--small",
+        fieldset: {
+          legend: {
+            text: "Options",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--s"
+          }
+        },
+        items: [
+          {
+            value: "live",
+            text: "Filter non-live services"
+          }
+        ]
+      }) 
     }}
 
     {{ govukButton({
