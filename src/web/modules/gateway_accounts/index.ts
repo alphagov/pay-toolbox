@@ -43,5 +43,6 @@ export default {
   createAgentInitiatedMotoProduct: http.createAgentInitiatedMotoProduct,
   toggleWorldpayExemptionEngine: http.toggleWorldpayExemptionEngine,
   toggleRequiresAdditionalKycData: http.toggleRequiresAdditionalKycData,
-  toggleAllowAuthorisationApi: http.toggleAllowAuthorisationApi
+  toggleAllowAuthorisationApi: http.toggleAllowAuthorisationApi,
+  toggleRecurringEnabled: http.toggleRecurringEnabled
 }

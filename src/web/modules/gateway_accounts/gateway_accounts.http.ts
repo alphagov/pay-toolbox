@@ -372,6 +372,17 @@ async function toggleAllowAuthorisationApi(
   res.redirect(`/gateway_accounts/${id}`)
 }
 
+async function toggleRecurringEnabled(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { id } = req.params
+  const enabled = await Connector.toggleRecurringEnabled(id)
+
+  req.flash('info', `Recurring card payments ${enabled ? 'enabled' : 'disabled'}`)
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
 async function updateStripeStatementDescriptorPage(
   req: Request,
   res: Response
@@ -644,5 +655,6 @@ export default {
   createAgentInitiatedMotoProduct: wrapAsyncErrorHandler(createAgentInitiatedMotoProduct),
   toggleWorldpayExemptionEngine: wrapAsyncErrorHandler(toggleWorldpayExemptionEngine),
   toggleRequiresAdditionalKycData: wrapAsyncErrorHandler(toggleRequiresAdditionalKycData),
-  toggleAllowAuthorisationApi: wrapAsyncErrorHandler(toggleAllowAuthorisationApi)
+  toggleAllowAuthorisationApi: wrapAsyncErrorHandler(toggleAllowAuthorisationApi),
+  toggleRecurringEnabled: wrapAsyncErrorHandler(toggleRecurringEnabled)
 }
