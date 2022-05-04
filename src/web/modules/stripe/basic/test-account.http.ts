@@ -98,7 +98,8 @@ async function createTestGatewayAccount(serviceId: string, serviceName: string, 
         'company_number',
         'responsible_person',
         'vat_number',
-        'director'
+        'director',
+        'government_entity_document'
     ])
     logger.info(`Set Stripe setup values to 'true' for Stripe test Gateway Account ${gatewayAccountIdDerived}`)
 
