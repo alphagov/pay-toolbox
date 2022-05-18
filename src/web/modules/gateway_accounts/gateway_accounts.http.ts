@@ -261,9 +261,13 @@ async function emailBranding(req: Request, res: Response): Promise<void> {
 async function updateEmailBranding(req: Request, res: Response):
   Promise<void> {
   const { id } = req.params
-  const notifySettings = req.body
-  // eslint-disable-next-line no-underscore-dangle
-  delete notifySettings._csrf
+  const { api_token, template_id, refund_issued_template_id, email_reply_to_id } = req.body
+  const notifySettings = {
+    api_token,
+    template_id,
+    refund_issued_template_id,
+    ...email_reply_to_id && { email_reply_to_id }
+  }
 
   await Connector.updateEmailBranding(id, notifySettings)
   req.flash('info', 'Email custom branding successfully updated')
