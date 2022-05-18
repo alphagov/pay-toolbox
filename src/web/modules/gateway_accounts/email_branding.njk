@@ -34,6 +34,14 @@
       autocomplete: "off"
     })
     }}
+    {{ govukInput({
+      id: "email_reply_to_id",
+      name: "email_reply_to_id",
+      label: { text: "Reply-to email address id (can be empty)" },
+      hint: { html: "This is the id of the reply-to email address to use if the Notify service has multiple reply-to email addresses configured." },
+      autocomplete: "off"
+    })
+    }}
 
     {{ govukButton({
     text: "Update email branding"
