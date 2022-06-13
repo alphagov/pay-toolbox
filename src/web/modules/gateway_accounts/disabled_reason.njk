@@ -1,0 +1,29 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% extends "layout/layout.njk" %}
+
+{% set isTestData = account and not (account.type === "live") %}
+
+{% block main %}
+  <div>
+    <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Gateway account ({{ account.gateway_account_id }})</a>
+  </div>
+
+  <form method="POST">
+    {{ govukTextarea({
+      id: "reason",
+      name: "reason",
+      label: {
+        text: "Enter the reason for disabling the account",
+        classes: "govuk-label--l",
+        isPageHeading: true
+      }
+    }) }}
+
+    {{ govukButton({
+      text: "Disable gateway account"
+    }) }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}

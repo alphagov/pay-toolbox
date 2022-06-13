@@ -281,6 +281,29 @@ const connectorMethods = function connectorMethods(instance) {
     return !gatewayAccount.recurring_enabled
   }
 
+  async function disable(id, reason) {
+    const url = `/v1/api/accounts/${id}`
+    await axiosInstance.patch(url, {
+      op: 'replace',
+      path: 'disabled',
+      value: true
+    })
+    return axiosInstance.patch(url, {
+      op: 'replace',
+      path: 'disabled_reason',
+      value: reason
+    })
+  }
+
+  function enable(id) {
+    const url = `/v1/api/accounts/${id}`
+    return axiosInstance.patch(url, {
+      op: 'replace',
+      path: 'disabled',
+      value: false
+    })
+  }
+
   function addGatewayAccountCredentialsForSwitch(id, paymentProvider, credentials) {
     const url = `/v1/api/accounts/${id}/credentials`
     return axiosInstance.post(url, {
@@ -335,7 +358,9 @@ const connectorMethods = function connectorMethods(instance) {
     enableSwitchFlagOnGatewayAccount,
     toggleRequiresAdditionalKycData,
     toggleAllowAuthorisationApi,
-    toggleRecurringEnabled
+    toggleRecurringEnabled,
+    disable,
+    enable
   }
 }
 

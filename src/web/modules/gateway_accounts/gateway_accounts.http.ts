@@ -348,6 +348,39 @@ async function toggleSendReferenceToGateway(
   res.redirect(`/gateway_accounts/${id}`)
 }
 
+async function disableReasonPage(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { id } = req.params
+  const account = await getAccount(id)
+
+  res.render('gateway_accounts/disabled_reason', { account, csrf: req.csrfToken() })
+}
+
+async function disable(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { id } = req.params
+  const { reason } = req.body
+  await Connector.disable(id, reason)
+
+  req.flash('info', `Gateway account disabled`)
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
+async function enable(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { id } = req.params
+  await Connector.enable(id)
+
+  req.flash('info', `Gateway account enabled`)
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
 async function toggleRequiresAdditionalKycData(
   req: Request,
   res: Response
@@ -649,6 +682,9 @@ export default {
   toggleSendPayerIpAddressToGateway: wrapAsyncErrorHandler(toggleSendPayerIpAddressToGateway),
   toggleSendPayerEmailToGateway: wrapAsyncErrorHandler(toggleSendPayerEmailToGateway),
   toggleSendReferenceToGateway: wrapAsyncErrorHandler(toggleSendReferenceToGateway),
+  disableReasonPage: wrapAsyncErrorHandler(disableReasonPage),
+  disable: wrapAsyncErrorHandler(disable),
+  enable: wrapAsyncErrorHandler(enable),
   updateStripeStatementDescriptorPage: wrapAsyncErrorHandler(updateStripeStatementDescriptorPage),
   updateStripeStatementDescriptor: wrapAsyncErrorHandler(updateStripeStatementDescriptor),
   updateStripePayoutDescriptorPage: wrapAsyncErrorHandler(updateStripePayoutDescriptorPage),
