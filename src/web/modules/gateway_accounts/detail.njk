@@ -577,6 +577,35 @@
     </div>
   {% endif %}
 
+  {% if account.disabled === true %}
+  <div>
+    <h1 class="govuk-heading-s">Gateway account is disabled</h1>
+    <p class="govuk-body">If a gateway account is disabled, new payments cannot be initiated and refunds cannot be made.</p>
+    <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/enable">
+      {{ govukButton({
+      text: "Enable gateway account",
+      classes: "govuk-button--warning"
+      })
+      }}
+      <input type="hidden" name="_csrf" value="{{ csrf }}">
+    </form>
+  </div>
+  {% endif %}
+
+  {% if account.disabled === false %}
+  <div>
+    <h1 class="govuk-heading-s">Disable gateway account</h1>
+    <p class="govuk-body">If a gateway account is disabled, new payments cannot be initiated and refunds cannot be made.</p>
+    {{ govukButton({
+      text: "Disable gateway account",
+      href: "/gateway_accounts/" + gatewayAccountId + "/disable",
+      classes: "govuk-button--warning"
+    }) }}
+  </div>
+  {% endif %}
+
+
+
   {{ json("Gateway account details source", account) }}
   {{ json("Accepted cards source", acceptedCards) }}
   {{ json("Gateway account services source", services) }}
