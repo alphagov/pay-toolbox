@@ -6,8 +6,9 @@ const currencyFormatter = new Intl.NumberFormat('en-GB', {
 })
 
 const dateFormatterOptions = {
-  month: 'short',
   day: 'numeric',
+  month: 'short',
+  year: 'numeric',
   hour: 'numeric',
   minute: 'numeric',
   second: 'numeric',
@@ -21,8 +22,9 @@ const dateFormatterLocalTimeZone = new Intl.DateTimeFormat('en-GB', dateFormatte
 
 const unixDateFormatter = new Intl.DateTimeFormat('en-GB', {
   weekday: 'short',
+  day: '2-digit',
   month: 'short',
-  day: '2-digit'
+  year: 'numeric'
 })
 
 const toSimpleDate = function toSimpleDate(date) {
