@@ -366,7 +366,6 @@ async function disable(
   const { reason } = req.body
   await Connector.disable(id, reason)
 
-  req.flash('info', `Gateway account disabled`)
   res.redirect(`/gateway_accounts/${id}`)
 }
 

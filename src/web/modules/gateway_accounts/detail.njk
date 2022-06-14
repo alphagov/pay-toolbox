@@ -8,6 +8,15 @@
 {% set isTestData = not account.live %}
 
 {% block main %}
+  {% if account.disabled %}
+    {% set accountDisabledBannerHtml %}
+      <p class="govuk-notification-banner__heading">This account is disabled:</p>
+      <div>{{account.disabled_reason}}</div>
+    {% endset %}
+    {{ govukNotificationBanner({
+      html: accountDisabledBannerHtml
+    }) }}
+  {% endif %}
   {% if currentCredential.state  === 'CREATED' %}
     {{ govukNotificationBanner({
       text: 'This account needs to be configured with PSP credentials or onboarding needs to be completed.'
