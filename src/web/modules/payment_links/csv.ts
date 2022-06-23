@@ -46,6 +46,9 @@ const fields = [{
   label: 'Reference label',
   value: 'product.reference_label'
 },{
+  label: 'Reference hint',
+  value: 'product.reference_hint'
+},{
   label: 'Language',
   value: 'product.language'
 },{
