@@ -1,3 +1,5 @@
+import { AccountType } from "../../shared";
+
 export enum TokenType {
   Card = 'CARD',
   DirectDebit = 'DIRECT_DEBIT'
@@ -19,12 +21,21 @@ export interface Token {
 }
 
 export interface ListTokenRequest {
-  gateway_account_id: number;
+  gateway_account_id: string;
 }
 
 export interface DeleteTokenRequest {
-  gateway_account_id: number;
+  gateway_account_id: string;
   token_link: string;
+}
+
+export interface CreateTokenRequest {
+  account_id: string;
+  description: string;
+  created_by: string;
+  token_type: TokenType;
+  type: TokenSource;
+  token_account_type: AccountType;
 }
 
 export interface ListTokenResponse {
@@ -34,4 +45,8 @@ export interface ListTokenResponse {
 export interface DeleteTokenResponse {
   /** Date the token was revoked in format DD MMM YYYY */
   revoked: string;
+}
+
+export interface CreateTokenResponse {
+  token: string;
 }

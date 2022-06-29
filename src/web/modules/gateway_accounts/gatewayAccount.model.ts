@@ -6,7 +6,8 @@ import {
 
 import Validated from '../common/validated'
 import { ValidationError } from '../../../lib/errors'
-import { GatewayAccountRequest } from '../../../lib/pay-request/types/connector'
+import { CreateGatewayAccountRequest } from '../../../lib/pay-request/typed_clients/services/connector/types'
+import { AccountType } from '../../../lib/pay-request/typed_clients/shared'
 
 const liveStatus = {
   live: 'live',
@@ -98,24 +99,22 @@ class GatewayAccount extends Validated {
   }
 
   // formats gateway account according to the Connector patch standard
-  public formatPayload(): GatewayAccountRequest {
+  public formatPayload(): CreateGatewayAccountRequest {
     if (Object.values(sandbox).includes(this.provider)) this.provider = 'sandbox'
 
-    const payload: GatewayAccountRequest = {
+    const payload: CreateGatewayAccountRequest = {
       payment_provider: this.provider,
       description: this.description,
-      type: this.isLive() ? 'live' : 'test',
+      type: this.isLive() ? AccountType.Live : AccountType.Test,
       service_name: this.serviceName,
       analytics_id: this.analyticsId,
-      sector: this.sector,
-      internalFlag: this.internalFlag,
       service_id: this.serviceId
     }
 
     if (this.isLive() || this.provider === 'stripe' ) {
-      payload.requires_3ds = 'true'
+      payload.requires_3ds = true
     } else {
-      payload.requires_3ds = 'false'
+      payload.requires_3ds = false
     }
 
     if (this.provider === 'stripe' && this.credentials) {

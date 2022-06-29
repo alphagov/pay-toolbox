@@ -3,7 +3,9 @@ import {
   ListTokenRequest,
   ListTokenResponse,
   DeleteTokenRequest,
-  DeleteTokenResponse
+  DeleteTokenResponse,
+  CreateTokenRequest,
+  CreateTokenResponse
 } from './types'
 import { App } from '../../shared'
 
@@ -20,6 +22,12 @@ export default class PublicAuth extends Client {
       return client._axios
         .get(`/v1/frontend/auth/${params.gateway_account_id}`)
         .then(response => client._unpackResponseData<ListTokenResponse>(response));
+    },
+
+    create(params: CreateTokenRequest): Promise<CreateTokenResponse | undefined> {
+      return client._axios
+        .post('/v1/frontend/auth', params)
+        .then(response => client._unpackResponseData<CreateTokenResponse>(response))
     },
 
     delete(params: DeleteTokenRequest): Promise<DeleteTokenResponse | undefined> {

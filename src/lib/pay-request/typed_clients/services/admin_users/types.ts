@@ -97,7 +97,7 @@ export interface RetrieveUserByEmailRequest {
 }
 
 export interface RetrieveServiceByGatewayAccountIdRequest {
-  gatewayAccountId: number;
+  gatewayAccountId: string;
 }
 
 export interface UpdateUserDisabledRequest {

@@ -44,9 +44,25 @@ export interface GatewayAccount {
   allow_zero_amount: boolean;
   integration_version_3ds: number;
   allow_moto: boolean;
+  allow_telephone_payment_notifications: boolean;
+  send_payer_ip_address_to_gateway: boolean;
+  send_payer_email_to_gateway: boolean;
+  send_reference_to_gateway: boolean;
   email_collection_mode?: EmailCollectionMode,
   email_notifications: EmailNotifications,
-  notify_settings: Map<string, any>
+  notify_settings: NotifySettings
+  disabled: boolean;
+  disabled_reason: string;
+  requires_additional_kyc_data: boolean;
+  allow_authorisation_api: boolean;
+  recurring_enabled: boolean;
+}
+
+export interface GatewayAccountCredential {
+  external_id: string;
+  payment_provider: string;
+  state: string;
+  credentials: StripeCredentials | Credentials;
 }
 
 export interface StripeCredentials {
@@ -59,7 +75,7 @@ export interface Credentials {
 }
 
 export interface GatewayAccountFrontend extends GatewayAccount {
-  credentials: StripeCredentials | Credentials;
+  gateway_account_credentials: GatewayAccountCredential[];
   live: boolean;
   /** Gateway account has 3ds enabled */
   requires3ds: boolean;
@@ -73,8 +89,15 @@ export interface GatewayAccountFrontend extends GatewayAccount {
 export interface GatewayAccountAPI extends GatewayAccount {
   /** Gateway account has 3ds enabled */
   toggle_3ds: boolean;
+  worldpay_3ds_flex: Worldpay3dsFlexCredentials;
 
   // _links: PayLinks
+}
+
+export interface Worldpay3dsFlexCredentials {
+  issuer: string;
+  organisational_unit_id: string;
+  exemption_engine_enabled: boolean;
 }
 
 export interface NotifySettings {
@@ -83,23 +106,31 @@ export interface NotifySettings {
   refund_issued_template_id: string;
 }
 
-export interface UpdateGatewayAccountBlockPrepaidCardsRequest {
-  block_prepaid_cards: boolean;
-}
-
-export interface UpdateGatewayAccountNotifySettingsRequest {
-  notify_settings: NotifySettings;
-}
-
-export interface UpdateGatewayAccountAllowMotoRequest {
-  allow_moto: boolean;
+export interface UpdateGatewayAccountRequest {
+  notify_settings?: NotifySettings;
+  block_prepaid_cards?: boolean;
+  allow_moto?: boolean;
+  worldpay_exemption_engine_enabled?: boolean;
+  allow_telephone_payment_notifications?: boolean;
+  send_payer_ip_address_to_gateway?: boolean;
+  send_payer_email_to_gateway?: boolean;
+  send_reference_to_gateway?: boolean;
+  disabled?: boolean;
+  disabled_reason?: string;
+  requires_additional_kyc_data?: boolean;
+  allow_authorisation_api?: boolean;
+  recurring_enabled?: boolean;
+  corporate_credit_card_surcharge_amount?: number;
+  corporate_debit_card_surcharge_amount?: number;
+  corporate_prepaid_debit_card_surcharge_amount?: number;
 }
 
 export interface CreateGatewayAccountRequest {
   type: AccountType;
-  payment_provider: PaymentProvider;
+  payment_provider: string;
   service_name: string;
   description: string;
+  service_id: string;
   credentials?: Credentials | StripeCredentials;
   analytics_id?: string;
   requires_3ds?: boolean;
@@ -145,6 +176,10 @@ export interface GatewayStatusComparison {
   rawGatewayResponse: string;
   charge: Charge;
   processed: boolean;
+}
+
+export interface StripeSetup {
+  [task: string]: boolean;
 }
 
 export interface GatewayStatusComparison {

@@ -30,7 +30,7 @@ export function config(env: NodeJS.ProcessEnv = {}, options: PayHooks = {}): voi
   const adminUsersUrl = env.ADMINUSERS_URL
   const ledgerUrl = env.LEDGER_URL
   const productsUrl = env.PRODUCTS_URL
-  const publicAuthUrl = env.PUBLICAUTH_URL
+  const publicAuthUrl = env.PUBLIC_AUTH_URL
 
   if (connectorUrl)
     clients.Connector._configure(connectorUrl, options)
