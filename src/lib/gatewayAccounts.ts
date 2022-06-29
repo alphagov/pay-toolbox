@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Service } from './pay-request/types/adminUsers'
+import { Service } from './pay-request/typed_clients/services/admin_users/types'
 import { ParsedQs } from 'qs'
 import { BooleanFilterOption, toNullableBooleanString } from '../web/modules/common/BooleanFilterOption'
+import { ListGatewayAccountsRequest } from './pay-request/typed_clients/services/connector/types'
+import { AccountType } from './pay-request/typed_clients/shared'
 
 export function aggregateServicesByGatewayAccountId(services: Service[]): { [key: string]: Service } {
   return services
@@ -39,9 +41,9 @@ export interface Filters {
 }
 
 
-export function toAccountSearchParams(filters: Filters) {
+export function toAccountSearchParams(filters: Filters): ListGatewayAccountsRequest {
   return {
-    type: filters.live === BooleanFilterOption.True && 'live' || filters.live === BooleanFilterOption.False && 'test' || null,
+    type: filters.live === BooleanFilterOption.True && AccountType.Live || filters.live === BooleanFilterOption.False && AccountType.Test || null,
     payment_provider: filters.provider,
     payment_provider_account_id: filters.payment_provider_account_id,
     requires_3ds: toNullableBooleanString(filters.three_ds),

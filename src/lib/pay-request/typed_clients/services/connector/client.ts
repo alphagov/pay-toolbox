@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import Client, { PayHooks } from '../../base'
 import { mapRequestParamsToOperation } from '../../utils/request'
 import {
@@ -13,7 +14,8 @@ import {
   CreateGatewayAccountResponse,
   UpdateGatewayAccountAllowMotoRequest,
   UpdateGatewayAccountBlockPrepaidCardsRequest,
-  UpdateGatewayAccountNotifySettingsRequest
+  UpdateGatewayAccountNotifySettingsRequest,
+  GatewayStatusComparison
 } from './types'
 import { App } from '../../shared'
 
@@ -33,9 +35,32 @@ export default class Connector extends Client {
      * @returns In-flight payment object
      */
     retrieve(id: string): Promise<Charge | undefined> {
-        return client._axios
-          .get(`/v1/frontend/charges/${id}`)
-          .then(response => client._unpackResponseData<Charge>(response))
+      return client._axios
+        .get(`/v1/frontend/charges/${id}`)
+        .then(response => client._unpackResponseData<Charge>(response))
+    },
+
+    /**
+     * Get the comparison between the status in Pay and the status with the Gateway for a list of
+     * charges
+     * @param ids - Charge external IDs
+     * @returns Array of gateway comparison objects
+     */
+    getGatewayComparisons(ids: string[]): Promise<GatewayStatusComparison[] | undefined> {
+      return client._axios
+        .post('/v1/api/discrepancies/report', ids)
+        .then(response => client._unpackResponseData<GatewayStatusComparison[]>(response))
+    },
+
+    /**
+     * Attempts to cancel an authorisation with the payment gateway
+     * @param id - Charge external ID
+     * @returns Array of gateway comparison objects
+     */
+    resolveDiscrepancy(id: string): Promise<GatewayStatusComparison[] | undefined> {
+      return client._axios
+        .post('/v1/api/discrepancies/resolve', [id])
+        .then(response => client._unpackResponseData<GatewayStatusComparison[]>(response))
     }
   }))(this)
 
@@ -92,8 +117,9 @@ export default class Connector extends Client {
      * @returns List gateway account response
      */
     list(filters: ListGatewayAccountsRequest = {}): Promise<ListGatewayAccountsResponse | undefined> {
+      const params = _.omitBy(filters, _.isEmpty)
       return client._axios
-        .get('/v1/api/accounts', { params: filters})
+        .get('/v1/api/accounts', { params })
         .then(response => client._unpackResponseData<ListGatewayAccountsResponse>(response))
     },
 
@@ -142,5 +168,53 @@ export default class Connector extends Client {
         .get('/v1/api/card-types')
         .then(response => client._unpackResponseData<ListCardTypesResponse>(response));
     }
+  }))(this)
+
+
+  eventEmitter = ((client: Connector) => ({
+    emitByIdRange(startId: number, maxId: number, recordType: string, retryDelayInSeconds: number): Promise<void> {
+      const params = {
+        start_id: startId,
+        max_id: maxId,
+        record_type: recordType,
+        do_not_retry_emit_until: retryDelayInSeconds
+      }
+      return client._axios
+        .post('/v1/tasks/historical-event-emitter', null, { params })
+        .then(() => { return })
+    },
+
+    emitByDate(startDate: string, endDate: string, retryDelayInSeconds: number): Promise<void> {
+      const params = {
+        start_date: startDate,
+        end_date: endDate,
+        do_not_retry_emit_until: retryDelayInSeconds
+      }
+      return client._axios
+        .post('/v1/tasks/historical-event-emitter-by-date', null, { params })
+        .then(() => { return })
+    }
+  }))(this)
+
+  parityChecker = ((client: Connector) => ({
+    runParityCheck(
+      startId: number,
+      maxId: number,
+      doNotReprocessValidRecords: boolean,
+      parityCheckStatus: string,
+      retryDelayInSeconds: number,
+      recordType: string) : Promise<void> {
+        const params = {
+          start_id: startId,
+          max_id: maxId,
+          do_not_reprocess_valid_records: doNotReprocessValidRecords,
+          parity_check_status: parityCheckStatus,
+          do_not_retry_emit_until: retryDelayInSeconds,
+          record_type: recordType
+        }
+        return client._axios
+        .post('/v1/tasks/parity-checker', null, { params })
+        .then(() => { return })
+      }
   }))(this)
 }

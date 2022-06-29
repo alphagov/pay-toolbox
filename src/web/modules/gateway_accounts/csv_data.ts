@@ -1,22 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AdminUsers, Connector } from '../../../lib/pay-request'
-import { Service } from '../../../lib/pay-request/types/adminUsers'
-import { aggregateServicesByGatewayAccountId, extractFiltersFromQuery, toAccountSearchParams, Filters } from '../../../lib/gatewayAccounts'
-import { GatewayAccount } from '../../../lib/pay-request/types/connector'
+import { AdminUsers, Connector } from '../../../lib/pay-request/typed_clients/client'
+import { Service } from '../../../lib/pay-request/typed_clients/services/admin_users/types'
+import { aggregateServicesByGatewayAccountId, toAccountSearchParams, Filters } from '../../../lib/gatewayAccounts'
+import { GatewayAccount } from '../../../lib/pay-request/typed_clients/services/connector/types'
 
 async function getServiceGatewayAccountIndex(): Promise<{ [key: string]: Service }> {
-  const services = await AdminUsers.services()
+  const services = await AdminUsers.services.list()
   return aggregateServicesByGatewayAccountId(services)
 }
 
 function getAccounts(filters: Filters): Promise<GatewayAccount[]> {
   const searchParams = toAccountSearchParams(filters)
-  return Connector.accounts(searchParams).then((response: any) => response.accounts)
+  return Connector.accounts.list(searchParams).then((response: any) => response.accounts)
 }
 
 export async function createCsvData(filters: Filters): Promise<any> {
   const accountsResponse = await getAccounts(filters)
-  const serviceGatewayAccountIndex = await getServiceGatewayAccountIndex() 
+  const serviceGatewayAccountIndex = await getServiceGatewayAccountIndex()
 
   return accountsResponse
     .filter((account: GatewayAccount) => serviceGatewayAccountIndex[account.gateway_account_id] != undefined)
@@ -39,25 +39,25 @@ export async function createCsvData(filters: Filters): Promise<any> {
 export async function createCsvWithAdminEmailsData(filters: Filters): Promise<any> {
   const accountsResponse = await getAccounts(filters)
   const serviceGatewayAccountIndex = await getServiceGatewayAccountIndex()
-  const gatewayAccountToAdminEmails: { [key: string]: string[] } = 
-    await AdminUsers.adminEmailsForGatewayAccounts(accountsResponse.map((account: GatewayAccount) => account.gateway_account_id))
+  const gatewayAccountToAdminEmails =
+    await AdminUsers.users.listAdminEmailsForGatewayAccounts(accountsResponse.map((account: GatewayAccount) => account.gateway_account_id))
   const gatewayAccountIndex = accountsResponse.reduce((aggregate: any, account: GatewayAccount) => {
     aggregate[account.gateway_account_id] = account
     return aggregate
   }, {})
 
-  const emailAccountService: any[] = []
+  const emailAccountService: { email: string; service: Service; account: any }[] = []
 
   Object.entries(gatewayAccountToAdminEmails).forEach(([gatewayAccountId, emails]) => {
     const service = serviceGatewayAccountIndex[gatewayAccountId]
     const account = gatewayAccountIndex[gatewayAccountId]
-    emails.forEach(email => {
-      emailAccountService.push({email,service,account})
+    emails.forEach((email: string) => {
+      emailAccountService.push({ email, service, account })
     })
   })
 
   return emailAccountService
-    .map(({email,service,account}) => {
+    .map(({ email, service, account }) => {
       return {
         email,
         account,
