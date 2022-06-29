@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const { Connector } = require('../../../lib/pay-request')
+const { Connector } = require('../../../lib/pay-request/typed_clients/client')
 const logger = require('../../../lib/logger')
 
 async function emitByIdPage(req, res) {
@@ -31,7 +31,7 @@ async function emitById(req, res) {
   }
 
   try{
-    await Connector.historicalEventEmitter(startId, maxId, recordType, retryDelay)
+    await Connector.eventEmitter.emitByIdRange(startId, maxId, recordType, retryDelay)
     logger.info(`Emitting events successful between ${startId} and ${maxId}`)
 
     res.render('events/success', { startParam: startId, endParam: maxId, action: "emit" })
@@ -62,7 +62,7 @@ async function emitByDate(req, res) {
   }
 
   try{
-    await Connector.historicalEventEmitterByDate(startDate, endDate, retryDelay)
+    await Connector.eventEmitter.emitByDate(startDate, endDate, retryDelay)
     logger.info(`Emitting events successful between ${startDate} and ${endDate}`)
 
     res.render('events/success', { startParam: startDate, endParam: endDate, action: "emit" })
@@ -89,7 +89,7 @@ async function parityCheck(req, res) {
   }
 
   try{
-    await Connector.parityCheck(startId, maxId, doNotReprocessValidRecords, parityCheckStatus, retryDelay, recordType)
+    await Connector.parityChecker.runParityCheck(startId, maxId, doNotReprocessValidRecords, parityCheckStatus, retryDelay, recordType)
     logger.info(`Parity checking events successful between ${startId} and ${maxId}`)
 
     res.render('events/success', { startParam: startId, endParam: maxId, action: "parity check" })

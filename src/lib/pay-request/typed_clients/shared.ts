@@ -102,7 +102,7 @@ export interface EmailNotifications {
     enabled: boolean;
     template_body?: string;
   }
-  REFUND_ISSUES?: {
+  REFUND_ISSUED?: {
     version: number;
     enabled: boolean;
     template_body?: string;

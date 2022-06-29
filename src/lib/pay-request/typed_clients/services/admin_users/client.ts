@@ -22,23 +22,7 @@ export default class AdminUsers extends Client {
     super(baseUrl, App.AdminUsers, options)
   }
 
-  services = ((client: AdminUsers): {
-    /**
-     * Get a GOV.UK Pay service by external ID.
-     * @param id - External service ID
-     * @returns Service entity.
-     */
-    retrieve(id: string): Promise<Service | undefined>,
-    /**
-     * Get the GOV.UK Pay service that contains a given Gateway Account ID.
-     * @param params - Params to provide gateway account id
-     * @returns Service entity.
-     */
-    retrieve(params: RetrieveServiceByGatewayAccountIdRequest): Promise<Service | undefined>,
-    update(id: string, params: UpdateServiceRequest): Promise<Service | undefined>,
-    listUsers(id: string): Promise<User[] | undefined>,
-    list(): Promise<Service[] | undefined>,
-  } => ({
+  services = ((client: AdminUsers) => ({
     retrieve(idOrParams: string | RetrieveServiceByGatewayAccountIdRequest): Promise<Service | undefined> {
       const url = isRetrieveServiceParams(idOrParams)
         ? '/v1/api/services'
@@ -71,7 +55,7 @@ export default class AdminUsers extends Client {
     ): Promise<Service | undefined> {
       // @TODO(sfount) temporary method of having a uniform `update` method on services, this should be a much clearer
       //               pattern for devs to understand what's going on under the hood
-      const addOperations = [ 'gateway_account_ids' ]
+      const addOperations = ['gateway_account_ids']
       const payload = mapRequestParamsToOperation(params, addOperations)
 
       return client._axios
@@ -88,12 +72,7 @@ export default class AdminUsers extends Client {
     }
   }))(this)
 
-  users = ((client: AdminUsers): {
-    retrieve(id: string): Promise<User | undefined>,
-    retrieve(params: RetrieveUserByEmailRequest): Promise<User | undefined>,
-    update(id: string, params: UpdateUserUsernameRequest | UpdateUserDisabledRequest | UpdateUserTelephoneNumberRequest): Promise<User | undefined>,
-    resetSecondFactor(id: string): Promise<User | undefined>
-  } => ({
+  users = ((client: AdminUsers) => ({
     retrieve(idOrParams: string | RetrieveUserByEmailRequest): Promise<User | undefined> {
       const action = isRetrieveUserParams(idOrParams)
         ? client._axios.post('/v1/api/users/find', { username: idOrParams.email })
@@ -127,6 +106,14 @@ export default class AdminUsers extends Client {
       return client._axios
         .post(`/v1/api/users/${id}/reset-second-factor`)
         .then(response => client._unpackResponseData<User>(response))
+        .catch(client._unpackErrorResponse)
+    },
+
+    listAdminEmailsForGatewayAccounts(gatewayAccountIds: string[]): Promise<Map<string, string[]> | undefined> {
+      const request = { 'gatewayAccountIds': gatewayAccountIds }
+      return client._axios
+        .post('/v1/api/users/admin-emails-for-gateway-accounts', request)
+        .then(response => client._unpackResponseData<Map<string, string[]>>(response))
         .catch(client._unpackErrorResponse)
     }
   }))(this)
