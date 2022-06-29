@@ -8,7 +8,8 @@ export enum ProductStatus {
 export enum ProductType {
   Demo = 'DEMO',
   Prototype = 'PROTOTYPE',
-  Adhoc = 'ADHOC'
+  Adhoc = 'ADHOC',
+  Moto = 'AGENT_INITIATED_MOTO'
 }
 
 export enum Rel {
@@ -52,4 +53,15 @@ export interface ProductStat {
 
 export interface ListProductStatsRequest {
   gatewayAccountId?: number;
+}
+
+export interface CreateProductRequest {
+  gateway_account_id: string;
+  pay_api_token: string;
+  name: string;
+  description: string;
+  reference_enabled: boolean;
+  reference_label: string;
+  reference_hint: string;
+  type: ProductType;
 }

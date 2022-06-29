@@ -3,7 +3,6 @@ import Client from '../../base'
 import { mapRequestParamsToOperation } from '../../utils/request'
 import {
   Charge,
-  GatewayAccount,
   GatewayAccountAPI,
   GatewayAccountFrontend,
   StripeCredentials,
@@ -12,12 +11,12 @@ import {
   ListGatewayAccountsResponse,
   CreateGatewayAccountRequest,
   CreateGatewayAccountResponse,
-  UpdateGatewayAccountAllowMotoRequest,
-  UpdateGatewayAccountBlockPrepaidCardsRequest,
-  UpdateGatewayAccountNotifySettingsRequest,
-  GatewayStatusComparison
+  GatewayStatusComparison,
+  StripeSetup,
+  UpdateGatewayAccountRequest
 } from './types'
 import { App } from '../../shared'
+import {handleEntityNotFound} from "../../utils/error";
 
 /**
  * Convenience methods for accessing resource endpoints for the Connector
@@ -70,10 +69,11 @@ export default class Connector extends Client {
      * @param id - Gateway account ID
      * @returns Gateway account object
      */
-    retrieveAPI(id: number): Promise<GatewayAccountAPI | undefined> {
+    retrieveAPI(id: string): Promise<GatewayAccountAPI | undefined> {
       return client._axios
         .get(`/v1/api/accounts/${id}`)
-        .then(response => client._unpackResponseData<GatewayAccount>(response))
+        .then(response => client._unpackResponseData<GatewayAccountAPI>(response))
+        .catch(handleEntityNotFound("Account by ID", id))
     },
 
     /**
@@ -81,10 +81,23 @@ export default class Connector extends Client {
      * @param id - Gateway account ID
      * @returns Gateway account object
      */
-    retrieveFrontend(id: number): Promise<GatewayAccountFrontend | undefined> {
+    retrieveFrontend(id: string): Promise<GatewayAccountFrontend | undefined> {
       return client._axios
         .get(`/v1/frontend/accounts/${id}`)
         .then(response => client._unpackResponseData<GatewayAccountFrontend>(response))
+        .catch(handleEntityNotFound("Account by ID", id))
+    },
+
+    /**
+     * Frontend view for gateway account, retrieved by the gateway account external ID`
+     * @param externalId - Gateway account external ID
+     * @returns Gateway account object
+     */
+    retrieveFrontendByExternalId(externalId: string): Promise<GatewayAccountFrontend | undefined> {
+      return client._axios
+        .get(`/v1/frontend/accounts/external-id/${externalId}`)
+        .then(response => client._unpackResponseData<GatewayAccountFrontend>(response))
+        .catch(handleEntityNotFound("Account by external ID", externalId));
     },
 
     /**
@@ -93,10 +106,21 @@ export default class Connector extends Client {
      * @param id - Gateway account ID
      * @returns Stripe credentials for a requested gateway account
      */
-    retrieveStripeCredentials(id: number): Promise<StripeCredentials | undefined> {
+    retrieveStripeCredentials(id: string): Promise<StripeCredentials | undefined> {
       return client._axios
         .get(`/v1/api/accounts/${id}/stripe-account`)
         .then(response => client._unpackResponseData<StripeCredentials>(response))
+    },
+
+    /**
+     * Retrieves which Stripe Connect account setup tasks have been completed for the gateway account
+     * @param id - Gateway account ID
+     * @returns Stripe account setup object
+     */
+    retrieveStripeSetup(id: string): Promise<StripeSetup | undefined> {
+      return client._axios
+        .get(`/v1/api/accounts/${id}/stripe-setup`)
+        .then(response => client._unpackResponseData<StripeSetup>(response))
     },
 
     /**
@@ -105,7 +129,7 @@ export default class Connector extends Client {
      * @param id - Gateway account ID
      * @returns List of card types supported by this gateway account
      */
-    listCardTypes(id: number): Promise<ListCardTypesResponse | undefined> {
+    listCardTypes(id: string): Promise<ListCardTypesResponse | undefined> {
       return client._axios
         .get(`/v1/frontend/accounts/${id}/card-types`)
         .then(response => client._unpackResponseData<ListCardTypesResponse>(response))
@@ -143,10 +167,11 @@ export default class Connector extends Client {
      * @returns The updated gateway account object
      */
     update(
-      id: number,
-      params: UpdateGatewayAccountAllowMotoRequest | UpdateGatewayAccountBlockPrepaidCardsRequest | UpdateGatewayAccountNotifySettingsRequest
+      id: string,
+      params: UpdateGatewayAccountRequest
     ): Promise<void | undefined> {
       // @TODO(sfount) move to utility so that it can be unit tested
+      // Note that connector only supports single update per request, rather than an array of updates
       const payload = mapRequestParamsToOperation(params).pop()
 
       return client._axios
@@ -203,18 +228,18 @@ export default class Connector extends Client {
       doNotReprocessValidRecords: boolean,
       parityCheckStatus: string,
       retryDelayInSeconds: number,
-      recordType: string) : Promise<void> {
-        const params = {
-          start_id: startId,
-          max_id: maxId,
-          do_not_reprocess_valid_records: doNotReprocessValidRecords,
-          parity_check_status: parityCheckStatus,
-          do_not_retry_emit_until: retryDelayInSeconds,
-          record_type: recordType
-        }
-        return client._axios
+      recordType: string): Promise<void> {
+      const params = {
+        start_id: startId,
+        max_id: maxId,
+        do_not_reprocess_valid_records: doNotReprocessValidRecords,
+        parity_check_status: parityCheckStatus,
+        do_not_retry_emit_until: retryDelayInSeconds,
+        record_type: recordType
+      }
+      return client._axios
         .post('/v1/tasks/parity-checker', null, { params })
         .then(() => { return })
-      }
+    }
   }))(this)
 }
