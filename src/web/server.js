@@ -17,6 +17,7 @@ const {
 const logger = require('./../lib/logger')
 const requestLoggingMiddleware = require('../lib/requestLoggingMiddleware')
 const passport = require('../lib/auth/passport')
+const { configureClients } = require('../lib/pay-request/config')
 
 const errors = require('./errorHandler')
 const router = require('./router')
@@ -34,7 +35,7 @@ const {
 
 const app = express()
 
-const configureSecureHeaders = function configureSecureHeaders(instance) {
+function configureSecureHeaders(instance) {
   const serverBehindProxy = server.HTTP_PROXY
 
   // only set certain proxy configured headers if not behind a proxy, the proxy
@@ -50,22 +51,22 @@ const configureSecureHeaders = function configureSecureHeaders(instance) {
   instance.use(helmet({
     contentSecurityPolicy: {
       directives: {
-        "default-src": [ "'self'" ],
+        "default-src": ["'self'"],
         "script-src": [
           "'self'",
           "'unsafe-eval'",
           initGOVUKFrontendSnippet
         ],
-        "img-src": [ "'self'", 'https://*.githubusercontent.com', 'data:' ],
-        "style-src": [ "'self'", "'unsafe-inline'" ]
-      } 
+        "img-src": ["'self'", 'https://*.githubusercontent.com', 'data:'],
+        "style-src": ["'self'", "'unsafe-inline'"]
+      }
     },
     crossOriginResourcePolicy: { policy: "cross-origin" }
   }))
-  instance.use(csurf())  
+  instance.use(csurf())
 }
 
-const configureRequestParsing = function configureRequestParsing(instance) {
+function configureRequestParsing(instance) {
   if (!common.development) {
     // service is behind a front-facing proxy - set req IP values accordinglyi
     instance.enable('trust proxy')
@@ -76,7 +77,7 @@ const configureRequestParsing = function configureRequestParsing(instance) {
   instance.use(flash())
 }
 
-const configureServingPublicStaticFiles = function configureServingPublicStaticFiles(instance) {
+function configureServingPublicStaticFiles(instance) {
   const cache = { maxage: '1y' }
   instance.use('/public', express.static(path.join(__dirname, '../public'), cache))
   instance.use('/assets/fonts', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/govuk/assets/fonts'), cache))
@@ -84,7 +85,7 @@ const configureServingPublicStaticFiles = function configureServingPublicStaticF
   instance.use('/javascripts/govuk-frontend.js', express.static(path.join(process.cwd(), 'node_modules/govuk-frontend/govuk/all.js'), cache))
 }
 
-const configureClientSessions = function configureClientSessions(instance) {
+function configureClientSessions(instance) {
   const serverBehindProxy = server.HTTP_PROXY
   const thirtyMinutesInMillis = 30 * 60 * 1000
   instance.use(sessions({
@@ -98,7 +99,7 @@ const configureClientSessions = function configureClientSessions(instance) {
   }))
 }
 
-const configureAuth = function configureAuth(instance) {
+function configureAuth(instance) {
   const exposeAuthenticatedUserToTemplate = (req, res, next) => {
     res.locals.user = req.user
     res.locals.disableAuth = disableAuth
@@ -110,14 +111,14 @@ const configureAuth = function configureAuth(instance) {
   instance.use(exposeAuthenticatedUserToTemplate)
 }
 
-const configureTemplateRendering = async function configureTemplateRendering(instance) {
+async function configureTemplateRendering(instance) {
   const staticResourceManifest = await readManifest('manifest')
   const browserManifest = await readManifest('browser.manifest')
 
   const templateRendererConfig = { autoescape: true, express: instance }
 
   // include both templates from this repository and from govuk frontend
-  const templatePathRoots = [ path.join(process.cwd(), 'node_modules/govuk-frontend'), path.join(__dirname, 'modules') ]
+  const templatePathRoots = [path.join(process.cwd(), 'node_modules/govuk-frontend'), path.join(__dirname, 'modules')]
   const templaterEnvironment = nunjucks.configure(templatePathRoots, templateRendererConfig)
 
   // make static manifest details available to all templates
@@ -134,7 +135,7 @@ const configureTemplateRendering = async function configureTemplateRendering(ins
   instance.set('view engine', 'njk')
 }
 
-const configureRouting = function configureRouting(instance) {
+function configureRouting(instance) {
   // logger middleware included after flash and body parsing middleware as they
   // alter the call stack (it should ideally be placed just before routes)
   instance.use(logger.middleware)
@@ -145,7 +146,7 @@ const configureRouting = function configureRouting(instance) {
 }
 
 // top level service stack wide error handling
-const configureErrorHandling = function configureErrorHandling(instance) {
+function configureErrorHandling(instance) {
   instance.use(errors.handleRequestErrors)
   instance.use(errors.handleDefault)
 }
@@ -167,11 +168,11 @@ const configureSentry = function configureSentry() {
   })
 }
 
-const configureSentryRequestHandler = function configureSentryRequestHandler(instance) {
+function configureSentryRequestHandler(instance) {
   instance.use(Sentry.Handlers.requestHandler())
 }
 
-const readManifest = function readManifest(name) {
+function readManifest(name) {
   return new Promise((resolve) => {
     const file = `${name}.json`
     fs.readFile(path.join(__dirname, '..//public', file), (err, data) => {
@@ -201,7 +202,8 @@ const configure = [
   configureServingPublicStaticFiles,
   configureTemplateRendering,
   configureRouting,
-  configureErrorHandling
+  configureErrorHandling,
+  configureClients
 ]
 configure.map((config) => config(app))
 

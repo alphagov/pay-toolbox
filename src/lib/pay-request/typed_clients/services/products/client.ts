@@ -8,8 +8,8 @@ import {
 import { App } from '../../shared'
 
 export default class Products extends Client {
-  constructor(baseUrl: string, options: PayHooks) {
-    super(baseUrl, App.Products, options)
+  constructor() {
+    super(App.Products)
   }
 
   accounts = ((client: Products) => ({
@@ -20,8 +20,7 @@ export default class Products extends Client {
       return client._axios
         .get(`/v1/api/gateway-account/${id}/products`)
         .then(response => client._unpackResponseData<Product[]>(response))
-        .then(redactProductTokens)
-        .catch(client._unpackErrorResponse)
+        .then(redactProductTokens);
     }
   }))(this)
 
@@ -30,8 +29,7 @@ export default class Products extends Client {
       return client._axios
         .get('/v1/api/stats/products', { params })
         .then(response => client._unpackResponseData<ProductStat[]>(response))
-        .then(redactProductStatTokens)
-        .catch(client._unpackErrorResponse)
+        .then(redactProductStatTokens);
     }
   }))(this)
 }

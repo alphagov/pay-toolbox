@@ -28,7 +28,7 @@ const handleRequestErrors = function handleRequestErrors(
   // could not access end point - gracefully show service that we were trying to access
   if (error instanceof RESTClientError) {
     if (error.data.code === 'ECONNREFUSED' || error.data.code === 'ECONNRESET') {
-      const message = `${error.service.name} API endpoint is unavailable (${error.data.code})`
+      const message = `${error.service} API endpoint is unavailable (${error.data.code})`
       Sentry.captureException(error)
       res.status(503).render('common/error', { message })
       return
@@ -36,7 +36,7 @@ const handleRequestErrors = function handleRequestErrors(
 
     if (error.data.response && error.data.response.data && error.data.response.data.errors) {
       // take the first data response and present as error
-      const message = `${error.service.name}: ${error.data.response.data.errors[0]}`
+      const message = `${error.service}: ${error.data.response.data.errors[0]}`
 
       // all 5xx responses should be triaged in Sentry
       if (String(error.data.response.status).startsWith('5')) {

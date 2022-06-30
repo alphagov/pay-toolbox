@@ -22,8 +22,8 @@ import { App } from '../../shared'
  * service.
  */
 export default class Connector extends Client {
-  constructor(baseUrl: string, options: PayHooks) {
-    super(baseUrl, App.Connector, options)
+  constructor() {
+    super(App.Connector)
   }
 
   charges = ((client: Connector) => ({
@@ -36,7 +36,6 @@ export default class Connector extends Client {
         return client._axios
           .get(`/v1/frontend/charges/${id}`)
           .then(response => client._unpackResponseData<Charge>(response))
-          .catch(error => client._unpackErrorResponse(error, 'Charge', id))
     }
   }))(this)
 
@@ -50,7 +49,6 @@ export default class Connector extends Client {
       return client._axios
         .get(`/v1/api/accounts/${id}`)
         .then(response => client._unpackResponseData<GatewayAccount>(response))
-        .catch(client._unpackErrorResponse)
     },
 
     /**
@@ -62,7 +60,6 @@ export default class Connector extends Client {
       return client._axios
         .get(`/v1/frontend/accounts/${id}`)
         .then(response => client._unpackResponseData<GatewayAccountFrontend>(response))
-        .catch(client._unpackErrorResponse)
     },
 
     /**
@@ -75,7 +72,6 @@ export default class Connector extends Client {
       return client._axios
         .get(`/v1/api/accounts/${id}/stripe-account`)
         .then(response => client._unpackResponseData<StripeCredentials>(response))
-        .catch(client._unpackErrorResponse)
     },
 
     /**
@@ -88,7 +84,6 @@ export default class Connector extends Client {
       return client._axios
         .get(`/v1/frontend/accounts/${id}/card-types`)
         .then(response => client._unpackResponseData<ListCardTypesResponse>(response))
-        .catch(client._unpackErrorResponse)
     },
 
     /*
@@ -100,7 +95,6 @@ export default class Connector extends Client {
       return client._axios
         .get('/v1/api/accounts', { params: filters})
         .then(response => client._unpackResponseData<ListGatewayAccountsResponse>(response))
-        .catch(client._unpackErrorResponse)
     },
 
     /**
@@ -111,8 +105,7 @@ export default class Connector extends Client {
     create(params: CreateGatewayAccountRequest): Promise<CreateGatewayAccountResponse | undefined> {
       return client._axios
         .post('/v1/api/accounts', params)
-        .then(response => client._unpackResponseData<CreateGatewayAccountResponse>(response))
-        .catch(client._unpackErrorResponse)
+        .then(response => client._unpackResponseData<CreateGatewayAccountResponse>(response));
     },
 
     /**
@@ -132,10 +125,9 @@ export default class Connector extends Client {
 
       return client._axios
         .patch(`/v1/api/accounts/${id}`, payload)
-        .then(() => { return })
+        .then(() => { return });
         // @TODO(sfount) decide if this should return the updated account -- could determine through uses of it
         // .then(() => this.retrieveAPI(id))
-        .catch(client._unpackErrorResponse)
     }
 
   }))(this)
@@ -148,8 +140,7 @@ export default class Connector extends Client {
     list(): Promise<ListCardTypesResponse | undefined> {
       return client._axios
         .get('/v1/api/card-types')
-        .then(response => client._unpackResponseData<ListCardTypesResponse>(response))
-        .catch(client._unpackErrorResponse)
+        .then(response => client._unpackResponseData<ListCardTypesResponse>(response));
     }
   }))(this)
 }

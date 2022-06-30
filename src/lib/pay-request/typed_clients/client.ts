@@ -12,11 +12,11 @@ const clients: {
   PublicAuth: _PublicAuth;
   AdminUsers: _AdminUsers;
 } = {
-  Connector: new _Connector(process.env.CONNECTOR_URL || '', {}),
-  Ledger: new _Ledger(process.env.LEDGER_URL || '', {}),
-  Products: new _Products(process.env.PRODUCTS_URL || '', {}),
-  PublicAuth: new _PublicAuth(process.env.PUBLICAUTH_URL || '', {}),
-  AdminUsers: new _AdminUsers(process.env.ADMINUSERS_URL || '', {})
+  Connector: new _Connector(),
+  Ledger: new _Ledger(),
+  Products: new _Products(),
+  PublicAuth: new _PublicAuth(),
+  AdminUsers: new _AdminUsers()
 }
 
 export const Connector = clients.Connector

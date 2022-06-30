@@ -8,8 +8,8 @@ import {
 import { App } from '../../shared'
 
 export default class PublicAuth extends Client {
-  constructor(baseUrl: string, options: PayHooks) {
-    super(baseUrl, App.PublicAuth, options)
+  constructor() {
+    super(App.PublicAuth)
   }
 
   tokens = ((client: PublicAuth) => ({
@@ -19,16 +19,14 @@ export default class PublicAuth extends Client {
     list(params: ListTokenRequest): Promise<ListTokenResponse | undefined> {
       return client._axios
         .get(`/v1/frontend/auth/${params.gateway_account_id}`)
-        .then(response => client._unpackResponseData<ListTokenResponse>(response))
-        .catch(client._unpackErrorResponse)
+        .then(response => client._unpackResponseData<ListTokenResponse>(response));
     },
 
     delete(params: DeleteTokenRequest): Promise<DeleteTokenResponse | undefined> {
       const data = { token_link: params.token_link }
       return client._axios
         .delete(`/v1/frontend/auth/${params.gateway_account_id}`, { data })
-        .then(response => client._unpackResponseData<DeleteTokenResponse>(response))
-        .catch(client._unpackErrorResponse)
+        .then(response => client._unpackResponseData<DeleteTokenResponse>(response));
     }
   }))(this)
 }
