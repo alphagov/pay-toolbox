@@ -28,13 +28,13 @@ export class RESTClientError extends Error {
 
   public data: AxiosError
 
-  public service: { key: string; name: string }
+  public service: string
 
-  public constructor(error: AxiosError, serviceKey: string, serviceName: string) {
+  public constructor(error: AxiosError, serviceName: string) {
     super(error.message)
     this.name = this.constructor.name
     this.data = error
-    this.service = { key: serviceKey, name: serviceName }
+    this.service = serviceName
     this.stack = error.stack
   }
 }

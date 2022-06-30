@@ -24,8 +24,8 @@ import { App } from '../../shared'
  * service.
  */
 export default class Connector extends Client {
-  constructor(baseUrl: string, options: PayHooks) {
-    super(baseUrl, App.Connector, options)
+  constructor() {
+    super(App.Connector)
   }
 
   charges = ((client: Connector) => ({
@@ -37,8 +37,7 @@ export default class Connector extends Client {
     retrieve(id: string): Promise<Charge | undefined> {
       return client._axios
         .get(`/v1/frontend/charges/${id}`)
-        .then(response => client._unpackResponseData<Charge>(response))
-        .catch(error => client._unpackErrorResponse(error, 'Charge', id))
+        .then(response => client._unpackResponseData<Charge>(response));
     },
 
     /**
@@ -50,8 +49,7 @@ export default class Connector extends Client {
     getGatewayComparisons(ids: string[]): Promise<GatewayStatusComparison[] | undefined> {
       return client._axios
         .post('/v1/api/discrepancies/report', ids)
-        .then(response => client._unpackResponseData<GatewayStatusComparison[]>(response))
-        .catch(client._unpackErrorResponse)
+        .then(response => client._unpackResponseData<GatewayStatusComparison[]>(response));
     },
 
     /**
@@ -62,8 +60,7 @@ export default class Connector extends Client {
     resolveDiscrepancy(id: string): Promise<GatewayStatusComparison[] | undefined> {
       return client._axios
         .post('/v1/api/discrepancies/resolve', [id])
-        .then(response => client._unpackResponseData<GatewayStatusComparison[]>(response))
-        .catch(client._unpackErrorResponse)
+        .then(response => client._unpackResponseData<GatewayStatusComparison[]>(response));
     }
   }))(this)
 
@@ -77,7 +74,6 @@ export default class Connector extends Client {
       return client._axios
         .get(`/v1/api/accounts/${id}`)
         .then(response => client._unpackResponseData<GatewayAccount>(response))
-        .catch(client._unpackErrorResponse)
     },
 
     /**
@@ -89,7 +85,6 @@ export default class Connector extends Client {
       return client._axios
         .get(`/v1/frontend/accounts/${id}`)
         .then(response => client._unpackResponseData<GatewayAccountFrontend>(response))
-        .catch(client._unpackErrorResponse)
     },
 
     /**
@@ -102,7 +97,6 @@ export default class Connector extends Client {
       return client._axios
         .get(`/v1/api/accounts/${id}/stripe-account`)
         .then(response => client._unpackResponseData<StripeCredentials>(response))
-        .catch(client._unpackErrorResponse)
     },
 
     /**
@@ -115,7 +109,6 @@ export default class Connector extends Client {
       return client._axios
         .get(`/v1/frontend/accounts/${id}/card-types`)
         .then(response => client._unpackResponseData<ListCardTypesResponse>(response))
-        .catch(client._unpackErrorResponse)
     },
 
     /*
@@ -128,7 +121,6 @@ export default class Connector extends Client {
       return client._axios
         .get('/v1/api/accounts', { params })
         .then(response => client._unpackResponseData<ListGatewayAccountsResponse>(response))
-        .catch(client._unpackErrorResponse)
     },
 
     /**
@@ -139,8 +131,7 @@ export default class Connector extends Client {
     create(params: CreateGatewayAccountRequest): Promise<CreateGatewayAccountResponse | undefined> {
       return client._axios
         .post('/v1/api/accounts', params)
-        .then(response => client._unpackResponseData<CreateGatewayAccountResponse>(response))
-        .catch(client._unpackErrorResponse)
+        .then(response => client._unpackResponseData<CreateGatewayAccountResponse>(response));
     },
 
     /**
@@ -160,10 +151,9 @@ export default class Connector extends Client {
 
       return client._axios
         .patch(`/v1/api/accounts/${id}`, payload)
-        .then(() => { return })
+        .then(() => { return });
         // @TODO(sfount) decide if this should return the updated account -- could determine through uses of it
         // .then(() => this.retrieveAPI(id))
-        .catch(client._unpackErrorResponse)
     }
 
   }))(this)
@@ -176,8 +166,7 @@ export default class Connector extends Client {
     list(): Promise<ListCardTypesResponse | undefined> {
       return client._axios
         .get('/v1/api/card-types')
-        .then(response => client._unpackResponseData<ListCardTypesResponse>(response))
-        .catch(client._unpackErrorResponse)
+        .then(response => client._unpackResponseData<ListCardTypesResponse>(response));
     }
   }))(this)
 
@@ -192,8 +181,7 @@ export default class Connector extends Client {
       }
       return client._axios
         .post('/v1/tasks/historical-event-emitter', null, { params })
-        .then(() => { return })
-        .catch(client._unpackErrorResponse)
+        .then(() => { return });
     },
 
     emitByDate(startDate: string, endDate: string, retryDelayInSeconds: number): Promise<void> {
@@ -204,8 +192,7 @@ export default class Connector extends Client {
       }
       return client._axios
         .post('/v1/tasks/historical-event-emitter-by-date', null, { params })
-        .then(() => { return })
-        .catch(client._unpackErrorResponse)
+        .then(() => { return });
     }
   }))(this)
 
@@ -227,8 +214,7 @@ export default class Connector extends Client {
         }
         return client._axios
         .post('/v1/tasks/parity-checker', null, { params })
-        .then(() => { return })
-        .catch(client._unpackErrorResponse)
+        .then(() => { return });
       }
   }))(this)
 }

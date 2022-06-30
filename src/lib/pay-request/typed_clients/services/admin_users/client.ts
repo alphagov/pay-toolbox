@@ -18,8 +18,8 @@ import { App } from '../../shared'
  * service.
  */
 export default class AdminUsers extends Client {
-  constructor(baseUrl: string, options: PayHooks) {
-    super(baseUrl, App.AdminUsers, options)
+  constructor() {
+    super(App.AdminUsers)
   }
 
   services = ((client: AdminUsers) => ({
@@ -32,15 +32,13 @@ export default class AdminUsers extends Client {
         : {}
       return client._axios
         .get(url, config)
-        .then(response => client._unpackResponseData<Service>(response))
-        .catch(client._unpackErrorResponse)
+        .then(response => client._unpackResponseData<Service>(response));
     },
 
     list(): Promise<Service[] | undefined> {
       return client._axios
         .get('/v1/api/services/list')
-        .then(response => client._unpackResponseData<Service[]>(response))
-        .catch(client._unpackErrorResponse)
+        .then(response => client._unpackResponseData<Service[]>(response));
     },
 
     /**
@@ -60,15 +58,13 @@ export default class AdminUsers extends Client {
 
       return client._axios
         .patch(`/v1/api/services/${id}`, payload)
-        .then(response => client._unpackResponseData<Service>(response))
-        .catch(client._unpackErrorResponse)
+        .then(response => client._unpackResponseData<Service>(response));
     },
 
     listUsers(id: string): Promise<User[] | undefined> {
       return client._axios
         .get(`/v1/api/services/${id}/users`)
-        .then(response => client._unpackResponseData<User[]>(response))
-        .catch(client._unpackErrorResponse)
+        .then(response => client._unpackResponseData<User[]>(response));
     }
   }))(this)
 
@@ -80,8 +76,7 @@ export default class AdminUsers extends Client {
 
       return action
         .then(response => client._unpackResponseData<User>(response))
-        .then(user => { console.log('redact otp'); return redactOTP(user) })
-        .catch(client._unpackErrorResponse)
+        .then(user => { console.log('redact otp'); return redactOTP(user) });
     },
 
     /**
@@ -98,23 +93,20 @@ export default class AdminUsers extends Client {
 
       return client._axios
         .patch(`/v1/api/users/${id}`, payload)
-        .then(response => client._unpackResponseData<User>(response))
-        .catch(client._unpackErrorResponse)
+        .then(response => client._unpackResponseData<User>(response));
     },
 
     resetSecondFactor(id: string): Promise<User | undefined> {
       return client._axios
         .post(`/v1/api/users/${id}/reset-second-factor`)
-        .then(response => client._unpackResponseData<User>(response))
-        .catch(client._unpackErrorResponse)
+        .then(response => client._unpackResponseData<User>(response));
     },
 
     listAdminEmailsForGatewayAccounts(gatewayAccountIds: string[]): Promise<Map<string, string[]> | undefined> {
       const request = { 'gatewayAccountIds': gatewayAccountIds }
       return client._axios
         .post('/v1/api/users/admin-emails-for-gateway-accounts', request)
-        .then(response => client._unpackResponseData<Map<string, string[]>>(response))
-        .catch(client._unpackErrorResponse)
+        .then(response => client._unpackResponseData<Map<string, string[]>>(response));
     }
   }))(this)
 }
