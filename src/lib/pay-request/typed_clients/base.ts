@@ -1,16 +1,30 @@
 import http from 'http'
 import https from 'https'
-import createError from 'http-errors'
 import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig, Method } from 'axios'
 import { App } from './shared'
+const { RESTClientError } = require('../../errors')
 
 /** Base HTTP client with common helpers for all microservices */
 export default class Client {
   _axios: AxiosInstance
   private _app: App
 
-  constructor(baseURL: string, app: App, options: PayHooks) {
+  constructor(app: App) {
     this._app = app
+  }
+
+  /**
+   * Pull out the data object given a successful HTTP response.
+   * @param response - HTTP response object
+   */
+  protected _unpackResponseData<T>(response: AxiosResponse): T {
+    return response.data
+  }
+
+  /**
+   * Configure the client. Should only be called once.
+   */
+  _configure(baseURL: string, options: PayHooks): void {
     this._axios = axios.create({
       baseURL,
       timeout: 60 * 1000,
@@ -23,32 +37,6 @@ export default class Client {
         rejectUnauthorized: process.env.NODE_ENV === 'production'
       })
     })
-    this._configure(baseURL, options)
-  }
-
-  /**
-   * Pull out the data object given a successful HTTP response.
-   * @param response - HTTP response object
-   */
-  protected _unpackResponseData<T>(response: AxiosResponse): T {
-    return response.data
-  }
-
-  /**
-   * Parses generic HTTP errors, throwing more specific errors given certain
-   * criteria.
-   * @param error - HTTP error object
-   */
-  protected _unpackErrorResponse(error: AxiosError, label?: string, id?: number | string): undefined {
-    const code = Number(error.response?.status || error.code)
-    if (code === 404 && label && id) {
-      throw createError(code, `${label} with identifier ${id} was not found.`)
-    }
-    throw createError(code)
-  }
-
-  _configure(baseUrl: string, options: PayHooks): void {
-    this._axios.defaults.baseURL = baseUrl
     this._axios.interceptors.request.use((request): AxiosRequestConfigWithMetadata => {
       const headers = options.transformRequestAddHeaders ? options.transformRequestAddHeaders() : {}
       Object.entries(headers)
@@ -85,7 +73,7 @@ export default class Client {
         code: (error.response && error.response.status) || error.code
       }
       if (options.failureResponse) options.failureResponse(context)
-      throw error
+      throw new RESTClientError(error, context.service)
     })
   }
 
@@ -103,7 +91,7 @@ export default class Client {
   }
 }
 
-interface PayRequestContext {
+export interface PayRequestContext {
   /** Response time in ms */
   responseTime: number;
   service: App;
