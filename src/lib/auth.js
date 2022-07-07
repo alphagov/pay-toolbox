@@ -18,6 +18,16 @@ const secured = function secured(req, res, next) {
   res.redirect('/auth')
 }
 
+/**
+ * Require the user to be an admin user to access the route.
+ * 
+ * The admin user restriction should only apply to routes where accessing or editing a resource
+ * poses a high security risk - such as the potential to gain privilege escalation, steal funds, or
+ * obtain card numbers.
+ * 
+ * Actions that pose a risk to interrupting service, but not a security risk do no need to require
+ * administrative permissions. 
+ */
 const administrative = function administrative(req, res, next) {
   if (disableAuth || req.user.admin) {
     next()
