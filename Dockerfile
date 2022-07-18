@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # prepare build process modules
-RUN npm ci --no-progress
+RUN npm ci --no-progress --legacy-peer-deps
 
 # ideally command is COPY scr/ scripts/ tsconfig.json ./
 # COPY flattens file structures so this is not possible inline right now
