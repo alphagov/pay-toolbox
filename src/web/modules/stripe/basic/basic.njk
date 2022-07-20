@@ -37,7 +37,7 @@
   <form method="POST" action="/stripe/basic/create">
     {{ govukInput({
       label: { text: "Statement descriptor" },
-      hint: { text: "Payment description to appear on user's bank statement" },
+      hint: { text: "Payment description to appear on user’s bank statement. Latin characters only. Contains between 5 and 22 characters, inclusive. Contains at least one letter. Does not contain any of the special characters < > \ ' \" *" },
       id: "statementDescriptor",
       name: "statementDescriptor",
       value: formValues.statementDescriptor,
