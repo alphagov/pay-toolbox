@@ -11,7 +11,7 @@
   </div>
 
   <p class="govuk-body">
-    The Stripe statement descriptor is what the user paying a service will see in their bank account. It's important that this
+    The Stripe statement descriptor is what the user paying a service will see in their bank account. It’s important that this
     correctly identifies the service to avoid chargebacks from confused users. This tool will update the Stripe Connect account.
   </p>
 
@@ -29,7 +29,7 @@
       name: "statement_descriptor",
       label: { text: "Stripe statement descriptor" },
       hint: {
-        text: "Contains between 5 and 22 characters, inclusive. Contains at least one letter. Does not contain any of the special characters < > \ ' \" *"
+        text: "Latin characters only. Contains between 5 and 22 characters, inclusive. Contains at least one letter. Does not contain any of the special characters < > \ ' \" *"
       },
       autocomplete: "off"
     })
