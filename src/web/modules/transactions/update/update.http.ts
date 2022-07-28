@@ -159,11 +159,11 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
         if (!moment(row.event_date, moment.ISO_8601).isValid()) {
           return cb(null, false, 'event_date is not a valid ISO_8601 string')
         }
-        if (!['payment', 'refund'].includes(row.transaction_type)) {
-          return cb(null, false, 'transaction_type must be one of \'payment\' or \'refund\'')
+        if (!['payment', 'refund', 'dispute'].includes(row.transaction_type)) {
+          return cb(null, false, 'transaction_type must be one of ‘payment’, ‘refund’ or ‘dispute’')
         }
-        if (row.transaction_type === 'refund' && !row.parent_transaction_id) {
-          return cb(null, false, 'parent_transaction_id is required when transaction_type is \'refund\'')
+        if (['refund', 'dispute'].includes(row.transaction_type) && !row.parent_transaction_id) {
+          return cb(null, false, 'parent_transaction_id is required when transaction_type is ‘refund’ or ‘dispute’')
         }
         if (row.captured_date && !moment(row.captured_date, moment.ISO_8601).isValid()) {
           return cb(null, false, 'captured_date is not a valid ISO_8601 string')
@@ -179,25 +179,25 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
 
         if (row.event_name === 'PAYMENT_STATUS_CORRECTED_TO_SUCCESS_BY_ADMIN') {
           if (!row.captured_date) {
-            return cb(null, false, `captured_date is required when event_name is '${row.event_name}'`)
+            return cb(null, false, `captured_date is required when event_name is ‘${row.event_name}’`)
           }
 
           if (!row.refund_status) {
-            return cb(null, false, `refund_status is required when event_name is '${row.event_name}'`)
+            return cb(null, false, `refund_status is required when event_name is ‘${row.event_name}’`)
           }
 
           if (!row.refund_amount_refunded) {
-            return cb(null, false, `refund_amount_refunded is required when event_name is '${row.event_name}'`)
+            return cb(null, false, `refund_amount_refunded is required when event_name is ‘${row.event_name}’`)
           }
 
           if (!row.refund_amount_available) {
-            return cb(null, false, `refund_amount_available is required when event_name is '${row.event_name}'`)
+            return cb(null, false, `refund_amount_available is required when event_name is ‘${row.event_name}’`)
           }
         }
 
         if (row.reproject_domain_object) {
           if (!['true', 'false'].includes(row.reproject_domain_object)) {
-            return cb(null, false, 'reproject_domain_object must be one of \'true\' or \'false\'')
+            return cb(null, false, 'reproject_domain_object must be one of ‘true’ or ‘false’')
           }
         }
 
