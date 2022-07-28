@@ -43,11 +43,11 @@
     <table class="govuk-table">
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">transaction_id</span></th>
-          <td class="govuk-table__cell">The external ID of the payment/refund</td>
+          <td class="govuk-table__cell">The external ID of the transaction</td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">transaction_type</span></th>
-          <td class="govuk-table__cell">The type of the transaction, one of ‘payment’ or ‘refund’.</td>
+          <td class="govuk-table__cell">The type of the transaction, one of ‘payment’, ‘refund’ or 'dispute'.</td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">event_name</span></th>
@@ -77,11 +77,19 @@
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">parent_transaction_id</span></th>
-          <td class="govuk-table__cell">Required for refunds only, this is the payment external ID.</td>
+          <td class="govuk-table__cell">Required for refunds and disputes, this is the payment external ID.</td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">reproject_domain_object</span></th>
           <td class="govuk-table__cell">Whether the event should cause the domain object to be re-projected from previous events, one of ‘true’ or ‘false’. If true, no event will be persisted to the ledger database and any transaction data provided for the row in the CSV will be ignored.</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">service_id</span></th>
+          <td class="govuk-table__cell">The external ID of the service that the transaction belongs to.</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">live</span></th>
+          <td class="govuk-table__cell">Whether the transaction is for a live service. One of ‘true’ or ‘false’.</td>
         </tr>
       </tbody>
     </table>
