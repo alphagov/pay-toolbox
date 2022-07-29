@@ -14,7 +14,7 @@ type TransactionRow = {
   event_name: string;
   event_date: string;
   parent_transaction_id: string;
-  reason: string;
+  reason?: string;
   admin_github_id: string;
   captured_date?: string,
   refund_status?: string,
@@ -150,7 +150,7 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
         if (!row.event_name) {
           return cb(null, false, 'event_name is missing')
         }
-        if (!row.reason) {
+        if (['payment', 'refund'].includes(row.transaction_type) && !row.reason) {
           return cb(null, false, 'reason is missing')
         }
 
