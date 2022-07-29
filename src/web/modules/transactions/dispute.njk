@@ -42,12 +42,18 @@
             <span>{{ (transaction.total_amount or transaction.amount) | currency }} </span>
           </td>
         </tr>
+        {% if transaction.fee %}
         <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Dispute fee</span></th>
           <td class="govuk-table__cell payment__cell">
             <span>{{ transaction.fee | currency }} </span>
           </td>
         </tr>
+        <tr class="govuk-table__row ">
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Net</span></th>
+          <td class="govuk-table__cell payment__cell">{{ transaction.net_amount | currency }}</td>
+        </tr>
+        {% endif %}
         <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Disputed reason</span></th>
           <td class="govuk-table__cell payment__cell">{{ transaction.reason | capitalize }}</td>
