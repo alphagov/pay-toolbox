@@ -33,7 +33,7 @@
   "dependencies": {
     "@aws-sdk/client-ecs": "~3.17.0",
     "@aws-sdk/client-s3": "~3.17.0",
-    "@govuk-pay/pay-js-commons": "3.6.1",
+    "@govuk-pay/pay-js-commons": "3.6.2",
     "@sentry/node": "^6.12.0",
     "axios": "0.26.1",
     "class-validator": "0.13.1",
