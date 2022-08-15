@@ -13,7 +13,6 @@ const statistics = require('./modules/statistics/statistics.http')
 const gatewayAccounts = require('./modules/gateway_accounts').default
 const switchPSP = require('./modules/gateway_accounts/switch_psp/switch_psp.http')
 const services = require('./modules/services').default
-const charges = require('./modules/transactions/legacy')
 const discrepancies = require('./modules/discrepancies')
 const stripe = require('./modules/stripe')
 const transactions = require('./modules/transactions/transactions.http')
@@ -114,9 +113,6 @@ router.post('/services/:id/organisation', auth.secured, services.updateOrganisat
 router.get('/discrepancies/search', auth.secured, discrepancies.search)
 router.post('/discrepancies/search', auth.secured, discrepancies.getDiscrepancyReport)
 router.post('/discrepancies/resolve/:id', auth.secured, discrepancies.resolveDiscrepancy)
-
-router.get('/charges/search', auth.secured, charges.search)
-router.post('/charges/search', auth.secured, charges.searchTransaction.http, charges.searchTransaction.exceptions)
 
 router.get('/stripe/basic/create', auth.secured, stripe.basic)
 router.post('/stripe/basic/create', auth.secured, stripe.basicCreate)
