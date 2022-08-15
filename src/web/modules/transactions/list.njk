@@ -112,20 +112,26 @@
   <div class="toolbox-right">
     <a
       {% if set.page <= 1 %}
-      disabled
+        disabled
+      {% elseif filters.gateway_payout_id %}
+        href="/transactions?page={{ set.page - 1 }}&account={{ accountId }}&gateway_payout_id={{ filters.gateway_payout_id }}"
       {% else %}
-      href="/transactions?page={{ set.page - 1 }}&status={{ selectedStatus }}{{ linkQueryParams }}"
+        href="/transactions?page={{ set.page - 1 }}&status={{ selectedStatus }}{{ linkQueryParams }}"
       {% endif %}
+
       class="govuk-button govuk-button--secondary">
       Previous
     </a>
     <a
-       {% if not(set._links.next_page) %}
-         disabled
-       {% else %}
-          href="/transactions?page={{ set.page + 1 }}&status={{ selectedStatus }}{{ linkQueryParams }}"
-       {% endif %}
-       class="govuk-button govuk-button--secondary">
+      {% if not(set._links.next_page) %}
+        disabled
+      {% elseif filters.gateway_payout_id %}
+        href="/transactions?page={{ set.page + 1 }}&account={{ accountId }}&gateway_payout_id={{ filters.gateway_payout_id }}"
+      {% else %}
+        href="/transactions?page={{ set.page + 1 }}&status={{ selectedStatus }}{{ linkQueryParams }}"
+      {% endif %}
+
+      class="govuk-button govuk-button--secondary">
       Next
     </a>
   </div>
