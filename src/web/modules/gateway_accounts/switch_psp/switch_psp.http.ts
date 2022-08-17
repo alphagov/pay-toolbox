@@ -60,7 +60,10 @@ export async function postSwitchPSP(req: Request, res: Response, next: NextFunct
           'bank_account',
           'company_number',
           'responsible_person',
-          'vat_number'
+          'vat_number',
+          'director',
+          'organisation_details',
+          'government_entity_document'
         ])
         credentials = { stripe_account_id: stripeAccount.id }
       }
