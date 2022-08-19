@@ -14,14 +14,15 @@ type TransactionRow = {
   event_name: string;
   event_date: string;
   parent_transaction_id: string;
-  reason?: string;
+  updated_reason: string;
   admin_github_id: string;
   captured_date?: string,
   refund_status?: string,
   refund_amount_refunded?: string,
   refund_amount_available?: string,
   reproject_domain_object?: string,
-  requires_3ds?: boolean
+  requires_3ds?: boolean,
+  reason?: string
 }
 
 export async function fileUpload(req: Request, res: Response): Promise<void> {
@@ -150,8 +151,14 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
         if (!row.event_name) {
           return cb(null, false, 'event_name is missing')
         }
-        if (['payment', 'refund'].includes(row.transaction_type) && !row.reason) {
-          return cb(null, false, 'reason is missing')
+        if (['payment', 'refund', 'dispute'].includes(row.transaction_type) && !row.updated_reason) {
+          return cb(null, false, 'updated_reason is missing')
+        }
+        if (['payment', 'refund'].includes(row.transaction_type) && row.reason) {
+          return cb(null, false, 'reason is not allowed when transaction_type is ‘payment’ or ‘refund’. did you mean to use ‘updated_reason‘?')
+        }
+        if (['dispute'].includes(row.transaction_type) && !row.reason) {
+          return cb(null, false, 'reason is required when transaction_type is ‘dispute’')
         }
 
         row.admin_github_id = formatSessionUserIdentifier(user)
