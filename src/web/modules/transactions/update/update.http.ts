@@ -157,9 +157,6 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
         if (['payment', 'refund'].includes(row.transaction_type) && row.reason) {
           return cb(null, false, 'reason is not allowed when transaction_type is ‘payment’ or ‘refund’. did you mean to use ‘updated_reason‘?')
         }
-        if (['dispute'].includes(row.transaction_type) && !row.reason) {
-          return cb(null, false, 'reason is required when transaction_type is ‘dispute’')
-        }
 
         row.admin_github_id = formatSessionUserIdentifier(user)
 

@@ -58,10 +58,6 @@
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">updated_reason</span></th>
           <td class="govuk-table__cell">A free text explanation of why the transaction is being updated. This field will only be used internally as a record so should be as detailed as necessary. Reference Zendesk or JIRA ticket IDs where appropriate.</td>
         </tr>
-        <tr class="govuk-table__row">
-          <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">reason</span></th>
-          <td class="govuk-table__cell">Only applies for disputes. If appears on payments or refunds, the upload shall be rejected</td>
-        </tr>
       </tbody>
     </table>
   </div>
@@ -95,6 +91,10 @@
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">live</span></th>
           <td class="govuk-table__cell">Whether the transaction is for a live service. One of ‘true’ or ‘false’.</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">reason</span></th>
+          <td class="govuk-table__cell">Only applies for disputes. Represents Stripe's reason of why the dispute has been opened. If appears on payments or refunds, the upload shall be rejected</td>
         </tr>
       </tbody>
     </table>
