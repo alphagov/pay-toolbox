@@ -152,7 +152,6 @@ router.get('/payment_links', auth.secured, paymentLinks.list)
 router.get('/payment_links/csv', auth.secured, paymentLinks.listCSV)
 router.get('/payment_links/:id', auth.secured, paymentLinks.detail)
 router.post('/payment_links/:id/toggle_require_captcha', auth.secured, paymentLinks.toggleRequireCaptcha)
-router.post('/payment_links/:id/toggle_new_payment_link_journey_enabled', auth.secured, paymentLinks.toggleNewPaymentLinkJourneyEnabled)
 
 router.get('/payouts', auth.secured, ledgerPayouts.list)
 
