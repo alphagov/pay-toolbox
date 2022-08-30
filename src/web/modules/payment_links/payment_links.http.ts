@@ -86,18 +86,6 @@ export async function toggleRequireCaptcha(req: Request, res: Response, next: Ne
   }
 }
 
-export async function toggleNewPaymentLinkJourneyEnabled(req: Request, res: Response, next: NextFunction) {
-  try {
-    const { id } = req.params
-    const enabled = await Products.toggleNewPaymentLinkJourneyEnabled(id)
-
-    req.flash('info', `New payment link journey ${enabled ? 'enabled' : 'disabled'}`)
-    res.redirect(`/payment_links/${id}`)
-  } catch (error) {
-    next(error)
-  }
-}
-
 interface PaymentLinkUsageContext {
   groupedPaymentLinks: any
   serviceGatewayAccountIndex: any

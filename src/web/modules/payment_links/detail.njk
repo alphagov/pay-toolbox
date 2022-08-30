@@ -117,31 +117,5 @@
     </form>
   </div>
 
-    <div>
-    <h1 class="govuk-heading-s">
-      {% if paymentLink.new_payment_link_journey_enabled %}
-        New payment link journey is enabled
-      {% else %}
-        New payment link journey is disabled
-      {% endif %}
-    </h1>
-
-    <form method="POST" action="/payment_links/{{ paymentLink.external_id }}/toggle_new_payment_link_journey_enabled">
-      {% if paymentLink.new_payment_link_journey_enabled %}
-        {{ govukButton({
-          text: "Disable new payment link journey"
-          })
-        }}
-      {% else %}
-        {{ govukButton({
-          text: "Enable new payment link journey",
-          classes: "govuk-button--warning"
-          })
-        }}
-      {% endif %}  
-      <input type="hidden" name="_csrf" value="{{ csrf }}">
-    </form>
-  </div>
-
   {{ json("Payment link source", paymentLink) }}
 {% endblock %}
