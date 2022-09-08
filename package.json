@@ -62,7 +62,7 @@
     "qs": "6.10.3",
     "sass": "^1.54.8",
     "stripe": "^8.174.0",
-    "winston": "^3.8.1"
+    "winston": "^3.8.2"
   },
   "devDependencies": {
     "@juggle/resize-observer": "^3.3.1",
