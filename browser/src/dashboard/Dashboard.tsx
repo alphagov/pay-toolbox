@@ -307,7 +307,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                   </span>
                 </div>
                 <div className="govuk-header__content" style={{ paddingTop: "2px" }}>
-                  <a href="#" className="govuk-header__link govuk-header__link--service-name govuk-header__service-name">Live payments</a>
+                  <a href="#" className="govuk-header__link govuk-header__link--service-name govuk-header__service-name">{ this.state.date.format("D MMMM YYYY") }</a>
                 </div>
               </div>
             </header>
