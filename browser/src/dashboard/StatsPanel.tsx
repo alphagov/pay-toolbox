@@ -24,14 +24,14 @@ export class StatsPanel extends React.Component<StatsPanelProps, {}> {
     const completionRate = this.props.all.total_volume ? (this.props.completed.total_volume / this.props.all.total_volume) * 100 : 0
     return (
       <div ref={this.setPanelRef} className="dashboard-card">
-        <span className="govuk-caption-xl">Payments</span>
+        <span className="govuk-caption-xl">Completed payments today</span>
         <h1 className="govuk-heading-xl">
           <ValueSpring
             value={this.props.completed.total_volume}
             formatter={numberFormatter}
           />
         </h1>
-        <span className="govuk-caption-xl">Gross volume</span>
+        <span className="govuk-caption-xl">Value of completed payments today</span>
         <h1 className="govuk-heading-xl">
           <ValueSpring
             value={this.props.completed.total_amount / 100}
@@ -44,7 +44,7 @@ export class StatsPanel extends React.Component<StatsPanelProps, {}> {
           <tbody className="govuk-table__body">
             <tr className="govuk-table__row">
               <th scope="row" className="stats-cell">
-                <span className="govuk-caption-m">All payments</span>
+                <span className="govuk-caption-m">All payments today</span>
               </th>
               <td className="stats-cell" style={{ minWidth: 130 }}>
                 <ValueSpring
@@ -55,7 +55,7 @@ export class StatsPanel extends React.Component<StatsPanelProps, {}> {
             </tr>
             <tr className="govuk-table__row">
               <th scope="row" className="stats-cell">
-                <span className="govuk-caption-m">All payments gross volume</span>
+                <span className="govuk-caption-m">Value of all payments today</span>
               </th>
               <td className="stats-cell" style={{ minWidth: 130 }}>
                 <ValueSpring
@@ -66,7 +66,7 @@ export class StatsPanel extends React.Component<StatsPanelProps, {}> {
             </tr>
             <tr className="govuk-table__row">
               <th scope="row" className="stats-cell">
-                <span className="govuk-caption-m">Completion rate</span>
+                <span className="govuk-caption-m">Percentage of completed payments today</span>
               </th>
               <td className="stats-cell" style={{ minWidth: 130 }}>
                 <ValueSpring

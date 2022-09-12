@@ -76,17 +76,17 @@ export function jsonToChartData(
 
   const series = [
     {
-      'id': 'Errored payments',
+      'id': 'Errored payments today',
       'data': timedata(padded, 'errored_payments'),
       'color': '#d4351c'
     },
     {
-      'id': 'Completed payments',
+      'id': 'Completed payments today',
       'data': timedata(padded, 'completed_payments'),
       'color': '#00703c'
     },
     {
-      'id': 'All payments',
+      'id': 'All payments today',
       'data': timedata(padded, 'all_payments'),
       'color': '#1d70b8'
     }
@@ -94,7 +94,7 @@ export function jsonToChartData(
 
   if (includeComparison) {
     series.push({
-      'id': comparisonDate ? comparisonDate.format('dddd Do MMMM YYYY') : 'Comparison payments',
+      'id': comparisonDate ? 'Completed payments ' + comparisonDate.format('D MMMM YYYY') : 'Comparison payments',
       'data': timedata(comparePadded, 'completed_payments'),
       'color': '#b1b4b64d'
     })
