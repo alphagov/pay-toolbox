@@ -314,6 +314,14 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
           </div>
         </div>
         <div className="govuk-grid-row govuk-body govuk-!-margin-bottom-4">
+          <div className="govuk-grid-column-full">
+            <div className="event-card" style={{ padding: '15px', paddingLeft: '20px', paddingRight: '20px' }}>
+              <h1 className="govuk-heading-l">Live payments dashboard</h1>
+              <p className="govuk-body-l" style={{ marginBottom: '20px' }}><a href="https://payments.service.gov.uk" className="govuk-link govuk-link--no-visited-state">GOV.UK Pay</a> is a free service, available to public sector organisations to take online payments.</p>
+            </div>
+          </div>
+        </div>
+        <div className="govuk-grid-row govuk-body govuk-!-margin-bottom-4">
           {/* @TODO(sfount) bottom shadow (without factoring in column padding) is needed for parity */}
           {/* Non-zero min-height to maintain width without content (a loading or syncing icon should be used) */}
           <div style={{ maxHeight: this.state.statsHeight, overflowY: 'hidden', minHeight: 5 }} className="govuk-grid-column-one-half">
