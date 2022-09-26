@@ -1,0 +1,25 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">GOV.UK Pay platform</span>
+  <h1 class="govuk-heading-m">Find a payment link</h1>
+
+  <form method="POST">
+    {{ govukInput({
+      id: "id",
+      name: "id",
+      label: { text: "Payment link external ID" },
+      hint: { text: "You can find this in the URL following ‘/pay/’ after visiting a payment link"}
+      })
+    }}
+
+    {{ govukButton({
+      text: "Search"
+      })
+    }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}
