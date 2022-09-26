@@ -58,6 +58,15 @@ export async function listCSV(req: Request, res: Response, next: NextFunction): 
   }
 }
 
+export function search(req: Request, res: Response) {
+  res.render('payment_links/search', { csrf: req.csrfToken() })
+}
+
+export function searchRequest(req: Request, res: Response) {
+  const id = req.body.id.trim()
+  res.redirect(`/payment_links/${id}`)
+}
+
 export async function detail(req: Request, res: Response, next: NextFunction) {
   try {
     const { id } = req.params
