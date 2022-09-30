@@ -1,4 +1,4 @@
-import Client, { PayHooks } from '../../base'
+import Client from '../../base'
 import { mapRequestParamsToOperation } from '../../utils/request'
 import {
   Charge,
@@ -13,7 +13,8 @@ import {
   CreateGatewayAccountResponse,
   UpdateGatewayAccountAllowMotoRequest,
   UpdateGatewayAccountBlockPrepaidCardsRequest,
-  UpdateGatewayAccountNotifySettingsRequest
+  UpdateGatewayAccountNotifySettingsRequest,
+  GatewayStatusComparison
 } from './types'
 import { App } from '../../shared'
 
@@ -33,9 +34,32 @@ export default class Connector extends Client {
      * @returns In-flight payment object
      */
     retrieve(id: string): Promise<Charge | undefined> {
-        return client._axios
-          .get(`/v1/frontend/charges/${id}`)
-          .then(response => client._unpackResponseData<Charge>(response))
+      return client._axios
+        .get(`/v1/frontend/charges/${id}`)
+        .then(response => client._unpackResponseData<Charge>(response))
+    },
+
+    /**
+     * Get the comparison between the status in Pay and the status with the Gateway for a list of
+     * charges
+     * @param ids - Charge external IDs
+     * @returns Array of gateway comparison objects
+     */
+    getGatewayComparisons(ids: string[]): Promise<GatewayStatusComparison[] | undefined> {
+      return client._axios
+        .post('/v1/api/discrepancies/report', ids)
+        .then(response => client._unpackResponseData<GatewayStatusComparison[]>(response))
+    },
+
+    /**
+     * Attempts to cancel an authorisation with the payment gateway
+     * @param id - Charge external ID
+     * @returns Array of gateway comparison objects
+     */
+    resolveDiscrepancy(id: string): Promise<GatewayStatusComparison[] | undefined> {
+      return client._axios
+        .post('/v1/api/discrepancies/resolve', [id])
+        .then(response => client._unpackResponseData<GatewayStatusComparison[]>(response))
     }
   }))(this)
 

@@ -133,3 +133,13 @@ export interface CreateGatewayAccountResponse {
   analytics_id?: string;
   gateway_account_id?: string;
 }
+
+export interface GatewayStatusComparison {
+  payStatus: string;
+  payExternalStatus: string;
+  gatewayStatus: string;
+  chargeId: string;
+  rawGatewayResponse: string;
+  charge: Charge;
+  processed: boolean;
+}
