@@ -167,4 +167,52 @@ export default class Connector extends Client {
         .then(response => client._unpackResponseData<ListCardTypesResponse>(response));
     }
   }))(this)
+
+
+  eventEmitter = ((client: Connector) => ({
+    emitByIdRange(startId: number, maxId: number, recordType: string, retryDelayInSeconds: number): Promise<void> {
+      const params = {
+        start_id: startId,
+        max_id: maxId,
+        record_type: recordType,
+        do_not_retry_emit_until: retryDelayInSeconds
+      }
+      return client._axios
+        .post('/v1/tasks/historical-event-emitter', null, { params })
+        .then(() => { return })
+    },
+
+    emitByDate(startDate: string, endDate: string, retryDelayInSeconds: number): Promise<void> {
+      const params = {
+        start_date: startDate,
+        end_date: endDate,
+        do_not_retry_emit_until: retryDelayInSeconds
+      }
+      return client._axios
+        .post('/v1/tasks/historical-event-emitter-by-date', null, { params })
+        .then(() => { return })
+    }
+  }))(this)
+
+  parityChecker = ((client: Connector) => ({
+    runParityCheck(
+      startId: number,
+      maxId: number,
+      doNotReprocessValidRecords: boolean,
+      parityCheckStatus: string,
+      retryDelayInSeconds: number,
+      recordType: string) : Promise<void> {
+        const params = {
+          start_id: startId,
+          max_id: maxId,
+          do_not_reprocess_valid_records: doNotReprocessValidRecords,
+          parity_check_status: parityCheckStatus,
+          do_not_retry_emit_until: retryDelayInSeconds,
+          record_type: recordType
+        }
+        return client._axios
+        .post('/v1/tasks/parity-checker', null, { params })
+        .then(() => { return })
+      }
+  }))(this)
 }

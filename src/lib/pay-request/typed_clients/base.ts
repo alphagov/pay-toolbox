@@ -1,8 +1,9 @@
 import http from 'http'
 import https from 'https'
-import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig, Method } from 'axios'
-import { App } from './shared'
-const { RESTClientError } = require('../../errors')
+import axios, {AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig, Method} from 'axios'
+import {App} from './shared'
+
+const {RESTClientError} = require('../../errors')
 
 /** Base HTTP client with common helpers for all microservices */
 export default class Client {
@@ -35,18 +36,21 @@ export default class Client {
       httpsAgent: new https.Agent({
         keepAlive: true,
         rejectUnauthorized: process.env.NODE_ENV === 'production'
-      })
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
     })
     this._axios.interceptors.request.use((request): AxiosRequestConfigWithMetadata => {
       const headers = options.transformRequestAddHeaders ? options.transformRequestAddHeaders() : {}
       Object.entries(headers)
-        .forEach(([ headerKey, headerValue ]) => {
+        .forEach(([headerKey, headerValue]) => {
           request.headers[headerKey] = headerValue
         })
 
       return {
         ...request,
-        metadata: { start: Date.now() }
+        metadata: {start: Date.now()}
       }
     })
 
@@ -85,7 +89,7 @@ export default class Client {
     try {
       await this._axios.get('/healthcheck')
       return true
-    } catch(e) {
+    } catch (e) {
       return false
     }
   }
@@ -111,7 +115,9 @@ interface AxiosRequestConfigWithMetadata extends AxiosRequestConfig {
 export type PayRequestHeaders = { [key: string]: string }
 
 export interface PayHooks {
- transformRequestAddHeaders?(): PayRequestHeaders;
- successResponse?(context: PayRequestContext): void;
- failureResponse?(context: PayRequestContext): void;
+  transformRequestAddHeaders?(): PayRequestHeaders;
+
+  successResponse?(context: PayRequestContext): void;
+
+  failureResponse?(context: PayRequestContext): void;
 }
