@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import Client from '../../base'
 import { mapRequestParamsToOperation } from '../../utils/request'
 import {
@@ -116,8 +117,9 @@ export default class Connector extends Client {
      * @returns List gateway account response
      */
     list(filters: ListGatewayAccountsRequest = {}): Promise<ListGatewayAccountsResponse | undefined> {
+      const params = _.omitBy(filters, _.isEmpty)
       return client._axios
-        .get('/v1/api/accounts', { params: filters})
+        .get('/v1/api/accounts', { params })
         .then(response => client._unpackResponseData<ListGatewayAccountsResponse>(response))
     },
 

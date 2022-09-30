@@ -26,7 +26,7 @@ export interface Charge {
 }
 
 export interface GatewayAccount {
-  gateway_account_id: number;
+  gateway_account_id: string;
   payment_provider: PaymentProvider;
   type: AccountType;
   description: string;
@@ -45,7 +45,8 @@ export interface GatewayAccount {
   integration_version_3ds: number;
   allow_moto: boolean;
   email_collection_mode?: EmailCollectionMode,
-  email_notifications: EmailNotifications
+  email_notifications: EmailNotifications,
+  notify_settings: Map<string, any>
 }
 
 export interface StripeCredentials {
@@ -109,12 +110,14 @@ export interface ListCardTypesResponse {
 }
 
 export interface ListGatewayAccountsRequest {
-  moto_enabled?: boolean;
-  apple_pay_enabled?: boolean;
-  google_pay_enabled?: boolean;
-  requires_3ds?: boolean;
+  moto_enabled?: string;
+  apple_pay_enabled?: string;
+  google_pay_enabled?: string;
+  requires_3ds?: string;
   type?: AccountType;
-  payment_provider?: PaymentProvider;
+  payment_provider?: string;
+  payment_provider_account_id?: string;
+  provider_switch_enabled?: string
 }
 
 export interface ListGatewayAccountsResponse {
@@ -132,6 +135,16 @@ export interface CreateGatewayAccountResponse {
   requires_3ds: boolean;
   analytics_id?: string;
   gateway_account_id?: string;
+}
+
+export interface GatewayStatusComparison {
+  payStatus: string;
+  payExternalStatus: string;
+  gatewayStatus: string;
+  chargeId: string;
+  rawGatewayResponse: string;
+  charge: Charge;
+  processed: boolean;
 }
 
 export interface GatewayStatusComparison {
