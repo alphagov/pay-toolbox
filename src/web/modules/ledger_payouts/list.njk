@@ -20,7 +20,7 @@
     {% endif %}
   </span>
 
-  <h1 class="govuk-heading-m">Platform payouts</h1>
+  <h1 class="govuk-heading-m">Payouts</h1>
 
   {% if accountId %}
     <div class="govuk-body">
@@ -68,7 +68,7 @@
               <span class="govuk-caption-m">{{ payout.created_date | formatToSimpleDate }}</span>
             </td>
             <td class="govuk-table__cell">
-               <a class="govuk-link govuk-link--no-visited-state" 
+               <a class="govuk-link govuk-link--no-visited-state"
                    href="/transactions?account={{ payout.gateway_account_id }}&gateway_payout_id={{ payout.gateway_payout_id }}">
                 View
               </a>
@@ -102,7 +102,7 @@
         {% endif %} class="govuk-button govuk-button--secondary">
       Previous
     </a>
-    <a  {% if not(set._links.next_page) %} disabled 
+    <a  {% if not(set._links.next_page) %} disabled
         {% else %} href="/payouts?page={{ set.page + 1 }}&status={{ selectedStatus }}{% if service %}&account={{ accountId }}{% endif %}"
       {% endif %} class="govuk-button govuk-button--secondary">
       Next
