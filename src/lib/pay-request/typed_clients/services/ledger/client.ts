@@ -212,6 +212,12 @@ export default class Ledger extends Client {
         .then(response => client._unpackResponseData<PerformanceReport>(response));
     },
 
+    retrieveLegacyPerformanceSummary(params: PerformanceReportRequest): Promise<PerformanceReport | undefined> {
+      return client._axios
+        .get('/v1/report/performance-report-legacy', {params})
+        .then(response => client._unpackResponseData<PerformanceReport>(response));
+    },
+
     retrievePerformanceSummaryByGateway(params: GatewayPerformanceReportRequest): Promise<GatewayPerformanceReport | undefined> {
       return client._axios
         .get('/v1/report/gateway-performance-report', {params})
