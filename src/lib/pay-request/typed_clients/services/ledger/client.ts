@@ -189,10 +189,9 @@ export default class Ledger extends Client {
 
   payouts = ((client: Ledger) => ({
     list(params: ListPayoutForAccountRequest | ListPayoutWithAccountOverrideRequest): Promise<SearchResponse<Payout> | undefined> {
-      const accountIdParam = params.gateway_account_id as number[]
-      const payoutParams: any = {
+      const payoutParams = {
         ...params,
-        ...accountIdParam && accountIdParam.length && { gateway_account_id: accountIdParam.join(',') }
+        ...params.gateway_account_id && Array.isArray(params.gateway_account_id) && { gateway_account_id: params.gateway_account_id.join(',') },
       }
 
       return client._axios

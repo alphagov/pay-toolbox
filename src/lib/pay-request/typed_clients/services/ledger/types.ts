@@ -299,11 +299,11 @@ export interface ListEventTickerRequest {
 export interface ListPayoutRequest {
   page?: number;
   display_size?: number;
-  state?: ExternalPayoutState;
+  state?: string;
 }
 
 export interface ListPayoutForAccountRequest extends ListPayoutRequest {
-  gateway_account_id: number | number[];
+  gateway_account_id: string | string[];
 }
 
 export interface ListPayoutWithAccountOverrideRequest extends ListPayoutRequest {
