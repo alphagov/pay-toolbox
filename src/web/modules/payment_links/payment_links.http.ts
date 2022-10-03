@@ -1,21 +1,21 @@
 import _ from 'lodash'
-import { Request, Response, NextFunction } from 'express'
-import { Products, AdminUsers, Connector } from '../../../lib/pay-request'
-import { aggregateServicesByGatewayAccountId } from '../../../lib/gatewayAccounts'
-import { format } from './csv'
+import {NextFunction, Request, Response} from 'express'
+import {AdminUsers, Connector, Products} from '../../../lib/pay-request/typed_clients/client'
+import type {Product} from '../../../lib/pay-request/typed_clients/services/products/types'
+import {aggregateServicesByGatewayAccountId} from '../../../lib/gatewayAccounts'
+import {format} from './csv'
+import {AccountType} from "../../../lib/pay-request/typed_clients/shared";
 
-function indexPaymentLinkByType(paymentLink: any): any {
-  const index = paymentLink._links.reduce((aggregate: any, linkDetails: any) => {
+function getLinksForProductIndexedByType(paymentLink: Product) {
+  return paymentLink._links.reduce((aggregate: { [key: string]: string }, linkDetails) => {
     aggregate[linkDetails.rel] = linkDetails.href
     return aggregate
   }, {})
-  paymentLink._indexedLinks = index
-  return paymentLink
 }
 
 export async function list(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const { accountId } = req.params
+    const {accountId} = req.params
     const sort = req.query.sort as string || 'last_payment_date'
     const live = req.query.live === undefined ? true : req.query.live && req.query.live !== "false"
 
@@ -38,7 +38,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
 
 export async function listCSV(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const { accountId } = req.params
+    const {accountId} = req.params
     const sort = req.query.sort as string || 'last_payment_date'
     const live = req.query.live === undefined ? true : req.query.live && req.query.live !== "false"
     const filterLiveAccounts = live && !accountId
@@ -59,7 +59,7 @@ export async function listCSV(req: Request, res: Response, next: NextFunction): 
 }
 
 export function search(req: Request, res: Response) {
-  res.render('payment_links/search', { csrf: req.csrfToken() })
+  res.render('payment_links/search', {csrf: req.csrfToken()})
 }
 
 export function searchRequest(req: Request, res: Response) {
@@ -69,12 +69,13 @@ export function searchRequest(req: Request, res: Response) {
 
 export async function detail(req: Request, res: Response, next: NextFunction) {
   try {
-    const { id } = req.params
-    const paymentLink = indexPaymentLinkByType(await Products.getProduct(id))
+    const {id} = req.params
+    const paymentLink = await Products.products.retrieve(id)
+    const indexedLinks = getLinksForProductIndexedByType(paymentLink)
 
     res.render('payment_links/detail', {
       paymentLink,
-      url: paymentLink._indexedLinks.friendly || paymentLink._indexedLinks.pay,
+      url: indexedLinks.friendly || indexedLinks.pay,
       messages: req.flash('info'),
       csrf: req.csrfToken()
     })
@@ -85,64 +86,61 @@ export async function detail(req: Request, res: Response, next: NextFunction) {
 
 export async function toggleRequireCaptcha(req: Request, res: Response, next: NextFunction) {
   try {
-    const { id } = req.params
-    const enabled = await Products.toggleRequireCaptcha(id)
+    const {id} = req.params
+    const product = await Products.products.retrieve(id)
+    const enable = !product.require_captcha
+    await Products.products.update(id, product.gateway_account_id, {require_captcha: enable})
 
-    req.flash('info', `Require CAPTCHA ${enabled ? 'enabled' : 'disabled'}`)
+    req.flash('info', `Require CAPTCHA ${enable ? 'enabled' : 'disabled'}`)
     res.redirect(`/payment_links/${id}`)
   } catch (error) {
     next(error)
   }
 }
 
-interface PaymentLinkUsageContext {
-  groupedPaymentLinks: any
-  serviceGatewayAccountIndex: any
-}
-async function fetchUsageContext(sortKey: string, filterLiveAccounts: Boolean, accountId?: string): Promise<PaymentLinkUsageContext> {
+async function fetchUsageContext(sortKey: string, filterLiveAccounts: Boolean, accountId?: string) {
   let serviceRequest, liveAccountsRequest
   if (accountId) {
-    serviceRequest = AdminUsers.gatewayAccountServices(accountId)
-      .then((service: any) => [service])
-    liveAccountsRequest = Connector.account(accountId)
-      .then((account: any) => [account])
+    serviceRequest = AdminUsers.services.retrieve(accountId)
+      .then((service) => [service])
+    liveAccountsRequest = Connector.accounts.retrieveAPI(accountId)
+      .then((account) => [account])
   } else {
-    serviceRequest = AdminUsers.services()
-    liveAccountsRequest = Connector.accounts({ type: 'live' })
-      .then((response: any) => response.accounts)
+    serviceRequest = AdminUsers.services.list()
+    liveAccountsRequest = Connector.accounts.list({type: AccountType.Live})
+      .then((response) => response.accounts)
   }
 
-  const paymentLinksRequest = Products.paymentLinksWithUsage(accountId)
+  const productStatsRequest = Products.reports.listStats({
+    ...accountId && {gatewayAccountId: Number(accountId)}
+  })
 
-  const [serviceResponse, paymentLinksResponse, liveAccountsResponse] = await Promise.all([serviceRequest, paymentLinksRequest, liveAccountsRequest])
+  const [serviceResponse, productStatsResponse, liveAccountsResponse] = await Promise.all([serviceRequest, productStatsRequest, liveAccountsRequest])
 
   const serviceGatewayAccountIndex = aggregateServicesByGatewayAccountId(serviceResponse)
 
   const liveAccounts = liveAccountsResponse.map((account: any) => account.gateway_account_id)
 
-  const paymentLinks = paymentLinksResponse
-    .map((paymentLink: any) => {
-      indexPaymentLinkByType(paymentLink.product)
-      return paymentLink
-    })
-    .filter((link: any) => !filterLiveAccounts || liveAccounts.includes(link.product.gateway_account_id))
-    .map((link: any) => {
-      const service = serviceGatewayAccountIndex[link.product.gateway_account_id]
+  const paymentLinks = productStatsResponse
+    .filter((productStat) => !filterLiveAccounts || liveAccounts.includes(productStat.product.gateway_account_id))
+    .map((productStat) => {
+      const service = serviceGatewayAccountIndex[productStat.product.gateway_account_id]
+      const indexedLinks = getLinksForProductIndexedByType(productStat.product)
       return {
-        ...link,
-        is_live_account: liveAccounts.includes(link.product.gateway_account_id),
-        url: link.product._indexedLinks.friendly || link.product._indexedLinks.pay,
+        ...productStat,
+        is_live_account: liveAccounts.includes(productStat.product.gateway_account_id),
+        url: indexedLinks.friendly || indexedLinks.pay,
         service_name: service && service.service_name && service.service_name.en,
         organisation_name: service && service.merchant_details && service.merchant_details.name,
-        is_fixed_price: Boolean(link.product.price),
-        has_metadata: Boolean(link.product.metadata)
+        is_fixed_price: Boolean(productStat.product.price),
+        has_metadata: Boolean(productStat.product.metadata)
       }
     })
 
   const groupedLinks = _.groupBy(paymentLinks, 'product.gateway_account_id')
   const orderedGroups = _.orderBy(
     Object.keys(groupedLinks)
-      .map((key: any) => {
+      .map((key) => {
         const group = groupedLinks[key]
         return {
           key,

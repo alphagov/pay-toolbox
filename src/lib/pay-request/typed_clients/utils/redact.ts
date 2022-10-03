@@ -13,9 +13,13 @@ export function redactProductStatTokens(products: ProductStat[]): ProductStat[] 
   })
 }
 
+export function redactProductApiToken(product: Product) {
+  delete product.pay_api_token
+  return product
+}
+
 export function redactProductTokens(products: Product[]): Product[] {
   return products.map((product) => {
-    delete product.pay_api_token
-    return product
+    return redactProductApiToken(product);
   })
 }
