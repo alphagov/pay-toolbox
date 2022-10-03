@@ -43,6 +43,7 @@ export interface Product {
   pay_api_token?: string;
   description?: string;
   metadata?: { [key: string]: string | number | boolean };
+  require_captcha?: boolean;
 }
 
 export interface ProductStat {
@@ -64,4 +65,8 @@ export interface CreateProductRequest {
   reference_label: string;
   reference_hint: string;
   type: ProductType;
+}
+
+export interface UpdateProductRequest {
+  require_captcha?: boolean;
 }
