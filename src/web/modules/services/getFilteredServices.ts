@@ -1,6 +1,6 @@
 import { BooleanFilterOption } from '../common/BooleanFilterOption'
-import { Service, User } from '../../../lib/pay-request/types/adminUsers'
-import { AdminUsers } from '../../../lib/pay-request'
+import { Service } from '../../../lib/pay-request/typed_clients/services/admin_users/types'
+import { AdminUsers } from '../../../lib/pay-request/typed_clients/client'
 
 export interface ServiceFilters {
   live: BooleanFilterOption;
@@ -15,7 +15,7 @@ function serviceAttributeMatchesFilter(filterValue: BooleanFilterOption, service
 }
 
 export async function fetchAndFilterServices(filters: ServiceFilters): Promise<Service[]> {
-  const services: Service[] = await AdminUsers.services()
+  const services: Service[] = await AdminUsers.services.list()
   return services.filter(service =>
     serviceAttributeMatchesFilter(filters.live, service.current_go_live_stage === 'LIVE')
     && serviceAttributeMatchesFilter(filters.internal, service.internal)

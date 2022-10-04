@@ -33,6 +33,7 @@ export interface Service {
   redirect_to_service_immediately_on_terminal_state: boolean;
   collect_billing_address: boolean;
   experimental_features_enabled: boolean;
+  agent_initiated_moto_enabled?: boolean;
   merchant_details?: MerchantDetails;
   custom_branding?: CustomBranding;
   sector?: string;
@@ -126,4 +127,16 @@ export interface UpdateServiceRequest {
   gateway_account_ids?: string[];
   redirect_to_service_immediately_on_terminal_state?: boolean;
   experimental_features_enabled?: boolean;
+  agent_initiated_moto_enabled?: boolean;
+  archived?: boolean;
+}
+
+export interface SearchServicesRequest {
+  service_name?: string;
+  service_merchant_name?: string;
+}
+
+export interface SearchServicesResponse {
+  name_results: Service[];
+  merchant_results: Service[];
 }
