@@ -1,20 +1,19 @@
-import { Request, Response } from 'express'
-import { ParsedQs, stringify } from 'qs'
+import {Request, Response} from 'express'
+import {ParsedQs, stringify} from 'qs'
 
 import logger from '../../../lib/logger'
-import { AdminUsers, Connector } from '../../../lib/pay-request'
-import { Service, User } from '../../../lib/pay-request/types/adminUsers'
-import { GatewayAccount } from '../../../lib/pay-request/types/connector'
-import { wrapAsyncErrorHandler } from '../../../lib/routes'
-import { sanitiseCustomBrandingURL } from './branding'
+import {AdminUsers, Connector} from '../../../lib/pay-request/typed_clients/client'
+import type {Service, User} from '../../../lib/pay-request/typed_clients/services/admin_users/types'
+import {wrapAsyncErrorHandler} from '../../../lib/routes'
+import {sanitiseCustomBrandingURL} from './branding'
 import GatewayAccountRequest from './gatewayAccountRequest.model'
-import { formatPerformancePlatformCsv } from './performancePlatformCsv'
-import { formatErrorsForTemplate, ClientFormError } from '../common/validationErrorFormat'
+import {formatPerformancePlatformCsv} from './performancePlatformCsv'
+import {formatErrorsForTemplate, ClientFormError} from '../common/validationErrorFormat'
 import UpdateOrganisationFormRequest from './UpdateOrganisationForm'
-import { IOValidationError } from '../../../lib/errors'
-import { formatServiceExportCsv } from './serviceExportCsv'
-import { BooleanFilterOption } from '../common/BooleanFilterOption'
-import { ServiceFilters, fetchAndFilterServices, getLiveNotArchivedServices } from './getFilteredServices'
+import {IOValidationError} from '../../../lib/errors'
+import {formatServiceExportCsv} from './serviceExportCsv'
+import {BooleanFilterOption} from '../common/BooleanFilterOption'
+import {ServiceFilters, fetchAndFilterServices, getLiveNotArchivedServices} from './getFilteredServices'
 
 function extractFiltersFromQuery(query: ParsedQs): ServiceFilters {
   return {
@@ -55,7 +54,7 @@ const performancePlatformCsv = async function performancePlatformCsv(req: Reques
 const getServiceGatewayAccounts = async (gateway_account_ids: Array<string>) => {
   const serviceGatewayAccounts = []
   for (const id of gateway_account_ids) {
-    serviceGatewayAccounts.push(await Connector.account(id) as GatewayAccount)
+    serviceGatewayAccounts.push(await Connector.accounts.retrieveAPI(id))
   }
   return serviceGatewayAccounts
 }
@@ -65,39 +64,54 @@ const detail = async function detail(req: Request, res: Response): Promise<void>
   const messages = req.flash('info')
 
   const [service, users] = await Promise.all([
-    AdminUsers.service(serviceId),
-    AdminUsers.serviceUsers(serviceId) as User[]
+    AdminUsers.services.retrieve(serviceId),
+    AdminUsers.services.listUsers(serviceId)
   ])
 
-  users.forEach((user) => {
+  const userDetails = users.map(user => {
     const currentServicesRole = user.service_roles
       .find((serviceRole) => serviceRole.service && serviceRole.service.external_id === serviceId)
-    user.role = currentServicesRole.role && currentServicesRole.role.name
+    return {
+      external_id: user.external_id,
+      role: currentServicesRole.role.name,
+      email: user.email,
+      disabled: user.disabled
+    }
   })
 
   const serviceGatewayAccounts = await getServiceGatewayAccounts(service.gateway_account_ids)
 
-  const adminEmails = users.filter((user) => user.role.toLowerCase() == 'admin').map((user) => user.email).toString()
+  const adminEmails = userDetails
+    .filter((userDetail) => userDetail.role.toLowerCase() == 'admin')
+    .map((userDetail) => userDetail.email)
+    .toString()
 
   res.render('services/detail', {
-    service, serviceGatewayAccounts, users, serviceId, messages, adminEmails
+    service,
+    serviceGatewayAccounts,
+    users: userDetails,
+    serviceId,
+    messages,
+    adminEmails
   })
 }
 
 const branding = async function branding(req: Request, res: Response): Promise<void> {
   const serviceId: string = req.params.id
-  const service = await AdminUsers.service(serviceId)
+  const service = await AdminUsers.services.retrieve(serviceId)
 
-  res.render('services/branding', { serviceId, service, csrf: req.csrfToken() })
+  res.render('services/branding', {serviceId, service, csrf: req.csrfToken()})
 }
 
 const updateBranding = async function updateBranding(req: Request, res: Response): Promise<void> {
-  const { id } = req.params
+  const {id} = req.params
 
-  await AdminUsers.updateServiceBranding(
-    id,
-    sanitiseCustomBrandingURL(req.body.image_url),
-    sanitiseCustomBrandingURL(req.body.css_url)
+  await AdminUsers.services.update(id, {
+      custom_branding: {
+        image_url: sanitiseCustomBrandingURL(req.body.image_url),
+        css_url: sanitiseCustomBrandingURL(req.body.css_url)
+      }
+    }
   )
 
   logger.info(`Updated service branding for ${id}`)
@@ -119,7 +133,7 @@ const linkAccounts = async function linkAccounts(req: Request, res: Response): P
   }
 
   if (req.session.recovered) {
-    context.recovered = { ...req.session.recovered }
+    context.recovered = {...req.session.recovered}
     delete req.session.recovered
   }
   res.render('services/link_accounts', context)
@@ -132,7 +146,9 @@ const updateLinkAccounts = async function updateLinkAccounts(
   const serviceId = req.params.id
 
   const gatewayAccountRequest = new GatewayAccountRequest(req.body)
-  await AdminUsers.updateServiceGatewayAccount(serviceId, gatewayAccountRequest.id)
+  await AdminUsers.services.update(serviceId, {
+    gateway_account_ids: [gatewayAccountRequest.id.toString()]
+  })
 
   logger.info(`Service ${serviceId} added gateway account ${gatewayAccountRequest.id}`)
   req.flash('info', `Gateway Account ${gatewayAccountRequest.id} linked`)
@@ -140,7 +156,7 @@ const updateLinkAccounts = async function updateLinkAccounts(
 }
 
 const search = async function search(req: Request, res: Response): Promise<void> {
-  res.render('services/search', { csrf: req.csrfToken() })
+  res.render('services/search', {csrf: req.csrfToken()})
 }
 
 const searchRequest = async function searchRequest(req: Request, res: Response): Promise<void> {
@@ -151,7 +167,10 @@ const searchRequest = async function searchRequest(req: Request, res: Response):
     if (isAdminusersUuid.test(term)) {
       res.redirect(`/services/${term}`)
     } else {
-      const data = await AdminUsers.searchServices(term, term)
+      const data = await AdminUsers.services.search({
+        service_name: term,
+        service_merchant_name: term
+      })
       const nameResults = data.name_results.map((serv: Service) => Object.assign(serv, {matched: 'name'}))
       let merchantResults = data.merchant_results.map((serv: Service) => Object.assign(serv, {matched: 'merchant'}))
 
@@ -159,8 +178,8 @@ const searchRequest = async function searchRequest(req: Request, res: Response):
       const servIds = new Set(nameResults.map((serv: Service) => serv.id))
       merchantResults = merchantResults.filter((serv: Service) => !servIds.has(serv.id))
       const results = filtered
-      ? [...nameResults.filter((serv: Service) => serv.current_go_live_stage === 'LIVE'), ...merchantResults.filter((serv: Service) => serv.current_go_live_stage === 'LIVE')]
-      : [...nameResults, ...merchantResults]
+        ? [...nameResults.filter((serv: Service) => serv.current_go_live_stage === 'LIVE'), ...merchantResults.filter((serv: Service) => serv.current_go_live_stage === 'LIVE')]
+        : [...nameResults, ...merchantResults]
 
       res.render('services/search_results', {
         term,
@@ -171,7 +190,7 @@ const searchRequest = async function searchRequest(req: Request, res: Response):
       })
     }
   } else {
-    res.render('services/search', { csrf: req.csrfToken(), error: 'Please enter a search term' })
+    res.render('services/search', {csrf: req.csrfToken(), error: 'Please enter a search term'})
   }
 }
 
@@ -181,11 +200,14 @@ const toggleTerminalStateRedirectFlag = async function toggleTerminalStateRedire
 ): Promise<void> {
   const serviceId = req.params.id
 
-  const serviceResult = await AdminUsers.toggleTerminalStateRedirectFlag(serviceId)
-  const { redirect_to_service_immediately_on_terminal_state: state } = serviceResult
-  logger.info(`Toggled redirect to service on terminal state flag to ${state} for service ${serviceId}`, { externalId: serviceId })
+  const service = await AdminUsers.services.retrieve(serviceId);
+  const enable = !service.redirect_to_service_immediately_on_terminal_state;
+  await AdminUsers.services.update(serviceId, {
+    redirect_to_service_immediately_on_terminal_state: enable
+  })
+  logger.info(`Toggled redirect to service on terminal state flag to ${enable} for service ${serviceId}`, {externalId: serviceId})
 
-  req.flash('info', `Redirect to service on terminal state flag set to ${state} for service`)
+  req.flash('info', `Redirect to service on terminal state ${ enable? 'enabled' : 'disabled'}`)
   res.redirect(`/services/${serviceId}`)
 }
 
@@ -195,11 +217,14 @@ const toggleExperimentalFeaturesEnabledFlag = async function toggleExperimentalF
 ): Promise<void> {
   const serviceId = req.params.id
 
-  const serviceResult = await AdminUsers.toggleExperimentalFeaturesEnabledFlag(serviceId)
-  const { experimental_features_enabled: state } = serviceResult
-  logger.info(`Toggled experimental features enabled flag to ${state} for service ${serviceId}`, { externalId: serviceId })
+  const service = await AdminUsers.services.retrieve(serviceId);
+  const enable = !service.experimental_features_enabled
+  await AdminUsers.services.update(serviceId, {
+    experimental_features_enabled: enable
+  })
+  logger.info(`Toggled experimental features enabled flag to ${enable} for service ${serviceId}`, {externalId: serviceId})
 
-  req.flash('info', `Experimental features enabled flag set to ${state} for service`)
+  req.flash('info', `Experimental features ${ enable? 'enabled' : 'disabled'}`)
   res.redirect(`/services/${serviceId}`)
 }
 
@@ -209,11 +234,14 @@ const toggleAgentInitiatedMotoEnabledFlag = async function toggleAgentInitiatedM
 ): Promise<void> {
   const serviceId = req.params.id
 
-  const serviceResult = await AdminUsers.toggleAgentInitiatedMotoEnabledFlag(serviceId)
-  const { agent_initiated_moto_enabled: state } = serviceResult
-  logger.info(`Toggled agent-initiated MOTO enabled flag to ${state} for service ${serviceId}`, { externalId: serviceId })
+  const service = await AdminUsers.services.retrieve(serviceId);
+  const enable = !service.agent_initiated_moto_enabled
+  await AdminUsers.services.update(serviceId, {
+    agent_initiated_moto_enabled: enable
+  })
+  logger.info(`Toggled agent-initiated MOTO enabled flag to ${enable} for service ${serviceId}`, {externalId: serviceId})
 
-  req.flash('info', `Agent-initiated MOTO enabled flag set to ${state} for service`)
+  req.flash('info', `Agent-initiated MOTO ${ enable? 'enabled' : 'disabled'}`)
   res.redirect(`/services/${serviceId}`)
 }
 
@@ -229,9 +257,9 @@ const updateOrganisationForm = async function updateOrganisationForm(
   req: Request,
   res: Response
 ): Promise<void> {
-  const service = await AdminUsers.service(req.params.id)
-  const context: RecoverContext = { service, csrf: req.csrfToken() }
-  const { recovered } = req.session
+  const service = await AdminUsers.services.retrieve(req.params.id)
+  const context: RecoverContext = {service, csrf: req.csrfToken()}
+  const {recovered} = req.session
 
   if (recovered) {
     context.formValues = recovered.formValues
@@ -256,11 +284,13 @@ const updateOrganisation = async function updateOrganisation(
   req: Request,
   res: Response
 ): Promise<void> {
-  const { id } = req.params
+  const {id} = req.params
 
   try {
     const updateRequest = new UpdateOrganisationFormRequest(req.body)
-    await AdminUsers.updateServiceOrganisationName(id, updateRequest.name)
+    await AdminUsers.services.update(id, {
+      'merchant_details/name': updateRequest.name
+    })
     req.flash('info', 'Updated organisation')
     res.redirect(`/services/${id}`)
   } catch (error) {
@@ -281,11 +311,14 @@ const toggleArchiveService = async function toggleArchiveService(
 ): Promise<void> {
   const serviceId = req.params.id
 
-  const serviceResult = await AdminUsers.toggleArchiveService(serviceId)
-  const { archived } = serviceResult
-  logger.info(`Toggled archive status to ${archived} for service ${serviceId}`, { externalId: serviceId })
+  const service = await AdminUsers.services.retrieve(serviceId);
+  const archive = !service.archived
+  await AdminUsers.services.update(serviceId, {
+    archived: archive
+  })
+  logger.info(`Toggled archive status to ${archive} for service ${serviceId}`, {externalId: serviceId})
 
-  req.flash('info', `Service archived status changed to ${archived} for service`)
+  req.flash('info', `Service ${archive ? 'archived': 'un-archived'}`)
   res.redirect(`/services/${serviceId}`)
 }
 

@@ -1,5 +1,5 @@
 import { Parser } from 'json2csv'
-import { Service } from '../../../lib/pay-request/types/adminUsers'
+import { Service } from '../../../lib/pay-request/typed_clients/services/admin_users/types'
 import _ from 'lodash'
 import moment from 'moment'
 

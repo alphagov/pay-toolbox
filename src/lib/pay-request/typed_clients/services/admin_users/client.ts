@@ -9,7 +9,7 @@ import {
   RetrieveUserByEmailRequest,
   UpdateUserUsernameRequest,
   UpdateUserDisabledRequest,
-  UpdateUserTelephoneNumberRequest
+  UpdateUserTelephoneNumberRequest, SearchServicesRequest, SearchServicesResponse
 } from './types'
 import { App } from '../../shared'
 
@@ -39,6 +39,12 @@ export default class AdminUsers extends Client {
       return client._axios
         .get('/v1/api/services/list')
         .then(response => client._unpackResponseData<Service[]>(response));
+    },
+
+    search(params: SearchServicesRequest): Promise<SearchServicesResponse | undefined> {
+      return client._axios
+        .post('/v1/api/services/search', params)
+        .then(response => client._unpackResponseData<SearchServicesResponse>(response));
     },
 
     /**
