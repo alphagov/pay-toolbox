@@ -1,25 +1,24 @@
-import { NextFunction, Request, Response } from 'express'
-import { Connector, AdminUsers } from '../../../../lib/pay-request'
+import {NextFunction, Request, Response} from 'express'
+import {AdminUsers, Connector} from '../../../../lib/pay-request/typed_clients/client'
 import AccountDetails from '../../stripe/basic/basicAccountDetails.model'
-import { setupProductionStripeAccount } from '../../stripe/basic/account'
-import { StripeAgreement } from '../../../../lib/pay-request/types/adminUsers'
+import {setupProductionStripeAccount} from '../../stripe/basic/account'
 import logger from "../../../../lib/logger";
 
 import stripeTestAccount from '../../stripe/basic/test-account.http'
 
 export async function switchPSPPage(req: Request, res: Response, next: NextFunction) {
-  const account = await Connector.accountWithCredentials(req.params.id)
-  const service = await AdminUsers.gatewayAccountServices(account.gateway_account_id)
-  res.render('gateway_accounts/switch_psp/switch_psp', { account, service, flash: req.flash(), csrf: req.csrfToken() })
+  const account = await Connector.accounts.retrieveFrontend(req.params.id)
+  const service = await AdminUsers.services.retrieve({gatewayAccountId: account.gateway_account_id})
+  res.render('gateway_accounts/switch_psp/switch_psp', {account, service, flash: req.flash(), csrf: req.csrfToken()})
 }
 
 export async function postSwitchPSP(req: Request, res: Response, next: NextFunction) {
   const gatewayAccountId = req.params.id
-  let credentials: { stripe_account_id?: string }
+  let stripeCredentials: { stripe_account_id: string }
 
   try {
-    const account = await Connector.accountWithCredentials(req.params.id)
-    const service = await AdminUsers.gatewayAccountServices(gatewayAccountId)
+    const account = await Connector.accounts.retrieveFrontend(req.params.id)
+    const service = await AdminUsers.services.retrieve({gatewayAccountId: gatewayAccountId})
 
     if (!req.body.paymentProvider) {
       req.flash('error', 'Payment provider is required')
@@ -49,28 +48,33 @@ export async function postSwitchPSP(req: Request, res: Response, next: NextFunct
           return res.redirect(`/gateway_accounts/${req.params.id}/switch_psp`)
         }
         const accountDetails = new AccountDetails(req.body)
-        const switchProxyAgreement: StripeAgreement = { ip_address: req.ip, agreement_time: Date.now() }
-        const stripeAccount = await setupProductionStripeAccount(service.external_id, accountDetails, switchProxyAgreement)
-        credentials = { stripe_account_id: stripeAccount.id }
+        const tosAcceptance = {ip_address: req.ip, agreement_time: Date.now()}
+        const stripeAccount = await setupProductionStripeAccount(service.external_id, accountDetails, tosAcceptance)
+        stripeCredentials = {stripe_account_id: stripeAccount.id}
       } else {
         // use new stripe account setup and fully configure it for
         const stripeAccount = await stripeTestAccount.createStripeTestAccount(service.service_name.en)
 
-        await Connector.updateStripeSetupValues(account.gateway_account_id, [
-          'bank_account',
-          'company_number',
-          'responsible_person',
-          'vat_number',
-          'director',
-          'organisation_details',
-          'government_entity_document'
-        ])
-        credentials = { stripe_account_id: stripeAccount.id }
+        await Connector.accounts.updateStripeSetup(account.gateway_account_id, {
+          bank_account: true,
+          company_number: true,
+          responsible_person: true,
+          vat_number: true,
+          director: true,
+          organisation_details: true,
+          government_entity_document: true
+        })
+        stripeCredentials = {stripe_account_id: stripeAccount.id}
       }
     }
 
-    await Connector.enableSwitchFlagOnGatewayAccount(gatewayAccountId)
-    await Connector.addGatewayAccountCredentialsForSwitch(gatewayAccountId, req.body.paymentProvider, credentials)
+    await Connector.accounts.update(gatewayAccountId, {
+      provider_switch_enabled: true
+    })
+    await Connector.accounts.addGatewayAccountCredentials(gatewayAccountId, {
+      payment_provider: req.body.paymentProvider,
+      ...stripeCredentials && { credentials: stripeCredentials }
+    })
 
     logger.info('Provider switch enabled for gateway account', {
       gateway_account_id: account.gateway_account_id,

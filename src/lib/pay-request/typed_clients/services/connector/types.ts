@@ -56,6 +56,7 @@ export interface GatewayAccount {
   requires_additional_kyc_data: boolean;
   allow_authorisation_api: boolean;
   recurring_enabled: boolean;
+  provider_switch_enabled: boolean;
 }
 
 export interface GatewayAccountCredential {
@@ -70,8 +71,8 @@ export interface StripeCredentials {
 }
 
 export interface Credentials {
-  merchant_id: string;
-  username: string;
+  merchant_id?: string;
+  username?: string;
 }
 
 export interface GatewayAccountFrontend extends GatewayAccount {
@@ -123,6 +124,7 @@ export interface UpdateGatewayAccountRequest {
   corporate_credit_card_surcharge_amount?: number;
   corporate_debit_card_surcharge_amount?: number;
   corporate_prepaid_debit_card_surcharge_amount?: number;
+  provider_switch_enabled?: boolean;
 }
 
 export interface CreateGatewayAccountRequest {
@@ -190,4 +192,32 @@ export interface GatewayStatusComparison {
   rawGatewayResponse: string;
   charge: Charge;
   processed: boolean;
+}
+
+export interface UpdateStripeSetupRequest {
+  bank_account?: boolean;
+  responsible_person?: boolean;
+  vat_number?: boolean;
+  company_number?: boolean;
+  director?: boolean;
+  government_entity_document?: boolean;
+  additional_kyc_data?: boolean;
+  organisation_details?: boolean;
+}
+
+export interface GatewayAccountCredentials {
+  active_start_date: string;
+  active_end_date: string;
+  created_date: string;
+  credentials: Credentials | StripeCredentials;
+  external_id: string;
+  gateway_account_id: number;
+  last_updated_by_user_external_id: string;
+  payment_provider: string;
+  state: string;
+}
+
+export interface AddGatewayAccountCredentialsRequest {
+  payment_provider: string;
+  credentials?: StripeCredentials;
 }
