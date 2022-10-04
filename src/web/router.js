@@ -43,11 +43,6 @@ router.get('/auth/unauthorised', auth.unauthorised)
 
 router.get('/', auth.secured, landing.root)
 
-router.get('/statistics', auth.secured, statistics.overview)
-router.get('/statistics/filter/date', auth.secured, statistics.dateFilterRequest)
-router.post('/statistics/filter/date', auth.secured, statistics.dateFilter)
-router.get('/statistics/compare/date', auth.secured, statistics.compareFilterRequest)
-router.post('/statistics/compare/date', auth.secured, statistics.compareFilter)
 router.get('/statistics/services', auth.secured, statistics.csvServices)
 router.post('/statistics/services', auth.secured, statistics.byServices)
 router.get('/statistics/performance-page', auth.secured, performance.overview)
