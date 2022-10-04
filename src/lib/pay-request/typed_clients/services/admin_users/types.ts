@@ -14,6 +14,12 @@ export enum GoLiveStage {
   Live = 'LIVE'
 }
 
+export enum PSPTestAccountStage {
+  NotStarted= 'NOT_STARTED',
+  RequestSubmitted = 'REQUEST_SUBMITTED',
+  Created = 'CREATED'
+}
+
 export interface CustomBranding {
   image_url?: string;
   css_url?: string;
@@ -39,6 +45,7 @@ export interface Service {
   sector?: string;
   went_live_date?: string;
   created_date?: string;
+  current_psp_test_account_stage: PSPTestAccountStage;
   // _links
 }
 
@@ -91,6 +98,7 @@ export interface MerchantDetails {
   address_postcode?: string;
   address_country?: string;
   email?: string;
+  url?: string;
 }
 
 export interface RetrieveUserByEmailRequest {
@@ -129,6 +137,7 @@ export interface UpdateServiceRequest {
   experimental_features_enabled?: boolean;
   agent_initiated_moto_enabled?: boolean;
   archived?: boolean;
+  current_psp_test_account_stage?: PSPTestAccountStage
 }
 
 export interface SearchServicesRequest {
@@ -139,4 +148,9 @@ export interface SearchServicesRequest {
 export interface SearchServicesResponse {
   name_results: Service[];
   merchant_results: Service[];
+}
+
+export interface StripeAgreement {
+  agreement_time: string;
+  ip_address: string;
 }

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import Client from '../../base'
-import { mapRequestParamsToOperation } from '../../utils/request'
+import {mapRequestParamsToOperation} from '../../utils/request'
 import {
   Charge,
   GatewayAccountAPI,
@@ -13,9 +13,9 @@ import {
   CreateGatewayAccountResponse,
   GatewayStatusComparison,
   StripeSetup,
-  UpdateGatewayAccountRequest
+  UpdateGatewayAccountRequest, UpdateStripeSetupRequest, GatewayAccountCredentials, AddGatewayAccountCredentialsRequest
 } from './types'
-import { App } from '../../shared'
+import {App} from '../../shared'
 import {handleEntityNotFound} from "../../utils/error";
 
 /**
@@ -143,7 +143,7 @@ export default class Connector extends Client {
     list(filters: ListGatewayAccountsRequest = {}): Promise<ListGatewayAccountsResponse | undefined> {
       const params = _.omitBy(filters, _.isEmpty)
       return client._axios
-        .get('/v1/api/accounts', { params })
+        .get('/v1/api/accounts', {params})
         .then(response => client._unpackResponseData<ListGatewayAccountsResponse>(response))
     },
 
@@ -176,9 +176,23 @@ export default class Connector extends Client {
 
       return client._axios
         .patch(`/v1/api/accounts/${id}`, payload)
-        .then(() => { return });
-        // @TODO(sfount) decide if this should return the updated account -- could determine through uses of it
-        // .then(() => this.retrieveAPI(id))
+        .then(() => {
+          return
+        });
+      // @TODO(sfount) decide if this should return the updated account -- could determine through uses of it
+      // .then(() => this.retrieveAPI(id))
+    },
+
+    updateStripeSetup(id: string, params: UpdateStripeSetupRequest): Promise<void> {
+      const payload = mapRequestParamsToOperation(params);
+      return client._axios
+        .patch(`/v1/api/accounts/${id}/stripe-setup`, payload)
+    },
+
+    addGatewayAccountCredentials(id: string, params: AddGatewayAccountCredentialsRequest): Promise<GatewayAccountCredentials> {
+      return client._axios
+        .post(`/v1/api/accounts/${id}/credentials`)
+        .then(response => client._unpackResponseData<GatewayAccountCredentials>(response));
     }
 
   }))(this)
@@ -205,8 +219,10 @@ export default class Connector extends Client {
         do_not_retry_emit_until: retryDelayInSeconds
       }
       return client._axios
-        .post('/v1/tasks/historical-event-emitter', null, { params })
-        .then(() => { return })
+        .post('/v1/tasks/historical-event-emitter', null, {params})
+        .then(() => {
+          return
+        })
     },
 
     emitByDate(startDate: string, endDate: string, retryDelayInSeconds: number): Promise<void> {
@@ -216,8 +232,10 @@ export default class Connector extends Client {
         do_not_retry_emit_until: retryDelayInSeconds
       }
       return client._axios
-        .post('/v1/tasks/historical-event-emitter-by-date', null, { params })
-        .then(() => { return })
+        .post('/v1/tasks/historical-event-emitter-by-date', null, {params})
+        .then(() => {
+          return
+        })
     }
   }))(this)
 
@@ -238,8 +256,10 @@ export default class Connector extends Client {
         record_type: recordType
       }
       return client._axios
-        .post('/v1/tasks/parity-checker', null, { params })
-        .then(() => { return })
+        .post('/v1/tasks/parity-checker', null, {params})
+        .then(() => {
+          return
+        })
     }
   }))(this)
 }

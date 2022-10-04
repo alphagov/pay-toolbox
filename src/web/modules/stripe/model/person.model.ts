@@ -1,11 +1,13 @@
-function stripeTestResponsiblePersonDetails () {
+import Stripe from "stripe";
+
+export function stripeTestResponsiblePersonDetails (): Stripe.PersonCreateParams {
   return {
     first_name: 'Jane',
     last_name: 'Doe',
     dob: {
-      day: '01',
-      month: '01',
-      year: '1901'
+      day: 1,
+      month: 1,
+      year: 1901
     },
     relationship: {
       representative: true,
@@ -28,5 +30,3 @@ function stripeTestResponsiblePersonDetails () {
     }
   }
 }
-
-module.exports = { stripeTestResponsiblePersonDetails }

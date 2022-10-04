@@ -1,31 +1,31 @@
 import HTTPSProxyAgent from 'https-proxy-agent'
-import { Request, Response, NextFunction } from 'express'
+import Stripe from "stripe";
 
+import {NextFunction, Request, Response} from 'express'
 import logger from '../../../../lib/logger'
 import * as config from '../../../../config'
-import { Connector, AdminUsers } from '../../../../lib/pay-request'
-import { ValidationError as CustomValidationError } from '../../../../lib/errors'
-import { wrapAsyncErrorHandler } from '../../../../lib/routes'
-import { Service } from '../../../../lib/pay-request/types/adminUsers'
+import {AdminUsers, Connector} from '../../../../lib/pay-request/typed_clients/client'
+import {ValidationError as CustomValidationError} from '../../../../lib/errors'
+import {wrapAsyncErrorHandler} from '../../../../lib/routes'
+import {PSPTestAccountStage, Service} from '../../../../lib/pay-request/typed_clients/services/admin_users/types'
 import GatewayAccountFormModel from "../../gateway_accounts/gatewayAccount.model";
-import { GatewayAccount as CardGatewayAccount } from "../../../../lib/pay-request/types/connector";
-// @ts-ignore
-import { accounts } from "stripe";
-import { stripeTestAccountDetails } from '../model/account.model'
-import { stripeTestResponsiblePersonDetails } from '../model/person.model'
+import {stripeTestAccountDetails} from '../model/account.model'
+import {stripeTestResponsiblePersonDetails} from '../model/person.model'
+import {CreateGatewayAccountResponse} from "../../../../lib/pay-request/typed_clients/services/connector/types";
 
-const Stripe = require('stripe')
 const { StripeError } = Stripe.errors
 
 const STRIPE_ACCOUNT_TEST_API_KEY: string = process.env.STRIPE_ACCOUNT_TEST_API_KEY || ''
 
-const stripeConfig = {}
+const stripeConfig: Stripe.StripeConfig = {
+  'apiVersion': '2020-08-27'
+}
 if (config.server.HTTPS_PROXY) {
   // @ts-ignore
   stripeConfig.httpAgent = new HTTPSProxyAgent(config.server.HTTPS_PROXY)
 }
 
-const stripe = new Stripe(STRIPE_ACCOUNT_TEST_API_KEY, {...stripeConfig, 'apiVersion': '2020-08-27'})
+const stripe = new Stripe(STRIPE_ACCOUNT_TEST_API_KEY, {...stripeConfig})
 
 const createTestAccount = async function createTestAccount(req: Request, res: Response): Promise<void> {
     if (!STRIPE_ACCOUNT_TEST_API_KEY) {
@@ -33,7 +33,7 @@ const createTestAccount = async function createTestAccount(req: Request, res: Re
     }
 
     const serviceExternalId = req.query.service as string
-    const service: Service = await AdminUsers.service(serviceExternalId)
+    const service: Service = await AdminUsers.services.retrieve(serviceExternalId)
 
     const context = {
         systemLinkService: serviceExternalId,
@@ -51,11 +51,11 @@ const createTestAccountConfirm = async function createTestAccountConfirm(req: Re
     let service: Service
 
     try {
-        service = await AdminUsers.service(systemLinkService)
+        service = await AdminUsers.services.retrieve(systemLinkService)
 
         const stripeAccount = await createStripeTestAccount(service.service_name.en)
 
-        const account: CardGatewayAccount = await createTestGatewayAccount(systemLinkService, service.service_name.en, stripeAccount.id)
+        const account = await createTestGatewayAccount(systemLinkService, service.service_name.en, stripeAccount.id)
         const gatewayAccountIdDerived = String(account.gateway_account_id)
         res.render('gateway_accounts/createSuccess', {
             account: account,
@@ -77,7 +77,7 @@ const createTestAccountConfirm = async function createTestAccountConfirm(req: Re
     }
 }
 
-async function createTestGatewayAccount(serviceId: string, serviceName: string, stripeConnectId: string): Promise<CardGatewayAccount> {
+async function createTestGatewayAccount(serviceId: string, serviceName: string, stripeConnectId: string): Promise<CreateGatewayAccountResponse> {
     const account = new GatewayAccountFormModel({
         live: 'not-live',
         paymentMethod: 'card',
@@ -89,32 +89,35 @@ async function createTestGatewayAccount(serviceId: string, serviceName: string, 
         credentials: stripeConnectId
     })
     account.serviceId = serviceId
-    const cardAccount: CardGatewayAccount = await Connector.createAccount(account.formatPayload())
-    const gatewayAccountIdDerived = String(cardAccount.gateway_account_id)
+    const createdAccount = await Connector.accounts.create(account.formatPayload())
+    const gatewayAccountIdDerived = String(createdAccount.gateway_account_id)
     logger.info(`Created new Gateway Account ${gatewayAccountIdDerived}`)
 
-    await Connector.updateStripeSetupValues(gatewayAccountIdDerived, [
-        'bank_account',
-        'company_number',
-        'responsible_person',
-        'vat_number',
-        'director',
-        'organisation_details',
-        'government_entity_document'
-    ])
+    await Connector.accounts.updateStripeSetup(gatewayAccountIdDerived, {
+      bank_account: true,
+      company_number: true,
+      responsible_person: true,
+      vat_number: true,
+      director: true,
+      organisation_details: true,
+      government_entity_document: true
+    })
     logger.info(`Set Stripe setup values to 'true' for Stripe test Gateway Account ${gatewayAccountIdDerived}`)
 
     // connect system linked services to the created account
-    await AdminUsers.updateServiceGatewayAccount(serviceId, gatewayAccountIdDerived)
+    await AdminUsers.services.update(serviceId, {
+      gateway_account_ids: [gatewayAccountIdDerived]
+    })
     logger.info(`Service ${serviceId} linked to new Gateway Account ${gatewayAccountIdDerived}`)
 
-    await AdminUsers.updateServiceTestPspAccountStageToCreated(serviceId)
+    await AdminUsers.services.update(serviceId, {
+      current_psp_test_account_stage: PSPTestAccountStage.Created
+    })
 
-    return cardAccount
+    return createdAccount
 }
 
-// @ts-ignore
-async function createStripeTestAccount(serviceName: string): Promise<accounts> {
+async function createStripeTestAccount(serviceName: string): Promise<Stripe.Account> {
     logger.info('Requesting new Stripe test account from stripe API')
 
     const stripeAccountCreated = await stripe.accounts.create(stripeTestAccountDetails(serviceName))

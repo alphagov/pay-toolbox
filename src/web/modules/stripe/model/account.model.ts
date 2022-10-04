@@ -1,4 +1,6 @@
-function stripeTestAccountDetails (serviceName) {
+import Stripe from "stripe";
+
+export function stripeTestAccountDetails (serviceName: string): Stripe.AccountCreateParams {
   // test Stripe account details as per https://stripe.com/docs/connect/testing
   return {
     type: 'custom',
@@ -35,12 +37,12 @@ function stripeTestAccountDetails (serviceName) {
     },
     settings: {
       payouts: {
-        schedule: { interval: 'daily', delay_days: '7' },
+        schedule: { interval: 'daily', delay_days: 7 },
         statement_descriptor: 'TEST ACCOUNT'
       }
     },
     business_profile: {
-      mcc: 9399,
+      mcc: '9399',
       product_description: 'Test account for a service'
     },
     tos_acceptance: {
@@ -49,5 +51,3 @@ function stripeTestAccountDetails (serviceName) {
     }
   }
 }
-
-module.exports = { stripeTestAccountDetails }

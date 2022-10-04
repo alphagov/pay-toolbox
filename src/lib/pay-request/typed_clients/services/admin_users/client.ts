@@ -1,17 +1,20 @@
-import Client, { PayHooks } from '../../base'
-import { redactOTP } from '../../utils/redact'
-import { mapRequestParamsToOperation } from '../../utils/request'
+import Client from '../../base'
+import {redactOTP} from '../../utils/redact'
+import {mapRequestParamsToOperation} from '../../utils/request'
 import {
-  User,
-  Service,
   RetrieveServiceByGatewayAccountIdRequest,
-  UpdateServiceRequest,
   RetrieveUserByEmailRequest,
-  UpdateUserUsernameRequest,
+  SearchServicesRequest,
+  SearchServicesResponse,
+  Service,
+  StripeAgreement,
+  UpdateServiceRequest,
   UpdateUserDisabledRequest,
-  UpdateUserTelephoneNumberRequest, SearchServicesRequest, SearchServicesResponse
+  UpdateUserTelephoneNumberRequest,
+  UpdateUserUsernameRequest,
+  User
 } from './types'
-import { App } from '../../shared'
+import {App} from '../../shared'
 
 /**
  * Convenience methods for accessing resource endpoints for the Admin Users
@@ -45,6 +48,12 @@ export default class AdminUsers extends Client {
       return client._axios
         .post('/v1/api/services/search', params)
         .then(response => client._unpackResponseData<SearchServicesResponse>(response));
+    },
+
+    retrieveStripeAgreement(id: string): Promise<StripeAgreement | undefined> {
+      return client._axios
+        .get(`/v1/api/services/${id}/stripe-agreement`)
+        .then(response => client._unpackResponseData<StripeAgreement>(response))
     },
 
     /**

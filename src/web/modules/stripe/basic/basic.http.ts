@@ -1,15 +1,16 @@
-import { Request, Response } from 'express'
+import {Request, Response} from 'express'
 
 import logger from '../../../../lib/logger'
-import { AdminUsers } from '../../../../lib/pay-request'
-import { ValidationError as CustomValidationError, IOValidationError } from '../../../../lib/errors'
-import { wrapAsyncErrorHandler } from '../../../../lib/routes'
-import { formatErrorsForTemplate, ClientFormError } from '../../common/validationErrorFormat'
-import { Service, StripeAgreement } from '../../../../lib/pay-request/types/adminUsers'
+import {AdminUsers} from '../../../../lib/pay-request/typed_clients/client'
+import {IOValidationError, ValidationError as CustomValidationError} from '../../../../lib/errors'
+import {wrapAsyncErrorHandler} from '../../../../lib/routes'
+import {ClientFormError, formatErrorsForTemplate} from '../../common/validationErrorFormat'
+import {Service} from '../../../../lib/pay-request/typed_clients/services/admin_users/types'
 import AccountDetails from './basicAccountDetails.model'
-import { setupProductionStripeAccount } from './account'
-const Stripe = require('stripe')
-const { StripeError } = Stripe.errors
+import {setupProductionStripeAccount} from './account'
+
+import Stripe from "stripe";
+const {StripeError} = Stripe.errors
 
 const createAccountForm = async function createAccountForm(
   req: Request,
@@ -20,7 +21,7 @@ const createAccountForm = async function createAccountForm(
   }
 
   const systemLinkService = req.query.service as string
-  const service: Service = await AdminUsers.service(systemLinkService)
+  const service: Service = await AdminUsers.services.retrieve(systemLinkService)
 
   if (service.current_go_live_stage !== 'TERMS_AGREED_STRIPE') {
     throw new CustomValidationError('Service has not completed request to go live and selected Stripe as their PSP')
@@ -43,7 +44,7 @@ const createAccountForm = async function createAccountForm(
     csrf: req.csrfToken()
   }
 
-  const { recovered } = req.session
+  const {recovered} = req.session
   if (recovered) {
     context.formValues = recovered.formValues
 
@@ -72,15 +73,15 @@ const submitAccountCreate = async function submitAccountCreate(
   req: Request,
   res: Response
 ): Promise<void> {
-  const { systemLinkService } = req.body
+  const {systemLinkService} = req.body
 
   try {
-    const service: Service = await AdminUsers.service(systemLinkService)
+    const service: Service = await AdminUsers.services.retrieve(systemLinkService)
     const accountDetails: AccountDetails = new AccountDetails(req.body)
 
-    const stripeAgreement: StripeAgreement = await AdminUsers.serviceStripeAgreement(systemLinkService)
+    const stripeAgreement = await AdminUsers.services.retrieveStripeAgreement(systemLinkService)
     const stripeAccount = await setupProductionStripeAccount(systemLinkService, accountDetails, stripeAgreement)
-    res.render('stripe/success', { response: stripeAccount, systemLinkService, service })
+    res.render('stripe/success', {response: stripeAccount, systemLinkService, service})
   } catch (error) {
     let errors
     if (error instanceof IOValidationError) {
