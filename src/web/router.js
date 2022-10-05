@@ -22,6 +22,7 @@ const platform = require('./modules/platform/dashboard.http')
 const paymentLinks = require('./modules/payment_links/payment_links.http')
 const ledgerPayouts = require('./modules/ledger_payouts/payout.http')
 const performance = require('./modules/statistics/performance.http')
+const performanceBetweenDates = require('./modules/statistics/performance_between_dates.http')
 const events = require('./modules/events')
 
 // @TODO(sfount) remove `default`s on update to import export syntax
@@ -52,6 +53,8 @@ router.get('/statistics/services', auth.secured, statistics.csvServices)
 router.post('/statistics/services', auth.secured, statistics.byServices)
 router.get('/statistics/performance-page', auth.secured, performance.overview)
 router.get('/statistics/performance-data', auth.secured, performance.downloadData)
+router.get('/statistics/performance-between-dates-page', auth.secured, performanceBetweenDates.overview)
+router.post('/statistics/performance-between-dates-page', auth.secured, performanceBetweenDates.downloadData)
 
 router.get('/gateway_accounts', auth.secured, gatewayAccounts.overview)
 router.get('/gateway_accounts/csv', auth.secured, gatewayAccounts.listCSV)

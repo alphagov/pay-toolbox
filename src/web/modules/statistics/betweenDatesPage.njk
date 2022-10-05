@@ -1,0 +1,34 @@
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">GOV.UK Pay platform</span>
+  <h1 class="govuk-heading-m">Compare statistics for two days</h1>
+
+  <form method="post" action="/statistics/compare/date">
+    {{ govukDateInput({
+        id: "fromDate",
+        namePrefix: "from-date",
+        items: [
+          { name: "month", value: fromDate.getMonth(), classes: "govuk-input--width-2" },
+          { name: "year", value: fromDate.getFullYear(), classes: "govuk-input--width-4" }
+        ]
+      })
+    }}
+    {{ govukDateInput({
+        id: "toDate",
+        namePrefix: "to-date",
+        items: [
+          { name: "month", value: toDate.getMonth() + 1, classes: "govuk-input--width-2" },
+          { name: "year", value: toDate.getFullYear(), classes: "govuk-input--width-4" }
+        ]
+      })
+    }}
+    {{ govukButton({
+        text: "Download statistics"
+      }) }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}
