@@ -92,10 +92,11 @@ const byServices = async function byServices(req: Request, res: Response, next: 
             reportData.push(accountReportData)
           })
       })
+    const ordered = _.sortBy(reportData, ['gateway_account_id'] )
 
     res.set('Content-Type', 'text/csv')
     res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_platform_transactions_by_service_month_${fromDate.format('YYYY-MM')}_${toDate.format('YYYY-MM')}.csv"`)
-    res.status(200).send(format(reportData, yearMonthValues, forAllTime))
+    res.status(200).send(format(ordered, yearMonthValues, forAllTime))
   } catch (error) {
     next(error)
   }
