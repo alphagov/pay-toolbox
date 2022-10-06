@@ -1,8 +1,7 @@
-import {Request, Response, NextFunction} from 'express'
+import { Request, Response, NextFunction } from 'express'
 
 import moment from 'moment'
-import {Ledger, AdminUsers} from '../../../lib/pay-request/typed_clients/client'
-import {TransactionState} from "../../../lib/pay-request/typed_clients/shared";
+import { Ledger, AdminUsers } from './../../../lib/pay-request'
 
 export function dashboard(req: Request, res: Response): void {
   res.render('platform/dashboard')
@@ -17,7 +16,7 @@ function formatISODate(moment: moment.Moment): string {
 }
 
 export async function timeseries(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const {date, fromHour, toHour} = req.query
+  const { date, fromHour, toHour } = req.query
 
   try {
     const baseDate = moment(date as string)
@@ -30,10 +29,10 @@ export async function timeseries(req: Request, res: Response, next: NextFunction
       baseDate.clone().utc().set('hour', Number(toHour as string)).endOf('hour') :
       baseDate.clone().utc().endOf('day')
 
-    const result = await Ledger.reports.listTransactionSummaryByHour({
-      from_date: formatISODate(fromDate),
-      to_date: formatISODate(toDate)
-    })
+    const result = await Ledger.paymentVolumesByHour(
+      formatISODate(fromDate),
+      formatISODate(toDate)
+    )
     res.status(200).json(result)
   } catch (error) {
     next(error)
@@ -43,20 +42,20 @@ export async function timeseries(req: Request, res: Response, next: NextFunction
 
 export async function aggregate(req: Request, res: Response, next: NextFunction): Promise<void> {
   // limit expects an upper limit for the date provided - this can be to millisecond amount
-  const {date, state, limit} = req.query
+  const { date, state, limit } = req.query
 
   try {
     const baseDate = moment(date as string)
 
     const toDate = limit && limit.length ?
-      limit as string :
+      limit :
       baseDate.utc().endOf('day').format()
 
-    const result = await Ledger.reports.retrieveLegacyPerformanceSummary({
-      from_date: baseDate.utc().startOf('day').format(),
-      to_date: toDate,
-      state: state as TransactionState
-    })
+    const result = await Ledger.paymentVolumesAggregateLegacy(
+      baseDate.utc().startOf('day').format(),
+      toDate,
+      state
+    )
     res.status(200).json(result)
   } catch (error) {
     next(error)
@@ -64,43 +63,33 @@ export async function aggregate(req: Request, res: Response, next: NextFunction)
 }
 
 export async function ticker(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const {from, to} = req.query
+  const { from, to} = req.query
 
   try {
-    const result = await Ledger.events.listTicker({
-      from_date: from as string,
-      to_date: to as string
-    })
+    const result = await Ledger.eventTicker(from, to)
     res.status(200).json(result)
   } catch (error) {
     next(error)
   }
 }
 
-interface GatewayAccountSummary {
-  name: string;
-  went_live_date: string;
-  is_recent: boolean;
-}
-
 export async function services(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const services = await AdminUsers.services.list()
+    const services = await AdminUsers.services()
 
-    const index = services.reduce((aggregate: { [key: string]: GatewayAccountSummary }, service) => {
+    const index = services.reduce((aggregate: any, service: any) => {
       const now = moment()
-      let isRecent = false;
       if (service.went_live_date) {
         const numberOfDaysOld = now.diff(moment(service.went_live_date), 'days')
-        isRecent = numberOfDaysOld < 30
+        service.is_recent = numberOfDaysOld < 30
       }
-      const mapped: { [key: string]: GatewayAccountSummary } = {
+      const mapped = {
         ...aggregate,
         ...service.gateway_account_ids.reduce((aggregate: any, accountId: string) => {
           aggregate[accountId] = {
             name: service.service_name.en,
             went_live_date: service.went_live_date,
-            is_recent: isRecent
+            is_recent: service.is_recent
           }
           return aggregate
         }, {})
