@@ -101,7 +101,7 @@ export async function toggleRequireCaptcha(req: Request, res: Response, next: Ne
 async function fetchUsageContext(sortKey: string, filterLiveAccounts: Boolean, accountId?: string) {
   let serviceRequest, liveAccountsRequest
   if (accountId) {
-    serviceRequest = AdminUsers.services.retrieve(accountId)
+    serviceRequest = AdminUsers.services.retrieve({gatewayAccountId: accountId})
       .then((service) => [service])
     liveAccountsRequest = Connector.accounts.retrieveAPI(accountId)
       .then((account) => [account])
