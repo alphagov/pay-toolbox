@@ -2,7 +2,7 @@
 
 {% extends "layout/layout.njk" %}
 
-{% set isTestData = not (transaction.parent and transaction.parent.live) %}
+{% set isTestData = not (parentTransaction and parentTransaction.live) %}
 
 {% block main %}
   <h1 class="govuk-heading-m">Dispute</h1>

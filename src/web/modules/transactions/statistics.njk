@@ -2,8 +2,8 @@
 
 {% block main %}
   <span class="govuk-caption-m">
-    {% if account %}
-      <span>{{ account.name }}</span>
+    {% if service %}
+      <span>{{ service.name }}</span>
     {% else %}
       <span>GOV.UK Pay platform</span>
     {% endif %}
@@ -57,7 +57,7 @@
             <th class="govuk-table__header" scope="row">Total amount</th>
             <td class="govuk-table__cell govuk-table__cell--numeric">{{results.gross | currency}}</td>
           </tr>
-       
+
           <tr class="govuk-table__row">
             <th class="govuk-table__header" scope="row">Refunds</th>
             <td class="govuk-table__cell govuk-table__cell--numeric">{{results.refunds}}</td>
@@ -69,7 +69,7 @@
         </tbody>
       </table>
 
-      {% if results.include_moto_statistics %}
+      {% if results.includeMotoStatistics %}
       <h2 class="govuk-heading-m">Additional statistics</h2>
 
       <table class="govuk-table">

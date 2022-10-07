@@ -49,7 +49,9 @@ export interface Transaction {
   created_date: string;
   state: State<ExternalTransactionState>;
   transaction_type: TransactionType;
+  live: boolean;
   parent_transaction_id?: string;
+  gateway_transaction_id?: string;
 }
 
 export interface Payment extends Transaction {
@@ -171,6 +173,7 @@ export interface TransactionsByHourRequest {
 }
 
 export interface TransactionSummaryRequest {
+  from_date?: string;
   to_date?: string;
   /** moto_payments report entry will be returned with 0 values unless this is set to true. */
   include_moto_statistics?: boolean;
@@ -184,7 +187,7 @@ export interface TransactionSummaryWithAccountOverrideRequest extends Transactio
 export interface TransactionSummaryForAccountRequest extends TransactionSummaryRequest {
   /** simplified extended ISO format (ISO 8601). YYYY-MM-DDTHH:mm:ss.sssZ. Dates will be registered as UTC. */
   from_date: string;
-  account_id: number;
+  account_id: string;
 }
 
 export interface PaymentsByStateRequest {
@@ -199,7 +202,7 @@ export interface PaymentsByStateWithAccountOverrideRequest extends PaymentsBySta
 }
 
 export interface PaymentsByStateForAccountRequest extends PaymentsByStateRequest {
-  account_id: number;
+  account_id: string;
 }
 
 export interface PerformanceReportRequest {
@@ -229,6 +232,7 @@ export interface RetrieveTransactionWithAccountOverrideRequest {
 export interface ListTransactionRequest {
   page?: number;
   display_size?: number;
+  transaction_type?: TransactionType;
   cardholder_name?: string;
   /** simplified extended ISO format (ISO 8601). YYYY-MM-DDTHH:mm:ss.sssZ. Dates will be registered as UTC. */
   from_date?: string;
@@ -254,6 +258,8 @@ export interface ListTransactionRequest {
    * of the parent transaction.
   */
   with_parent_transaction?: boolean;
+  limit_total?: boolean;
+  limit_total_size?: number;
 }
 
 export interface ListTransactionForAccountRequest extends ListTransactionRequest {
@@ -275,7 +281,7 @@ export interface ListPaymentRefundsResponse {
 }
 
 export interface ListTransactionEventsRequest {
-  gateway_account_id: number;
+  gateway_account_id: string;
   /**
    * Do not filter events. By default (false) events are filtered for the self
    * service view, only showing certain events for backward compatability. Including
@@ -309,4 +315,13 @@ export interface ListPayoutForAccountRequest extends ListPayoutRequest {
 export interface ListPayoutWithAccountOverrideRequest extends ListPayoutRequest {
   override_account_id_restriction: boolean;
   gateway_account_id?: number | number[];
+}
+
+export interface RelatedTransactionsRequest {
+  gateway_account_id: string;
+}
+
+export interface TransactionsForTransactionResponse {
+  parent_transaction_id: string;
+  transactions: Transaction[];
 }

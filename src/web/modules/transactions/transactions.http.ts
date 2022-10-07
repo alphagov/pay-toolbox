@@ -1,43 +1,42 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import {NextFunction, Request, Response} from 'express'
 
-import { Request, Response, NextFunction } from 'express'
-
-import { Transaction } from './types/ledger'
-
-import { Ledger, Connector, AdminUsers } from '../../../lib/pay-request'
-import { EntityNotFoundError } from '../../../lib/errors'
+import {AdminUsers, Connector, Ledger} from '../../../lib/pay-request/typed_clients/client'
+import {EntityNotFoundError} from '../../../lib/errors'
 import logger from '../../../lib/logger'
+import {TransactionType} from "../../../lib/pay-request/typed_clients/shared";
+import {PaymentListFilterStatus, resolvePaymentStates, resolveRefundStates} from "./states";
 
 const process = require('process')
 const url = require('url')
 const https = require('https')
 const moment = require('moment')
 
-const { common, services } = require('./../../../config')
+const {common, services} = require('./../../../config')
 
 if (common.development) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
 }
 
 export async function searchPage(req: Request, res: Response): Promise<void> {
-  res.render('transactions/search', { csrf: req.csrfToken() })
+  res.render('transactions/search', {csrf: req.csrfToken()})
 }
 
 // @TODO(sfount) move to `transaction.d.ts` -- resolve JavaScript/ TypeScript module issue
-export enum PaymentListFilterStatus {
-  'succeeded', 'failed', 'in-progress', 'all'
-}
+
 
 export async function search(req: Request, res: Response, next: NextFunction): Promise<void> {
   const id = req.body.id && req.body.id.trim()
 
   try {
-    await Ledger.transaction(id)
+    await Ledger.transactions.retrieve(id)
 
     res.redirect(`/transactions/${id}`)
   } catch (error) {
     if (error instanceof EntityNotFoundError) {
-      const referenceSearch = await Ledger.transactionsByReference(id)
+      const referenceSearch = await Ledger.transactions.list({
+        override_account_id_restriction: true,
+        reference: id
+      })
 
       if (referenceSearch.results.length > 1) {
         res.redirect(`/transactions?reference=${id}`)
@@ -47,7 +46,10 @@ export async function search(req: Request, res: Response, next: NextFunction): P
         return
       }
 
-      const gatewayTransactionIdSearch = await Ledger.transactionsByGatewayTransactionId(id)
+      const gatewayTransactionIdSearch = await Ledger.transactions.list({
+        override_account_id_restriction: true,
+        gateway_transaction_id: id
+      })
       if (gatewayTransactionIdSearch.results.length > 1) {
         res.redirect(`/transactions?gateway_transaction_id=${id}`)
         return
@@ -67,18 +69,33 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
   try {
     let service, account
     const accountId = req.query.account
-    const selectedStatus = req.query.status || PaymentListFilterStatus[PaymentListFilterStatus.all]
-    const transactionType = req.query.type && req.query.type.toString().toUpperCase() || 'PAYMENT'
+    const selectedStatus = req.query.status as PaymentListFilterStatus || PaymentListFilterStatus.All
+    const transactionType = req.query.type && req.query.type.toString().toUpperCase() as TransactionType || TransactionType.Payment
+
     const filters = {
-      ...req.query.reference && { reference: req.query.reference },
-      ...req.query.gateway_transaction_id && { gateway_transaction_id: req.query.gateway_transaction_id },
-      ...req.query.gateway_payout_id && { gateway_payout_id: req.query.gateway_payout_id }
+      ...req.query.reference && {reference: req.query.reference as string},
+      ...req.query.gateway_transaction_id && {gateway_transaction_id: req.query.gateway_transaction_id as string},
+      ...req.query.gateway_payout_id && {gateway_payout_id: req.query.gateway_payout_id as string}
     }
-    const response = await Ledger.transactions(accountId, req.query.page, selectedStatus, filters, false, transactionType)
+    const page = req.query.page && Number(req.query.page) || 1
+    const pageSize = 20
+    const limitTotalSize = 5000
+    const response = await Ledger.transactions.list({
+      override_account_id_restriction: !accountId,
+      page,
+      display_size: pageSize,
+      limit_total: true,
+      limit_total_size: limitTotalSize,
+      ...transactionType && {transaction_type: transactionType as TransactionType},
+      ...accountId && {account_id: Number(accountId)},
+      ...transactionType === TransactionType.Payment && {payment_states: resolvePaymentStates(selectedStatus)},
+      ...transactionType === TransactionType.Refund && {refund_states: resolveRefundStates(selectedStatus)},
+      ...filters
+    })
 
     if (req.query.account) {
-      service = await AdminUsers.gatewayAccountServices(accountId)
-      account = await Connector.account(accountId)
+      service = await AdminUsers.services.retrieve({gatewayAccountId: accountId as string})
+      account = await Connector.accounts.retrieveAPI(accountId as string)
     }
 
     res.render('transactions/list', {
@@ -98,30 +115,30 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
 
 export async function show(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const transaction = await Ledger.transaction(req.params.id) as Transaction
-    const account = await Connector.account(transaction.gateway_account_id)
-    const service = await AdminUsers.gatewayAccountServices(transaction.gateway_account_id)
+    const transaction = await Ledger.transactions.retrieve(req.params.id)
+    const account = await Connector.accounts.retrieveAPI(transaction.gateway_account_id)
+    const service = await AdminUsers.services.retrieve({gatewayAccountId: transaction.gateway_account_id})
     const relatedTransactions = []
     let stripeDashboardUri = ''
 
-    const transactionEvents = await Ledger.events(
-      transaction.transaction_id,
-      transaction.gateway_account_id
-    )
+    const transactionEvents = await Ledger.transactions.listEvents(transaction.transaction_id, {
+      gateway_account_id: transaction.gateway_account_id,
+      include_all_events: true
+    })
+
     const events = transactionEvents.events
       .map((event: any) => {
         event.data = Object.keys(event.data).length ? event.data : null
         return event
       })
 
-    const relatedResult = await Ledger.relatedTransactions(
-      transaction.transaction_id,
-      transaction.gateway_account_id
-    )
+    const relatedResult = await Ledger.transactions.retrieveRelatedTransactions(transaction.transaction_id,
+      {gateway_account_id: transaction.gateway_account_id})
     relatedTransactions.push(...relatedResult.transactions)
 
+    let parentTransaction
     if (transaction.parent_transaction_id) {
-      transaction.parent = await Ledger.transaction(transaction.parent_transaction_id) as Transaction
+      parentTransaction = await Ledger.transactions.retrieve(transaction.parent_transaction_id)
     }
 
     const renderKey = transaction.transaction_type.toLowerCase()
@@ -132,6 +149,7 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
 
     res.render(`transactions/${renderKey}`, {
       transaction,
+      parentTransaction,
       relatedTransactions,
       account,
       service,
@@ -147,17 +165,17 @@ const sum = (a: number, b: number): number => a + b
 
 export async function statistics(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    let account
-    const accountId = req.query.account
+    let service
+    const accountId = req.query.account as string
 
     if (req.query.account) {
-      account = await AdminUsers.gatewayAccountServices(accountId)
+      service = await AdminUsers.services.retrieve({gatewayAccountId: accountId})
     } else {
       // @TODO(sfount) temporarily disable platform level queries - not supported by Ledger
       throw new Error('Platform statistics not supported by Ledger')
     }
 
-    const periodKeyMap: {[key: string]: string} = {
+    const periodKeyMap: { [key: string]: string } = {
       today: 'day',
       week: 'week',
       month: 'month'
@@ -168,14 +186,24 @@ export async function statistics(req: Request, res: Response, next: NextFunction
     const fromDate: string = moment().utc().startOf(momentKey).format()
     const toDate: string = moment().utc().endOf(momentKey).format()
 
-    const gateway_account = await Connector.account(accountId);
-    const include_moto_statistics = gateway_account.allow_moto;
+    const account = await Connector.accounts.retrieveAPI(accountId);
+    const includeMotoStatistics = account.allow_moto;
 
-    const paymentsByState = await Ledger.getPaymentsByState(accountId, fromDate, toDate)
-    const paymentStatistics = await Ledger.paymentStatistics(accountId, fromDate, toDate, include_moto_statistics)
+    const paymentsByState = await Ledger.reports.retrievePaymentSummaryByState({
+      account_id: accountId,
+      from_date: fromDate,
+      to_date: toDate
+    })
+    const paymentStatistics = await Ledger.reports.retrieveTransactionSummary({
+      account_id: accountId,
+      override_from_date_validation: true,
+      include_moto_statistics: includeMotoStatistics,
+      ...fromDate && {from_date: fromDate},
+      ...toDate && {to_date: toDate},
+    })
 
     const results = {
-      include_moto_statistics: include_moto_statistics,
+      includeMotoStatistics,
       payments: paymentStatistics.payments.count,
       gross: paymentStatistics.payments.gross_amount,
       motoPayments: paymentStatistics.moto_payments.count,
@@ -192,7 +220,7 @@ export async function statistics(req: Request, res: Response, next: NextFunction
     }
 
     res.render('transactions/statistics', {
-      account,
+      service,
       accountId,
       selectedPeriod,
       results
@@ -207,12 +235,12 @@ export async function csvPage(req: Request, res: Response, next: NextFunction): 
   const years = []
   const totalNumberOfYears = 5
 
-  let account
-  const accountId = req.query.account
+  let service
+  const accountId = req.query.account as string
 
   try {
     if (req.query.account) {
-      account = await AdminUsers.gatewayAccountServices(accountId)
+      service = await AdminUsers.services.retrieve({gatewayAccountId: accountId})
     }
 
     // eslint-disable-next-line no-plusplus
@@ -220,7 +248,7 @@ export async function csvPage(req: Request, res: Response, next: NextFunction): 
 
     res.render('transactions/csv', {
       accountId,
-      account,
+      service,
       years,
       months: moment.months(),
       csrf: req.csrfToken()
@@ -258,8 +286,8 @@ export async function streamCsv(req: Request, res: Response, next: NextFunction)
   let gatewayAccountDetails
   try {
     if (accountId) {
-      serviceDetails = await AdminUsers.gatewayAccountServices(accountId)
-      gatewayAccountDetails = await Connector.account(accountId)
+      serviceDetails = await AdminUsers.services.retrieve({gatewayAccountId: accountId})
+      gatewayAccountDetails = await Connector.accounts.retrieveAPI(accountId)
     }
 
     const feeHeaders = gatewayAccountDetails && gatewayAccountDetails.payment_provider === 'stripe'
@@ -269,8 +297,8 @@ export async function streamCsv(req: Request, res: Response, next: NextFunction)
       payment_states: '',
       exact_reference_match: true,
       ...filters,
-      ...accountId && { account_id: accountId },
-      ...feeHeaders && { fee_headers: feeHeaders }
+      ...accountId && {account_id: accountId},
+      ...feeHeaders && {fee_headers: feeHeaders}
     }
 
     const accountName = serviceDetails ? serviceDetails.name : 'GOV.UK Platform'

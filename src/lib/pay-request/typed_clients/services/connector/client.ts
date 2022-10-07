@@ -191,7 +191,7 @@ export default class Connector extends Client {
 
     addGatewayAccountCredentials(id: string, params: AddGatewayAccountCredentialsRequest): Promise<GatewayAccountCredentials> {
       return client._axios
-        .post(`/v1/api/accounts/${id}/credentials`)
+        .post(`/v1/api/accounts/${id}/credentials`, params)
         .then(response => client._unpackResponseData<GatewayAccountCredentials>(response));
     }
 
