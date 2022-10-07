@@ -1,4 +1,4 @@
-import Client, { PayHooks } from '../../base'
+import Client, {PayHooks} from '../../base'
 import type {
   Payment,
   Refund,
@@ -26,7 +26,7 @@ import type {
   ListPayoutWithAccountOverrideRequest,
   TransactionsByHourRequest,
   ListPaymentRefundsResponse,
-  ListTransactionEventsResponse,
+  ListTransactionEventsResponse, Transaction, RelatedTransactionsRequest, TransactionsForTransactionResponse,
 } from './types'
 import {
   SearchResponse,
@@ -35,6 +35,7 @@ import {
   PaymentProvider,
   App
 } from '../../shared'
+import {handleEntityNotFound} from "../../utils/error";
 
 export default class Ledger extends Client {
   constructor() {
@@ -51,7 +52,7 @@ export default class Ledger extends Client {
       params: RetrieveTransactionForAccountRequest | RetrieveTransactionWithAccountOverrideRequest
     ): Promise<Payment | undefined> {
       return client._axios
-        .get(`/v1/transaction/${id}`, { params })
+        .get(`/v1/transaction/${id}`, {params})
         .then(response => client._unpackResponseData<Payment>(response));
     },
 
@@ -64,11 +65,11 @@ export default class Ledger extends Client {
 
         // @TODO(sfount): this is to work around querystring.stringy() not using a comma separated value
         //                method. The library `qs` is probably a safer way to do this
-        ...accountIdParam && accountIdParam.length && { account_id: accountIdParam.join(',') },
+        ...accountIdParam && accountIdParam.length && {account_id: accountIdParam.join(',')},
         transaction_type: TransactionType.Payment
       }
       return client._axios
-        .get('/v1/transaction', { params: paymentFilters })
+        .get('/v1/transaction', {params: paymentFilters})
         .then(response => client._unpackResponseData<SearchResponse<Payment>>(response));
     },
 
@@ -78,7 +79,7 @@ export default class Ledger extends Client {
      */
     listRefunds(id: string, params: ListPaymentRefundsRequest): Promise<ListPaymentRefundsResponse | undefined> {
       return client._axios
-        .get(`/v1/transaction/${id}/transaction`, { params })
+        .get(`/v1/transaction/${id}/transaction`, {params})
         .then(response => client._unpackResponseData<ListPaymentRefundsResponse>(response));
     }
   }))(this)
@@ -93,7 +94,7 @@ export default class Ledger extends Client {
       params: RetrieveTransactionForAccountRequest | RetrieveTransactionWithAccountOverrideRequest
     ): Promise<Refund | undefined> {
       return client._axios
-        .get(`/v1/transaction/${id}`, { params })
+        .get(`/v1/transaction/${id}`, {params})
         .then(response => client._unpackResponseData<Refund>(response));
     },
 
@@ -103,17 +104,48 @@ export default class Ledger extends Client {
       const accountIdParam = filters.account_id as number[]
       const refundFilters: any = {
         ...filters,
-        ...accountIdParam && accountIdParam.length && { account_id: accountIdParam.join(',') },
+        ...accountIdParam && accountIdParam.length && {account_id: accountIdParam.join(',')},
         transaction_type: TransactionType.Refund
       }
 
       return client._axios
-        .get('/v1/transaction', { params: refundFilters })
+        .get('/v1/transaction', {params: refundFilters})
         .then(response => client._unpackResponseData<SearchResponse<Refund>>(response));
     }
   }))(this)
 
   transactions = ((client: Ledger) => ({
+    retrieve(id: string): Promise<Transaction | undefined> {
+      return client._axios
+        .get(`/v1/transaction/${id}`, { params: {override_account_id_restriction: true}})
+        .then(response => client._unpackResponseData<Transaction>(response))
+        .catch(handleEntityNotFound('Transaction', id))
+    },
+
+    retrieveRelatedTransactions(id: string, params: RelatedTransactionsRequest): Promise<TransactionsForTransactionResponse | undefined> {
+      return client._axios
+        .get(`/v1/transaction/${id}/transaction`, {params})
+        .then(response => client._unpackResponseData<TransactionsForTransactionResponse>(response));
+    },
+
+    list(
+      filters: ListTransactionForAccountRequest | ListTransactionRequestWithAccountOverrideRequest
+    ): Promise<SearchResponse<Transaction> | undefined> {
+      const accountIdParam = filters.account_id as number[]
+      const paymentFilters: any = {
+        ...filters,
+
+        // @TODO(sfount): this is to work around querystring.stringy() not using a comma separated value
+        //                method. The library `qs` is probably a safer way to do this
+        ...accountIdParam && accountIdParam.length && {account_id: accountIdParam.join(',')},
+        ...Array.isArray(filters.payment_states) && { payment_states: filters.payment_states.join(',') },
+        ...Array.isArray(filters.refund_states) && { refund_states: filters.refund_states.join(',') }
+      }
+      return client._axios
+        .get('/v1/transaction', {params: paymentFilters})
+        .then(response => client._unpackResponseData<SearchResponse<Transaction>>(response));
+    },
+
     /**
      * @param id - GOV.UK Pay transaction external ID
      * @param params - optionally specify gateway account ID or override requirement
@@ -122,7 +154,7 @@ export default class Ledger extends Client {
      */
     listEvents(id: string, params: ListTransactionEventsRequest): Promise<ListTransactionEventsResponse | undefined> {
       return client._axios
-        .get(`/v1/transaction/${id}/event`, { params })
+        .get(`/v1/transaction/${id}/event`, {params})
         .then(response => client._unpackResponseData<ListTransactionEventsResponse>(response));
     }
   }))(this)
@@ -134,7 +166,7 @@ export default class Ledger extends Client {
      */
     listTicker(params: ListEventTickerRequest): Promise<EventTicker[] | undefined> {
       return client._axios
-        .get('/v1/event/ticker', { params })
+        .get('/v1/event/ticker', {params})
         .then(response => client._unpackResponseData<EventTicker[]>(response))
 
         // @FIXME(sfount) this is to accomidate inconsistent backend behaviour,
@@ -152,13 +184,13 @@ export default class Ledger extends Client {
   reports = ((client: Ledger) => ({
     retrievePaymentSummaryByState(params: PaymentsByStateWithAccountOverrideRequest | PaymentsByStateForAccountRequest): Promise<PaymentCountByStateReport | undefined> {
       return client._axios
-        .get('/v1/report/payments_by_state', { params })
+        .get('/v1/report/payments_by_state', {params})
         .then(response => client._unpackResponseData<PaymentCountByStateReport>(response));
     },
 
     retrieveTransactionSummary(params: TransactionSummaryWithAccountOverrideRequest | TransactionSummaryForAccountRequest): Promise<TransactionSummaryReport | undefined> {
       return client._axios
-        .get('/v1/report/transactions-summary', { params })
+        .get('/v1/report/transactions-summary', {params})
         .then(response => client._unpackResponseData<TransactionSummaryReport>(response));
     },
 
@@ -170,19 +202,19 @@ export default class Ledger extends Client {
      */
     listTransactionSummaryByHour(params: TransactionsByHourRequest): Promise<TransactionsByHourReport | undefined> {
       return client._axios
-        .get('/v1/report/transactions-by-hour', { params })
+        .get('/v1/report/transactions-by-hour', {params})
         .then(response => client._unpackResponseData<TransactionsByHourReport>(response));
     },
 
     retrievePerformanceSummary(params: PerformanceReportRequest): Promise<PerformanceReport | undefined> {
       return client._axios
-        .get('/v1/report/performance-report', { params })
+        .get('/v1/report/performance-report', {params})
         .then(response => client._unpackResponseData<PerformanceReport>(response));
     },
 
     retrievePerformanceSummaryByGateway(params: GatewayPerformanceReportRequest): Promise<GatewayPerformanceReport | undefined> {
       return client._axios
-        .get('/v1/report/gateway-performance-report', { params })
+        .get('/v1/report/gateway-performance-report', {params})
         .then(response => client._unpackResponseData<GatewayPerformanceReport>(response));
     }
   }))(this)
@@ -191,11 +223,11 @@ export default class Ledger extends Client {
     list(params: ListPayoutForAccountRequest | ListPayoutWithAccountOverrideRequest): Promise<SearchResponse<Payout> | undefined> {
       const payoutParams = {
         ...params,
-        ...params.gateway_account_id && Array.isArray(params.gateway_account_id) && { gateway_account_id: params.gateway_account_id.join(',') },
+        ...params.gateway_account_id && Array.isArray(params.gateway_account_id) && {gateway_account_id: params.gateway_account_id.join(',')},
       }
 
       return client._axios
-        .get('/v1/payout', { params: payoutParams })
+        .get('/v1/payout', {params: payoutParams})
         .then(response => client._unpackResponseData<SearchResponse<Payout>>(response));
     }
   }))(this)
