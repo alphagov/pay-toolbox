@@ -21,9 +21,6 @@ export async function searchPage(req: Request, res: Response): Promise<void> {
   res.render('transactions/search', {csrf: req.csrfToken()})
 }
 
-// @TODO(sfount) move to `transaction.d.ts` -- resolve JavaScript/ TypeScript module issue
-
-
 export async function search(req: Request, res: Response, next: NextFunction): Promise<void> {
   const id = req.body.id && req.body.id.trim()
 

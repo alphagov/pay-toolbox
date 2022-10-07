@@ -39,6 +39,12 @@ export default class Connector extends Client {
         .then(response => client._unpackResponseData<Charge>(response))
     },
 
+    retrieveAPI(externalChargeId: string, accountId: string): Promise<Charge | undefined> {
+      return client._axios
+        .get(`/v1/api/accounts/${accountId}/charges/${externalChargeId}`)
+        .then(response => client._unpackResponseData<Charge>(response))
+    },
+
     /**
      * Get the comparison between the status in Pay and the status with the Gateway for a list of
      * charges
