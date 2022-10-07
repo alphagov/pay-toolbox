@@ -50,11 +50,11 @@ const paymentTypeMap: { [key: string]: string } = {
 }
 
 const providerLogoMap: { [key: string]: string } = {
-  '"worldpay"': WorldpayLogo,
-  '"stripe"': StripeLogo,
-  '"epdq"': BarclaysLogo,
-  '"smartpay"': BarclaysLogo,
-  '"sandbox"': SandboxLogo
+  'worldpay': WorldpayLogo,
+  'stripe': StripeLogo,
+  'epdq': BarclaysLogo,
+  'smartpay': BarclaysLogo,
+  'sandbox': SandboxLogo
 }
 
 const profileMap: { [key: string]: CardProfile } = {

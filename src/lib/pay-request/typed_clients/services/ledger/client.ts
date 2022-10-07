@@ -175,7 +175,7 @@ export default class Ledger extends Client {
           .map(event => ({
             ...event,
             resource_type: event.resource_type.toUpperCase() as ResourceType,
-            payment_provider: event.payment_provider.replace(/"/g, '') as PaymentProvider
+            payment_provider: event.payment_provider && event.payment_provider.replace(/"/g, '') as PaymentProvider
           }))
         );
     }
