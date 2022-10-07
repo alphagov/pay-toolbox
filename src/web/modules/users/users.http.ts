@@ -1,17 +1,17 @@
-import { Request, Response, NextFunction } from 'express'
-import { wrapAsyncErrorHandler } from '../../../lib/routes'
-import { AdminUsers } from '../../../lib/pay-request'
+import {Request, Response, NextFunction} from 'express'
+import {wrapAsyncErrorHandler} from '../../../lib/routes'
+import {AdminUsers} from '../../../lib/pay-request/typed_clients/client'
 import logger from '../../../lib/logger'
 
 import UpdateEmailFormRequest from './UpdateEmailForm'
 import UpdatePhoneNumberFormRequest from './UpdatePhoneNumberForm'
 
-import { formatErrorsForTemplate, ClientFormError } from '../common/validationErrorFormat'
-import { EntityNotFoundError, IOValidationError } from '../../../lib/errors'
+import {formatErrorsForTemplate, ClientFormError} from '../common/validationErrorFormat'
+import {EntityNotFoundError, IOValidationError} from '../../../lib/errors'
 
 const show = async function show(req: Request, res: Response): Promise<void> {
-  const payUser = await AdminUsers.user(req.params.id)
-  const context = { payUser, messages: req.flash('info'), csrf: req.csrfToken() }
+  const payUser = await AdminUsers.users.retrieve(req.params.id)
+  const context = {payUser, messages: req.flash('info'), csrf: req.csrfToken()}
 
   res.render('users/users.show.njk', context)
 }
@@ -29,9 +29,9 @@ const updatePhoneNumberForm = async function updatePhoneNumberForm(
   req: Request,
   res: Response
 ): Promise<void> {
-  const user = await AdminUsers.user(req.params.id)
-  const context: RecoverContext = { user, csrf: req.csrfToken() }
-  const { recovered } = req.session
+  const user = await AdminUsers.users.retrieve(req.params.id)
+  const context: RecoverContext = {user, csrf: req.csrfToken()}
+  const {recovered} = req.session
 
   // @TODO(sfount) move all recovery code into one place -- all mapping to formats the template
   //               understand should be done in one place
@@ -54,9 +54,9 @@ const updatePhoneNumberForm = async function updatePhoneNumberForm(
 }
 
 const updateEmailForm = async function updateEmailForm(req: Request, res: Response): Promise<void> {
-  const user = await AdminUsers.user(req.params.id)
-  const context: RecoverContext = { user, csrf: req.csrfToken() }
-  const { recovered } = req.session
+  const user = await AdminUsers.users.retrieve(req.params.id)
+  const context: RecoverContext = {user, csrf: req.csrfToken()}
+  const {recovered} = req.session
 
   // @TODO(sfount) move all recovery code into one place -- all mapping to formats the template
   //               understand should be done in one place
@@ -83,12 +83,12 @@ const updateEmail = async function updateEmail(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const { id } = req.params
+  const {id} = req.params
 
   try {
     const updateRequest = new UpdateEmailFormRequest(req.body)
 
-    await AdminUsers.updateUserEmail(id, updateRequest.email)
+    await AdminUsers.users.update(id, {email: updateRequest.email})
     req.flash('info', 'Updated email')
     res.redirect(`/users/${id}`)
   } catch (error) {
@@ -109,12 +109,12 @@ const updatePhoneNumber = async function updatePhoneNumber(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const { id } = req.params
+  const {id} = req.params
 
   try {
     const updateRequest = new UpdatePhoneNumberFormRequest(req.body)
 
-    await AdminUsers.updateUserPhone(id, updateRequest.telephone_number)
+    await AdminUsers.users.update(id, {telephone_number: updateRequest.telephone_number})
     req.flash('info', 'Updated phone number ')
     res.redirect(`/users/${id}`)
   } catch (error) {
@@ -134,10 +134,12 @@ const toggleUserEnabled = async function toggleUserEnabled(
   req: Request,
   res: Response
 ): Promise<void> {
-  const { id } = req.params
-  await AdminUsers.toggleUserEnabled(id)
+  const {id} = req.params
+  const user = await AdminUsers.users.retrieve(id)
+  const disable = !user.disabled
+  await AdminUsers.users.update(id, {disabled: disable})
 
-  req.flash('info', 'Updated disabled status')
+  req.flash('info', `User ${disable? 'disabled' : 'enabled'}`)
   res.redirect(`/users/${id}`)
 }
 
@@ -145,11 +147,11 @@ const removeUserFromService = async function removeUserFromService(
   req: Request,
   res: Response
 ): Promise<void> {
-  const { serviceId, userId } = req.params
-  logger.info("Removing user from service.", { user_external_id: userId, service_external_id: serviceId })
-  await AdminUsers.removeUserFromService(serviceId, userId)
-  logger.info("Removed user from service.", { user_external_id: userId, service_external_id: serviceId })
-  
+  const {serviceId, userId} = req.params
+  logger.info("Removing user from service.", {user_external_id: userId, service_external_id: serviceId})
+  await AdminUsers.services.removeUser(serviceId, userId)
+  logger.info("Removed user from service.", {user_external_id: userId, service_external_id: serviceId})
+
   req.flash('info', `User ${userId} removed from service ${serviceId}`)
   res.redirect(`/users/${userId}`)
 }
@@ -158,10 +160,10 @@ const confirmRemoveUserFromService = async function confirmRemoveUserFromService
   req: Request,
   res: Response
 ): Promise<void> {
-  const { serviceId, userId } = req.params
-  const payUser = await AdminUsers.user(userId)
-  const service = await AdminUsers.service(serviceId)
-  const context = { payUser, serviceId, userId, service, csrf: req.csrfToken() }
+  const {serviceId, userId} = req.params
+  const payUser = await AdminUsers.users.retrieve(userId)
+  const service = await AdminUsers.services.retrieve(serviceId)
+  const context = {payUser, serviceId, userId, service, csrf: req.csrfToken()}
 
   res.render('users/deleteUserFromService.njk', context)
 }
@@ -170,8 +172,8 @@ const resetUserSecondFactor = async function resetUserSecondFactor(
   req: Request,
   res: Response
 ): Promise<void> {
-  const { id } = req.params
-  await AdminUsers.resetUserSecondFactor(id)
+  const {id} = req.params
+  await AdminUsers.users.resetSecondFactor(id)
 
   req.flash('info', 'User second factor method reset')
   res.redirect(`/users/${id}`)
@@ -181,7 +183,7 @@ const searchPage = async function searchPage(
   req: Request,
   res: Response
 ): Promise<void> {
-  res.render('users/search', { csrf: req.csrfToken() })
+  res.render('users/search', {csrf: req.csrfToken()})
 }
 
 const search = async function search(
@@ -191,16 +193,16 @@ const search = async function search(
 ): Promise<void> {
   const search = req.body.search && req.body.search.trim()
   try {
-    const user = await AdminUsers.findUser(search)
+    const user = await AdminUsers.users.findByEmail(search)
     res.redirect(`/users/${user.external_id}`)
   } catch (err) {
     if (err instanceof EntityNotFoundError) {
-      const user = await AdminUsers.user(search)
+      const user = await AdminUsers.users.retrieve(search)
       return res.redirect(`/users/${user.external_id}`)
     }
     next(err)
   }
-  
+
 }
 
 export default {

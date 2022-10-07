@@ -109,16 +109,10 @@ export interface RetrieveServiceByGatewayAccountIdRequest {
   gatewayAccountId: string;
 }
 
-export interface UpdateUserDisabledRequest {
-  disabled: boolean;
-}
-
-export interface UpdateUserUsernameRequest {
-  username: string;
-}
-
-export interface UpdateUserTelephoneNumberRequest {
-  telephone_number: string;
+export interface UpdateUserRequest {
+  disabled?: boolean;
+  telephone_number?: string;
+  email?: string;
 }
 
 export interface UpdateServiceRequest {

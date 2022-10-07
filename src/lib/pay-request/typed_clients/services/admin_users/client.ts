@@ -8,13 +8,11 @@ import {
   SearchServicesResponse,
   Service,
   StripeAgreement,
-  UpdateServiceRequest,
-  UpdateUserDisabledRequest,
-  UpdateUserTelephoneNumberRequest,
-  UpdateUserUsernameRequest,
+  UpdateServiceRequest, UpdateUserRequest,
   User
 } from './types'
 import {App} from '../../shared'
+import {handleEntityNotFound} from "../../utils/error";
 
 /**
  * Convenience methods for accessing resource endpoints for the Admin Users
@@ -80,18 +78,29 @@ export default class AdminUsers extends Client {
       return client._axios
         .get(`/v1/api/services/${id}/users`)
         .then(response => client._unpackResponseData<User[]>(response));
+    },
+
+    removeUser(serviceId: string, userId: string) : Promise<void> {
+      return client._axios
+        .delete(`/v1/api/toolbox/services/${serviceId}/users/${userId}`)
     }
   }))(this)
 
   users = ((client: AdminUsers) => ({
-    retrieve(idOrParams: string | RetrieveUserByEmailRequest): Promise<User | undefined> {
-      const action = isRetrieveUserParams(idOrParams)
-        ? client._axios.post('/v1/api/users/find', { username: idOrParams.email })
-        : client._axios.get(`/v1/api/users/${idOrParams}`)
-
-      return action
+    retrieve(id: string): Promise<User | undefined> {
+      return client._axios
+        .get(`/v1/api/users/${id}`)
         .then(response => client._unpackResponseData<User>(response))
-        .then(user => redactOTP(user));
+        .then(user => redactOTP(user))
+        .catch(handleEntityNotFound('User', id));
+    },
+
+    findByEmail(email: string) : Promise<User | undefined> {
+      return client._axios
+        .post('/v1/api/users/find', { username: email })
+        .then(response => client._unpackResponseData<User>(response))
+        .then(user => redactOTP(user))
+        .catch(handleEntityNotFound('User', email));
     },
 
     /**
@@ -102,7 +111,7 @@ export default class AdminUsers extends Client {
      */
     update(
       id: string,
-      params: UpdateUserUsernameRequest | UpdateUserDisabledRequest | UpdateUserTelephoneNumberRequest
+      params: UpdateUserRequest
     ): Promise<User | undefined> {
       const payload = mapRequestParamsToOperation(params).pop()
 
