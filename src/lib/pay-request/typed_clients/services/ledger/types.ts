@@ -204,9 +204,9 @@ export interface PaymentsByStateForAccountRequest extends PaymentsByStateRequest
 
 export interface PerformanceReportRequest {
   /** simplified extended ISO format (ISO 8601). YYYY-MM-DDTHH:mm:ss.sssZ. Dates will be registered as UTC. */
-  from_date: string;
+  from_date?: string;
   /** simplified extended ISO format (ISO 8601). YYYY-MM-DDTHH:mm:ss.sssZ. Dates will be registered as UTC. */
-  to_date: string;
+  to_date?: string;
   state?: TransactionState
 }
 
