@@ -1,8 +1,9 @@
-import { Request, Response } from 'express'
+import {Request, Response} from 'express'
 import moment from 'moment'
-import { Service } from '../../../lib/pay-request/typed_clients/services/admin_users/types'
-import { getLiveNotArchivedServices } from '../services/getFilteredServices'
-import { Ledger } from '../../../lib/pay-request'
+import {Service} from '../../../lib/pay-request/typed_clients/services/admin_users/types'
+import {getLiveNotArchivedServices} from '../services/getFilteredServices'
+import {Ledger} from '../../../lib/pay-request/typed_clients/client'
+import {TransactionState} from "../../../lib/pay-request/typed_clients/shared";
 
 function convertToUnits(value: number) {
   let stringOfAmount
@@ -45,7 +46,9 @@ export async function downloadData(req: Request, res: Response) {
       return aggregate
     }, {})
 
-  const paymentStatistics = await Ledger.paymentVolumesAggregate(null, null, 'SUCCESS')
+  const paymentStatistics = await Ledger.reports.retrievePerformanceSummary({
+    state: TransactionState.Success
+  })
 
   const data = {
     dateUpdated: moment().format('D MMMM YYYY'),
