@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { diff } from 'deep-diff'
-import { Ledger, Connector } from '../../../../lib/pay-request/typed_clients/client'
+import { Ledger, Connector } from '../../../../lib/pay-request/client'
 
 export async function validateLedgerTransaction(
   req: Request,

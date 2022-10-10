@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from 'express'
-import {AdminUsers, Connector} from '../../../../lib/pay-request/typed_clients/client'
+import {AdminUsers, Connector} from '../../../../lib/pay-request/client'
 import AccountDetails from '../../stripe/basic/basicAccountDetails.model'
 import {setupProductionStripeAccount} from '../../stripe/basic/account'
 import logger from "../../../../lib/logger";

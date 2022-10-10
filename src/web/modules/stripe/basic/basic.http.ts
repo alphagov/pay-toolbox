@@ -1,11 +1,11 @@
 import {Request, Response} from 'express'
 
 import logger from '../../../../lib/logger'
-import {AdminUsers} from '../../../../lib/pay-request/typed_clients/client'
+import {AdminUsers} from '../../../../lib/pay-request/client'
 import {IOValidationError, ValidationError as CustomValidationError} from '../../../../lib/errors'
 import {wrapAsyncErrorHandler} from '../../../../lib/routes'
 import {ClientFormError, formatErrorsForTemplate} from '../../common/validationErrorFormat'
-import {Service} from '../../../../lib/pay-request/typed_clients/services/admin_users/types'
+import {Service} from '../../../../lib/pay-request/services/admin_users/types'
 import AccountDetails from './basicAccountDetails.model'
 import {setupProductionStripeAccount} from './account'
 

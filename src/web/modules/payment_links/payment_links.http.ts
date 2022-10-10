@@ -1,10 +1,10 @@
 import _ from 'lodash'
 import {NextFunction, Request, Response} from 'express'
-import {AdminUsers, Connector, Products} from '../../../lib/pay-request/typed_clients/client'
-import type {Product} from '../../../lib/pay-request/typed_clients/services/products/types'
+import {AdminUsers, Connector, Products} from '../../../lib/pay-request/client'
+import type {Product} from '../../../lib/pay-request/services/products/types'
 import {aggregateServicesByGatewayAccountId} from '../../../lib/gatewayAccounts'
 import {format} from './csv'
-import {AccountType} from "../../../lib/pay-request/typed_clients/shared";
+import {AccountType} from "../../../lib/pay-request/shared";
 
 function getLinksForProductIndexedByType(paymentLink: Product) {
   return paymentLink._links.reduce((aggregate: { [key: string]: string }, linkDetails) => {

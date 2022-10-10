@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from 'express'
 import {wrapAsyncErrorHandler} from '../../../lib/routes'
-import {AdminUsers} from '../../../lib/pay-request/typed_clients/client'
+import {AdminUsers} from '../../../lib/pay-request/client'
 import logger from '../../../lib/logger'
 
 import UpdateEmailFormRequest from './UpdateEmailForm'

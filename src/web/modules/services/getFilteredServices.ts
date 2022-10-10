@@ -1,6 +1,6 @@
 import { BooleanFilterOption } from '../common/BooleanFilterOption'
-import { Service } from '../../../lib/pay-request/typed_clients/services/admin_users/types'
-import { AdminUsers } from '../../../lib/pay-request/typed_clients/client'
+import { Service } from '../../../lib/pay-request/services/admin_users/types'
+import { AdminUsers } from '../../../lib/pay-request/client'
 
 export interface ServiceFilters {
   live: BooleanFilterOption;

@@ -3,7 +3,7 @@ import https from 'https'
 import axios, {AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig, Method} from 'axios'
 import {App} from './shared'
 
-const {RESTClientError} = require('../../errors')
+const {RESTClientError} = require('../errors')
 
 /** Base HTTP client with common helpers for all microservices */
 export default class Client {

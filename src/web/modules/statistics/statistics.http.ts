@@ -3,12 +3,12 @@ import {NextFunction, Request, Response} from 'express'
 import moment from 'moment'
 import _ from 'lodash'
 import logger from '../../../lib/logger'
-import {AdminUsers, Connector, Ledger} from './../../../lib/pay-request/typed_clients/client'
+import {AdminUsers, Connector, Ledger} from '../../../lib/pay-request/client'
 
 import {wrapAsyncErrorHandlers} from './../../../lib/routes'
-import {GatewayAccount} from "../../../lib/pay-request/typed_clients/services/connector/types";
-import {AccountType} from "../../../lib/pay-request/typed_clients/shared";
-import {GatewayPerformanceReportEntry} from "../../../lib/pay-request/typed_clients/services/ledger/types";
+import {GatewayAccount} from "../../../lib/pay-request/services/connector/types";
+import {AccountType} from "../../../lib/pay-request/shared";
+import {GatewayPerformanceReportEntry} from "../../../lib/pay-request/services/ledger/types";
 import {format} from "./csv"
 
 const startOfGovUkPay = moment.utc().month(8).year(2016)

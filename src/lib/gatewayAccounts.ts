@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Service } from './pay-request/typed_clients/services/admin_users/types'
+import { Service } from './pay-request/services/admin_users/types'
 import { ParsedQs } from 'qs'
 import { BooleanFilterOption, toNullableBooleanString } from '../web/modules/common/BooleanFilterOption'
-import { ListGatewayAccountsRequest } from './pay-request/typed_clients/services/connector/types'
-import { AccountType } from './pay-request/typed_clients/shared'
+import { ListGatewayAccountsRequest } from './pay-request/services/connector/types'
+import { AccountType } from './pay-request/shared'
 
 export function aggregateServicesByGatewayAccountId(services: Service[]): { [key: string]: Service } {
   return services

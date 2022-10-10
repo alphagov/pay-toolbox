@@ -4,14 +4,14 @@ import Stripe from "stripe";
 import {NextFunction, Request, Response} from 'express'
 import logger from '../../../../lib/logger'
 import * as config from '../../../../config'
-import {AdminUsers, Connector} from '../../../../lib/pay-request/typed_clients/client'
+import {AdminUsers, Connector} from '../../../../lib/pay-request/client'
 import {ValidationError as CustomValidationError} from '../../../../lib/errors'
 import {wrapAsyncErrorHandler} from '../../../../lib/routes'
-import {PSPTestAccountStage, Service} from '../../../../lib/pay-request/typed_clients/services/admin_users/types'
+import {PSPTestAccountStage, Service} from '../../../../lib/pay-request/services/admin_users/types'
 import GatewayAccountFormModel from "../../gateway_accounts/gatewayAccount.model";
 import {stripeTestAccountDetails} from '../model/account.model'
 import {stripeTestResponsiblePersonDetails} from '../model/person.model'
-import {CreateGatewayAccountResponse} from "../../../../lib/pay-request/typed_clients/services/connector/types";
+import {CreateGatewayAccountResponse} from "../../../../lib/pay-request/services/connector/types";
 
 const { StripeError } = Stripe.errors
 

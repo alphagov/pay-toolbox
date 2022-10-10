@@ -1,4 +1,4 @@
-import {ExternalTransactionState} from "../../../lib/pay-request/typed_clients/shared";
+import {ExternalTransactionState} from "../../../lib/pay-request/shared";
 
 export enum PaymentListFilterStatus {
   Succeeded = 'succeeded', Failed = 'failed', InProgress = 'in-progress', All = 'all'

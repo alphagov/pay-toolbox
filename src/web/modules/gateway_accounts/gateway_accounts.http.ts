@@ -7,7 +7,7 @@ import logger from '../../../lib/logger'
 
 import {
   Connector, AdminUsers, PublicAuth, Products
-} from '../../../lib/pay-request/typed_clients/client'
+} from '../../../lib/pay-request/client'
 import {wrapAsyncErrorHandler} from '../../../lib/routes'
 import {extractFiltersFromQuery, toAccountSearchParams} from '../../../lib/gatewayAccounts'
 
@@ -16,15 +16,15 @@ import {
   GoLiveStage,
   Service,
   UpdateServiceRequest
-} from '../../../lib/pay-request/typed_clients/services/admin_users/types'
-import {Product, ProductType} from '../../../lib/pay-request/typed_clients/services/products/types'
+} from '../../../lib/pay-request/services/admin_users/types'
+import {Product, ProductType} from '../../../lib/pay-request/services/products/types'
 import {
   GatewayAccount,
   GatewayAccountFrontend,
   StripeCredentials,
   StripeSetup
-} from '../../../lib/pay-request/typed_clients/services/connector/types'
-import {PaymentProvider} from '../../../lib/pay-request/typed_clients/shared'
+} from '../../../lib/pay-request/services/connector/types'
+import {PaymentProvider} from '../../../lib/pay-request/shared'
 import {ClientFormError} from '../common/validationErrorFormat'
 import * as config from '../../../config'
 import {format} from './csv'
@@ -35,7 +35,7 @@ import {formatErrorsForTemplate} from '../common/validationErrorFormat'
 import {EntityNotFoundError, IOValidationError} from '../../../lib/errors'
 
 import * as stripeClient from '../../../lib/stripe/stripe.client'
-import {TokenSource, TokenType} from '../../../lib/pay-request/typed_clients/services/public_auth/types'
+import {TokenSource, TokenType} from '../../../lib/pay-request/services/public_auth/types'
 
 async function overview(req: Request, res: Response): Promise<void> {
   const filters = extractFiltersFromQuery(req.query)
