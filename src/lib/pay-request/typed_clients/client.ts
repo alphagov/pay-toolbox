@@ -4,6 +4,7 @@ import _Ledger from './services/ledger/client'
 import _Products from './services/products/client'
 import _PublicAuth from './services/public_auth/client'
 import { PayHooks } from './base'
+import {BroadcastResult} from "./shared";
 
 const clients: {
   Connector: _Connector;
@@ -42,4 +43,17 @@ export function config(env: NodeJS.ProcessEnv = {}, options: PayHooks = {}): voi
     clients.Products._configure(productsUrl, options)
   if (publicAuthUrl)
     clients.PublicAuth._configure(publicAuthUrl, options)
+}
+
+// make a GET request to all supported clients - for now suppress throwing the
+// error upwards as the calling code probably wants all results
+export async function broadcast(path: string): Promise<BroadcastResult[]> {
+  return Promise.all(Object.values(clients).map(async (client) => {
+    try {
+      const result = await client._axios.get(path)
+      return { app: client._app, success: true, result }
+    } catch (error) {
+      return { app: client._app, success: false, result: error }
+    }
+  }))
 }

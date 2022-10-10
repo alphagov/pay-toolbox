@@ -8,7 +8,7 @@ const {RESTClientError} = require('../../errors')
 /** Base HTTP client with common helpers for all microservices */
 export default class Client {
   _axios: AxiosInstance
-  private _app: App
+  _app: App
 
   constructor(app: App) {
     this._app = app

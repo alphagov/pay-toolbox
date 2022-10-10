@@ -150,6 +150,12 @@ export enum Language {
   Welsh = 'cy'
 }
 
+export interface BroadcastResult {
+  app: string;
+  success: boolean;
+  result: object;
+}
+
 export type kv = { [key: string ]: string | boolean | undefined }
 
 export enum App {

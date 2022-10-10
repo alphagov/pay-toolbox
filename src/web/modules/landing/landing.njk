@@ -12,7 +12,7 @@
         {% else %}
           <span class="circle status-disconnected"></span>
         {% endif %}
-        <span> {{ service.name }}</span>
+        <span> {{ service.name | replace("_", " ") | title }}</span>
       </li>
     {% endfor %}
     </ul>
