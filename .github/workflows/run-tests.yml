@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   unit-tests:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     name: Unit tests
 
     steps:
