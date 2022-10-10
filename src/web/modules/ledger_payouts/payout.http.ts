@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from 'express'
 
-import {Ledger, Connector, AdminUsers} from '../../../lib/pay-request/typed_clients/client'
+import {Ledger, Connector, AdminUsers} from '../../../lib/pay-request/client'
 
 export async function list(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {

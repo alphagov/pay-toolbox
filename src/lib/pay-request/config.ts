@@ -1,7 +1,7 @@
 import { getNamespace } from 'cls-hooked'
 
-import { config } from './typed_clients/client'
-import { PayRequestContext } from './typed_clients/base'
+import { config } from './client'
+import { PayRequestContext } from './base'
 const logger = require('../logger')
 
 function transformRequestAddHeaders() {
@@ -44,4 +44,4 @@ export function configureClients() {
     successResponse,
     failureResponse
   })
-} 
+}

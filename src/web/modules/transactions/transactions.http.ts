@@ -1,9 +1,9 @@
 import {NextFunction, Request, Response} from 'express'
 
-import {AdminUsers, Connector, Ledger} from '../../../lib/pay-request/typed_clients/client'
+import {AdminUsers, Connector, Ledger} from '../../../lib/pay-request/client'
 import {EntityNotFoundError} from '../../../lib/errors'
 import logger from '../../../lib/logger'
-import {TransactionType} from "../../../lib/pay-request/typed_clients/shared";
+import {TransactionType} from "../../../lib/pay-request/shared";
 import {PaymentListFilterStatus, resolvePaymentStates, resolveRefundStates} from "./states";
 
 const process = require('process')

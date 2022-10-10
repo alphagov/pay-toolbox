@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const { Connector } = require('../../../lib/pay-request/typed_clients/client')
+const { Connector } = require('../../../lib/pay-request/client')
 const logger = require('../../../lib/logger')
 
 async function emitByIdPage(req, res) {
@@ -43,7 +43,7 @@ async function emitById(req, res) {
 
 async function emitByDate(req, res) {
   const { start_date: startDate, end_date: endDate, retry_delay: retryDelay } = req.body
-  
+
   const validationErrors = {}
   if (!startDate) {
     validationErrors.noStartDate = true

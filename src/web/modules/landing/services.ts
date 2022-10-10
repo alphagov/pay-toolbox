@@ -1,5 +1,5 @@
 import logger from "./../../../lib/logger";
-import {broadcast} from "../../../lib/pay-request/typed_clients/client";
+import {broadcast} from "../../../lib/pay-request/client";
 import {toFormattedDate} from "./../../../lib/format";
 
 interface HealthCheckResult {

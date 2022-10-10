@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AdminUsers, Connector } from '../../../lib/pay-request/typed_clients/client'
-import { Service } from '../../../lib/pay-request/typed_clients/services/admin_users/types'
+import { AdminUsers, Connector } from '../../../lib/pay-request/client'
+import { Service } from '../../../lib/pay-request/services/admin_users/types'
 import { aggregateServicesByGatewayAccountId, toAccountSearchParams, Filters } from '../../../lib/gatewayAccounts'
-import { GatewayAccount } from '../../../lib/pay-request/typed_clients/services/connector/types'
+import { GatewayAccount } from '../../../lib/pay-request/services/connector/types'
 
 async function getServiceGatewayAccountIndex(): Promise<{ [key: string]: Service }> {
   const services = await AdminUsers.services.list()

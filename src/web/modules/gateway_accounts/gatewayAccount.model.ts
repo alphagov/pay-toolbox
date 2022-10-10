@@ -6,8 +6,8 @@ import {
 
 import Validated from '../common/validated'
 import { ValidationError } from '../../../lib/errors'
-import { CreateGatewayAccountRequest } from '../../../lib/pay-request/typed_clients/services/connector/types'
-import { AccountType } from '../../../lib/pay-request/typed_clients/shared'
+import { CreateGatewayAccountRequest } from '../../../lib/pay-request/services/connector/types'
+import { AccountType } from '../../../lib/pay-request/shared'
 
 const liveStatus = {
   live: 'live',

@@ -1,7 +1,7 @@
 import Stripe from "stripe";
-import {AdminUsers} from '../../../../lib/pay-request/typed_clients/client'
+import {AdminUsers} from '../../../../lib/pay-request/client'
 import AccountDetails from './basicAccountDetails.model'
-import {Service, StripeAgreement} from '../../../../lib/pay-request/typed_clients/services/admin_users/types'
+import {Service, StripeAgreement} from '../../../../lib/pay-request/services/admin_users/types'
 import {ValidationError as CustomValidationError} from '../../../../lib/errors'
 import logger from '../../../../lib/logger'
 import * as stripeClient from '../../../../lib/stripe/stripe.client'

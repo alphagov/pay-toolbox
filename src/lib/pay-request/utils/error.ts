@@ -1,4 +1,4 @@
-import {EntityNotFoundError, RESTClientError} from "../../../errors";
+import {EntityNotFoundError, RESTClientError} from "../../errors";
 
 export function handleEntityNotFound(entityName: string, entityId: string) {
   return (error: RESTClientError) => {

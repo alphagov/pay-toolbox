@@ -1,8 +1,8 @@
 import {Request, Response, NextFunction} from 'express'
 
 import moment from 'moment'
-import {Ledger, AdminUsers} from '../../../lib/pay-request/typed_clients/client'
-import {TransactionState} from "../../../lib/pay-request/typed_clients/shared";
+import {Ledger, AdminUsers} from '../../../lib/pay-request/client'
+import {TransactionState} from "../../../lib/pay-request/shared";
 
 export function dashboard(req: Request, res: Response): void {
   res.render('platform/dashboard')

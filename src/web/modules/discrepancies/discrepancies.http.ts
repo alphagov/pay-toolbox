@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 
 import logger from './../../../lib/logger'
-import { Connector } from '../../../lib/pay-request/typed_clients/client'
+import { Connector } from '../../../lib/pay-request/client'
 import { wrapAsyncErrorHandlers } from './../../../lib/routes'
 
 const searchTransaction = async function searchTransaction(req: Request, res: Response) {
