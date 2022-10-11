@@ -7,7 +7,6 @@ import { Event } from './../../../src/web/modules/transactions/types/ledger'
 
 export interface EventTickerResponse {
   timeFetched?: moment.Moment,
-  historicFetch: boolean,
   events: Event[]
 }
 
@@ -58,16 +57,18 @@ export async function fetchTransactionVolumesByHour(
     return {
       data, compareData
     }
+  } else {
+    throw new Error('Failed to fetch transaction volumes by hour, response not ok')
   }
 }
 
 export async function fetchAggregateVolumes(date: moment.Moment, limitTime?: moment.Moment): Promise<AggregateVolumesResponse> {
   const timestamp = moment()
-  const limit = limitTime ? `&limit=${limitTime.format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z` : ''
+  const limit = limitTime ? `&limit=${limitTime.utc().format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z` : ''
 
   const [ completedResponse, allResponse ] = await Promise.all([
-    fetch(`/api/platform/aggregate?date=${date.utc().format()}&state=SUCCESS${limit}`),
-    fetch(`/api/platform/aggregate?date=${date.utc().format()}`)
+    fetch(`/api/platform/aggregate?date=${date.utc().format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z&state=SUCCESS${limit}`),
+    fetch(`/api/platform/aggregate?date=${date.utc().format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z${limit}`)
   ])
 
   if (completedResponse.ok && allResponse.ok) {
@@ -80,10 +81,12 @@ export async function fetchAggregateVolumes(date: moment.Moment, limitTime?: mom
       aggregateAllVolumes: allData,
       aggregateCompletedVolumes: completedData
     }
+  } else {
+    throw new Error('Failed to fetch aggregate volumes, response not ok')
   }
 }
 
-export async function fetchEventTicker(fromDate: moment.Moment, toDate: moment.Moment, historicFetch: boolean, lastFetchedEvents: moment.Moment): Promise<EventTickerResponse> {
+export async function fetchEventTicker(fromDate: moment.Moment, toDate: moment.Moment): Promise<EventTickerResponse> {
   const fromDateString = `${fromDate.format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
   const toDateString = `${toDate.format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
 
@@ -108,8 +111,7 @@ export async function fetchEventTicker(fromDate: moment.Moment, toDate: moment.M
         event.went_live_date = service.went_live_date
         event.is_recent = service.is_recent
         event.timestamp = moment(event.event_date).valueOf()
-        event.historic = historicFetch
-        event.key = event.resource_external_id + event.timestamp + event.event_type + event.historic
+        event.key = event.resource_external_id + event.timestamp + event.event_type
 
         return event
       })
@@ -119,18 +121,24 @@ export async function fetchEventTicker(fromDate: moment.Moment, toDate: moment.M
     const unique = parsed.filter((v: Event, i: number) => !eventsActiveSuccess.includes(v.event_type) || resources.indexOf(v.resource_external_id) === i)
 
     return {
-      historicFetch,
       timeFetched: toDate,
       events: unique
     }
+  } else {
+    throw new Error('Failed to fetch event ticker, response not ok')
   }
 }
-
-export async function fetchServiceInfo() {
+ 
+// the state should be managed above, this is a hack 
+export async function fetchServiceInfoAndReset() {
   const response = await fetch('/api/platform/services')
 
   if (response.ok) {
     const data = await response.json()
     services = data
+    for (const key in cachedSuccess) delete cachedSuccess[key]
+    return services
+  } else {
+    throw new Error('Failed to fetch services, response not ok')
   }
 }

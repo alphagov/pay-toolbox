@@ -76,6 +76,5 @@ export interface Event {
   is_recent?: boolean
   card_brand?: string
   timestamp?: number
-  historic?: boolean
   key?: string
 }
