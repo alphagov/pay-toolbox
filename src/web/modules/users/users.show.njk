@@ -29,7 +29,7 @@
   rows: [
     { key: { text: "ID" }, value: { html: "<code>" + payUser.external_id + "</code>" }, actions: { items: [{}] } },
     { key: { text: "Email" }, value: { text: payUser.email | truncate(35) }, actions: { items: [{ href: "/users/" + payUser.external_id + "/email", text: "Change" }] } },
-    { key: { text: "Phone" }, value: { text: payUser.telephone_number }, actions: { items: [{ href: "/users/" + payUser.external_id + "/phone", text: "Change" }] } },
+    { key: { text: "Phone" }, value: { text: payUser.telephone_number if payUser.telephone_number else "(None set)" }, actions: { items: [{ href: "/users/" + payUser.external_id + "/phone", text: "Change" }] } },
     { key: { text: "MFA" }, value: { text: payUser.second_factor }, actions: { items: [{ href: "/users/" + payUser.external_id + "/2FA/reset", text: "Reset" }] } },
     { key: { text: "Disabled" }, value: { text: "True" if payUser.disabled else "False" }, actions: { items: [{ href: "/users/" + payUser.external_id + "/toggle", text: "Enable" if payUser.disabled else "Disable" }] }  }
   ]
