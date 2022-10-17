@@ -28,7 +28,7 @@ export async function setupProductionStripeAccount(serviceExternalId: string, st
   const stripeAccount = await stripeClient.getStripeApi().accounts.create({
     type: 'custom',
     country: 'GB',
-    business_type: 'government_entity',
+    business_type: 'government_agency',
     settings: {
       payments: {
         statement_descriptor: stripeAccountDetails.statementDescriptor,
