@@ -4,7 +4,7 @@
 
 {% set isTestData = account and not (account.type === "live") %}
 
-{% set linkQueryParams %}{% if service %}&account={{ accountId }}{% endif %}{% if transactionType %}&type={{ transactionType }}{% endif %}{% endset %}
+{% set linkQueryParams %}{% if service %}&account={{ accountId }}{% endif %}{% if transactionType %}&type={{ transactionType }}{% endif %}{% if filters.reference %}&reference={{ filters.reference }}{% endif %}{% if filters.email %}&email={{ filters.email }}{% endif %}{% endset %}
 
 {% block main %}
   <span class="govuk-caption-m">
@@ -27,13 +27,19 @@
     {% endfor %}
   </div>
 
-  {% if filters.reference or filters.gateway_payout_id %}
+  {% if filters.email or filters.reference or filters.gateway_payout_id %}
     <div class="govuk-body">
       <h4 class="govuk-heading-s">Filtered by</h4>
       {% if filters.reference %}
         <div class="govuk-body">
           <div class="govuk-grid-column-one-third">Reference: </div>
           <span><strong class="govuk-tag">{{ filters.reference }}</strong></span>
+        </div>
+      {% endif %}
+      {% if filters.email %}
+        <div class="govuk-body">
+          <div class="govuk-grid-column-one-third">Email:</div>
+          <span><strong class="govuk-tag">{{ filters.email }}</strong></span>
         </div>
       {% endif %}
       {% if filters.gateway_payout_id %}
