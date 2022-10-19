@@ -10,11 +10,16 @@ const process = require('process')
 const url = require('url')
 const https = require('https')
 const moment = require('moment')
+const rfc822Validator = require('rfc822-validate')
 
 const {common, services} = require('./../../../config')
 
 if (common.development) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
+}
+
+function isAnEmail(value: string): boolean {
+  return rfc822Validator(value)
 }
 
 export async function searchPage(req: Request, res: Response): Promise<void> {
@@ -25,9 +30,23 @@ export async function search(req: Request, res: Response, next: NextFunction): P
   const id = req.body.id && req.body.id.trim()
 
   try {
-    await Ledger.transactions.retrieve(id)
+    if (isAnEmail(id)) {
+      const emailSearch = await Ledger.transactions.list({
+        override_account_id_restriction: true,
+        email: id
+      })
 
-    res.redirect(`/transactions/${id}`)
+      if (emailSearch.results.length > 1) {
+        res.redirect(`/transactions?email=${id}`)
+        return
+      } else if (emailSearch.results.length === 1) {
+        res.redirect(`/transactions/${emailSearch.results[0].transaction_id}`)
+        return
+      }
+    } else {
+      await Ledger.transactions.retrieve(id)
+      res.redirect(`/transactions/${id}`)
+    }
   } catch (error) {
     if (error instanceof EntityNotFoundError) {
       const referenceSearch = await Ledger.transactions.list({
@@ -71,6 +90,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
 
     const filters = {
       ...req.query.reference && {reference: req.query.reference as string},
+      ...req.query.email && {email: req.query.email as string},
       ...req.query.gateway_transaction_id && {gateway_transaction_id: req.query.gateway_transaction_id as string},
       ...req.query.gateway_payout_id && {gateway_payout_id: req.query.gateway_payout_id as string}
     }
