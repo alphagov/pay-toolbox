@@ -258,3 +258,23 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.loader {
+  width: 12px;
+  height: 12px;
+  border: 1px solid $govuk-secondary-text-colour;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  }
+
+  @keyframes rotation {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+} 

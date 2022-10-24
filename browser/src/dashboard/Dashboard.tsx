@@ -3,7 +3,7 @@ import React from 'react'
 import moment from 'moment'
 
 import { ResizeObserver } from '@juggle/resize-observer'
-import { Serie, Datum } from '@nivo/line'
+import { Serie } from '@nivo/line'
 
 import { Event } from './../../../src/web/modules/transactions/types/ledger'
 import { StatsPanel } from './StatsPanel'
@@ -11,18 +11,15 @@ import { EventListPanel } from './EventListPanel'
 
 import { ChartVolumePanel } from './ChartVolumePanel'
 
-import { jsonToChartData, TimeseriesPoint } from './parser'
-import { eventsActiveSuccess, eventsErrored, supportedEvents } from './events'
+import { jsonToChartData } from './parser'
+import { eventsActiveSuccess, eventsErrored } from './events'
 
 import {
   fetchTransactionVolumesByHour,
   fetchAggregateVolumes,
   fetchEventTicker,
-  fetchServiceInfo,
+  fetchServiceInfoAndReset,
   cachedSuccess,
-  TransactionVolumesByHourResponse,
-  AggregateVolumesResponse,
-  EventTickerResponse,
   DailyVolumeReport
 } from './ledgerResource'
 
@@ -30,46 +27,67 @@ interface DashboardProps {
   tickInterval: number
 }
 
+enum ConnectionStatus {
+  CONNECTING, CONNECTED, DISCONNECTED, FAILED
+}
+
 interface DashboardState {
   statsHeight: number,
   events: Event[],
   date: moment.Moment,
   compareDate: moment.Moment,
+
+  // move to config
   compareGraphs: boolean,
+
+  // move to data
   transactionVolumesByHour: Serie[],
   aggregateCompletedVolumes: DailyVolumeReport,
   aggregateAllVolumes: DailyVolumeReport,
   queuedEvents: Event[],
   activeEvents: Event[],
-  lastFetchedEvents?: moment.Moment
+  lastFetchedEvents?: moment.Moment,
+  connection: DashboardConnectionState,
+  lastSystemTick: number,
+  lastConnectionTick: number,
+  numberOfAggregateSyncs: number,
+
+  fetchedServices: boolean,
+  
+  // move to sync: status property similar to connection rather than top level
+  sync?: AggregateSyncStatus
 }
 
-interface AggregateSyncCache {
+export interface AggregateSyncStatus {
+  pending: boolean,
+  timestampTick: number,
+  data: PendingAggregateSync
+}
+
+interface PendingAggregateSync {
   aggregateAllVolumes: DailyVolumeReport,
   aggregateCompletedVolumes: DailyVolumeReport,
-  transactionVolumesByHourPatch: TimeseriesPoint[]
+  transactionVolumesByHour: Serie[]
 }
 
-interface AggregateSyncProgress {
-  timestamp: number,
-  inProgress: boolean,
-  cache: AggregateSyncCache
-}
+// the one place we're OK with having non-react state, this will be updated all the time
+// and would cause the dashboard to be re-drawn _a lot_
+let lastSystemTick: number | null = null 
 
-const aggregateSync: AggregateSyncProgress = {
-  timestamp: null,
-  inProgress: false,
-  cache: null
-}
-
+const MAX_FAILED_CONNECTION_ATTEMPTS = 60
 const MAX_ACTIVE_TICKER_EVENTS = 10
-let tick: number = null
-let aggregateTick: number = null
 const aggregateSyncFrequency = 30 * 60 * 1000
 
-// @FIXME(sfount) having state outside of component props is risky in the long run
-// re-structure this so it's out of the top level components responsibility
-let fetching = false
+interface DashboardConnectionState {
+  isFetching: boolean,
+  status: ConnectionStatus,
+  attempts: number,
+  lastWindowTimestamp?: number,
+  lastFetchedEventsTimestamp?: number,
+  lastAggregateSyncTimestamp?: number
+}
+
+const systemTickInterval = 1000
 
 export class Dashboard extends React.Component<DashboardProps, DashboardState> {
   interval?: NodeJS.Timeout
@@ -83,7 +101,6 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
       total_volume: 0,
       average_amount: 0
     }
-
     this.state = {
       statsHeight: 0,
       events: [],
@@ -93,102 +110,269 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
       transactionVolumesByHour: [],
       aggregateAllVolumes: zeroed,
       aggregateCompletedVolumes: zeroed,
+      numberOfAggregateSyncs: 0,
       queuedEvents: [],
-      activeEvents: []
+      activeEvents: [],
+      connection: {
+        isFetching: false,
+        status: ConnectionStatus.DISCONNECTED,
+        attempts: 0
+      },
+      lastSystemTick: Date.now(),
+      lastConnectionTick: Date.now(),
+      fetchedServices: false
     }
     this.setWatchObserver = this.setWatchObserver.bind(this)
     this.init()
   }
 
   async init() {
-    const volumesByHour = await fetchTransactionVolumesByHour(
-      this.state.date,
-      this.state.compareDate,
-      null,
-      null,
-      this.state.compareGraphs
-    )
-    this.setTransactionVolumeByHour(volumesByHour)
-
-    const volumes = await fetchAggregateVolumes(this.state.date)
-    this.setAggregateVolumes(volumes)
-
-    await fetchServiceInfo()
-
-    tick = Date.now()
-    aggregateTick = Date.now()
     this.interval = setInterval(this.tick.bind(this), 100)
   }
 
   async tick() {
-    const millsecondsSincePreviousFetch = Date.now() - this.state.lastFetchedEvents.valueOf()
+    const windowBufferMs = (this.props.tickInterval * 2 * 2) * 1000
+    const now = Date.now()
+    const windowNow = now - windowBufferMs
 
-    if (Date.now() - aggregateTick > aggregateSyncFrequency) {
-      this.aggregateSync()
+    if (moment(now).get('date') !== this.state.date.get('date')) {
+      log(now, windowNow, 'Resetting for a new date')
+      this.setState({
+        fetchedServices: false,
+        date: moment(),
+        compareDate: calculateComparisonDate(moment(now)),
+        connection: {
+          ...this.state.connection,
+          status: ConnectionStatus.DISCONNECTED
+        }
+      })
+      return
     }
+      if (this.state.connection.isFetching === false) {
+        switch (this.state.connection.status) {
+          case ConnectionStatus.DISCONNECTED:
+            // kick off an aggregate sync and then say we are connected
+            if (this.state.connection.attempts > MAX_FAILED_CONNECTION_ATTEMPTS) {
+              log(now, windowNow, `Failed to connect more than ${MAX_FAILED_CONNECTION_ATTEMPTS} times.`)
+              this.setState({
+                connection: {
+                  ...this.state.connection,
+                  status: ConnectionStatus.FAILED
+                },
+                sync: undefined
+              })
+            } else { 
+              // attempt to connect, fetch an aggregate sync and when that's complete set the events fetched since to now
+              // backoff and try slower given more attempts
+              if ((now - this.state.lastConnectionTick) > (this.state.connection.attempts * systemTickInterval)) {
+                log(now, windowNow, `Attempting to connect, time since last attempt ${now - this.state.lastConnectionTick}ms`)
+                this.setState({
+                  connection: {
+                    ...this.state.connection,
+                    isFetching: true,
+                    attempts: this.state.connection.attempts + 1
+                  }
+                })
+                
+                const syncBufferTimestamp = windowNow + (this.props.tickInterval * 2) * 1000
+                Promise.resolve()
+                  .then((): any => {
+                    if (!this.state.fetchedServices) {
+                      return fetchServiceInfoAndReset()
+                    } else {
+                      return false
+                    }
+                  })
+                  .then((maybeServiceResult) => {
+                    if (maybeServiceResult) {
+                      this.setState({
+                        fetchedServices: true
+                      })
+                    }
+                    return this.fetchAggregateSync(moment(syncBufferTimestamp).utc())
+                  })
+                  .then((result) => {
+                    log(now, windowNow, 'Connected: fetched aggregate sync', { limit: moment(syncBufferTimestamp).utc().format() })
+                    this.setState({
+                      connection: {
+                        ...this.state.connection,
+                        isFetching: false,
+                        status: ConnectionStatus.CONNECTED,
+                        lastAggregateSyncTimestamp: now,
+                        lastWindowTimestamp: syncBufferTimestamp,
+                        lastFetchedEventsTimestamp: undefined,
+                        attempts: 0
+                      },
+                      lastConnectionTick: now,
+                      numberOfAggregateSyncs: 1,
+                      sync: {
+                        pending: true,
+                        data: result,
+                        timestampTick: syncBufferTimestamp
+                      },
+                      queuedEvents: []
+                    })
+                  })
+                  .catch((error) => {
+                    log(now, windowNow, 'Error during connection attempt', error)
+                    this.setState({
+                      connection: {
+                        ...this.state.connection,
+                        isFetching: false,
+                        status: ConnectionStatus.DISCONNECTED
+                      },
+                      lastConnectionTick: now
+                    })
+                  })
+              }
+            }
+            break
+          case ConnectionStatus.CONNECTED:
 
-    if ((millsecondsSincePreviousFetch > (this.props.tickInterval * 1000 * 2)) && !fetching) {
-      tick = Date.now()
-      const fromDate = this.state.lastFetchedEvents
-      const toDate = this.state.lastFetchedEvents.clone().add(this.props.tickInterval, 'seconds').utc()
-      fetching = true
-      const eventTicker = await fetchEventTicker(fromDate, toDate, false, this.state.lastFetchedEvents)
-      fetching = false
-      this.setEventTicker(eventTicker)
-    }
-    this.processQueuedEvents(Date.now())
-  }
+            // 1. check aggregate first to give that the most time, there should be buffer between event window checks anyway
+            // 2. then check if there's no last checked event window - thats a trigger 
+            // 3. then check if the current window time is > interval 
+            if (this.state.sync && this.state.sync.pending) {
 
-  aggregateSync() {
-    if (!aggregateSync.inProgress) {
-      const fetchTime = moment(Date.now() - this.props.tickInterval * 1000).utc()
-      aggregateSync.inProgress = true
-      aggregateSync.timestamp = fetchTime.valueOf()
-      Promise.all([
-        fetchAggregateVolumes(this.state.date, fetchTime),
-        fetchTransactionVolumesByHour(
-          this.state.date,
-          this.state.compareDate,
-          fetchTime.hour() - 2,
-          fetchTime.hour() - 1,
-          false
-        )
-      ])
-        .then(([ volumes, volumesByHour ]) => {
-          aggregateSync.cache = {
-            aggregateAllVolumes: volumes.aggregateAllVolumes,
-            aggregateCompletedVolumes: volumes.aggregateCompletedVolumes,
-            transactionVolumesByHourPatch: volumesByHour.data
-          }
-        })
-    } else {
+              if (windowNow >= this.state.sync.timestampTick) {
+                log(now, windowNow, 'Applying pending aggregate sync')
+          
+                // remove any events fetched from before the aggregate sync, this should be an outlier
+                const stagedQueued = this.state.queuedEvents.filter((event) => event.timestamp && event.timestamp >= windowNow)
 
-      if (Date.now() - (this.props.tickInterval * 1000 * 2) > aggregateSync.timestamp) {
-        const stagingTransactionVolumesByHour  = [ ...this.state.transactionVolumesByHour ]
-        aggregateSync.cache.transactionVolumesByHourPatch.forEach((hourSegment: TimeseriesPoint) => {
-          const date = moment(hourSegment.timestamp)
+                this.setState({
+                  ...this.state.sync.data,
+                  queuedEvents: stagedQueued,
+                  sync: undefined
+                })
+              }
+            } 
 
-          updateAggregateGraphNode(stagingTransactionVolumesByHour, date, 0, hourSegment.errored_payments)
-          updateAggregateGraphNode(stagingTransactionVolumesByHour, date, 1, hourSegment.completed_payments)
-          updateAggregateGraphNode(stagingTransactionVolumesByHour, date, 2, hourSegment.all_payments)
-        })
-        this.setState({
-          aggregateAllVolumes: aggregateSync.cache.aggregateAllVolumes,
-          aggregateCompletedVolumes: aggregateSync.cache.aggregateCompletedVolumes,
-          transactionVolumesByHour: stagingTransactionVolumesByHour
-        })
+            if (
+              !(this.state.sync && this.state.sync.pending) &&
+              this.state.connection.lastAggregateSyncTimestamp && (now - this.state.connection.lastAggregateSyncTimestamp) > aggregateSyncFrequency
+            ) {
+              log(now, windowNow, 'Getting a scheduled aggregate sync')
+              this.setState({
+                connection: {
+                  ...this.state.connection,
+                  isFetching: true
+                }
+              })
+              
+              const syncBufferTimestamp = windowNow + (this.props.tickInterval * 2) * 1000
+              this.fetchAggregateSync(moment(syncBufferTimestamp).utc())
+                .then((result) => {
 
-        console.log('Aggregate sync process completed at', Date.now())
-        aggregateSync.inProgress = false
-        aggregateSync.cache = null
-        aggregateSync.timestamp = null
-        aggregateTick = Date.now()
+                  log(now, windowNow, 'Got the data for a scheduled aggregate sync', { limit: moment(syncBufferTimestamp).utc().format() })
+                  this.setState({
+                    connection: {
+                      ...this.state.connection,
+                      isFetching: false,
+                      lastAggregateSyncTimestamp: now,
+                    },
+                    sync: {
+                      pending: true,
+                      data: result,
+                      timestampTick: syncBufferTimestamp
+                    },
+                    numberOfAggregateSyncs: this.state.numberOfAggregateSyncs + 1
+                  })
+                })
+                .catch((error) => {
+                  log(now, windowNow, 'Error during scheduled aggregate sync')
+                  this.setState({
+                    connection: {
+                      ...this.state.connection,
+                      isFetching: false,
+                      status: ConnectionStatus.DISCONNECTED
+                    }
+                  })
+                })
+            } else if (
+              !this.state.connection.lastFetchedEventsTimestamp || 
+              this.state.connection.lastFetchedEventsTimestamp && (now - this.state.connection.lastFetchedEventsTimestamp) > this.props.tickInterval * 1000
+            ) {
+              this.setState({
+                connection: {
+                  ...this.state.connection,
+                  isFetching: true
+                }
+              })
+              const from = moment(this.state.connection.lastWindowTimestamp).utc()
+              const to = moment(windowNow).add(this.props.tickInterval * 3, 'seconds').utc()
+              const differenceDrift = from.valueOf() - windowNow
+              const windowSize = to.valueOf() - from.valueOf()
+
+              // also have a kill switch on the window size
+              if (differenceDrift < this.props.tickInterval * 1000) {
+                log(now, windowNow, `Detected too much drift between the window and current time window size(${windowSize}ms) drift(${differenceDrift}ms)`)
+                this.setState({
+                  connection: {
+                    ...this.state.connection,
+                    isFetching: false,
+                    status: ConnectionStatus.DISCONNECTED
+                  },
+                  lastConnectionTick: now
+                })
+                return
+              }
+              log(now, windowNow, `Fetch event window ${from.format(format)} ${to.format(format)} window size(${windowSize}ms) drift(${differenceDrift}ms)`)
+              fetchEventTicker(from, to)
+                .then((result) => {
+                  this.setState({
+                    queuedEvents: [
+                      ...this.state.queuedEvents,
+                      ...result.events
+                    ],
+                    connection: {
+                      ...this.state.connection,
+                      isFetching: false,
+                      lastFetchedEventsTimestamp: now,
+                      lastWindowTimestamp: to.valueOf()
+                    }
+                  })
+                })
+                .catch((error) => {
+                  log(now, windowNow, 'Error during fetching event window')
+                  this.setState({
+                    connection: {
+                      ...this.state.connection,
+                      isFetching: false,
+                      status: ConnectionStatus.DISCONNECTED
+                    }
+                  })
+                })
+            }
+            break
+          case ConnectionStatus.FAILED:
+            // unhook this tick listener, we don't need to continue evaluating
+            break
+          default:
+            break
+        }
       }
+
+    lastSystemTick = now
+    // no matter what we're doing with our connection, check to see if we've got queued non-processed events and have them surfaced
+    this.processQueuedEvents(windowNow)
+  }
+
+  async fetchAggregateSync(timestampFrom: moment.Moment): Promise<PendingAggregateSync> {
+    const [ volumes, volumesByHour ] = await Promise.all([
+      fetchAggregateVolumes(timestampFrom, timestampFrom),
+      // @FIXME(sfount) without providing a to-date (or limit) there's a reasonable small chance the aggregate and volumes by hour don't line up, this should be a very small discrepancy so could be addressed later
+      fetchTransactionVolumesByHour(timestampFrom, this.state.compareDate, null, null, this.state.compareGraphs)
+    ])
+
+    return {
+      aggregateAllVolumes: volumes.aggregateAllVolumes,
+      aggregateCompletedVolumes: volumes.aggregateCompletedVolumes,
+      transactionVolumesByHour: jsonToChartData(volumesByHour.data, this.state.date, volumesByHour.compareData, this.state.compareGraphs, this.state.compareDate)
     }
   }
 
-  processQueuedEvents(timestamp: number) {
-    const cursor = timestamp - (this.props.tickInterval * 1000 * 2)
+  processQueuedEvents(cursor: number) {
     const filtered: Event[] = []
     const staging: Event[] = []
 
@@ -257,44 +441,19 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
     resizeObserver.observe(element)
   }
 
-  setTransactionVolumeByHour(response: TransactionVolumesByHourResponse) {
-    this.setState({
-      transactionVolumesByHour: jsonToChartData(response.data, this.state.date, response.compareData, this.state.compareGraphs, this.state.compareDate)
-    })
-  }
-
-  setAggregateVolumes(response: AggregateVolumesResponse) {
-    const timeFetched = response.timeFetched || moment()
-    this.setState({
-      aggregateCompletedVolumes: response.aggregateCompletedVolumes,
-      aggregateAllVolumes: response.aggregateAllVolumes,
-      ...!this.state.lastFetchedEvents && {
-        lastFetchedEvents: timeFetched.utc()
-      }
-    })
-  }
-
-  setEventTicker(response: EventTickerResponse) {
-    // @TODO(sfount) make this less confusing looking
-    this.setState({
-      ...!response.historicFetch && { lastFetchedEvents: response.timeFetched },
-      ...response.events.length && !response.historicFetch && {
-        queuedEvents: this.state.queuedEvents.concat(response.events)
-      },
-      ...response.events.length && response.historicFetch && {
-        activeEvents: this.state.activeEvents.concat(response.events.slice(-MAX_ACTIVE_TICKER_EVENTS))
-      }
-    })
-  }
-
   render() {
+    const headerStatusColourMap: { [key in ConnectionStatus]?: string } = {
+      [ConnectionStatus.CONNECTED]: '#1d70b8',
+      [ConnectionStatus.DISCONNECTED]: '#b1b4b6',
+      [ConnectionStatus.FAILED]: '#d4351c'
+    }
     return (
       <div>
 
         <div className="govuk-grid-row govuk-body govuk-!-margin-bottom-5">
           <div className="govuk-grid-column-full">
             <header>
-              <div className="event-card govuk-header__container" style={{ color: 'white', backgroundColor: 'black', paddingTop: '15px', borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px' }}>
+              <div className="event-card govuk-header__container" style={{ color: 'white', backgroundColor: 'black', paddingTop: '15px', borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px', borderBottomColor: headerStatusColourMap[this.state.connection.status] }}>
                 <div className="govuk-header__logo" style={{ }}>
                   <span className="govuk-header__link govuk-header__link--homepage">
                     <span className="govuk-header__logotype">
@@ -317,7 +476,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
           <div className="govuk-grid-column-full">
             <div className="event-card" style={{ padding: '15px', paddingLeft: '20px', paddingRight: '20px' }}>
               <h1 className="govuk-heading-l">Live payments dashboard</h1>
-              <p className="govuk-body-l" style={{ marginBottom: '20px' }}><a href="https://payments.service.gov.uk" className="govuk-link govuk-link--no-visited-state">GOV.UK Pay</a> is a free service, available to public sector organisations to take online payments.</p>
+              <p className="govuk-body-l" style={{ marginBottom: '20px' }}><a href="https://www.payments.service.gov.uk" className="govuk-link govuk-link--no-visited-state">GOV.UK Pay</a> is a free service, available to public sector organisations to take online payments.</p>
             </div>
           </div>
         </div>
@@ -325,7 +484,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
           {/* @TODO(sfount) bottom shadow (without factoring in column padding) is needed for parity */}
           {/* Non-zero min-height to maintain width without content (a loading or syncing icon should be used) */}
           <div style={{ maxHeight: this.state.statsHeight, overflowY: 'hidden', minHeight: 5 }} className="govuk-grid-column-one-half">
-            <EventListPanel events={this.state.activeEvents} />
+            <EventListPanel events={this.state.activeEvents} sync={this.state.sync} numberOfAggregateSyncs={this.state.numberOfAggregateSyncs} fetchedServices={this.state.fetchedServices} isFetching={this.state.connection.isFetching} />
           </div>
           <div className="govuk-grid-column-one-half">
             <StatsPanel
@@ -357,16 +516,6 @@ function updateStagingGraphNode(transactionVolumesByHour: Serie[], event: Event,
   transactionVolumesByHour[pointIndex].data[index] = { ...point, y: currentValue + 1}
 }
 
-function updateAggregateGraphNode(transactionVolumesByHour: Serie[],timestamp: moment.Moment, pointIndex: number, pointValue: number) {
-  const hourIndex = timestamp.hour()
-  const defaultPoint: Datum = { x: `${timestamp.format('YYYY-MM-DDTHH')}:00:00.000000Z` }
-
-  transactionVolumesByHour[pointIndex].data[hourIndex] = {
-    ...transactionVolumesByHour[pointIndex].data[hourIndex] || defaultPoint,
-    y: pointValue
-  }
-}
-
 function calculateComparisonDate(date: moment.Moment): moment.Moment {
   const comparison = date.clone()
   comparison.subtract(1, 'year')
@@ -377,4 +526,12 @@ function calculateComparisonDate(date: moment.Moment): moment.Moment {
   }
   comparison.set('day', date.get('day'))
   return comparison
+}
+
+const format = 'HH:mm:ss'
+function log(current: number, window: number, message: string, context?: any) {
+  console.log(moment(current).utc().format(format), moment(window).utc().format(format), message)
+  if (context) {
+    console.log(context)
+  }
 }
