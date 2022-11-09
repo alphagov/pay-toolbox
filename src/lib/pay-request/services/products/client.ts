@@ -35,7 +35,7 @@ export default class Products extends Client {
      */
     listProductsByType(id: string, type: ProductType): Promise<Product[] | undefined> {
       return client._axios
-        .get(`/v1/api/gateway-account/${id}/products`)
+        .get(`/v1/api/gateway-account/${id}/products`, {params: {type}})
         .then(response => client._unpackResponseData<Product[]>(response))
         .then(redactProductTokens)
     }
