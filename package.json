@@ -61,7 +61,7 @@
     "passport-github": "1.1.0",
     "qs": "6.10.3",
     "rfc822-validate": "^1.0.0",
-    "sass": "^1.56.0",
+    "sass": "^1.56.1",
     "stripe": "^8.174.0",
     "winston": "^3.8.2"
   },
