@@ -198,6 +198,9 @@ async function detail(req: Request, res: Response): Promise<void> {
     stripeDashboardUri = `https://dashboard.stripe.com/${account.live ? '' : 'test/'}connect/accounts/${stripeCredentials.stripe_account_id}`
   }
 
+  const is3DSFlexApplicable = (currentCredential.payment_provider === PaymentProvider.Worldpay && !account.allow_moto)
+  const threeDSFlexEnabled = (account.integration_version_3ds === 2)
+
   res.render('gateway_accounts/detail', {
     account,
     acceptedCards,
@@ -206,6 +209,8 @@ async function detail(req: Request, res: Response): Promise<void> {
     currentCredential,
     outstandingStripeSetupTasks,
     stripeDashboardUri,
+    is3DSFlexApplicable,
+    threeDSFlexEnabled,
     messages: req.flash('info'),
     csrf: req.csrfToken()
   })

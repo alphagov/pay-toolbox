@@ -147,27 +147,22 @@
     </dl>
   </div>
   <div>
-    <h2 class="govuk-heading-s payment__header">Self-serve settings</h1>
+    <h2 class="govuk-heading-s payment__header">Self-serve settings</h2>
     <dl class="govuk-summary-list">
-    {% if account.requires3ds != undefined %}
+      {% if is3DSFlexApplicable %}
         <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">3DS enabled</span></dt>
-          <dd class="govuk-summary-list__value">{{ account.requires3ds | string | capitalize }}</dd>
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">3DS Flex enabled</span></dt>
+          <dd class="govuk-summary-list__value">{{ threeDSFlexEnabled | string | capitalize }}</dd>
           <dd class="govuk-summary-list__actions"></dd>
         </div>
+      {% endif %}
+      {% if account.payment_provider === 'worldpay' %}
         <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">3DS version</span></dt>
-          <dd class="govuk-summary-list__value">{{ account.integration_version_3ds | string }}</dd>
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Exemption Engine</span></dt>
+          <dd class="govuk-summary-list__value">{{ "Enabled" if account.worldpay_3ds_flex and account.worldpay_3ds_flex.exemption_engine_enabled else "Disabled" }}</dd>
           <dd class="govuk-summary-list__actions"></dd>
         </div>
-        {% if account.payment_provider === 'worldpay' %}
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Exemption Engine</span></dt>
-            <dd class="govuk-summary-list__value">{{ "Enabled" if account.worldpay_3ds_flex and account.worldpay_3ds_flex.exemption_engine_enabled else "Disabled" }}</dd>
-            <dd class="govuk-summary-list__actions"></dd>
-          </div>
-        {% endif %}
-    {% endif %}
+      {% endif %}
     {% if account.allow_apple_pay != undefined %}
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Apple Pay enabled</span></dt>
