@@ -37,12 +37,14 @@ export default class Connector extends Client {
       return client._axios
         .get(`/v1/frontend/charges/${id}`)
         .then(response => client._unpackResponseData<Charge>(response))
+        .catch(handleEntityNotFound("Charge", id))
     },
 
     retrieveAPI(externalChargeId: string, accountId: string): Promise<Charge | undefined> {
       return client._axios
         .get(`/v1/api/accounts/${accountId}/charges/${externalChargeId}`)
         .then(response => client._unpackResponseData<Charge>(response))
+        .catch(handleEntityNotFound("Charge", externalChargeId))
     },
 
     /**
