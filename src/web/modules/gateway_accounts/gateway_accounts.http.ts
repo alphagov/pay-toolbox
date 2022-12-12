@@ -140,6 +140,15 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
     }
     await AdminUsers.services.update(serviceId, serviceUpdateRequest)
     logger.info(`Service ${serviceId} linked to new Gateway Account ${gatewayAccountIdDerived}`)
+
+    logger.info('Service made live', {
+      service_name: service.service_name.en,
+      organisation_name: service.merchant_details && service.merchant_details.name,
+      sector: account.sector,
+      service_went_live_date: moment.utc().format(),
+      service_created_date: moment.utc(service.created_date).format(),
+      service_using_provider: account.provider
+    })
   }
 
   const stripeAccountStatementDescriptors: {
