@@ -23,22 +23,22 @@
     {{ govukInput({
       id: "template_id",
       name: "template_id",
-      label: { text: "Payment receipt template id" },
+      label: { text: "Payment confirmation template ID" },
       autocomplete: "off"
     })
     }}
     {{ govukInput({
       id: "refund_issued_template_id",
       name: "refund_issued_template_id",
-      label: { text: "Refund issued template id" },
+      label: { text: "Refund template ID" },
       autocomplete: "off"
     })
     }}
     {{ govukInput({
       id: "email_reply_to_id",
       name: "email_reply_to_id",
-      label: { text: "Reply-to email address id (can be empty)" },
-      hint: { html: "This is the id of the reply-to email address to use if the Notify service has multiple reply-to email addresses configured." },
+      label: { text: "Reply-to email address ID (optional)" },
+      hint: { html: "Enter an existing ID, not an email address" },
       autocomplete: "off"
     })
     }}
