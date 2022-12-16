@@ -302,6 +302,11 @@ async function updateEmailBranding(req: Request, res: Response):
   Promise<void> {
   const {id} = req.params
   const {api_token, template_id, refund_issued_template_id, email_reply_to_id} = req.body
+
+  if (email_reply_to_id && email_reply_to_id.includes('@')) {
+    throw new Error('Reply-to email address ID must be an ID or left blank (not an email address)')
+  }
+
   const notifySettings = {
     api_token,
     template_id,
