@@ -4,6 +4,7 @@ const config = require('../../../config')
 const logger = require('../../logger')
 
 const { isPermittedUser, isAdminUser } = require('./permissions')
+const {PermissionLevel} = require("../types");
 
 const githubAuthCredentials = {
   clientID: config.auth.AUTH_GITHUB_CLIENT_ID,
@@ -27,12 +28,13 @@ const handleGitHubOAuthSuccessResponse = async function handleGitHubOAuthSuccess
   try {
     await isAdminUser(username, accessToken)
 
-    sessionProfile.admin = true
+    sessionProfile.permissionLevel = PermissionLevel.ADMIN
     logger.info(`Administrator checks passed, setting session for ${username}`)
     callback(null, sessionProfile)
   } catch (adminUserFailure) {
     try {
       await isPermittedUser(username, accessToken)
+      sessionProfile.permissionLevel = PermissionLevel.USER_SUPPORT
 
       logger.info(`Valid non-admin permissions, setting session for ${username}`)
       callback(null, sessionProfile)
