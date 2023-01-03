@@ -6,6 +6,6 @@ declare namespace Express {
   }
   interface User {
     username?: string;
-    admin?: boolean;
+    permissionLevel?: number;
   }
 }

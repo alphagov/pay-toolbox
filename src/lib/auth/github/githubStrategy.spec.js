@@ -1,12 +1,9 @@
 /* eslint-disable global-require */
 // @TODO(sfount) mockery subsitutes are slow taking ~200ms, this could make test times explode
 const mockery = require('mockery')
-const chai = require('chai')
-const spies = require('chai-spies')
+const sinon = require('sinon')
 
-const { expect } = chai
-
-chai.use(spies)
+const {PermissionLevel} = require('../types')
 
 const validPermissions = async () => true
 const invalidPermissions = async () => {
@@ -15,7 +12,7 @@ const invalidPermissions = async () => {
 
 describe('GitHub OAuth strategy', () => {
   // eslint-disable-next-line key-spacing
-  const profile = { username: 'some-test-user', displayName: 'Some User', _json: { avatar_url : 'some-url' } }
+  const profile = {username: 'some-test-user', displayName: 'Some User', _json: {avatar_url: 'some-url'}}
   let handleGitHubOAuthSuccessResponse
 
   beforeEach(() => {
@@ -25,55 +22,62 @@ describe('GitHub OAuth strategy', () => {
       useCleanCache: true
     })
   })
-  afterEach(() => { mockery.disable() })
-
-  it('invokes callback with `true` valid permissions and profile details given valid permissions', async () => {
-    const authCallbackSpy = chai.spy()
-    mockery.registerMock('./permissions', { isPermittedUser: validPermissions })
-    // eslint-disable-next-line prefer-destructuring
-    handleGitHubOAuthSuccessResponse = require('./strategy').handleGitHubOAuthSuccessResponse
-
-    await handleGitHubOAuthSuccessResponse('some-access-token', 'some-refresh-token', profile, authCallbackSpy)
-
-    expect(authCallbackSpy).to.have.been.called.once.with(
-      null,
-      {
-        username: profile.username,
-        displayName: profile.displayName,
-
-        // eslint-disable-next-line no-underscore-dangle
-        avatarUrl: profile._json.avatar_url
-      }
-    )
+  afterEach(() => {
+    mockery.disable()
   })
 
-  it('invokes callback with `false` invalid permissions given invalid permissions', async () => {
-    const authCallbackSpy = chai.spy()
-    mockery.registerMock('./permissions', { isPermittedUser: invalidPermissions })
-    // eslint-disable-next-line prefer-destructuring
-    handleGitHubOAuthSuccessResponse = require('./strategy').handleGitHubOAuthSuccessResponse
+  describe('valid permissions', () => {
+    it('invokes callback with `true` and profile details with USER_SUPPORT permission level when user does not have admin permissions', async () => {
+      const authCallbackSpy = sinon.spy()
+      mockery.registerMock('./permissions', {isPermittedUser: validPermissions})
+      // eslint-disable-next-line prefer-destructuring
+      handleGitHubOAuthSuccessResponse = require('./strategy').handleGitHubOAuthSuccessResponse
 
-    await handleGitHubOAuthSuccessResponse('some-access-token', 'some-refresh-token', profile, authCallbackSpy)
-    expect(authCallbackSpy).to.have.been.called.once.with(null, false)
+      await handleGitHubOAuthSuccessResponse('some-access-token', 'some-refresh-token', profile, authCallbackSpy)
+
+      sinon.assert.calledWith(authCallbackSpy,
+        null,
+        {
+          username: profile.username,
+          displayName: profile.displayName,
+          permissionLevel: PermissionLevel.USER_SUPPORT,
+
+          // eslint-disable-next-line no-underscore-dangle
+          avatarUrl: profile._json.avatar_url
+        }
+      )
+    })
+
+    it('invokes callback with ADMIN permissionLevel when user has admin permissions', async () => {
+      const authCallbackSpy = sinon.spy()
+      mockery.registerMock('./permissions', {isAdminUser: validPermissions})
+      // eslint-disable-next-line prefer-destructuring
+      handleGitHubOAuthSuccessResponse = require('./strategy').handleGitHubOAuthSuccessResponse
+
+      await handleGitHubOAuthSuccessResponse('some-access-token', 'some-refresh-token', profile, authCallbackSpy)
+      sinon.assert.calledWith(authCallbackSpy,
+        null,
+        {
+          username: profile.username,
+          displayName: profile.displayName,
+          permissionLevel: PermissionLevel.ADMIN,
+
+          // eslint-disable-next-line no-underscore-dangle
+          avatarUrl: profile._json.avatar_url
+        }
+      )
+    })
   })
 
-  it('invokes callback with admin flag set given admin permissions', async () => {
-    const authCallbackSpy = chai.spy()
-    mockery.registerMock('./permissions', { isAdminUser: validPermissions })
-    // eslint-disable-next-line prefer-destructuring
-    handleGitHubOAuthSuccessResponse = require('./strategy').handleGitHubOAuthSuccessResponse
+  describe('invalid permissions', () => {
+    it('invokes callback with `false`', async () => {
+      const authCallbackSpy = sinon.spy()
+      mockery.registerMock('./permissions', {isPermittedUser: invalidPermissions})
+      // eslint-disable-next-line prefer-destructuring
+      handleGitHubOAuthSuccessResponse = require('./strategy').handleGitHubOAuthSuccessResponse
 
-    await handleGitHubOAuthSuccessResponse('some-access-token', 'some-refresh-token', profile, authCallbackSpy)
-    expect(authCallbackSpy).to.have.been.called.once.with(
-      null,
-      {
-        username: profile.username,
-        displayName: profile.displayName,
-        admin: true,
-
-        // eslint-disable-next-line no-underscore-dangle
-        avatarUrl: profile._json.avatar_url
-      }
-    )
+      await handleGitHubOAuthSuccessResponse('some-access-token', 'some-refresh-token', profile, authCallbackSpy)
+      sinon.assert.calledWith(authCallbackSpy, null, false)
+    })
   })
 })
