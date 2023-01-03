@@ -1,11 +1,11 @@
-const logger = require('./logger')
-
-const { disableAuth } = require('./../config')
+import logger from './logger'
+import {disableAuth} from './../config'
+import {NextFunction, Request, Response} from 'express'
 
 // Simple method to ensure that all `req` objects passed in have
 // sufficient access headers to access secured routes. Any route that specifies
 // `secured` will be rejected without these headers.
-const secured = function secured(req, res, next) {
+export function secured(req: Request, res: Response, next: NextFunction) {
   if ((req.session && req.isAuthenticated()) || disableAuth) {
     delete req.session.authBlockedRedirectUrl
     next()
@@ -20,24 +20,24 @@ const secured = function secured(req, res, next) {
 
 /**
  * Require the user to be an admin user to access the route.
- * 
+ *
  * The admin user restriction should only apply to routes where accessing or editing a resource
  * poses a high security risk - such as the potential to gain privilege escalation, steal funds, or
  * obtain card numbers.
- * 
+ *
  * Actions that pose a risk to interrupting service, but not a security risk do no need to require
- * administrative permissions. 
+ * administrative permissions.
  */
-const administrative = function administrative(req, res, next) {
+const administrative = function administrative(req: Request, res: Response, next: NextFunction) {
   if (disableAuth || req.user.admin) {
     next()
     return
   }
   logger.info(`Non admin user ${req.user.username} attempted to access administrative path`)
-  res.render('common/error', { message: 'Action requires admin role permissions' })
+  res.render('common/error', {message: 'Action requires admin role permissions'})
 }
 
-const unauthorised = function unauthorised(req, res) {
+const unauthorised = function unauthorised(req: Request, res: Response) {
   if (req.session && req.isAuthenticated()) {
     res.redirect('/')
     return
@@ -47,7 +47,7 @@ const unauthorised = function unauthorised(req, res) {
   res.status(403).send('User does not have permissions to access the resource')
 }
 
-const revokeSession = function revokeSession(req, res) {
+const revokeSession = function revokeSession(req: Request, res: Response) {
   logger.info(`Revoking session for user ${req.user && req.user.username}`)
   req.logout()
   res.redirect('/')
