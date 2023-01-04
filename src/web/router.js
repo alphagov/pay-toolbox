@@ -109,6 +109,7 @@ router.get('/discrepancies/search', auth.secured, discrepancies.search)
 router.post('/discrepancies/search', auth.secured, discrepancies.getDiscrepancyReport)
 router.post('/discrepancies/resolve/:id', auth.secured, discrepancies.resolveDiscrepancy)
 
+router.get('/stripe/balance', auth.secured, stripe.balance)
 router.get('/stripe/basic/create', auth.secured, stripe.basic)
 router.post('/stripe/basic/create', auth.secured, stripe.basicCreate)
 router.get('/stripe/basic/create-test-account', auth.secured, stripe.createTestAccount)
