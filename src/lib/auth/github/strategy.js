@@ -3,7 +3,7 @@ const { Strategy } = require('passport-github')
 const config = require('../../../config')
 const logger = require('../../logger')
 
-const { isPermittedUser, isAdminUser } = require('./permissions')
+const { getPermissionLevel} = require('./permissions')
 const {PermissionLevel} = require("../types");
 
 const githubAuthCredentials = {
@@ -26,22 +26,18 @@ const handleGitHubOAuthSuccessResponse = async function handleGitHubOAuthSuccess
   logger.info(`Successful account auth from GitHub for user ${username}`)
 
   try {
-    await isAdminUser(username, accessToken)
-
-    sessionProfile.permissionLevel = PermissionLevel.ADMIN
-    logger.info(`Administrator checks passed, setting session for ${username}`)
-    callback(null, sessionProfile)
-  } catch (adminUserFailure) {
-    try {
-      await isPermittedUser(username, accessToken)
-      sessionProfile.permissionLevel = PermissionLevel.USER_SUPPORT
-
-      logger.info(`Valid non-admin permissions, setting session for ${username}`)
+    const permissionLevel = await getPermissionLevel(username, accessToken)
+    if (permissionLevel) {
+      sessionProfile.permissionLevel = permissionLevel
+      logger.info(`User is authorised with permission level ${PermissionLevel[permissionLevel]}, setting session for ${username}`)
       callback(null, sessionProfile)
-    } catch (permittedUserFailure) {
-      logger.warn(`Permissions rejected for user ${username} [${permittedUserFailure.message}]`)
-      callback(null, false, permittedUserFailure)
+    } else {
+      logger.warn(`User ${username} is not a member of any GitHub groups granting access`)
+      callback(null, false)
     }
+  } catch (err) {
+    logger.warn(`Failed to check permissions for user ${username} [${err.message}]`)
+    callback(null, false, err)
   }
 }
 
