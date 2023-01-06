@@ -55,9 +55,9 @@ describe('Authorisation middleware', () => {
     it('should allow authenticated requests if user permission level is equal to the required permission level', () => {
       requestMock.isAuthenticated = () => true
       requestMock.user = {
-        permissionLevel: PermissionLevel.USER_SUPPORT
+        permissionLevel: PermissionLevel.VIEW_ONLY
       }
-      auth.secured(PermissionLevel.USER_SUPPORT)(requestMock, responseSpy, nextSpy)
+      auth.secured(PermissionLevel.VIEW_ONLY)(requestMock, responseSpy, nextSpy)
 
       sinon.assert.calledWithExactly(nextSpy)
       sinon.assert.notCalled(responseSpy.render)
