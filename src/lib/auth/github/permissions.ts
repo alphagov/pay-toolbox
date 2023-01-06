@@ -17,20 +17,22 @@ async function isUserMemberOfGitHubTeam(username: string, token: string, team: s
   logger.info(`Requesting team ${team} permissions for ${username}`)
   try {
     await axios.get(url, githubRestOptions)
+    logger.info(`User ${username} is a member of team ${team}`)
     return true
   } catch (err) {
+    logger.info(`User ${username} is not a member of team ${team}`)
     return false
   }
 }
 
-export async function getPermissionLevel(username: string, token: string): Promise<PermissionLevel | boolean> {
+export async function checkUserAccess(username: string, token: string) {
   if (await isUserMemberOfGitHubTeam(username, token, config.auth.AUTH_GITHUB_ADMIN_TEAM_ID)) {
-    return PermissionLevel.ADMIN
+    return {permitted: true, permissionLevel: PermissionLevel.ADMIN}
   } else if (await isUserMemberOfGitHubTeam(username, token, config.auth.AUTH_GITHUB_USER_SUPPORT_TEAM_ID)) {
-    return PermissionLevel.USER_SUPPORT
+    return {permitted: true, permissionLevel: PermissionLevel.USER_SUPPORT}
   } else if (await isUserMemberOfGitHubTeam(username, token, config.auth.AUTH_GITHUB_VIEW_ONLY_TEAM_ID)) {
-    return PermissionLevel.VIEW_ONLY
+    return {permitted: true, permissionLevel: PermissionLevel.VIEW_ONLY}
   } else {
-    return false
+    return {permitted: false}
   }
 }

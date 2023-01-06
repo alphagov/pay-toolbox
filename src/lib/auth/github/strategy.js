@@ -3,7 +3,7 @@ const { Strategy } = require('passport-github')
 const config = require('../../../config')
 const logger = require('../../logger')
 
-const { getPermissionLevel} = require('./permissions')
+const { checkUserAccess} = require('./permissions')
 const {PermissionLevel} = require("../types");
 
 const githubAuthCredentials = {
@@ -26,10 +26,10 @@ const handleGitHubOAuthSuccessResponse = async function handleGitHubOAuthSuccess
   logger.info(`Successful account auth from GitHub for user ${username}`)
 
   try {
-    const permissionLevel = await getPermissionLevel(username, accessToken)
-    if (permissionLevel) {
-      sessionProfile.permissionLevel = permissionLevel
-      logger.info(`User is authorised with permission level ${PermissionLevel[permissionLevel]}, setting session for ${username}`)
+    const userAccessCheckResult = await checkUserAccess(username, accessToken)
+    if (userAccessCheckResult.permitted) {
+      sessionProfile.permissionLevel = userAccessCheckResult.permissionLevel
+      logger.info(`User is authorised with permission level ${PermissionLevel[userAccessCheckResult.permissionLevel]}, setting session for ${username}`)
       callback(null, sessionProfile)
     } else {
       logger.warn(`User ${username} is not a member of any GitHub groups granting access`)
