@@ -111,7 +111,6 @@ router.get('/discrepancies/search', auth.secured(PermissionLevel.USER_SUPPORT), 
 router.post('/discrepancies/search', auth.secured(PermissionLevel.USER_SUPPORT), discrepancies.getDiscrepancyReport)
 router.post('/discrepancies/resolve/:id', auth.secured(PermissionLevel.USER_SUPPORT), discrepancies.resolveDiscrepancy)
 
-router.get('/stripe/balance', stripe.balance)
 router.get('/stripe/basic/create', auth.secured(PermissionLevel.VIEW_ONLY), stripe.basic)
 router.post('/stripe/basic/create', auth.secured(PermissionLevel.USER_SUPPORT), stripe.basicCreate)
 router.get('/stripe/basic/create-test-account', auth.secured(PermissionLevel.VIEW_ONLY), stripe.createTestAccount)
