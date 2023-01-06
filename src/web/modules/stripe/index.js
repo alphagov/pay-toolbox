@@ -3,7 +3,6 @@ const httpBasic = require('./basic/basic.http').default
 const httpBasicTest = require('./basic/test-account.http').default
 
 module.exports = {
-  balance: httpBasic.logStripeBalance,
   basic: httpBasic.createAccountForm,
   basicCreate: httpBasic.submitAccountCreate,
   createTestAccount: httpBasicTest.createTestAccount,

@@ -8,7 +8,6 @@ import {ClientFormError, formatErrorsForTemplate} from '../../common/validationE
 import {Service} from '../../../../lib/pay-request/services/admin_users/types'
 import AccountDetails from './basicAccountDetails.model'
 import {setupProductionStripeAccount} from './account'
-import * as stripeClient from '../../../../lib/stripe/stripe.client'
 
 import Stripe from "stripe";
 const {StripeError} = Stripe.errors
@@ -99,21 +98,7 @@ const submitAccountCreate = async function submitAccountCreate(
   }
 }
 
-const logStripeBalance = async function logStripeBalance(
-  req: Request,
-  res: Response
-): Promise<void> {
-  if (!process.env.STRIPE_ACCOUNT_API_KEY) {
-    throw new CustomValidationError('Stripe API Key was not configured for this Toolbox instance')
-  }
-  const balance = await stripeClient.getStripeApi().balance.retrieve()
-  const { amount, currency } = balance.available.shift()
-  logger.info('Stripe balance retrieved.', { amount, currency })
-  res.sendStatus(200)
-}
-
 export default {
   createAccountForm: wrapAsyncErrorHandler(createAccountForm),
-  submitAccountCreate: wrapAsyncErrorHandler(submitAccountCreate),
-  logStripeBalance: wrapAsyncErrorHandler(logStripeBalance)
+  submitAccountCreate: wrapAsyncErrorHandler(submitAccountCreate)
 }
