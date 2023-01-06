@@ -2,6 +2,7 @@ const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 
 const {PermissionLevel} = require('../types')
+const {checkUserAccess} = require("./permissions");
 
 describe('GitHub OAuth strategy', () => {
   // eslint-disable-next-line key-spacing
@@ -9,7 +10,10 @@ describe('GitHub OAuth strategy', () => {
 
   it('invokes callback with `true` and profile details when user has sufficient permissions', async () => {
     const authCallbackSpy = sinon.spy()
-    const strategy = getStrategyWithMocks(() => Promise.resolve(PermissionLevel.USER_SUPPORT))
+    const strategy = getStrategyWithMocks(() => Promise.resolve({
+      permitted: true,
+      permissionLevel: PermissionLevel.VIEW_ONLY
+    }))
 
     await strategy.handleGitHubOAuthSuccessResponse('some-access-token', 'some-refresh-token', profile, authCallbackSpy)
 
@@ -18,7 +22,7 @@ describe('GitHub OAuth strategy', () => {
       {
         username: profile.username,
         displayName: profile.displayName,
-        permissionLevel: PermissionLevel.USER_SUPPORT,
+        permissionLevel: PermissionLevel.VIEW_ONLY,
 
         // eslint-disable-next-line no-underscore-dangle
         avatarUrl: profile._json.avatar_url
@@ -28,7 +32,7 @@ describe('GitHub OAuth strategy', () => {
 
   it('invokes callback with `false` when user does not have sufficient permissions', async () => {
     const authCallbackSpy = sinon.spy()
-    const strategy = getStrategyWithMocks(() => Promise.resolve(false))
+    const strategy = getStrategyWithMocks(() => Promise.resolve({permitted: false}))
 
     await strategy.handleGitHubOAuthSuccessResponse('some-access-token', 'some-refresh-token', profile, authCallbackSpy)
     sinon.assert.calledWith(authCallbackSpy, null, false)
@@ -43,10 +47,10 @@ describe('GitHub OAuth strategy', () => {
   })
 })
 
-function getStrategyWithMocks(getPermissionLevelMock) {
+function getStrategyWithMocks(checkUserAccessMock) {
   return proxyquire('./strategy', {
     './permissions': {
-      getPermissionLevel: getPermissionLevelMock
+      checkUserAccess: checkUserAccessMock
     }
   })
 }

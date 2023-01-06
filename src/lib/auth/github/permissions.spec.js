@@ -29,8 +29,8 @@ describe('Permissions util', () => {
   it('should return ADMIN permission level when user is a member of the admin GitHub team', async () => {
     mockSuccessGetUserMembershipOfTeam(authConfig.AUTH_GITHUB_ADMIN_TEAM_ID)
 
-    const permissionLevel = await permissions.getPermissionLevel(username, token);
-    expect(permissionLevel).to.equal(PermissionLevel.ADMIN)
+    const result = await permissions.checkUserAccess(username, token);
+    expect(result).to.deep.equal({permitted: true, permissionLevel: PermissionLevel.ADMIN})
   })
 
   it('should return ADMIN permission level when user is a member of multiple GitHub teams including the admin team', async () => {
@@ -38,27 +38,27 @@ describe('Permissions util', () => {
     mockSuccessGetUserMembershipOfTeam(authConfig.AUTH_GITHUB_USER_SUPPORT_TEAM_ID)
     mockSuccessGetUserMembershipOfTeam(authConfig.AUTH_GITHUB_VIEW_ONLY_TEAM_ID)
 
-    const permissionLevel = await permissions.getPermissionLevel(username, token);
-    expect(permissionLevel).to.equal(PermissionLevel.ADMIN)
+    const result = await permissions.checkUserAccess(username, token);
+    expect(result).to.deep.equal({permitted: true, permissionLevel: PermissionLevel.ADMIN})
   })
 
   it('should return USER_SUPPORT permission level when user is a member of the user support GitHub team', async () => {
     mockSuccessGetUserMembershipOfTeam(authConfig.AUTH_GITHUB_USER_SUPPORT_TEAM_ID)
 
-    const permissionLevel = await permissions.getPermissionLevel(username, token);
-    expect(permissionLevel).to.equal(PermissionLevel.USER_SUPPORT)
+    const result = await permissions.checkUserAccess(username, token);
+    expect(result).to.deep.equal({permitted: true, permissionLevel: PermissionLevel.USER_SUPPORT})
   })
 
   it('should return VIEW_ONLY permission level when user is a member of the view-only GitHub team', async () => {
     mockSuccessGetUserMembershipOfTeam(authConfig.AUTH_GITHUB_VIEW_ONLY_TEAM_ID)
 
-    const permissionLevel = await permissions.getPermissionLevel(username, token);
-    expect(permissionLevel).to.equal(PermissionLevel.VIEW_ONLY)
+    const result = await permissions.checkUserAccess(username, token);
+    expect(result).to.deep.equal({permitted: true, permissionLevel: PermissionLevel.VIEW_ONLY})
   })
 
   it('should return false when user is not a member of any permitted GitHub team', async () => {
-    const permissionLevel = await permissions.getPermissionLevel(username, token);
-    expect(permissionLevel).to.equal(false)
+    const result = await permissions.checkUserAccess(username, token);
+    expect(result).to.deep.equal({permitted: false})
   })
 })
 
