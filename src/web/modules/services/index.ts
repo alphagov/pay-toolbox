@@ -23,5 +23,8 @@ export default {
   toggleAgentInitiatedMotoEnabled: http.toggleAgentInitiatedMotoEnabled,
   updateOrganisationForm: http.updateOrganisationForm,
   updateOrganisation: http.updateOrganisation,
-  toggleArchiveService: http.toggleArchiveService
+  toggleArchiveService: http.toggleArchiveService,
+  futurePaymentPageBrandingPage: http.futurePaymentPageBrandingPage,
+  submitFuturePaymentPageBranding: http.submitFuturePaymentPageBranding,
+  resetBranding: http.resetBranding
 }

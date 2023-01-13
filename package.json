@@ -21,7 +21,7 @@
     "build-browser-dev": "webpack -w --mode development",
     "build:typescript": "tsc",
     "build:sass": "scripts/compile-assets",
-    "build:copy": "copyfiles --up 1 src/**/*.njk dist/",
+    "build:copy": "copyfiles --up 1 src/**/*.njk src/web/**/*.scss dist/",
     "version": "echo $npm_package_version"
   },
   "repository": {
@@ -46,6 +46,7 @@
     "express": "4.18.1",
     "fast-csv": "^4.3.6",
     "google-libphonenumber": "~3.2.21",
+    "govuk-country-and-territory-autocomplete": "^1.0.2",
     "govuk-frontend": "^3.14.0",
     "helmet": "^5.1.1",
     "http-errors": "^2.0.0",
@@ -100,6 +101,8 @@
     "eslint-plugin-react": "^7.23.2",
     "mocha": "^8.4.0",
     "mockery": "2.1.0",
+    "pay-frontend": "github:alphagov/pay-frontend",
+    "pay-products-ui": "github:alphagov/pay-products-ui",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-inlinesvg": "2.3.0",

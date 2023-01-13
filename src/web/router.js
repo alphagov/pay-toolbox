@@ -96,6 +96,11 @@ router.post('/services/search', auth.secured, services.searchRequest)
 router.get('/services/:id', auth.secured, services.detail.http, services.detail.exceptions)
 router.get('/services/:id/branding', auth.secured, services.branding, services.detail.exceptions)
 router.post('/services/:id/branding', auth.secured, auth.administrative, services.updateBranding)
+
+router.get('/services/:id/future/branding', auth.secured, services.futurePaymentPageBrandingPage)
+router.post('/services/:id/future/branding', auth.secured, upload.single('logo-file'), services.submitFuturePaymentPageBranding)
+router.post('/services/:id/future/branding/reset', auth.secured, services.resetBranding)
+
 router.get('/services/:id/link_accounts', auth.secured, auth.administrative, services.linkAccounts, services.detail.exceptions)
 router.post('/services/:id/link_accounts', auth.secured, auth.administrative, services.updateLinkAccounts.http, services.updateLinkAccounts.exceptions)
 router.get('/services/:id/toggle_terminal_state_redirect', auth.secured, services.toggleTerminalStateRedirectFlag)

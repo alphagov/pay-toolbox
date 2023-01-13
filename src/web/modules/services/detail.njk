@@ -21,6 +21,7 @@
       { key: { text: "Name" }, value: { text: service.name } },
       { key: { text: "Organisation" }, value: { text: service.merchant_details.name or "(Not set)" }, actions: { items: [{ href: "/services/" + service.external_id + "/organisation", text: "Change" }] } },
       { key: { text: "Go live status" }, value: { text: service.current_go_live_stage | upper } },
+      { key: { text: "Branding" }, value: { text: "Default GOV.UK" if not service.custom_branding else "Custom branding" }, actions: { items: [{ href: "/services/" + service.external_id + "/future/branding", text: "Manage" }] } },
       { key: { text: "Archived" }, value: { text: service.archived | string | capitalize } },
       { key: { text: "Redirect to service on terminal state" }, value: { text: service.redirect_to_service_immediately_on_terminal_state | string | capitalize } },
       { key: { text: "Agent-initiated MOTO payments are enabled" }, value: { text: service.agent_initiated_moto_enabled | string | capitalize } },

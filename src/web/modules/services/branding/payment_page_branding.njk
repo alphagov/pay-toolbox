@@ -1,0 +1,175 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <div>
+    <a href="/services/{{ serviceId }}" class="govuk-back-link">Back</a>
+  </div>
+
+  <span class="govuk-caption-m">{{ service.name }}</span>
+  <h1 class="govuk-heading-m">Branding</h1>
+
+  {#
+    Main sevice page 
+    "Branding": "Default GOV.UK" || "Custom branding": "Manage"
+
+
+    -> If there is already custom branding, interstitial page with links to the current branding assets and an action to "Change branding"
+    -> If there isn't already a custom branding, directly links to "Change branding" page 
+    -> (there is no memory for a custom branding to repopulate the preview, this allows it to be blank by default)
+    ----> (option) encapsulate values in the name of the file to allow the preview to be filled out
+    ----> (option) upload the assets to CDN with metadata specifying the colour and any other settings, these could then be fetched out and used to re-populate the 
+    ---------> (the absolute URL to the CDN would be saved but the file key could be split off the end)
+    ---------> if taking this option, if you can't find any of the values needed for the preview it should be made very clear to the user
+  
+    #}
+
+    {{ govukInsetText({
+      text: "This service is using the default GOV.UK branding." if not service.custom_branding else "This service is using custom branding."
+    }) }}
+
+  <form method="POST" action="/services/{{ service.external_id }}/future/branding?_csrf={{ csrf }}" enctype="multipart/form-data">
+
+    <div class="govuk-form-group">
+      <div style="outline: 1px dashed #b1b4b6; height: 80px; padding: 10px">
+        <div id="preview-block" style="background: {{ 'black' if not form['banner-colour'] else form['banner-colour'] }}; height: 100%;">
+          <img id="preview-image" src="{% if form.image_url %}{{ form.image_url }}{% endif %}" style="max-height: 60px; margin-left: 10px; margin-top: 10px" class="govuk-header__logotype-crown custom-branding-image">
+        </div>
+      </div>
+    </div>
+    {# <div class="govuk-form-group"> #}
+      {{ govukInput ({
+          id: 'banner-colour',
+          name: 'banner-colour',
+          type: 'color',
+          label: {
+            text: 'Header background colour'
+          },
+          value: form['banner-colour'] or 'black',
+          classes: 'govuk-input--width-2',
+          attributes: {
+            'style': 'height: 51.2px'
+          }
+        }) }}
+
+      {% set fileUploadHint %}
+        A logo provided by the service. No logo will be displayed if not provided. {% if form['image_url'] %}There is an <a class='govuk-link govuk-link--no-visited-state' href="{{form['image_url']}}">existing image</a> applied to this branding.{% endif %}
+      {% endset %}
+      
+      {# In order to use the default crown we might need to actually have it and upload it to s3 as I think the custom branding is all or nothing #}
+      {{ govukFileUpload({
+        id: "logo-file",
+        name: 'logo-file',
+        label: {
+          text: "Custom logo"
+        }, 
+        hint: {
+          html: fileUploadHint
+        },
+        value: form['image_url']
+      }) }}
+      
+      {# {{ govukDetails({ #}
+        {# summaryText: "Logo requirements", #}
+        {# text: "We need to know your nationality so we can work out which elections you’re entitled to vote in. If you cannot provide your nationality, you’ll have to send copies of identity documents through the post." #}
+      {# }) }} #}
+
+      {% set advancedHtml %}
+        {{ govukInput ({
+          id: 'colour',
+          type: 'color',
+          label: {
+            text: 'Primary colour'
+          },
+          hint: {
+            text: 'The colour that will be used for the bar'
+          },
+          classes: 'govuk-input--width-2'
+        }) }}
+
+        {{ govukCheckboxes({
+          name: "service_name",
+          fieldset: {
+            legend: {
+              text: "Service name header"
+            }
+          },
+          items: [
+            {
+              value: "show",
+              text: "Show the service name"
+            }
+          ]
+        }) }}
+      {% endset %}
+
+      {# <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible"> #}
+
+      {# this should contain anything other than a primary colour and a file upload #}
+      {{ govukDetails({
+        summaryText: "Advanced configuration",
+        html: advancedHtml
+      }) }}
+
+      {# <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible"> #}
+
+      {{ govukButton({
+        text: "Update branding"
+      })}}
+
+      
+    {# </div> #}
+    
+
+    {# {{ govukButton({
+    text: "Update Branding Links"
+    })
+    }} #}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+
+  {% if service.custom_branding %}
+  <form method="POST" action="/services/{{ service.external_id }}/future/branding/reset">
+    {{ govukButton({
+        text: "Remove custom branding",
+        classes: "govuk-button--warning"
+      })}}
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+  {% endif %}
+
+  <script>
+    document.getElementById('banner-colour').addEventListener('input', (e) => {
+      document.getElementById('preview-block').style.background = e.target.value
+    })
+
+    document.getElementById('logo-file').addEventListener('change', (evt) => {
+      var tgt = evt.target || window.event.srcElement,
+        files = tgt.files;
+    
+      // FileReader support
+      if (FileReader && files && files.length) {
+          var fr = new FileReader();
+          fr.onload = function () {
+              document.getElementById('preview-image').src = fr.result;
+          }
+          fr.readAsDataURL(files[0]);
+      }
+      
+      // Not supported
+      else {
+          // fallback -- perhaps submit the input to an iframe and temporarily store
+          // them on the server until the user's session ends.
+      }
+    })
+  </script>
+{% endblock %}

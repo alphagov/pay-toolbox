@@ -1,0 +1,73 @@
+$govuk-font-family: -apple-system,BlinkMacSystemFont,helvetica neue,helvetica,ubuntu,roboto,noto,segoe ui,arial,sans-serif; // Override font as so not to use New Transport
+// @import "custom-shared-application";
+@import "govuk-frontend/govuk/base";
+
+// CUSTOM BRANDING
+// Use the variables below to control the style
+// Make sure banner colours meet minimum colour contrast levels
+
+$custom-banner-colour: #238b4f !default;
+$custom-banner-border-colour: #ffffff !default;
+$custom-text-colour: #ffffff !default;
+$logo-image-height: 2em !default;
+$logo-image-width: null !default;
+
+.custom-branding {
+  @if $logo-image-height != null {
+    .custom-branding-image {
+      max-height: $logo-image-height;
+
+      @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        width: 100%;
+      }
+    }
+  }
+
+  @if $logo-image-width != null {
+    .custom-branding-image {
+      width: $logo-image-width;
+
+      @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        width: 100%;
+      }
+    }
+  }
+
+  .govuk-header {
+    background-color: $custom-banner-colour;
+  }
+
+  .govuk-header__link{
+    &:link,
+    &:visited {
+      color: $custom-text-colour;
+    }
+  }
+
+  .govuk-header__link--service-name {
+    color: $custom-text-colour;
+  }
+
+  .govuk-header__container {
+    border-bottom-color: $custom-banner-border-colour;
+  }
+
+  @include govuk-media-query($from: tablet) {
+    .govuk-header__content {
+      width: 66%;
+      vertical-align: bottom;
+      margin-bottom: 7px;
+    }
+  }
+
+  .govuk-button {
+    padding: 7px 15px 6px;
+    padding: .368421053em .842105263em .315789474em;
+  }
+}
+
+// I think this is payment links specific 
+div.govuk-panel--confirmation {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}

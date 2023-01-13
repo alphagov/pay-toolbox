@@ -15,6 +15,14 @@ import {formatServiceExportCsv} from './serviceExportCsv'
 import {BooleanFilterOption} from '../common/BooleanFilterOption'
 import {ServiceFilters, fetchAndFilterServices, getLiveNotArchivedServices} from './getFilteredServices'
 
+import path from 'path'
+import sass from 'sass'
+import fs from 'fs/promises'
+
+import { NoSuchKey, S3 } from '@aws-sdk/client-s3'
+
+const client = new S3({})
+
 function extractFiltersFromQuery(query: ParsedQs): ServiceFilters {
   return {
     live: query.live as BooleanFilterOption || BooleanFilterOption.True,
@@ -108,8 +116,10 @@ const updateBranding = async function updateBranding(req: Request, res: Response
 
   await AdminUsers.services.update(id, {
       custom_branding: {
-        image_url: sanitiseCustomBrandingURL(req.body.image_url),
-        css_url: sanitiseCustomBrandingURL(req.body.css_url)
+        // image_url: sanitiseCustomBrandingURL(req.body.image_url),
+        // css_url: sanitiseCustomBrandingURL(req.body.css_url)
+        image_url: req.body.image_url,
+        css_url: req.body.css_url
       }
     }
   )
@@ -322,6 +332,153 @@ const toggleArchiveService = async function toggleArchiveService(
   res.redirect(`/services/${serviceId}`)
 }
 
+async function futurePaymentPageBrandingPage(req: Request, res: Response): Promise<void> {
+  const serviceId: string = req.params.id
+  const service = await AdminUsers.services.retrieve(serviceId)
+  let form: any = {}
+
+  if (service.custom_branding) {
+    // try and get the files from s3
+    if (service.custom_branding.css_url) {
+      const parsed = new URL(service.custom_branding.css_url)
+      console.log(parsed)
+      try {
+        const css = await client.getObject({
+          Bucket: 'sfount-govuk-pay',
+          Key: parsed.pathname.substring(1)
+        })
+        form = { ...form, ...css.Metadata }
+        console.log('got css', css)
+      } catch (error) {
+        console.log('failed to get css') 
+      }
+    }
+
+    if (service.custom_branding.image_url) {
+      const parsed = new URL(service.custom_branding.image_url)
+      form.image_url = service.custom_branding.image_url
+    }
+  }
+
+  res.render(`services/branding/payment_page_branding`, { service, serviceId, csrf: req.csrfToken(), form })
+  return
+}
+
+enum brandingVariables {
+  BANNER_COLOUR = 'banner-colour',
+  BANNER_BORDER_COLOUR = 'banner-border-colour'
+}
+
+const variableMap: { [key: string]: string } = {
+  [brandingVariables.BANNER_COLOUR]: '$custom-banner-colour',
+  [brandingVariables.BANNER_BORDER_COLOUR]: '$custom-banner-border-colour'
+}
+
+function formatBrandingVariables(variableBody: { [key: string]: string }): string {
+  let compiledString = ''
+  for (const variable of Object.values(brandingVariables)) {
+    console.log('checking', variable)
+    if (variableBody[variable]) {
+      compiledString = compiledString.concat(`${variableMap[variable]}: ${variableBody[variable]};\n`)
+    }
+  }
+  return compiledString
+}
+
+async function resetBranding(req: Request, res: Response) {
+  const serviceId: string = req.params.id
+  const service = await AdminUsers.services.retrieve(serviceId)
+  await AdminUsers.services.update(service.external_id, {
+    custom_branding: {}
+  }) 
+  req.flash('info', `Branding reset to Default GOV.UK`)
+  res.redirect(`/services/${service.external_id}`)
+}
+
+// take some settings from the page, generate sass output
+async function submitFuturePaymentPageBranding(req: Request, res: Response) {
+  console.log('file received from browser', req.body)
+  console.log(req.file)
+  const serviceId: string = req.params.id
+  const service = await AdminUsers.services.retrieve(serviceId)
+
+  console.log('submitting ')
+
+  const formatted = formatBrandingVariables(req.body)
+
+  // get the root file
+  const file = await fs.readFile(path.join(__dirname, 'branding/custom.scss'))
+
+  // come up with better way to do root (theres already a method I think)
+  const compiled = sass.compileString(formatted.concat(file.toString()), { loadPaths: [
+    // this is where I've copied files from the frontend repo -- it could be replaced by node_modules ref
+    path.join(__dirname, 'branding'),
+    path.join(__dirname, '../../../../node_modules/pay-frontend/app/assets/sass'),
+    path.join(__dirname, '../../../../node_modules/pay-products-ui/app/assets/sass'),
+    // need a reference to payment links modules as well
+
+    // this gives access to govuk-frontend and govuk-accessible-autocomplete
+    path.join(__dirname, '../../../../node_modules') 
+  ] })
+  
+  // console.log('read file', file.toString())
+
+  // some findings 
+  // { loadPaths: [] // should be absolute path to node modules folder }
+
+  // will likely have to - read the file
+  // add the variables formatted and up front (w/ simple unit test)
+  // run compile and upload that string
+
+
+  // in variable file
+  // $mycolour: custom_value;
+
+  // in actual sass file
+  // $mycolour: default_value !default;
+  const adminusersPayload: any = {}
+
+  const cssKey = `${service.external_id}.css`
+  const response = await client.putObject({
+    Bucket: 'sfount-govuk-pay',
+    Body: compiled.css,
+    Key: cssKey,
+    Metadata: req.body,
+    ContentType: 'text/css',
+    ACL: 'public-read'
+  })
+  adminusersPayload.css_url = 'https://da49zv8eg7hhn.cloudfront.net/' + cssKey + '?hash=' + res.locals.toolboxId
+
+  if (req.file) {
+    const imageKey = `${service.external_id}-${req.file.originalname}`
+    const imageUpload = await client.putObject({
+      Bucket: 'sfount-govuk-pay',
+      Body: req.file.buffer,
+      Key: imageKey,
+      ContentType: req.file.mimetype,
+      ACL: 'public-read'
+    })
+
+    adminusersPayload.image_url = 'https://da49zv8eg7hhn.cloudfront.net/' + imageKey + '?hash=' + res.locals.toolboxId
+    console.log('uploaded image file')
+  } else {
+    if (service.custom_branding && service.custom_branding.image_url) {
+      adminusersPayload.image_url = service.custom_branding.image_url
+    }
+  }
+
+  console.log('uploaded css to s3', response)
+
+  console.log('custom', formatted)
+
+  await AdminUsers.services.update(service.external_id, {
+    custom_branding: adminusersPayload
+  })
+
+  req.flash('info', `Branding updated`)
+  res.redirect(`/services/${service.external_id}`)
+}
+
 export default {
   overview: wrapAsyncErrorHandler(overview),
   listCsv: wrapAsyncErrorHandler(listCsv),
@@ -338,6 +495,9 @@ export default {
   toggleAgentInitiatedMotoEnabled: wrapAsyncErrorHandler(toggleAgentInitiatedMotoEnabledFlag),
   updateOrganisationForm: wrapAsyncErrorHandler(updateOrganisationForm),
   updateOrganisation: wrapAsyncErrorHandler(updateOrganisation),
-  toggleArchiveService: wrapAsyncErrorHandler(toggleArchiveService)
+  toggleArchiveService: wrapAsyncErrorHandler(toggleArchiveService),
+  futurePaymentPageBrandingPage: wrapAsyncErrorHandler(futurePaymentPageBrandingPage),
+  submitFuturePaymentPageBranding: wrapAsyncErrorHandler(submitFuturePaymentPageBranding),
+  resetBranding: wrapAsyncErrorHandler(resetBranding)
 }
 

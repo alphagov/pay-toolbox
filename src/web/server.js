@@ -47,22 +47,24 @@ function configureSecureHeaders(instance) {
     xssFilter: false
   } : {}
   const initGOVUKFrontendSnippet = '\'sha256-tqCUU2yHjDH9fiULK1QKKUFdNg//3tfcIB2bl/5yKI4=\''
-  instance.use(helmet(helmetOptions))
-  instance.use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        "default-src": ["'self'"],
-        "script-src": [
-          "'self'",
-          "'unsafe-eval'",
-          initGOVUKFrontendSnippet
-        ],
-        "img-src": ["'self'", 'https://*.githubusercontent.com', 'data:'],
-        "style-src": ["'self'", "'unsafe-inline'"]
-      }
-    },
-    crossOriginResourcePolicy: { policy: "cross-origin" }
-  }))
+  // instance.use(helmet(helmetOptions))
+  // instance.use(helmet({
+  //   // crossOriginResourcePolicy: false,
+  //   contentSecurityPolicy: {
+  //     directives: {
+  //       "default-src": ["'self'"],
+  //       "script-src": [
+  //         "'self'",
+  //         "'unsafe-eval'",
+  //         "'unsafe-inline'"
+  //         // initGOVUKFrontendSnippet
+  //       ],
+  //       "img-src": ["'self'", 'https://*.githubusercontent.com', 'https://da49zv8eg7hhn.cloudfront.net', 'data:'],
+  //       "style-src": ["'self'", "'unsafe-inline'"]
+  //     }
+  //   },
+  //   crossOriginResourcePolicy: { policy: "cross-origin" }
+  // }))
   instance.use(csurf())
 }
 
