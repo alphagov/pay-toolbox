@@ -54,6 +54,10 @@ export interface Transaction {
   gateway_transaction_id?: string;
 }
 
+export interface Agreement {
+  agreement_id: string;
+}
+
 export interface Payment extends Transaction {
   description: string;
   language: Language;
@@ -262,7 +266,27 @@ export interface ListTransactionRequest {
   limit_total_size?: number;
 }
 
+export interface ListAgreementRequest {
+  page?: number;
+  display_size?: number;
+  live?: boolean;
+  status?: string;
+  reference?: string;
+  /**
+   * If the reference filter should check for the value in the reference or should
+   * require it to exactly equal the reference.
+  */
+  exact_reference_match?: boolean;
+  limit_total?: boolean;
+  limit_total_size?: number; 
+}
+
 export interface ListTransactionForAccountRequest extends ListTransactionRequest {
+  account_id: number | number[];
+}
+
+// do same for agreement
+export interface ListAgreementForAccountRequest extends ListAgreementRequest {
   account_id: number | number[];
 }
 
@@ -270,6 +294,14 @@ export interface ListTransactionRequestWithAccountOverrideRequest extends ListTr
   override_account_id_restriction: boolean;
   account_id?: number | number[];
 }
+
+// do same for agreement
+export interface ListAgreementRequestWithAccountOverrideRequest extends ListAgreementRequest {
+  override_account_or_service_id_restriction: boolean;
+  account_id?: number | number[];
+}
+
+
 
 export interface ListPaymentRefundsRequest {
   gateway_account_id: number;
