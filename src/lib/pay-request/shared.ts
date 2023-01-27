@@ -53,6 +53,13 @@ export enum ExternalTransactionState {
   Error = 'error'
 }
 
+export enum ExternalAgreementState {
+  Created = 'created',
+  Active = 'active',
+  Cancelled = 'cancelled',
+  Expired = 'expired'
+}
+
 export enum TransactionErrorCode {
   /** Payment method rejected. P0010. */
   Rejected = 'P0010',

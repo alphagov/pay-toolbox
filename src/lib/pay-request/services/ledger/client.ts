@@ -13,6 +13,8 @@ import type {
   RetrieveTransactionWithAccountOverrideRequest,
   ListTransactionForAccountRequest,
   ListTransactionRequestWithAccountOverrideRequest,
+  ListAgreementForAccountRequest,
+  ListAgreementRequestWithAccountOverrideRequest,
   ListPaymentRefundsRequest,
   ListTransactionEventsRequest,
   ListEventTickerRequest,
@@ -26,7 +28,11 @@ import type {
   ListPayoutWithAccountOverrideRequest,
   TransactionsByHourRequest,
   ListPaymentRefundsResponse,
-  ListTransactionEventsResponse, Transaction, RelatedTransactionsRequest, TransactionsForTransactionResponse,
+  ListTransactionEventsResponse, 
+  Transaction, 
+  RelatedTransactionsRequest, 
+  TransactionsForTransactionResponse,
+  Agreement
 } from './types'
 import {
   SearchResponse,
@@ -157,6 +163,20 @@ export default class Ledger extends Client {
         .get(`/v1/transaction/${id}/event`, {params})
         .then(response => client._unpackResponseData<ListTransactionEventsResponse>(response));
     }
+  }))(this)
+
+  agreements = ((client: Ledger) => ({
+    list(
+      filters: ListAgreementForAccountRequest | ListAgreementRequestWithAccountOverrideRequest
+    ): Promise<SearchResponse<Agreement> | undefined> {
+      const accountIdParam = filters.account_id as number[]
+      const paymentFilters: any = {
+        ...filters
+      }
+      return client._axios
+        .get('/v1/agreement', {params: paymentFilters})
+        .then(response => client._unpackResponseData<SearchResponse<Agreement>>(response));
+    },
   }))(this)
 
   events = ((client: Ledger) => ({
