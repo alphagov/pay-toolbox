@@ -170,11 +170,9 @@ export default class Ledger extends Client {
       filters: ListAgreementForAccountRequest | ListAgreementRequestWithAccountOverrideRequest
     ): Promise<SearchResponse<Agreement> | undefined> {
       const accountIdParam = filters.account_id as number[]
-      const paymentFilters: any = {
-        ...filters
-      }
+
       return client._axios
-        .get('/v1/agreement', {params: paymentFilters})
+        .get('/v1/agreement', {params: filters})
         .then(response => client._unpackResponseData<SearchResponse<Agreement>>(response));
     },
   }))(this)
