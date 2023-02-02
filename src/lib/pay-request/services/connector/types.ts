@@ -150,7 +150,8 @@ export interface ListGatewayAccountsRequest {
   type?: AccountType;
   payment_provider?: string;
   payment_provider_account_id?: string;
-  provider_switch_enabled?: string
+  provider_switch_enabled?: string;
+  service_id?: string;
 }
 
 export interface ListGatewayAccountsResponse {
