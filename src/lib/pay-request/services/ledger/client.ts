@@ -32,7 +32,9 @@ import type {
   Transaction, 
   RelatedTransactionsRequest, 
   TransactionsForTransactionResponse,
-  Agreement
+  Agreement,
+  RetrieveAgreementForAccountRequest,
+  RetrieveAgreementForAccountWithOverrideRequest
 } from './types'
 import {
   SearchResponse,
@@ -166,6 +168,16 @@ export default class Ledger extends Client {
   }))(this)
 
   agreements = ((client: Ledger) => ({
+    retrieve(
+      id: string,
+      params: RetrieveAgreementForAccountRequest | RetrieveAgreementForAccountWithOverrideRequest
+    ): Promise<Agreement | undefined> {
+      return client._axios
+        .get(`/v1/agreement/${id}`, {params})
+        .then(response => client._unpackResponseData<Agreement>(response))
+        .catch(handleEntityNotFound('Agreement', id))
+    },
+
     list(
       filters: ListAgreementForAccountRequest | ListAgreementRequestWithAccountOverrideRequest
     ): Promise<SearchResponse<Agreement> | undefined> {

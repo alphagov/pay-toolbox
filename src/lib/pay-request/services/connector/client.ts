@@ -13,10 +13,11 @@ import {
   CreateGatewayAccountResponse,
   GatewayStatusComparison,
   StripeSetup,
-  UpdateGatewayAccountRequest, UpdateStripeSetupRequest, GatewayAccountCredentials, AddGatewayAccountCredentialsRequest
+  UpdateGatewayAccountRequest, UpdateStripeSetupRequest, GatewayAccountCredentials, AddGatewayAccountCredentialsRequest, GatewayAccount
 } from './types'
 import {App} from '../../shared'
 import {handleEntityNotFound} from "../../utils/error";
+import { EntityNotFoundError } from '../../../errors'
 
 /**
  * Convenience methods for accessing resource endpoints for the Connector
@@ -153,6 +154,26 @@ export default class Connector extends Client {
       return client._axios
         .get('/v1/api/accounts', {params})
         .then(response => client._unpackResponseData<ListGatewayAccountsResponse>(response))
+    },
+
+    /*
+     * Get one gateway account given service ID. This is a polyfill method until service ID and live/ test are the primary index for accounts on the backend. 
+     */
+    async retrieveForService(filters: ListGatewayAccountsRequest = {}): Promise<GatewayAccount | undefined> {
+      const params = _.omitBy(filters, _.isEmpty)
+      const { accounts } = await client._axios
+        .get('/v1/api/accounts', {params})
+        .then(response => client._unpackResponseData<ListGatewayAccountsResponse>(response))
+
+      if (accounts.length > 1) {
+        throw new Error(`Multiple accounts for service ${filters.service_id} ${filters.type}, this is a legacy configuration`)
+      }
+
+      if (!accounts.length) {
+        throw new EntityNotFoundError('Account for service', filters.service_id)
+      }
+
+      return accounts[0]
     },
 
     /**

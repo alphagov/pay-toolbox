@@ -10,7 +10,8 @@ import {
   CardBrand,
   ExternalPayoutState,
   TransactionState,
-  ExternalAgreementState
+  ExternalAgreementState,
+  PaymentInstrumentType
 } from '../../shared'
 
 export interface BillingAddress {
@@ -55,8 +56,24 @@ export interface Transaction {
   gateway_transaction_id?: string;
 }
 
+export interface PaymentInstrument {
+  agreement_external_id: string;
+  created_date: string;
+  external_id: string;
+  card_details: CardDetails;
+  type: PaymentInstrumentType;
+}
+
 export interface Agreement {
-  agreement_id: string;
+  external_id: string;
+  created_date: string;
+  description: string;
+  live: boolean;
+  reference: string;
+  service_id: string;
+  status: ExternalAgreementState;
+  payment_instrument?: PaymentInstrument;
+  user_identifier?: string;
 }
 
 export interface Payment extends Transaction {
@@ -223,6 +240,15 @@ export interface GatewayPerformanceReportRequest {
   from_date: string;
   /** simplified extended ISO format (ISO 8601). YYYY-MM-DDTHH:mm:ss.sssZ. Dates will be registered as UTC. */
   to_date: string;
+}
+
+export interface RetrieveAgreementForAccountRequest {
+  account_id?: string;
+  service_id?: string;
+}
+
+export interface RetrieveAgreementForAccountWithOverrideRequest extends RetrieveAgreementForAccountRequest {
+  override_account_or_service_id_restriction: boolean;
 }
 
 export interface RetrieveTransactionForAccountRequest {

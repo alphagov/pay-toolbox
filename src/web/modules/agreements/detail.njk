@@ -1,0 +1,72 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "common/json.njk" import json %}
+{% from "./status.macro.njk" import agreementStatusTag %}
+{% extends "layout/layout.njk" %}
+
+{% set isTestData = not agreement.live %}
+
+{% macro captionCell(content) %}
+<span class="govuk-caption-m">{{ content }}</span>
+{% endmacro %}
+
+{% block main %}
+  <h1 class="govuk-heading-m">Agreement</h1>
+
+  {{ govukSummaryList({
+    rows: [
+      { key : { html: captionCell("ID") }, value: { text: agreement.external_id } },
+      { key : { text: captionCell("Status") }, value: { html: agreementStatusTag(agreement.status) } },
+      { key : { html: captionCell("Description") }, value: { text: agreement.description } },
+      { key : { text: captionCell("Reference") }, value: { text: agreement.reference } },
+      { key : { text: captionCell("User identifier") }, value: { text: agreement.user_identifier or "(None set)" } } ,
+      { key : { text: captionCell("Date created") }, value: { text: agreement.created_date | formatDate } } 
+    ]
+  }) }}
+  
+  {% set cardBrandLabelMap = {
+    "visa": "Visa",
+    "master-card": "Mastercard",
+    "american-express": "American Express",
+    "diners-club": "Diners Club",
+    "discover": "Discover",
+    "jcb": "Jcb",
+    "unionpay": "Union Pay",
+    "maestro": "Maestro"
+  } %}
+
+  <h2 class="govuk-heading-s">Payment instrument</h2>
+  {% if agreement.payment_instrument %}
+    {{ govukSummaryList({
+      rows: [
+        { key : { text: captionCell("ID") }, value: { text: agreement.payment_instrument.external_id } },
+        { key : { text: captionCell("Type") }, value: { text: agreement.payment_instrument.type } },
+        { key : { text: captionCell("Card brand") }, value: { text: cardBrandLabelMap[agreement.payment_instrument.card_details.card_brand] } },
+        { key : { text: captionCell("Cardholder name") }, value: { text: agreement.payment_instrument.card_details.cardholder_name } },
+        { key : { text: captionCell("Card") }, value: { text: agreement.payment_instrument.card_details.first_digits_card_number + " •••• " + agreement.payment_instrument.card_details.last_digits_card_number } },
+        { key : { text: captionCell("Date created") }, value: { text: agreement.payment_instrument.created_date | formatDate } } 
+      ]
+    }) }}
+
+  {% else %}
+  <div>
+    <p class="govuk-body">(None set)</p>
+  </div>
+  {% endif %}
+
+  <h2 class="govuk-heading-s">Service</h2>
+  {% set accountLink %}
+  <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ account.gateway_account_id }}">{{ account.type | capitalize }} {{ account.payment_provider | capitalize }} ({{ account.gateway_account_id }})</a>
+  {% endset %}
+  {% set serviceLink %}
+  <a class="govuk-link govuk-link--no-visited-state" href="/services/{{ service.external_id }}">{{ service.name }}</a> 
+  {% endset %}
+
+  {{ govukSummaryList({
+    rows: [
+      { key : { html: captionCell("Gateway account") }, value: { html: accountLink } },
+      { key : { text: captionCell("Service") }, value: { html: serviceLink } } 
+    ]
+  }) }}
+
+  {{ json("Agreement source", agreement) }}
+{% endblock %}
