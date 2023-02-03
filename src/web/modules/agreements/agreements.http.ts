@@ -15,14 +15,14 @@ if (common.development) {
 export async function detail(req: Request, res: Response, next: NextFunction) {
   try {
     const agreement = await Ledger.agreements.retrieve(req.params.id, { override_account_or_service_id_restriction: true })
-    const account = await Connector.accounts.retrieveForService({
+    const { accounts } = await Connector.accounts.list({
       service_id: agreement.service_id, 
       type: agreement.live ? AccountType.Live : AccountType.Test
     })
     const service = await AdminUsers.services.retrieve(agreement.service_id)
     
     
-    res.render('agreements/detail', { agreement, service, account })
+    res.render('agreements/detail', { agreement, service, accounts })
   } catch (error) {
     next(error)
   }
