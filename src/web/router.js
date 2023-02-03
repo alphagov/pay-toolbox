@@ -16,6 +16,7 @@ const services = require('./modules/services').default
 const discrepancies = require('./modules/discrepancies')
 const stripe = require('./modules/stripe')
 const transactions = require('./modules/transactions/transactions.http')
+const agreements = require('./modules/agreements/agreements.http')
 const updateTransactions = require('./modules/transactions/update/update.http')
 const parity = require('./modules/transactions/discrepancies/validateLedger.http')
 const platform = require('./modules/platform/dashboard.http')
@@ -144,6 +145,8 @@ router.get('/transactions/:id', auth.secured(PermissionLevel.VIEW_ONLY), transac
 router.get('/transactions/:id/parity', auth.secured(PermissionLevel.USER_SUPPORT), parity.validateLedgerTransaction)
 
 router.get('/transactions', auth.secured(PermissionLevel.VIEW_ONLY), transactions.list)
+
+router.get('/agreements', auth.secured(PermissionLevel.VIEW_ONLY), agreements.list)
 
 router.get('/payment_links', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.list)
 router.get('/payment_links/search', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.search)

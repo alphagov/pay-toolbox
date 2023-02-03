@@ -1,0 +1,111 @@
+{% from "agreements/status.macro.njk" import agreementStatusTag %}
+
+{% extends "layout/layout.njk" %}
+
+{% set isTestData = account and not (account.type === "live") %}
+
+{% set linkQueryParams %}{% if service %}&account={{ accountId }}{% endif %}{% if filters.reference %}&reference={{ filters.reference }}{% endif %}{% endset %}
+
+{% block main %}
+  <span class="govuk-caption-m">
+    {% if service %}
+      <span>{{ service.name }}</span>
+    {% else %}
+      <span>GOV.UK Pay platform</span>
+    {% endif %}
+  </span>
+
+  <h1 class="govuk-heading-m">Agreements</h1>
+
+  <div class="transactions-filter__container govuk-body">
+    {% for status in ["created", "active", "cancelled", "all"] %}
+      <a
+        class="transactions-filter__item {% if selectedStatus === status %}selected{% endif %} no-decoration"
+        href="/agreements?status={{ status }}{{ linkQueryParams }}">
+        <span>{{ status | capitalize }}</span>
+      </a>
+    {% endfor %}
+  </div>
+
+  {% if filters.reference %}
+    <div class="govuk-body">
+      <h4 class="govuk-heading-s">Filtered by</h4>
+      {% if filters.reference %}
+        <div class="govuk-body">
+          <div class="govuk-grid-column-one-third">Reference: </div>
+          <span><strong class="govuk-tag">{{ filters.reference }}</strong></span>
+        </div>
+      {% endif %}
+    </div>
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+  {% endif %}
+
+  <div>
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col">Reference</th>
+          <th class="govuk-table__header" scope="col"></th>
+          <th class="govuk-table__header" scope="col">Description</th>
+          <th class="govuk-table__header" scope="col">Date created</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {% for agreement in agreements %}
+          <tr class="govuk-table__row" onclick="local.href='/agreements'">
+            <td class="govuk-table__cell">
+              <a class="govuk-link govuk-link--no-visited-state" href="/agreements/{{ agreement.external_id }}">
+                {{ agreement.reference | truncate(20) }}
+              </a>
+            <td class="govuk-table__cell">
+              {{ agreementStatusTag(
+                agreement.status
+                ) }}
+            </td>
+            <td class="govuk-table__cell">
+              <span class="govuk-caption-m">{{ agreement.description | truncate(20) }}</span>
+            </td>
+            <td class="govuk-table__cell">
+              <span class="govuk-caption-m">{{ agreement.created_date | formatDateLocalTimeZone }}</span>
+            </td>
+          </tr>
+        {% else %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell center" colspan="5"><span><i>No agreements found.</i></span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="govuk-body">
+    Showing page {{ set.page }} ({{ set.count }}) of
+    {% if set.total < 5000 %}
+        about {{ set.total }} agreements
+    {% else %}
+        over 5000 agreements
+    {% endif %}
+  </div>
+  <div class="toolbox-right">
+    <a
+      {% if set.page <= 1 %}
+        disabled
+      {% else %}
+        href="/agreements?page={{ set.page - 1 }}&status={{ selectedStatus }}{{ linkQueryParams }}"
+      {% endif %}
+
+      class="govuk-button govuk-button--secondary">
+      Previous
+    </a>
+    <a
+      {% if not(set._links.next_page) %}
+        disabled
+      {% else %}
+        href="/agreements?page={{ set.page + 1 }}&status={{ selectedStatus }}{{ linkQueryParams }}"
+      {% endif %}
+
+      class="govuk-button govuk-button--secondary">
+      Next
+    </a>
+  </div>
+{% endblock %}

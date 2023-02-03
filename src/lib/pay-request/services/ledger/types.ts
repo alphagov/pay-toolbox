@@ -9,7 +9,8 @@ import {
   ResourceType,
   CardBrand,
   ExternalPayoutState,
-  TransactionState
+  TransactionState,
+  ExternalAgreementState
 } from '../../shared'
 
 export interface BillingAddress {
@@ -270,7 +271,7 @@ export interface ListAgreementRequest {
   page?: number;
   display_size?: number;
   live?: boolean;
-  status?: string;
+  status?: ExternalAgreementState | ExternalAgreementState[];
   reference?: string;
   /**
    * If the reference filter should check for the value in the reference or should

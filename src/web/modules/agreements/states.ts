@@ -1,14 +1,14 @@
 import {ExternalAgreementState, ExternalTransactionState} from "../../../lib/pay-request/shared";
 
 export enum AgreementListFilterStatus {
-  Created = 'created', Active = 'active', InActive = 'in-active', All = 'all'
+  Created = 'created', Active = 'active', Cancelled = 'cancelled', All = 'all'
 }
 
-const agreementFilterStatusMap: { [key in AgreementListFilterStatus]: ExternalAgreementState[] } = {
-  all: [],
-  created: [ExternalAgreementState.Created],
-  active: [ExternalAgreementState.Active],
-  'in-active': [ExternalAgreementState.Cancelled, ExternalAgreementState.Expired]
+const agreementFilterStatusMap: { [key in AgreementListFilterStatus]: ExternalAgreementState } = {
+  all: null,
+  created: ExternalAgreementState.Created,
+  active: ExternalAgreementState.Active,
+  cancelled: ExternalAgreementState.Cancelled
 }
 
 export function resolveAgreementStates(statusFilter: AgreementListFilterStatus) {
