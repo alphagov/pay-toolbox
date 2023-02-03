@@ -55,7 +55,9 @@
 
   <h2 class="govuk-heading-s">Service</h2>
   {% set accountLink %}
-  <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ account.gateway_account_id }}">{{ account.type | capitalize }} {{ account.payment_provider | capitalize }} ({{ account.gateway_account_id }})</a>
+  {% for account in accounts %}
+  <a class="govuk-link govuk-link--no-visited-state" style="margin-right: 10px" href="/gateway_accounts/{{ account.gateway_account_id }}">{{ account.type | capitalize }} {{ account.payment_provider | capitalize }} ({{ account.gateway_account_id }}) </a>
+  {% endfor %}
   {% endset %}
   {% set serviceLink %}
   <a class="govuk-link govuk-link--no-visited-state" href="/services/{{ service.external_id }}">{{ service.name }}</a> 
