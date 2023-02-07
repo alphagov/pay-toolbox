@@ -157,7 +157,7 @@ export default class Connector extends Client {
     },
 
     /*
-     * Get one gateway account given service ID. This is a polyfill method until service ID and live/ test are the primary index for accounts on the backend. 
+     * Get one gateway account given service ID. This is a polyfill method until service ID and live/ test are the primary index for accounts on the backend.
      */
     async retrieveForService(filters: ListGatewayAccountsRequest = {}): Promise<GatewayAccount | undefined> {
       const params = _.omitBy(filters, _.isEmpty)
@@ -166,11 +166,11 @@ export default class Connector extends Client {
         .then(response => client._unpackResponseData<ListGatewayAccountsResponse>(response))
 
       if (accounts.length > 1) {
-        throw new Error(`Multiple accounts for service ${filters.service_id} ${filters.type}, this is a legacy configuration`)
+        throw new Error(`Multiple accounts for service ${filters.serviceIds} ${filters.type}, this is a legacy configuration`)
       }
 
       if (!accounts.length) {
-        throw new EntityNotFoundError('Account for service', filters.service_id)
+        throw new EntityNotFoundError('Account for service', filters.serviceIds)
       }
 
       return accounts[0]
