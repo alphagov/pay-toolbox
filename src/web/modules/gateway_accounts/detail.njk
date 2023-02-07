@@ -208,6 +208,11 @@
         <dd class="govuk-summary-list__value">{{ 'Enabled' if account.provider_switch_enabled else 'Disabled' }}</dd>
         <dd class="govuk-summary-list__actions"></dd>
       </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Recurring enabled</span></dt>
+        <dd class="govuk-summary-list__value">{{ account.recurring_enabled | string | capitalize }}</dd>
+        <dd class="govuk-summary-list__actions"></dd>
+      </div>
       {% if account.block_prepaid_cards != undefined %}
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Blocked prepaid cards</span></dt>
