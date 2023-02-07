@@ -16,12 +16,11 @@ export async function detail(req: Request, res: Response, next: NextFunction) {
   try {
     const agreement = await Ledger.agreements.retrieve(req.params.id, { override_account_or_service_id_restriction: true })
     const { accounts } = await Connector.accounts.list({
-      service_id: agreement.service_id, 
+      serviceIds: agreement.service_id,
       type: agreement.live ? AccountType.Live : AccountType.Test
     })
     const service = await AdminUsers.services.retrieve(agreement.service_id)
-    
-    
+
     res.render('agreements/detail', { agreement, service, accounts })
   } catch (error) {
     next(error)
@@ -33,7 +32,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     let service, account
     const accountId = req.query.account
     const selectedStatus = req.query.status as AgreementListFilterStatus || AgreementListFilterStatus.All
-    
+
     const filters = {
       ...req.query.reference && {reference: req.query.reference as string}
     }

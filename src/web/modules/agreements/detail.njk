@@ -19,10 +19,10 @@
       { key : { html: captionCell("Description") }, value: { text: agreement.description } },
       { key : { text: captionCell("Reference") }, value: { text: agreement.reference } },
       { key : { text: captionCell("User identifier") }, value: { text: agreement.user_identifier or "(None set)" } } ,
-      { key : { text: captionCell("Date created") }, value: { text: agreement.created_date | formatDate } } 
+      { key : { text: captionCell("Date created") }, value: { text: agreement.created_date | formatDate } }
     ]
   }) }}
-  
+
   {% set cardBrandLabelMap = {
     "visa": "Visa",
     "master-card": "Mastercard",
@@ -43,7 +43,7 @@
         { key : { text: captionCell("Card brand") }, value: { text: cardBrandLabelMap[agreement.payment_instrument.card_details.card_brand] } },
         { key : { text: captionCell("Cardholder name") }, value: { text: agreement.payment_instrument.card_details.cardholder_name } },
         { key : { text: captionCell("Card") }, value: { text: agreement.payment_instrument.card_details.first_digits_card_number + " •••• " + agreement.payment_instrument.card_details.last_digits_card_number } },
-        { key : { text: captionCell("Date created") }, value: { text: agreement.payment_instrument.created_date | formatDate } } 
+        { key : { text: captionCell("Date created") }, value: { text: agreement.payment_instrument.created_date | formatDate } }
       ]
     }) }}
 
@@ -60,13 +60,13 @@
   {% endfor %}
   {% endset %}
   {% set serviceLink %}
-  <a class="govuk-link govuk-link--no-visited-state" href="/services/{{ service.external_id }}">{{ service.name }}</a> 
+  <a class="govuk-link govuk-link--no-visited-state" href="/services/{{ service.external_id }}">{{ service.name }}</a>
   {% endset %}
 
   {{ govukSummaryList({
     rows: [
       { key : { html: captionCell("Gateway account") }, value: { html: accountLink } },
-      { key : { text: captionCell("Service") }, value: { html: serviceLink } } 
+      { key : { text: captionCell("Service") }, value: { html: serviceLink } }
     ]
   }) }}
 

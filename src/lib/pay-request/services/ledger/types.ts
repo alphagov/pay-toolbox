@@ -305,7 +305,7 @@ export interface ListAgreementRequest {
   */
   exact_reference_match?: boolean;
   limit_total?: boolean;
-  limit_total_size?: number; 
+  limit_total_size?: number;
 }
 
 export interface ListTransactionForAccountRequest extends ListTransactionRequest {
