@@ -2,10 +2,10 @@
 
 {% macro payout_status(status) %}
   <strong class="govuk-tag
-        {% if (status=='paidout') %} status-success {% endif %}
-        {% if (status=='failed') %} status-failed {% endif %}
-        {% if (status=='intransit') %} status-in-progress {% endif %}
-      status-tag">
+        {% if (status=='paidout') %} govuk-tag--green {% endif %}
+        {% if (status=='failed') %} govuk-tag--red {% endif %}
+        {% if (status=='intransit') %} govuk-tag--orange {% endif %}
+      ">
     <span>{{ status | capitalize }}</span>
   </strong>
 {% endmacro %}
