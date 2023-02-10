@@ -5,8 +5,8 @@
 
 <strong class="govuk-tag
     {% if final and success.includes(state) %} govuk-tag--green {% endif %}
-    {% if final and failed.includes(state) %} govuk-tag--red {% endif %}
-    {% if not final %} govuk-tag--orange {% endif %}
+    {% if final and failed.includes(state) %} govuk-tag--orange {% endif %}
+    {% if not final %} govuk-tag--grey {% endif %}
   ">
 
   {# 0p payments are supported and will be flagged as 'full' even though they are not refunded #}
