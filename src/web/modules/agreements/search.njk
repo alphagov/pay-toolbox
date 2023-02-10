@@ -1,0 +1,25 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">GOV.UK Pay platform</span>
+  <h1 class="govuk-heading-m">Find an agreement</h1>
+
+  <form method="POST" action="/agreements/search">
+    {{ govukInput({
+      id: "id",
+      name: "id",
+      hint: { text: "GOV.UK Pay agreement external ID or reference" },
+      label: { text: "Search" }
+      })
+      }}
+
+    {{ govukButton({
+      text: "Search"
+      })
+      }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}
