@@ -118,26 +118,6 @@
   vertical-align: middle;
 }
 
-.status-tag {
-  border-radius: 10px;
-  text-transform: none;
-  letter-spacing: inherit;
-  margin-left: 5px;
-}
-
-.status-success {
-  background-color: govuk-colour("turquoise");
-}
-
-.status-failed {
-  background-color: govuk-colour("orange");
-}
-
-.status-in-progress {
-  background-color: #6f777b;
-  color: #f3f2f1;
-}
-
 .status-inline-spacer {
   margin-bottom: 15px;
 }
@@ -277,4 +257,4 @@
   100% {
       transform: rotate(360deg);
   }
-} 
+}
