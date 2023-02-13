@@ -70,3 +70,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     next(error)
   }
 }
+
+export async function searchPage(req: Request, res: Response): Promise<void> {
+  res.render('agreements/search', {csrf: req.csrfToken()})
+}
