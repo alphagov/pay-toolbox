@@ -111,7 +111,7 @@ class GatewayAccount extends Validated {
       service_id: this.serviceId
     }
 
-    if (this.isLive() || this.provider === 'stripe' ) {
+    if (this.isLive() || this.provider === 'stripe' || this.provider === 'worldpay' ) {
       payload.requires_3ds = true
     } else {
       payload.requires_3ds = false
