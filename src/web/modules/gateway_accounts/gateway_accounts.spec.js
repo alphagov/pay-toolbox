@@ -12,7 +12,8 @@ const validGatewayAccountDetails = {
   provider: 'stripe',
   analyticsId: 'fs-valid-id',
   credentials: 'valid-credentials',
-  sector: 'valid-sector'
+  sector: 'valid-sector',
+  serviceId: 'service-id'
 }
 
 describe('Gateway Accounts', () => {
@@ -143,6 +144,18 @@ describe('Gateway Accounts', () => {
         new GatewayAccount(details)
       }).to.throw(ValidationError)
     })
+
+    it('successfully creates model when provider is worldpay and test account', function () {
+      const details = _.cloneDeep(validGatewayAccountDetails)
+      details.provider = 'worldpay'
+      details.live = 'not-live'
+
+      const account = new GatewayAccount(details)
+      expect(account).to.be.an('object')
+      account.serviceId = 'service-id'
+      const payload = account.formatPayload()
+      expect(payload.requires_3ds).to.eql(true)
+    });
   })
 })
 
