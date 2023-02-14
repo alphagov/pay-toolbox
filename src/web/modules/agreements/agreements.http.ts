@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express'
 import { AdminUsers, Connector, Ledger } from '../../../lib/pay-request/client'
 import { AccountType } from '../../../lib/pay-request/shared'
 import { AgreementListFilterStatus, resolveAgreementStates } from './states'
+import {EntityNotFoundError} from '../../../lib/errors'
 
 const process = require('process')
 
@@ -73,4 +74,32 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
 
 export async function searchPage(req: Request, res: Response): Promise<void> {
   res.render('agreements/search', {csrf: req.csrfToken()})
+}
+
+export async function search(req: Request, res: Response, next: NextFunction): Promise<void> {
+  const id = req.body.id && req.body.id.trim()
+
+  try {
+    await Ledger.agreements.retrieve(id, { override_account_or_service_id_restriction: true })
+    res.redirect(`/agreements/${id}`)
+  } catch (error) {
+    if (error instanceof EntityNotFoundError) {
+      const referenceSearch = await Ledger.agreements.list({
+        override_account_or_service_id_restriction: true,
+        reference: id
+      })
+
+      if (referenceSearch.results.length > 1) {
+        res.redirect(`/agreements?reference=${id}`)
+        return
+      } else if (referenceSearch.results.length === 1) {
+        res.redirect(`/agreements/${referenceSearch.results[0].external_id}`)
+        return
+      }
+
+      next(new EntityNotFoundError('Agreement search with criteria ', id))
+      return
+    }
+    next(error)
+  }
 }

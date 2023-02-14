@@ -146,9 +146,10 @@ router.get('/transactions/:id/parity', auth.secured(PermissionLevel.USER_SUPPORT
 
 router.get('/transactions', auth.secured(PermissionLevel.VIEW_ONLY), transactions.list)
 
-router.get('/agreements', auth.secured(PermissionLevel.VIEW_ONLY), agreements.list)
 router.get('/agreements/search', auth.secured(PermissionLevel.VIEW_ONLY), agreements.searchPage)
+router.post('/agreements/search', auth.secured(PermissionLevel.VIEW_ONLY), agreements.search)
 router.get('/agreements/:id', auth.secured(PermissionLevel.VIEW_ONLY), agreements.detail)
+router.get('/agreements', auth.secured(PermissionLevel.VIEW_ONLY), agreements.list)
 
 router.get('/payment_links', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.list)
 router.get('/payment_links/search', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.search)
