@@ -92,7 +92,8 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
       ...req.query.reference && {reference: req.query.reference as string},
       ...req.query.email && {email: req.query.email as string},
       ...req.query.gateway_transaction_id && {gateway_transaction_id: req.query.gateway_transaction_id as string},
-      ...req.query.gateway_payout_id && {gateway_payout_id: req.query.gateway_payout_id as string}
+      ...req.query.gateway_payout_id && {gateway_payout_id: req.query.gateway_payout_id as string},
+      ...req.query.agreement_id && {agreement_id: req.query.agreement_id as string}
     }
     const page = req.query.page && Number(req.query.page) || 1
     const pageSize = 20
