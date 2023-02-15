@@ -34,6 +34,12 @@
     "maestro": "Maestro"
   } %}
 
+  {{ govukButton({
+    text: "View payments",
+    href: "/transactions?agreement_id=" + agreement.external_id
+    })
+  }}
+
   <h2 class="govuk-heading-s">Payment instrument</h2>
   {% if agreement.payment_instrument %}
     {{ govukSummaryList({

@@ -27,7 +27,7 @@
     {% endfor %}
   </div>
 
-  {% if filters.email or filters.reference or filters.gateway_payout_id %}
+  {% if filters.email or filters.reference or filters.gateway_payout_id or filters.agreement_id %}
     <div class="govuk-body">
       <h4 class="govuk-heading-s">Filtered by</h4>
       {% if filters.reference %}
@@ -46,6 +46,12 @@
         <div class="govuk-body">
             <div class="govuk-grid-column-one-third">Gateway payout ID : </div>
             <span><strong class="govuk-tag">{{ filters.gateway_payout_id }}</strong></span>
+        </div>
+      {% endif %}
+      {% if filters.agreement_id %}
+        <div class="govuk-body">
+            <div class="govuk-grid-column-one-third">Agreement ID : </div>
+            <span><strong class="govuk-tag">{{ filters.agreement_id }}</strong></span>
         </div>
       {% endif %}
     </div>
@@ -121,6 +127,8 @@
         disabled
       {% elseif filters.gateway_payout_id %}
         href="/transactions?page={{ set.page - 1 }}&account={{ accountId }}&gateway_payout_id={{ filters.gateway_payout_id }}"
+      {% elseif filters.agreement_id %}
+        href="/transactions?page={{ set.page - 1 }}&account={{ accountId }}&agreement_id={{ filters.agreement_id }}"
       {% else %}
         href="/transactions?page={{ set.page - 1 }}&status={{ selectedStatus }}{{ linkQueryParams }}"
       {% endif %}
@@ -133,6 +141,8 @@
         disabled
       {% elseif filters.gateway_payout_id %}
         href="/transactions?page={{ set.page + 1 }}&account={{ accountId }}&gateway_payout_id={{ filters.gateway_payout_id }}"
+      {% elseif filters.agreement_id %}
+        href="/transactions?page={{ set.page + 1 }}&account={{ accountId }}&agreement_id={{ filters.agreement_id }}"
       {% else %}
         href="/transactions?page={{ set.page + 1 }}&status={{ selectedStatus }}{{ linkQueryParams }}"
       {% endif %}
