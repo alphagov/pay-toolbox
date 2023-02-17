@@ -17,6 +17,7 @@ const discrepancies = require('./modules/discrepancies')
 const stripe = require('./modules/stripe')
 const transactions = require('./modules/transactions/transactions.http')
 const agreements = require('./modules/agreements/agreements.http')
+const webhooks = require('./modules/webhooks/webhooks.http')
 const updateTransactions = require('./modules/transactions/update/update.http')
 const parity = require('./modules/transactions/discrepancies/validateLedger.http')
 const platform = require('./modules/platform/dashboard.http')
@@ -159,6 +160,8 @@ router.get('/payment_links/:id', auth.secured(PermissionLevel.VIEW_ONLY), paymen
 router.post('/payment_links/:id/toggle_require_captcha', auth.secured(PermissionLevel.USER_SUPPORT), paymentLinks.toggleRequireCaptcha)
 
 router.get('/payouts', auth.secured(PermissionLevel.VIEW_ONLY), ledgerPayouts.list)
+
+router.get('/webhooks/:serviceId', auth.secured(PermissionLevel.VIEW_ONLY), webhooks.list)
 
 router.get('/platform/dashboard', auth.secured(PermissionLevel.VIEW_ONLY), platform.dashboard)
 router.get('/platform/dashboard/live', platform.live)
