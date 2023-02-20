@@ -3,7 +3,6 @@ import _AdminUsers from './services/admin_users/client'
 import _Ledger from './services/ledger/client'
 import _Products from './services/products/client'
 import _PublicAuth from './services/public_auth/client'
-import _Webhooks from './services/webhooks/client'
 import { PayHooks } from './base'
 import {BroadcastResult} from "./shared";
 
@@ -13,14 +12,12 @@ const clients: {
   Products: _Products;
   PublicAuth: _PublicAuth;
   AdminUsers: _AdminUsers;
-  Webhooks: _Webhooks;
 } = {
   Connector: new _Connector(),
   Ledger: new _Ledger(),
   Products: new _Products(),
   PublicAuth: new _PublicAuth(),
-  AdminUsers: new _AdminUsers(),
-  Webhooks: new _Webhooks()
+  AdminUsers: new _AdminUsers()
 }
 
 export const Connector = clients.Connector
@@ -28,7 +25,6 @@ export const Ledger = clients.Ledger
 export const Products = clients.Products
 export const PublicAuth = clients.PublicAuth
 export const AdminUsers = clients.AdminUsers
-export const Webhooks = clients.Webhooks
 
 export function config(env: NodeJS.ProcessEnv = {}, options: PayHooks = {}): void {
   const connectorUrl = env.CONNECTOR_URL
@@ -36,7 +32,6 @@ export function config(env: NodeJS.ProcessEnv = {}, options: PayHooks = {}): voi
   const ledgerUrl = env.LEDGER_URL
   const productsUrl = env.PRODUCTS_URL
   const publicAuthUrl = env.PUBLIC_AUTH_URL
-  const webhooksUrl = env.WEBHOOKS_URL
 
   if (connectorUrl)
     clients.Connector._configure(connectorUrl, options)
@@ -48,8 +43,6 @@ export function config(env: NodeJS.ProcessEnv = {}, options: PayHooks = {}): voi
     clients.Products._configure(productsUrl, options)
   if (publicAuthUrl)
     clients.PublicAuth._configure(publicAuthUrl, options)
-  if (webhooksUrl)
-    clients.Webhooks._configure(webhooksUrl, options)
 }
 
 // make a GET request to all supported clients - for now suppress throwing the
