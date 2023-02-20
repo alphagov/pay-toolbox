@@ -49,7 +49,7 @@ export function config(env: NodeJS.ProcessEnv = {}, options: PayHooks = {}): voi
   if (publicAuthUrl)
     clients.PublicAuth._configure(publicAuthUrl, options)
   if (webhooksUrl)
-    clients.PublicAuth._configure(webhooksUrl, options)
+    clients.Webhooks._configure(webhooksUrl, options)
 }
 
 // make a GET request to all supported clients - for now suppress throwing the
