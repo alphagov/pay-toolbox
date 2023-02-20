@@ -174,6 +174,5 @@ export enum App {
   AdminUsers = 'ADMIN_USERS',
   Products = 'PRODUCTS',
   Ledger = 'LEDGER',
-  PublicAuth = 'PUBLIC_AUTH',
-  Webhooks = 'WEBHOOKS'
+  PublicAuth = 'PUBLIC_AUTH'
 }
