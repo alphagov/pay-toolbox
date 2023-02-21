@@ -161,7 +161,7 @@ router.post('/payment_links/:id/toggle_require_captcha', auth.secured(Permission
 
 router.get('/payouts', auth.secured(PermissionLevel.VIEW_ONLY), ledgerPayouts.list)
 
-router.get('/webhooks/:serviceId', auth.secured(PermissionLevel.VIEW_ONLY), webhooks.list)
+router.get('/webhooks', auth.secured(PermissionLevel.VIEW_ONLY), webhooks.list)
 
 router.get('/platform/dashboard', auth.secured(PermissionLevel.VIEW_ONLY), platform.dashboard)
 router.get('/platform/dashboard/live', platform.live)

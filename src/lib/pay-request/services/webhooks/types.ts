@@ -10,7 +10,7 @@ export interface Webhook {
 }
 
 export interface ListWebhookRequest {
-  live?: boolean;
+  live: boolean;
 }
 
 export interface ListWebhooksForServiceRequest extends ListWebhookRequest {
