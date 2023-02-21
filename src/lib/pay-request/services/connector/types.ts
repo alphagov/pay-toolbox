@@ -57,6 +57,7 @@ export interface GatewayAccount {
   allow_authorisation_api: boolean;
   recurring_enabled: boolean;
   provider_switch_enabled: boolean;
+  service_id: string;
 }
 
 export interface GatewayAccountCredential {

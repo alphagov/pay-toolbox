@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { AdminUsers, Webhooks } from '../../../lib/pay-request/client'
+import { AdminUsers, Connector, Webhooks } from '../../../lib/pay-request/client'
+import { AccountType } from '../../../lib/pay-request/shared'
 
 const process = require('process')
 
@@ -12,17 +13,24 @@ if (common.development) {
 
 export async function list(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const serviceId = req.params.serviceId
+    const accountId = req.query.account
 
-    const response = await Webhooks.webhooks.list({
-      service_id: serviceId as string
+    if (!accountId) {
+      throw new Error('Webhooks can currently only be shown for a single account')
+    }
+
+    const account = await Connector.accounts.retrieveAPI(accountId as string)
+    const service = await AdminUsers.services.retrieve(account.service_id)
+    
+    const { results } = await Webhooks.webhooks.list({
+      service_id: service.external_id,
+      live: account.type === AccountType.Live 
     })
 
-    const service = await AdminUsers.services.retrieve(serviceId as string)
-
     res.render('webhooks/overview', {
+      account,
       service,
-      webhooks: response.results
+      webhooks: results
     })
   } catch (error) {
     next(error)
