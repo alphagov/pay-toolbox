@@ -28,7 +28,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
       live: account.type === AccountType.Live 
     })
 
-    const formattedResults = results.map(webhook => {
+    const formattedResults = results.length ? results.map(webhook => {
       const callbackDomain = new URL(webhook.callback_url).hostname
 
       return {
@@ -37,7 +37,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
         status: webhook.status,
         created_date: webhook.created_date,
       }
-    })
+    }) : null
 
     res.render('webhooks/overview', {
       account,
