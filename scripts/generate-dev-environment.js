@@ -7,6 +7,7 @@ CONNECTOR_URL=http://localhost:9300
 PRODUCTS_URL=http://localhost:18000
 PUBLIC_AUTH_URL=http://localhost:9600
 LEDGER_URL=http://localhost:10700
+WEBHOOKS_URL=http://localhost:10800
 SELFSERVICE_URL=http://localhost:9400`
 
 const TUNNEL_URL_MAP =`ADMINUSERS_URL=https://localhost:9001
@@ -14,6 +15,7 @@ CONNECTOR_URL=https://localhost:9003
 PRODUCTS_URL=https://localhost:9005
 PUBLIC_AUTH_URL=https://localhost:9006
 LEDGER_URL=https://localhost:9007
+WEBHOOKS_URL=https://localhost:9008
 SELFSERVICE_URL=https://selfservice.pymnt.uk`
 
 const DOCKER_URL_MAP =`ADMINUSERS_URL=https://docker.for.mac.localhost:9001
@@ -21,6 +23,7 @@ CONNECTOR_URL=https://docker.for.mac.localhost:9003
 PRODUCTS_URL=https://docker.for.mac.localhost:9005
 PUBLIC_AUTH_URL=https://docker.for.mac.localhost:9006
 LEDGER_URL=https://docker.for.mac.localhost:9007
+WEBHOOKS_URL=https://docker.for.mac.localhost:9008
 SELFSERVICE_URL=https://selfservice.pymnt.uk`
 
 const URL_MAP = (() => {
