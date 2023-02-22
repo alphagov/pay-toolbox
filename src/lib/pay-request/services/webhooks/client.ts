@@ -10,11 +10,11 @@ export default class Webhooks extends Client {
   webhooks = ((client: Webhooks) => ({
     list(
       params: ListWebhooksForServiceRequest
-    ): Promise<SearchResponse<Webhook> | undefined> {
+    ): Promise<Webhook[] | undefined> {
     
     return client._axios
       .get('/v1/webhook', {params})
-      .then(response => client._unpackResponseData<SearchResponse<Webhook>>(response));
+      .then(response => client._unpackResponseData<Webhook[] | undefined >(response));
     }
   }))(this)
 }
