@@ -270,6 +270,11 @@
       })
       }}
       {{ govukButton({
+      text: "View webhooks",
+      href: "/webhooks?account=" + gatewayAccountId
+      })
+      }}
+      {{ govukButton({
       text: "Download transaction CSV reports",
       href: "/transactions/csv?account=" + gatewayAccountId
       })

@@ -1,6 +1,6 @@
-x
 {% from "common/json.njk" import json %}
 {% extends "layout/layout.njk" %}
+{% from "./status.macro.njk" import agreementStatusTag %}
 
 {% block main %}
   <span class="govuk-caption-m">
@@ -12,6 +12,43 @@ x
   </span>
 
   <h1 class="govuk-heading-m">Webhooks</h1>
+
+  <div>
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__header" scope="col">ID</th>
+          <th class="govuk-table__header" scope="col">Domain</th>
+          <th class="govuk-table__header" scope="col">Staus</th>
+          <th class="govuk-table__header" scope="col">Created date</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {% for webhook in webhooks %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">
+              {{ webhook.external_id }}
+            </td>
+            <td class="govuk-table__cell">
+              {{ webhook.domain }}
+            </td>
+            <td class="govuk-table__cell">
+              {{ agreementStatusTag(
+                webhook.status
+              ) }}
+            </td>
+            <td class="govuk-table__cell">
+              {{ webhook.created_date | formatDate }}
+            </td>
+          </tr>
+        {% else %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell center" colspan="4"><span><i>No webhooks found.</i></span></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
   {{ json("Webhooks source", webhooks) }}
 {% endblock %}

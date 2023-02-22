@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 
 import { AdminUsers, Connector, Webhooks } from '../../../lib/pay-request/client'
 import { AccountType } from '../../../lib/pay-request/shared'
+import { URL } from 'url'
 
 const process = require('process')
 
@@ -27,10 +28,21 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
       live: account.type === AccountType.Live 
     })
 
+    const formattedResults = results.map(webhook => {
+      const callbackDomain = new URL(webhook.callback_url).hostname
+
+      return {
+        external_id: webhook.external_id,
+        domain: callbackDomain,
+        status: webhook.status,
+        created_date: webhook.created_date,
+      }
+    })
+
     res.render('webhooks/overview', {
       account,
       service,
-      webhooks: results
+      webhooks: formattedResults
     })
   } catch (error) {
     next(error)
