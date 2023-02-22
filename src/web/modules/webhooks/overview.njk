@@ -1,6 +1,6 @@
 {% from "common/json.njk" import json %}
 {% extends "layout/layout.njk" %}
-{% from "./status.macro.njk" import agreementStatusTag %}
+{% from "./status.macro.njk" import webhookStatusTag %}
 
 {% block main %}
   <span class="govuk-caption-m">
@@ -33,7 +33,7 @@
               {{ webhook.domain }}
             </td>
             <td class="govuk-table__cell">
-              {{ agreementStatusTag(
+              {{ webhookStatusTag(
                 webhook.status
               ) }}
             </td>
