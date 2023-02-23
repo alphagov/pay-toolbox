@@ -23,12 +23,12 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     const account = await Connector.accounts.retrieveAPI(accountId as string)
     const service = await AdminUsers.services.retrieve(account.service_id)
     
-    const { results } = await Webhooks.webhooks.list({
+    const webhooks = await Webhooks.webhooks.list({
       service_id: service.external_id,
       live: account.type === AccountType.Live 
     })
 
-    const formattedResults = results.map(webhook => {
+    const formattedResults = webhooks.map(webhook => {
       const callbackDomain = new URL(webhook.callback_url).hostname
 
       return {
