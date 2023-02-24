@@ -25,7 +25,8 @@ export function extractFiltersFromQuery(query: ParsedQs): Filters {
     google_pay: query.google_pay as BooleanFilterOption || BooleanFilterOption.All,
     moto: query.moto as BooleanFilterOption || BooleanFilterOption.All,
     switching_psp: query.switching_psp as BooleanFilterOption || BooleanFilterOption.All,
-    payment_provider_account_id: query.payment_provider_account_id as string
+    payment_provider_account_id: query.payment_provider_account_id as string,
+    recurring: query.recurring as BooleanFilterOption || BooleanFilterOption.All, 
   }
 }
 
@@ -38,6 +39,7 @@ export interface Filters {
   moto: BooleanFilterOption,
   switching_psp: BooleanFilterOption,
   payment_provider_account_id: string
+  recurring: BooleanFilterOption
 }
 
 
@@ -50,6 +52,7 @@ export function toAccountSearchParams(filters: Filters): ListGatewayAccountsRequ
     apple_pay_enabled: toNullableBooleanString(filters.apple_pay),
     google_pay_enabled: toNullableBooleanString(filters.google_pay),
     moto_enabled: toNullableBooleanString(filters.moto),
-    provider_switch_enabled: toNullableBooleanString(filters.switching_psp)
+    provider_switch_enabled: toNullableBooleanString(filters.switching_psp),
+    recurring_enabled: toNullableBooleanString(filters.recurring)
   }
 }
