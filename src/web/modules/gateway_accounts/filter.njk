@@ -118,6 +118,18 @@
       }}
     </div>
 
+    <div class="govuk-grid-column-one-quarter inputs-less-margin">
+      {{ booleanFilterSelect({
+          id: "recurring",
+          name: "recurring",
+          label: "Recurring",
+          trueOptionText: "Enabled",
+          falseOptionText: "Disabled",
+          currentValue: filters.recurring
+        })
+      }}
+    </div>
+
     <div class="govuk-grid-column-full inputs-less-margin">
       {{ govukButton({
         text: "Filter"

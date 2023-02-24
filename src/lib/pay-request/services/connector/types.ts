@@ -153,6 +153,7 @@ export interface ListGatewayAccountsRequest {
   payment_provider_account_id?: string;
   provider_switch_enabled?: string;
   serviceIds?: string;
+  recurring_enabled?: string;
 }
 
 export interface ListGatewayAccountsResponse {
