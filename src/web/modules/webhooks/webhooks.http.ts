@@ -42,7 +42,8 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     res.render('webhooks/overview', {
       account,
       service,
-      webhooks: formattedResults
+      webhooks: formattedResults,
+      isTestData: account.type === AccountType.Test 
     })
   } catch (error) {
     next(error)
