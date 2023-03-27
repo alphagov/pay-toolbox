@@ -53,10 +53,6 @@ class GatewayAccount extends Validated {
   @IsNotEmpty()
   public provider: string;
 
-  @IsString()
-  @IsNotEmpty({ message: 'Please enter a Google analytics Id' })
-  public analyticsId: string;
-
   public credentials: string;
 
   @IsString()
@@ -91,7 +87,6 @@ class GatewayAccount extends Validated {
     this.description = formValues.description
     this.serviceName = formValues.serviceName
     this.provider = formValues.provider
-    this.analyticsId = formValues.analyticsId
     this.credentials = formValues.credentials
     this.sector = formValues.sector
     this.internalFlag = formValues.internalFlag === "true"
@@ -107,7 +102,6 @@ class GatewayAccount extends Validated {
       description: this.description,
       type: this.isLive() ? AccountType.Live : AccountType.Test,
       service_name: this.serviceName,
-      analytics_id: this.analyticsId,
       service_id: this.serviceId
     }
 

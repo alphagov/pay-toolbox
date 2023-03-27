@@ -10,7 +10,6 @@ const validGatewayAccountDetails = {
   description: 'Valid gateway account details',
   serviceName: 'Valid gateway account service',
   provider: 'stripe',
-  analyticsId: 'fs-valid-id',
   credentials: 'valid-credentials',
   sector: 'valid-sector',
   serviceId: 'service-id'
@@ -77,16 +76,6 @@ describe('Gateway Accounts', () => {
       expect(() => {
         const details = _.cloneDeep(validGatewayAccountDetails)
         details.serviceName = ''
-
-        // eslint-disable-next-line no-new
-        new GatewayAccount(details)
-      }).to.throw(IOValidationError)
-    })
-
-    it('rejects when analyticsId is empty', () => {
-      expect(() => {
-        const details = _.cloneDeep(validGatewayAccountDetails)
-        details.analyticsId = ''
 
         // eslint-disable-next-line no-new
         new GatewayAccount(details)
