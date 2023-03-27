@@ -53,7 +53,6 @@ export interface GatewayAccount {
   notify_settings: NotifySettings
   disabled: boolean;
   disabled_reason: string;
-  requires_additional_kyc_data: boolean;
   allow_authorisation_api: boolean;
   recurring_enabled: boolean;
   provider_switch_enabled: boolean;
@@ -119,7 +118,6 @@ export interface UpdateGatewayAccountRequest {
   send_reference_to_gateway?: boolean;
   disabled?: boolean;
   disabled_reason?: string;
-  requires_additional_kyc_data?: boolean;
   allow_authorisation_api?: boolean;
   recurring_enabled?: boolean;
   corporate_credit_card_surcharge_amount?: number;
@@ -204,7 +202,6 @@ export interface UpdateStripeSetupRequest {
   company_number?: boolean;
   director?: boolean;
   government_entity_document?: boolean;
-  additional_kyc_data?: boolean;
   organisation_details?: boolean;
 }
 

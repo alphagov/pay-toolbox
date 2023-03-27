@@ -77,7 +77,6 @@ router.post('/gateway_accounts/:id/toggle_send_reference_to_gateway', auth.secur
 router.get('/gateway_accounts/:id/disable', auth.secured(PermissionLevel.VIEW_ONLY), gatewayAccounts.disableReasonPage)
 router.post('/gateway_accounts/:id/disable', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.disable)
 router.post('/gateway_accounts/:id/enable', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.enable)
-router.post('/gateway_accounts/:id/toggle_requires_additional_kyc_data', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.toggleRequiresAdditionalKycData)
 router.post('/gateway_accounts/:id/toggle_allow_authorisation_api', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.toggleAllowAuthorisationApi)
 router.post('/gateway_accounts/:id/toggle_recurring_enabled', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.toggleRecurringEnabled)
 router.get('/gateway_accounts/:id/stripe_statement_descriptor', auth.secured(PermissionLevel.VIEW_ONLY), gatewayAccounts.updateStripeStatementDescriptorPage)
