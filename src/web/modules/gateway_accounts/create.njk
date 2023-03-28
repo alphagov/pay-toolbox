@@ -62,8 +62,6 @@
       items: [
         { value: "card-sandbox", text: "Sandbox", checked: recovered.provider and recovered.provider === "card-sandbox" or true },
         { value: "worldpay", text: "Worldpay", checked: recovered.provider === "worldpay" },
-        { value: "smartpay", text: "Smartpay", checked: recovered.provider === "smartpay" },
-        { value: "epdq", text: "Epdq", checked: recovered.provider === "epdq" },
         { value: "stripe", text: "Stripe", checked: recovered.provider === "stripe" }
       ]
     })
@@ -97,16 +95,6 @@
       name: "description",
       value: recovered.description,
       errorMessage: errorMap.description and { text: errorMap.description },
-      autocomplete: "off"
-    }) }}
-
-    {{govukInput({
-      label: { text: "Google analytics ID" },
-      hint: { html: '<p>GOV.UK Pay standard: "${Department}-${Service}"</p><p>Blue Badge standard: "LG-${Service}-BB"</p>' },
-      id: "analyticsId",
-      name: "analyticsId",
-      value: recovered.analyticsId,
-      errorMessage: errorMap.analyticsId and { text: errorMap.analyticsId },
       autocomplete: "off"
     }) }}
 
