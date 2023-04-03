@@ -1,5 +1,6 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
 {% extends "layout/layout.njk" %}
 
 {% block main %}
@@ -33,6 +34,14 @@
 
     <input type="hidden" name="sector" value="{{ request.sector}}">
     <input type="hidden" name="internalFlag" value="{{ request.internalFlag }}">
+
+    {{govukInput({
+      label: { text: "Zendesk ticket number" },
+      hint: { text: "Entering a ticket number will respond to, but not close, the ticket. Leave blank to manually respond to the ticket in the zendesk UI." },
+      id: "zendeskTicketNumber",
+      name: "zendeskTicketNumber",
+      autocomplete: "off"
+    }) }}
 
     {{ govukButton({
       text: "Create gateway account"

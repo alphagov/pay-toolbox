@@ -1,22 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Request, Response, NextFunction} from 'express'
-import {ParsedQs, stringify} from 'qs'
+import {NextFunction, Request, Response} from 'express'
+import {stringify} from 'qs'
 import moment from 'moment'
 
 import logger from '../../../lib/logger'
 
-import {
-  Connector, AdminUsers, PublicAuth, Products
-} from '../../../lib/pay-request/client'
+import {AdminUsers, Connector, Products, PublicAuth} from '../../../lib/pay-request/client'
 import {wrapAsyncErrorHandler} from '../../../lib/routes'
 import {extractFiltersFromQuery, toAccountSearchParams} from '../../../lib/gatewayAccounts'
 
 import GatewayAccountFormModel from './gatewayAccount.model'
-import {
-  GoLiveStage,
-  Service,
-  UpdateServiceRequest
-} from '../../../lib/pay-request/services/admin_users/types'
+import {GoLiveStage, Service, UpdateServiceRequest} from '../../../lib/pay-request/services/admin_users/types'
 import {Product, ProductType} from '../../../lib/pay-request/services/products/types'
 import {
   GatewayAccount,
@@ -25,17 +19,17 @@ import {
   StripeSetup
 } from '../../../lib/pay-request/services/connector/types'
 import {PaymentProvider} from '../../../lib/pay-request/shared'
-import {ClientFormError} from '../common/validationErrorFormat'
+import {ClientFormError, formatErrorsForTemplate} from '../common/validationErrorFormat'
 import * as config from '../../../config'
 import {format} from './csv'
 import {formatWithAdminEmails} from './csv_with_admin_emails'
-import {createCsvWithAdminEmailsData, createCsvData} from './csv_data'
+import {createCsvData, createCsvWithAdminEmailsData} from './csv_data'
 import CreateAgentInitiatedMotoProductFormRequest from './CreateAgentInitiatedMotoProductFormRequest'
-import {formatErrorsForTemplate} from '../common/validationErrorFormat'
 import {EntityNotFoundError, IOValidationError} from '../../../lib/errors'
 
 import * as stripeClient from '../../../lib/stripe/stripe.client'
 import {TokenSource, TokenType} from '../../../lib/pay-request/services/public_auth/types'
+import {updateTicketWithWorldpayGoLiveResponse, getTicket} from "../../../lib/zendesk/zendesk.client";
 
 async function overview(req: Request, res: Response): Promise<void> {
   const filters = extractFiltersFromQuery(req.query)
@@ -115,8 +109,18 @@ async function confirm(req: Request, res: Response): Promise<void> {
   res.render('gateway_accounts/confirm', {account, request: req.body, csrf: req.csrfToken()})
 }
 
+function getGoLiveUrlForServiceUsingWorldpay(serviceId: string) {
+  return `${config.services.SELFSERVICE_URL}/service/${serviceId}/dashboard/live`
+}
+
 async function writeAccount(req: Request, res: Response): Promise<void> {
   const account = new GatewayAccountFormModel(req.body)
+
+  let ticket;
+  if (account.provider === PaymentProvider.Worldpay && req.body.zendeskTicketNumber) {
+    ticket = await getTicket(req.body.zendeskTicketNumber)
+  }
+
   const serviceId = req.body.systemLinkedService
   account.serviceId = serviceId
 
@@ -157,10 +161,15 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
     statementDescriptor?: string
   } = {}
 
-  if (account.provider === 'stripe') {
+  if (account.provider === PaymentProvider.Stripe) {
     const stripeAccountDetails = await stripeClient.getStripeApi().accounts.retrieve(account.credentials)
     stripeAccountStatementDescriptors.payoutStatementDescriptor = stripeAccountDetails.settings.payouts.statement_descriptor
     stripeAccountStatementDescriptors.statementDescriptor = stripeAccountDetails.settings.payments.statement_descriptor
+  }
+
+  let zendeskTicketUpdated = false
+  if (account.provider === PaymentProvider.Worldpay && ticket) {
+    zendeskTicketUpdated = await updateTicketWithWorldpayGoLiveResponse(ticket, getGoLiveUrlForServiceUsingWorldpay(serviceId));
   }
 
   // note payment_provider is not returned in the object returned from createAccount
@@ -171,6 +180,7 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
     provider: account.provider,
     isLive: account.isLive(),
     isStripe: account.provider === 'stripe',
+    zendeskTicketUpdated: zendeskTicketUpdated,
     stripeAccountStatementDescriptors,
     selfServiceBaseUrl: config.services.SELFSERVICE_URL
   })
