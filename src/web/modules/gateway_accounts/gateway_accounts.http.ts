@@ -117,8 +117,8 @@ function getGoLiveUrlForServiceUsingWorldpay(serviceId: string) {
   return `${config.services.SELFSERVICE_URL}/service/${serviceId}/dashboard/live`
 }
 
-function getGoLiveUrlForServiceUsingStripe(gatewayAccountId: string) {
-  return `${config.services.SELFSERVICE_URL}/account/${gatewayAccountId}/dashboard`
+function getGoLiveUrlForServiceUsingStripe(gatewayAccountExternalId: string) {
+  return `${config.services.SELFSERVICE_URL}/account/${gatewayAccountExternalId}/dashboard`
 }
 
 async function writeAccount(req: Request, res: Response): Promise<void> {
