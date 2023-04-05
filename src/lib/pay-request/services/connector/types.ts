@@ -169,6 +169,7 @@ export interface CreateGatewayAccountResponse {
   requires_3ds: boolean;
   analytics_id?: string;
   gateway_account_id?: string;
+  external_id: string;
 }
 
 export interface GatewayStatusComparison {
