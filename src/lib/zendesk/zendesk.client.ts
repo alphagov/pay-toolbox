@@ -10,7 +10,7 @@ const zendeskClient = zendesk.createClient({
 })
 
 export async function updateTicketWithStripeGoLiveResponse(ticket: ZendeskTicket, stripeGoLiveUrl: string, statementDescriptor: string, payoutStatementDescriptor: string): Promise<boolean> {
-  logger.info(`Updating zendesk ticket ${ticket.id} with go live response...`)
+  logger.info(`Updating zendesk ticket ${ticket.id} with go live response.`)
   try {
     await zendeskClient.tickets.update(ticket.id,
       {
@@ -81,7 +81,7 @@ GOV.UK Pay team
 }
 
 export async function updateTicketWithWorldpayGoLiveResponse(ticket: ZendeskTicket, worldpayGoLiveUrl: string): Promise<boolean> {
-  logger.info(`Updating zendesk ticket ${ticket.id} with go live response...`)
+  logger.info(`Updating zendesk ticket ${ticket.id} with go live response.`)
   try {
     await zendeskClient.tickets.update(ticket.id,
       {
