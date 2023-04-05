@@ -29,7 +29,11 @@ import {EntityNotFoundError, IOValidationError} from '../../../lib/errors'
 
 import * as stripeClient from '../../../lib/stripe/stripe.client'
 import {TokenSource, TokenType} from '../../../lib/pay-request/services/public_auth/types'
-import {updateTicketWithWorldpayGoLiveResponse, getTicket} from "../../../lib/zendesk/zendesk.client";
+import {
+  updateTicketWithWorldpayGoLiveResponse,
+  getTicket,
+  updateTicketWithStripeGoLiveResponse
+} from "../../../lib/zendesk/zendesk.client";
 
 async function overview(req: Request, res: Response): Promise<void> {
   const filters = extractFiltersFromQuery(req.query)
@@ -113,11 +117,15 @@ function getGoLiveUrlForServiceUsingWorldpay(serviceId: string) {
   return `${config.services.SELFSERVICE_URL}/service/${serviceId}/dashboard/live`
 }
 
+function getGoLiveUrlForServiceUsingStripe(gatewayAccountExternalId: string) {
+  return `${config.services.SELFSERVICE_URL}/account/${gatewayAccountExternalId}/dashboard`
+}
+
 async function writeAccount(req: Request, res: Response): Promise<void> {
   const account = new GatewayAccountFormModel(req.body)
 
   let ticket;
-  if (account.provider === PaymentProvider.Worldpay && req.body.zendeskTicketNumber) {
+  if (req.body.zendeskTicketNumber) {
     ticket = await getTicket(req.body.zendeskTicketNumber)
   }
 
@@ -170,6 +178,9 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
   let zendeskTicketUpdated = false
   if (account.provider === PaymentProvider.Worldpay && ticket) {
     zendeskTicketUpdated = await updateTicketWithWorldpayGoLiveResponse(ticket, getGoLiveUrlForServiceUsingWorldpay(serviceId));
+  } else if (account.provider === PaymentProvider.Stripe && ticket) {
+    zendeskTicketUpdated = await updateTicketWithStripeGoLiveResponse(ticket, getGoLiveUrlForServiceUsingStripe(createdAccount.external_id),
+      stripeAccountStatementDescriptors.statementDescriptor, stripeAccountStatementDescriptors.payoutStatementDescriptor);
   }
 
   // note payment_provider is not returned in the object returned from createAccount

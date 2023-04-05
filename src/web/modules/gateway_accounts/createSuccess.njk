@@ -25,6 +25,8 @@ A {{ account.type | upper }} Gateway account has been created through Admin User
     <p class="govuk-body">In Zendesk, fill in mandatory custom fields and solve the ticket.</p>
 {% elif isStripe and not isLive %}
     <p class="govuk-body">In Zendesk, respond to the request using "Stripe test account" macro</p>
+{% elif isStripe and isLive and zendeskTicketUpdated %}
+    <p class="govuk-body">In Zendesk, fill in mandatory custom fields and solve the ticket.</p>
 {% else %}
     <p class="govuk-body">In Zendesk, respond to the request to go live using the appropriate Zendesk macro (either “Stripe account” or “non-Stripe”).</p>
     <p class="govuk-body">Replace the placeholders in the macro with the following:</p>
