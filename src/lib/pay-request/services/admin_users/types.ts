@@ -3,13 +3,7 @@ export enum GoLiveStage {
   EnteredOrganisationName = 'ENTERED_ORGANISATION_NAME',
   EnteredOrganisationAddress = 'ENTERED_ORGANISATION_ADDRESS',
   ChosenPSPStripe = 'CHOSEN_PSP_STRIPE',
-  ChosenPSPWorldpay = 'CHOSEN_PSP_WORLDPAY',
-  ChosenPSPSmartpay = 'CHOSEN_PSP_SMARTPAY',
-  ChosenPSPEPDQ = 'CHOSEN_PSP_EPDQ',
   TermsAgreedStripe = 'TERMS_AGREED_STRIPE',
-  TermsAgreedWorldpay = 'TERMS_AGREED_WORLDPAY',
-  TermsAgreedSmartpay = 'TERMS_AGREED_SMARTPAY',
-  TermsAgreedEPDQ = 'TERMS_AGREED_EPDQ',
   Denied = 'DENIED',
   Live = 'LIVE'
 }
