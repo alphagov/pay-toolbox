@@ -221,7 +221,7 @@ async function detail(req: Request, res: Response): Promise<void> {
   const currentCredential = getCurrentCredential(account)
 
   const outstandingStripeSetupTasks = Object.keys(stripeSetup)
-    .filter(task => task != 'additional_kyc_data' && task != 'organisation_details' && stripeSetup[task] === false)
+    .filter(task => task != 'organisation_details' && stripeSetup[task] === false)
     .map(task => task.replace(/_/g, " "))
 
   if (currentCredential && currentCredential.payment_provider === PaymentProvider.Stripe) {
