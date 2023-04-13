@@ -36,13 +36,13 @@ Submit the following information:
 All users with admin permissions can submit this information. If you want to enable or restrict access to this, you can manage your team’s permissions in your settings.
 
 You must add all of these details before you can take payments.
+If you want to get back to these settings you can do this from the 'Settings' page for your service. 
 
 
 **2. Check these additional settings in your account:**
 
 * the card types you want to enable in ‘Settings’
-* if you want to collect billing or email address, or send payment and refund confirmation emails
-* customise the payment confirmation email, including adding your service support contact details should your users need to query a payment
+* if you want to collect billing or email address, or send payment and refund confirmation emails, or customise the payment confirmation email
 * your team’s account permissions
 
 
