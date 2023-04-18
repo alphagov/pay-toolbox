@@ -328,6 +328,21 @@ export interface ListAgreementRequestWithAccountOverrideRequest extends ListAgre
   account_id?: number | number[];
 }
 
+export interface ListAgreementEventsRequest {
+  service_id: string;
+  /**
+   * Do not filter events. By default (false) events are filtered for the self
+   * service view, only showing certain events for backward compatability. Including
+   * all events will return everything that made up the transaction in Ledger.
+   */
+  include_all_events: boolean;
+}
+
+export interface ListAgreementEventsResponse {
+  agreement_id: string;
+  events: Event[];
+}
+
 
 
 export interface ListPaymentRefundsRequest {

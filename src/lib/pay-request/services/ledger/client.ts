@@ -15,6 +15,8 @@ import type {
   ListTransactionRequestWithAccountOverrideRequest,
   ListAgreementForAccountRequest,
   ListAgreementRequestWithAccountOverrideRequest,
+  ListAgreementEventsRequest,
+  ListAgreementEventsResponse,
   ListPaymentRefundsRequest,
   ListTransactionEventsRequest,
   ListEventTickerRequest,
@@ -28,9 +30,9 @@ import type {
   ListPayoutWithAccountOverrideRequest,
   TransactionsByHourRequest,
   ListPaymentRefundsResponse,
-  ListTransactionEventsResponse, 
-  Transaction, 
-  RelatedTransactionsRequest, 
+  ListTransactionEventsResponse,
+  Transaction,
+  RelatedTransactionsRequest,
   TransactionsForTransactionResponse,
   Agreement,
   RetrieveAgreementForAccountRequest,
@@ -186,6 +188,18 @@ export default class Ledger extends Client {
       return client._axios
         .get('/v1/agreement', {params: filters})
         .then(response => client._unpackResponseData<SearchResponse<Agreement>>(response));
+    },
+
+    /**
+     * @param id - GOV.UK Pay agreement external ID
+     * @param params - optionally specify service ID
+     * @returns - List of events for this transaction and transaction with this
+     *            transaction set as their parent transaction
+     */
+    listEvents(id: string, params: ListAgreementEventsRequest): Promise<ListAgreementEventsResponse | undefined> {
+      return client._axios
+        .get(`/v1/agreement/${id}/event`, {params})
+        .then(response => client._unpackResponseData<ListAgreementEventsResponse>(response));
     },
   }))(this)
 

@@ -22,7 +22,18 @@ export async function detail(req: Request, res: Response, next: NextFunction) {
     })
     const service = await AdminUsers.services.retrieve(agreement.service_id)
 
-    res.render('agreements/detail', { agreement, service, accounts })
+    const agreementEvents = await Ledger.agreements.listEvents(agreement.external_id, {
+      service_id: agreement.service_id,
+      include_all_events: true
+    })
+
+    const events = agreementEvents.events
+      .map((event: any) => {
+        event.data = Object.keys(event.data).length ? event.data : null
+        return event
+      })
+
+    res.render('agreements/detail', { agreement, service, accounts, events })
   } catch (error) {
     next(error)
   }
