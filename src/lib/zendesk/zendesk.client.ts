@@ -36,7 +36,7 @@ Submit the following information:
 All users with admin permissions can submit this information. If you want to enable or restrict access to this, you can manage your team’s permissions in your settings.
 
 You must add all of these details before you can take payments.
-If you want to get back to these settings you can do this from the 'Settings' page for your service. 
+If you want to get back to these settings you can do this from the 'Settings' page for your service.
 
 
 **2. Check these additional settings in your account:**
@@ -48,9 +48,9 @@ If you want to get back to these settings you can do this from the 'Settings' pa
 
 **3. Let us know if you want us to change the descriptions shown on bank statements**
 
-The description a user will see on their bank account for these payments is ${statementDescriptor}.
+The description a user will see on their bank account for these payments is ${statementDescriptor.toUpperCase()}.
 
-The description you will see on your bank statement accompanying these payments is ${payoutStatementDescriptor}.
+The description you will see on your bank statement accompanying these payments is ${payoutStatementDescriptor.toUpperCase()}.
 
 Please contact us if you want to change either of them.
 
