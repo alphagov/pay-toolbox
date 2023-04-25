@@ -9,6 +9,11 @@ export interface Webhook {
   subscriptions: string[];
 }
 
+export interface RetrieveWebhookRequest {
+  account_id?: string;
+  service_id?: string;
+}
+
 export interface ListWebhookRequest {
   live: boolean;
 }
