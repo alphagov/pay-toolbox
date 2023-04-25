@@ -1,12 +1,12 @@
 {% set statusStyleMap = {
-  "CREATED": "govuk-tag--grey",
-  "ACTIVE": "govuk-tag--green",
-  "CANCELLED": "govuk-tag--yellow"
+  "ACTIVE": "govuk-tag--blue",
+  "INACTIVE": "govuk-tag--yellow",
+  "DISABLED": "govuk-tag--red"
 } %}
 {% set statusTextMap = {
-  "CREATED": "created",
-  "ACTIVE": "active",
-  "CANCELLED": "cancelled"
+  "ACTIVE": "Active",
+  "INACTIVE": "Inactive",
+  "DISABLED": "Disabled"
 } %}
 
 {% macro webhookStatusTag(status) %}

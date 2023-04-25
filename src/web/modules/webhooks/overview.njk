@@ -27,7 +27,7 @@
         {% for webhook in webhooks %}
           <tr class="govuk-table__row">
             <td class="govuk-table__cell">
-              {{ webhook.external_id }}
+              <a class="govuk-link" href="/webhooks/{{ webhook.external_id }}?service_id={{ service.external_id }}">{{ webhook.external_id }}</a>
             </td>
             <td class="govuk-table__cell">
               {{ webhook.domain }}

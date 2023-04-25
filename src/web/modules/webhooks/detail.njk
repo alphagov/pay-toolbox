@@ -1,0 +1,33 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "common/json.njk" import json %}
+{% extends "layout/layout.njk" %}
+{% from "./status.macro.njk" import webhookStatusTag %}
+
+{% macro captionCell(content) %}
+<span class="govuk-caption-m">{{ content }}</span>
+{% endmacro %}
+
+{% block main %}
+  <h1 class="govuk-heading-m">Webhook</h1>
+
+  {% set subscriptions_list %}
+    <ul>
+      {% for subscription_key in webhook.subscriptions %}
+        <li>{{human_readable_subscriptions[subscription_key | upper]}}</li>
+      {% endfor %}
+    </ul>
+  {% endset %}
+
+  {{ govukSummaryList({
+  rows: [
+    { key : { text: captionCell("ID") }, value: { text: webhook.external_id } },
+    { key : { text: captionCell("URL") }, value: { text: webhook.callback_url } },
+    { key : { text: captionCell("Status") }, value: { html: webhookStatusTag(webhook.status) } },
+    { key : { text: captionCell("Description") }, value: { text: webhook.description } },
+    { key : { text: captionCell("Date created") }, value: { text: webhook.created_date | formatDate } },
+    { key : { text: captionCell("Event types") }, value: { html: subscriptions_list } }
+  ]
+  }) }}
+
+  {{ json("Webhook source", webhook) }}
+{% endblock %}
