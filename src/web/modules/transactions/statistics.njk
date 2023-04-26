@@ -9,10 +9,10 @@
     {% endif %}
   </span>
   <h1 class="govuk-heading-m">Payments</h1>
-  <div class="transactions-filter__container govuk-body">
+  <div class="list-page-filter__container govuk-body">
     {% for period in ["today", "week", "month"] %}
       <a
-        class="transactions-filter__item {% if selectedPeriod === period %}selected{% endif %} no-decoration"
+        class="list-page-filter__item {% if selectedPeriod === period %}selected{% endif %} no-decoration"
         href="/transactions/statistics/?period={{ period }}{{ "&account=" + accountId if accountId }}">
         <span>{{ period | capitalize }}</span>
       </a>

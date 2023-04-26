@@ -30,10 +30,10 @@
     </div>
   {% endif %}
 
-  <div class="transactions-filter__container govuk-body">
+  <div class="list-page-filter__container govuk-body">
     {% for status in["intransit", "paidout", "failed", "all"] %}
       <a
-        class="transactions-filter__item {% if selectedStatus === status %}selected{% endif %} no-decoration"
+        class="list-page-filter__item {% if selectedStatus === status %}selected{% endif %} no-decoration"
         href="/payouts?status={{ status }}{% if service %}&account={{ accountId }}{% endif %}">
         <span>{{ status | capitalize }}</span>
       </a>
