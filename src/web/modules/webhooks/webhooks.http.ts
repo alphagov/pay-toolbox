@@ -8,6 +8,8 @@ const {constants} = require('@govuk-pay/pay-js-commons')
 const process = require('process')
 const {common} = require('./../../../config')
 
+const webhookMessagePageSize = 10
+
 if (common.development) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
 }
@@ -17,7 +19,7 @@ export async function detail(req: Request, res: Response, next: NextFunction): P
     const webhook = await Webhooks.webhooks.retrieve(
       req.params.id,
       {
-        service_id: req.query.service_id as string,
+        override_account_or_service_id_restriction: true,
       }
     )
 
@@ -76,4 +78,37 @@ export function search(req: Request, res: Response) {
 export function searchRequest(req: Request, res: Response) {
   const id = req.body.id.trim()
   res.redirect(`/webhooks/${id}`)
+}
+
+export async function listMessages(req: Request, res: Response, next: NextFunction): Promise<void> {
+  const page = Number(req.query.page) || 1
+  const status = req.query.status as string
+
+  try {
+    const webhook = await Webhooks.webhooks.retrieve(
+      req.params.id,
+      {
+        override_account_or_service_id_restriction: true
+      }
+    )
+
+    const webhookMessages = await Webhooks.webhooks.listMessages(
+      req.params.id,
+      {
+        page: page,
+        ...status && { status }
+      }
+    )
+
+    res.render('webhooks/messages', {
+      webhook,
+      webhookMessages,
+      webhookMessagePageSize,
+      page,
+      selectedStatus: status,
+      human_readable_subscriptions: constants.webhooks.humanReadableSubscriptions,
+    })
+  } catch (error) {
+    next(error)
+  }
 }

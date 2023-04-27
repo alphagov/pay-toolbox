@@ -47,6 +47,10 @@ export interface RetrieveWebhookRequest {
   service_id?: string;
 }
 
+export interface RetrieveWebhookRequestWithOverride {
+  override_account_or_service_id_restriction: boolean;
+}
+
 export interface ListWebhookRequest {
   live: boolean;
 }
@@ -57,5 +61,5 @@ export interface ListWebhooksForServiceRequest extends ListWebhookRequest {
 
 export interface ListWebhookMessageRequest {
   page?: number,
-  status?: DeliveryStatus
+  status?: string
 }

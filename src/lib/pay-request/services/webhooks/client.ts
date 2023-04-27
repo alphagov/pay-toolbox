@@ -1,5 +1,12 @@
 import Client from '../../base'
-import type { ListWebhookMessageRequest, ListWebhooksForServiceRequest, RetrieveWebhookRequest, Webhook, WebhookMessage } from './types'
+import type {
+  ListWebhookMessageRequest,
+  ListWebhooksForServiceRequest,
+  RetrieveWebhookRequest,
+  RetrieveWebhookRequestWithOverride,
+  Webhook,
+  WebhookMessage
+} from './types'
 import { App, SearchResponse } from '../../shared'
 import { handleEntityNotFound } from '../../utils/error';
 
@@ -11,7 +18,7 @@ export default class Webhooks extends Client {
   webhooks = ((client: Webhooks) => ({
     retrieve(
       id: string,
-      params: RetrieveWebhookRequest
+      params: RetrieveWebhookRequest | RetrieveWebhookRequestWithOverride
     ): Promise<Webhook | undefined> {
       return client._axios
         .get(`/v1/webhook/${id}`, {params})
