@@ -11,7 +11,7 @@
   <h1 class="govuk-heading-m">Webhook</h1>
 
   {% set subscriptions_list %}
-    <ul>
+    <ul class="govuk-list">
       {% for subscription_key in webhook.subscriptions %}
         <li>{{human_readable_subscriptions[subscription_key | upper]}}</li>
       {% endfor %}

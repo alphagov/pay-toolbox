@@ -1,7 +1,7 @@
 import Client from '../../base'
 import type { ListWebhookMessageRequest, ListWebhooksForServiceRequest, RetrieveWebhookRequest, Webhook, WebhookMessage } from './types'
 import { App, SearchResponse } from '../../shared'
-import { handleEntityNotFound } from "../../utils/error";
+import { handleEntityNotFound } from '../../utils/error';
 
 export default class Webhooks extends Client {
   constructor() {
