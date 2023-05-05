@@ -1,22 +1,31 @@
 import logger from "../logger";
 
-const zendesk = require('node-zendesk')
+import axios from "axios"
 
-const zendeskClient = zendesk.createClient({
-  username: process.env.ZENDESK_USER,
-  token: process.env.ZENDESK_API_KEY,
-  remoteUri: process.env.ZENDESK_URL,
-  proxy: process.env.http_proxy
-})
+function updateZendeskTicket(zendeskTicketNumber: number, zendeskTicketBody: string){
+  return axios({
+    method: 'put',
+    url: process.env.ZENDESK_URL + `/tickets/${zendeskTicketNumber}`,
+    data: {
+      ticket: {
+        comment: {
+          body: zendeskTicketBody
+        }
+      },
+    },
+    auth: {
+      username: process.env.ZENDESK_USER + '/token',
+      password: process.env.ZENDESK_API_KEY
+    }
+  }) 
+}
+
 
 export async function updateTicketWithStripeGoLiveResponse(ticket: ZendeskTicket, stripeGoLiveUrl: string, statementDescriptor: string, payoutStatementDescriptor: string): Promise<boolean> {
   logger.info(`Updating zendesk ticket ${ticket.id} with go live response.`)
+
   try {
-    await zendeskClient.tickets.update(ticket.id,
-      {
-        ticket: {
-          comment: {
-            body: `
+    const zendeskTicketBody = `
 Hello,
 
 Your GOV.UK Pay service with Stripe is now live. However there are still some important steps to complete before your service is ready to use.
@@ -67,11 +76,10 @@ You should also sign up to our service update at https://docs.google.com/forms/d
 Thanks
 
 GOV.UK Pay team
-            `
-          }
-        }
-      }
-    )
+`
+
+    await updateZendeskTicket(ticket.id, zendeskTicketBody)
+
     logger.info(`Zendesk ticket ${ticket} updated.`)
     return true;
   } catch (err) {
@@ -83,12 +91,7 @@ GOV.UK Pay team
 export async function updateTicketWithWorldpayGoLiveResponse(ticket: ZendeskTicket, worldpayGoLiveUrl: string): Promise<boolean> {
   logger.info(`Updating zendesk ticket ${ticket.id} with go live response.`)
   try {
-    await zendeskClient.tickets.update(ticket.id,
-      {
-        ticket: {
-          // custom_fields: [{ id: 360012004639, value: "something"}], <-- This can be done in the future which would enable us to automatically close the ticket
-          comment: {
-            body: `
+    const zendeskTicketBody = `
 Hello,
 
 You’re nearly ready to start taking payment on GOV.UK Pay. You just need to link your GOV.UK Pay account with your payment service provider’s (PSP) account.
@@ -120,11 +123,10 @@ You should also sign up to our service update at https://docs.google.com/forms/d
 Thanks
 
 GOV.UK Pay team
-            `
-          }
-        }
-      }
-    )
+  `
+
+    await updateZendeskTicket(ticket.id, zendeskTicketBody)
+
     logger.info(`Zendesk ticket ${ticket} updated.`)
     return true;
   } catch (err) {
@@ -149,7 +151,16 @@ export interface ZendeskTicket {
 
 export async function getTicket(zendeskTicketNumber: number): Promise<ZendeskTicket> {
   try {
-    return await zendeskClient.tickets.show(zendeskTicketNumber)
+    const response = await axios({
+      method: 'get',
+      url: process.env.ZENDESK_URL + `/tickets/${zendeskTicketNumber}`,
+      auth: {
+        username: process.env.ZENDESK_USER + '/token',
+        password: process.env.ZENDESK_API_KEY
+      }
+    })
+
+    return response.data.ticket
   } catch (err) {
     throw new Error(`Zendesk ticket number ${zendeskTicketNumber} is not valid`)
   }
