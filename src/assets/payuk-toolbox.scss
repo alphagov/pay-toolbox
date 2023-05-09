@@ -143,12 +143,12 @@
    color: govuk-colour("green");
  }
 
-.transactions-filter__container {
+.list-page-filter__container {
   display: flex;
   flex-direction: row;
 }
 
-.transactions-filter__item {
+.list-page-filter__item {
   flex-grow: 1;
   text-align: center;
   border-top: 1px solid $govuk-border-colour;
@@ -159,7 +159,7 @@
   cursor: pointer;
 }
 
-.transactions-filter__item.selected {
+.list-page-filter__item.selected {
   border-bottom: 5px solid govuk-colour("blue");
 }
 

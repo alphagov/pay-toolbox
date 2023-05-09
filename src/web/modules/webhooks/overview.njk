@@ -17,18 +17,15 @@
     <table class="govuk-table">
       <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-          <th class="govuk-table__header" scope="col">ID</th>
+
           <th class="govuk-table__header" scope="col">Domain</th>
-          <th class="govuk-table__header" scope="col">Staus</th>
+          <th class="govuk-table__header" scope="col">Status</th>
           <th class="govuk-table__header" scope="col">Created date</th>
         </tr>
       </thead>
       <tbody class="govuk-table__body">
         {% for webhook in webhooks %}
           <tr class="govuk-table__row">
-            <td class="govuk-table__cell">
-              <a class="govuk-link" href="/webhooks/{{ webhook.external_id }}?service_id={{ service.external_id }}">{{ webhook.external_id }}</a>
-            </td>
             <td class="govuk-table__cell">
               {{ webhook.domain }}
             </td>
@@ -38,7 +35,7 @@
               ) }}
             </td>
             <td class="govuk-table__cell">
-              {{ webhook.created_date | formatDate }}
+              <a class="govuk-link" href="/webhooks/{{ webhook.external_id }}">{{ webhook.created_date | formatToSimpleDate }}</a>
             </td>
           </tr>
         {% else %}

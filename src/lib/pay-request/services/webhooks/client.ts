@@ -1,7 +1,14 @@
 import Client from '../../base'
-import type { ListWebhooksForServiceRequest, RetrieveWebhookRequest, Webhook } from './types'
-import { App } from '../../shared'
-import { handleEntityNotFound } from "../../utils/error";
+import type {
+  ListWebhookMessageRequest,
+  ListWebhooksForServiceRequest,
+  RetrieveWebhookRequest,
+  RetrieveWebhookRequestWithOverride,
+  Webhook,
+  WebhookMessage
+} from './types'
+import { App, SearchResponse } from '../../shared'
+import { handleEntityNotFound } from '../../utils/error';
 
 export default class Webhooks extends Client {
   constructor() {
@@ -11,7 +18,7 @@ export default class Webhooks extends Client {
   webhooks = ((client: Webhooks) => ({
     retrieve(
       id: string,
-      params: RetrieveWebhookRequest
+      params: RetrieveWebhookRequest | RetrieveWebhookRequestWithOverride
     ): Promise<Webhook | undefined> {
       return client._axios
         .get(`/v1/webhook/${id}`, {params})
@@ -26,6 +33,15 @@ export default class Webhooks extends Client {
     return client._axios
       .get('/v1/webhook', {params})
       .then(response => client._unpackResponseData<Webhook[] | undefined >(response));
+    },
+
+    listMessages(
+      webhookId: string,
+      params: ListWebhookMessageRequest
+    ): Promise<SearchResponse<WebhookMessage> | undefined> {
+      return client._axios
+        .get(`/v1/webhook/${webhookId}/message`, {params})
+        .then(response => client._unpackResponseData<SearchResponse<WebhookMessage> | undefined >(response));
     }
   }))(this)
 }
