@@ -1,0 +1,24 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">GOV.UK Pay platform</span>
+  <h1 class="govuk-heading-m">Find a webhook</h1>
+
+  <form method="POST">
+    {{ govukInput({
+      id: "id",
+      name: "id",
+      label: { text: "Webhook external ID" }
+    })
+    }}
+
+    {{ govukButton({
+      text: "Search"
+    })
+    }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}

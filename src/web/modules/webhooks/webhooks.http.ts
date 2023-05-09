@@ -68,3 +68,12 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     next(error)
   }
 }
+
+export function search(req: Request, res: Response) {
+  res.render('webhooks/search', {csrf: req.csrfToken()})
+}
+
+export function searchRequest(req: Request, res: Response) {
+  const id = req.body.id.trim()
+  res.redirect(`/webhooks/${id}`)
+}
