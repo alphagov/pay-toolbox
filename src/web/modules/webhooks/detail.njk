@@ -2,6 +2,7 @@
 {% from "common/json.njk" import json %}
 {% extends "layout/layout.njk" %}
 {% from "./webhookStatus.macro.njk" import webhookStatusTag %}
+{% from "./webhookMessageStatus.macro.njk" import webhookMessageStatusTag %}
 
 {% set isTestData = webhook and not webhook.live %}
 
@@ -31,11 +32,85 @@
   ]
   }) }}
 
-  <ul class="govuk-list">
-    <li>
-      <a href="/webhooks/{{ webhook.external_id }}/messages" class="govuk-link">View messages</a>
-    </li>
-  </ul><hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-
   {{ json("Webhook source", webhook) }}
+
+  <h2 class="govuk-heading-m">Webhook Messages</h2>
+
+  <div class="list-page-filter__container govuk-body">
+    {% for status in ["successful", "failed"] %}
+      <a
+        class="list-page-filter__item {% if selectedStatus === status %}selected{% endif %} no-decoration"
+        href="/webhooks/{{webhook.external_id}}/messages?status={{ status }}">
+        <span>{{ status | capitalize }}</span>
+      </a>
+    {% endfor %}
+    <a
+      class="list-page-filter__item {% if not selectedStatus %}selected{% endif %} no-decoration"
+      href="/webhooks/{{webhook.external_id}}/messages">
+      <span>All</span>
+    </a>
+  </div>
+
+
+  <div>
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Event type</th>
+        <th class="govuk-table__header" scope="col">Status</th>
+        <th class="govuk-table__header" scope="col">Created</th>
+        <th class="govuk-table__header" scope="col">Latest attempt</th>
+      </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+      {% for message in webhookMessages.results %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">
+            <span class="govuk-caption-m">{{ human_readable_subscriptions[message.event_type | upper] }}</span>
+          </td>
+          <td class="govuk-table__cell">
+            <span class="govuk-caption-m">{{ webhookMessageStatusTag(message.last_delivery_status) }}</span>
+          </td>
+          <td class="govuk-table__cell">
+            <span class="govuk-caption-m">{{ message.created_date | formatDate }}</span>
+          </td>
+          <td class="govuk-table__cell">
+            <span class="govuk-caption-m">{{ message.latest_attempt and message.latest_attempt.created_date | formatDate }}</span>
+          </td>
+        </tr>
+      {% else %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell center" colspan="5"><span><i>No messages found.</i></span></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="govuk-body">
+    Showing page {{ webhookMessages.page }}
+
+  </div>
+  <div class="toolbox-right">
+    <a
+      {% if webhookMessages.page <= 1 %}
+        disabled
+      {% else %}
+        href="/webhooks/{{webhook.external_id}}/messages?page={{ webhookMessages.page - 1 }}&status={{ selectedStatus }}"
+      {% endif %}
+
+      class="govuk-button govuk-button--secondary">
+      Previous
+    </a>
+    <a
+      {% if webhookMessages.count < webhookMessagePageSize %}
+        disabled
+      {% else %}
+        href="/webhooks/{{webhook.external_id}}/messages?page={{ webhookMessages.page + 1 }}&status={{ selectedStatus }}"
+      {% endif %}
+
+      class="govuk-button govuk-button--secondary">
+      Next
+    </a>
+  </div>
 {% endblock %}
