@@ -30,8 +30,6 @@
   ]
   }) }}
 
-  {{ json(eventType + " event body", message.resource) }}
-
   <div class="govuk-!-margin-top-8">
     <h2 class="govuk-heading-s">Delivery attempts</h2>
     <table class="govuk-table">
@@ -64,6 +62,7 @@
       </table>
   </div>
 
+  {{ json(eventType + " event body", message.resource) }}
   {{ json("Webhook source", webhook) }}
   {{ json("Webhook message source", message) }}
 {% endblock %}

@@ -3,6 +3,10 @@
 {% from "./webhookStatus.macro.njk" import webhookStatusTag %}
 
 {% block main %}
+  <div>
+    <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Associated account ({{ account.external_id }})</a>
+  </div>
+
   <span class="govuk-caption-m">
     {% if service %}
       <span>{{ service.name }}</span>
@@ -27,7 +31,7 @@
         {% for webhook in webhooks %}
           <tr class="govuk-table__row">
             <td class="govuk-table__cell">
-              {{ webhook.domain }}
+              <a class="govuk-link" href="/webhooks/{{ webhook.external_id }}">{{ webhook.domain }}</a>
             </td>
             <td class="govuk-table__cell">
               {{ webhookStatusTag(
@@ -35,7 +39,7 @@
               ) }}
             </td>
             <td class="govuk-table__cell">
-              <a class="govuk-link" href="/webhooks/{{ webhook.external_id }}">{{ webhook.created_date | formatToSimpleDate }}</a>
+              {{ webhook.created_date | formatToSimpleDate }}
             </td>
           </tr>
         {% else %}
