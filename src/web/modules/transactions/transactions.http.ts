@@ -1,9 +1,9 @@
 import {NextFunction, Request, Response} from 'express'
 
-import {AdminUsers, Connector, Ledger} from '../../../lib/pay-request/client'
+import {AdminUsers, Connector, Ledger, Webhooks} from '../../../lib/pay-request/client'
 import {EntityNotFoundError} from '../../../lib/errors'
 import logger from '../../../lib/logger'
-import {TransactionType} from "../../../lib/pay-request/shared";
+import {AccountType, TransactionType} from '../../../lib/pay-request/shared'
 import {PaymentListFilterStatus, resolvePaymentStates, resolveRefundStates} from "./states";
 
 const process = require('process')
@@ -13,6 +13,7 @@ const moment = require('moment')
 const rfc822Validator = require('rfc822-validate')
 
 const {common, services} = require('./../../../config')
+const {constants} = require('@govuk-pay/pay-js-commons')
 
 if (common.development) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
@@ -159,6 +160,23 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
       parentTransaction = await Ledger.transactions.retrieve(transaction.parent_transaction_id)
     }
 
+    const webhookMessages = []
+    try {
+      const webhooks = await Webhooks.webhooks.list({
+        service_id: service.external_id,
+        live: account.type === AccountType.Live
+      })
+
+      for (const webhook of webhooks) {
+        const messages = await Webhooks.webhooks.listMessages(webhook.external_id, {
+          resource_id: transaction.transaction_id
+        })
+        webhookMessages.push(...messages.results.map((webhookMessage) => ({ ...webhookMessage, webhook_id: webhook.external_id })))
+      }
+    } catch (webhooksError) {
+      logger.warn('Failed to fetch webhooks data for the payments page', webhooksError)
+    }
+
     const renderKey = transaction.transaction_type.toLowerCase()
 
     if (transaction.gateway_transaction_id && account.payment_provider === 'stripe') {
@@ -172,7 +190,9 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
       account,
       service,
       events,
-      stripeDashboardUri
+      stripeDashboardUri,
+      webhookMessages,
+      humanReadableSubscriptions: constants.webhooks.humanReadableSubscriptions
     })
   } catch (error) {
     next(error)

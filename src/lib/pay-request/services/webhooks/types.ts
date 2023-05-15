@@ -61,5 +61,6 @@ export interface ListWebhooksForServiceRequest extends ListWebhookRequest {
 
 export interface ListWebhookMessageRequest {
   page?: number,
-  status?: string
+  status?: string,
+  resource_id?: string
 }

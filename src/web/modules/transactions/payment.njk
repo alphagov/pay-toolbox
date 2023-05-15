@@ -1,5 +1,6 @@
 {% from "transactions/status.macro.njk" import status %}
 {% from "common/json.njk" import json %}
+{% from "./../webhooks/webhookMessageStatus.macro.njk" import webhookMessageStatusTag %}
 {% extends "layout/layout.njk" %}
 
 {% set isTestData = not transaction.live %}
@@ -176,6 +177,25 @@
       </table>
     {% else %}
       <div class="center bottom-spacer"><span class="govuk-caption-m">No metadata</span></div>
+    {% endif %}
+  </div>
+
+  <div>
+    <h1 class="govuk-heading-s payment__header">Webhook messages</h1>
+    {% if webhookMessages.length %}
+    <table class="govuk-table">
+      <tbody class="govuk-table__body">
+      {% for message in webhookMessages %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell"><a class="govuk-link" href="/webhooks/{{ message.webhook_id }}/messages/{{ message.external_id }}">{{ humanReadableSubscriptions[message.event_type | upper] }}</a></td>
+          <td class="govuk-table__cell">{{ webhookMessageStatusTag(message.last_delivery_status or 'PENDING') }}</td>
+          <td class="govuk-table__cell">{{ message.created_date | formatDate }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <div class="center bottom-spacer"><span class="govuk-caption-m">No webhook messages associated with payment</span></div>
     {% endif %}
   </div>
 
