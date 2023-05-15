@@ -1,7 +1,7 @@
 {% from "transactions/status.macro.njk" import status %}
 
 {% extends "layout/layout.njk" %}
-{% from "./webhookMessageStatus.macro.njk" import webhookMessageStatusTag %}
+{% from "./../webhookMessageStatus.macro.njk" import webhookMessageStatusTag %}
 
 {% set isTestData = webhook and not webhook.live %}
 
@@ -46,7 +46,7 @@
     {% for message in webhookMessages.results %}
     <tr class="govuk-table__row">
       <td class="govuk-table__cell">
-        <span class="govuk-caption-m">{{ human_readable_subscriptions[message.event_type | upper] }}</span>
+        <a class="govuk-link" href="/webhooks/{{ webhook.external_id }}/messages/{{ message.external_id }}">{{ human_readable_subscriptions[message.event_type | upper] }}</a>
       </td>
       <td class="govuk-table__cell">
         <span class="govuk-caption-m">{{ webhookMessageStatusTag(message.last_delivery_status) }}</span>

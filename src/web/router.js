@@ -165,6 +165,7 @@ router.post('/webhooks/search', auth.secured(PermissionLevel.VIEW_ONLY), webhook
 router.get('/webhooks/:id', auth.secured(PermissionLevel.VIEW_ONLY), webhooks.detail)
 router.get('/webhooks', auth.secured(PermissionLevel.VIEW_ONLY), webhooks.list)
 router.get('/webhooks/:id/messages', auth.secured(PermissionLevel.VIEW_ONLY), webhooks.listMessages)
+router.get('/webhooks/:webhookId/messages/:messageId', auth.secured(PermissionLevel.VIEW_ONLY), webhooks.messageDetail)
 
 router.get('/platform/dashboard', auth.secured(PermissionLevel.VIEW_ONLY), platform.dashboard)
 router.get('/platform/dashboard/live', platform.live)

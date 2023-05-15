@@ -100,13 +100,27 @@ export async function listMessages(req: Request, res: Response, next: NextFuncti
       }
     )
 
-    res.render('webhooks/messages', {
+    res.render('webhooks/messages/overview', {
       webhook,
       webhookMessages,
       webhookMessagePageSize,
       page,
       selectedStatus: status,
       human_readable_subscriptions: constants.webhooks.humanReadableSubscriptions,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export async function messageDetail(req: Request, res: Response, next: NextFunction) {
+  try {
+    const webhook = await Webhooks.webhooks.retrieve(req.params.webhookId, { override_account_or_service_id_restriction: true })
+    const message = await Webhooks.webhooks.retrieveMessage(req.params.webhookId, req.params.messageId)
+    res.render('webhooks/messages/detail', {
+      webhook,
+      message,
+      human_readable_subscriptions: constants.webhooks.humanReadableSubscriptions
     })
   } catch (error) {
     next(error)
