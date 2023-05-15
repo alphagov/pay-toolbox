@@ -161,16 +161,20 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     }
 
     const webhookMessages = []
-    const webhooks = await Webhooks.webhooks.list({
-      service_id: service.external_id,
-      live: account.type === AccountType.Live
-    })
-
-    for (const webhook of webhooks) {
-      const messages = await Webhooks.webhooks.listMessages(webhook.external_id, {
-        resource_id: transaction.transaction_id
+    try {
+      const webhooks = await Webhooks.webhooks.list({
+        service_id: service.external_id,
+        live: account.type === AccountType.Live
       })
-      webhookMessages.push(...messages.results.map((webhookMessage) => ({ ...webhookMessage, webhook_id: webhook.external_id })))
+
+      for (const webhook of webhooks) {
+        const messages = await Webhooks.webhooks.listMessages(webhook.external_id, {
+          resource_id: transaction.transaction_id
+        })
+        webhookMessages.push(...messages.results.map((webhookMessage) => ({ ...webhookMessage, webhook_id: webhook.external_id })))
+      }
+    } catch (webhooksError) {
+      logger.warn('Failed to fetch webhooks data for the payments page', webhooksError)
     }
 
     const renderKey = transaction.transaction_type.toLowerCase()
