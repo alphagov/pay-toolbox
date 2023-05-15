@@ -42,6 +42,16 @@ export default class Webhooks extends Client {
       return client._axios
         .get(`/v1/webhook/${webhookId}/message`, {params})
         .then(response => client._unpackResponseData<SearchResponse<WebhookMessage> | undefined >(response));
+    },
+
+    retrieveMessage(
+      webhookId: string,
+      messageId: string
+    ): Promise<WebhookMessage | undefined> {
+      return client._axios
+        .get(`/v1/webhook/${webhookId}/message/${messageId}`)
+        .then(response => client._unpackResponseData<WebhookMessage>(response))
+        .catch(handleEntityNotFound('Webhook message', messageId))
     }
   }))(this)
 }

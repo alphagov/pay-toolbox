@@ -1,0 +1,39 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "common/json.njk" import json %}
+{% extends "layout/layout.njk" %}
+{% from "../webhookStatus.macro.njk" import webhookStatusTag %}
+
+{% set isTestData = webhook and not webhook.live %}
+
+{% macro captionCell(content) %}
+<span class="govuk-caption-m">{{ content }}</span>
+{% endmacro %}
+
+{% block main %}
+  <div>
+    <a href="/webhooks/{{ webhook.external_id }}/messages" class="govuk-back-link">Back to webhook messages</a>
+  </div>
+
+  {% set eventType = human_readable_subscriptions[message.event_type | upper] %}
+
+  <h1 class="govuk-heading-m">{{ eventType }}</h1>
+
+  {% set resourceLink %}
+    <a class="govuk-link" href="/transactions/{{ message.resource_id }}">{{ message.resource_id }}</a>
+  {% endset %}
+  {{ govukSummaryList({
+  rows: [
+    { key : { text: captionCell("ID") }, value: { text: webhook.external_id } },
+    { key : { text: captionCell("Resource") }, value: { html: resourceLink } },
+    { key : { text: captionCell("Event date") }, value: { text: message.event_date | formatDate } },
+    { key : { text: captionCell("Status code") }, value: { text: message.latest_attempt and message.latest_attempt.status_code or "-" } }
+  ]
+  }) }}
+
+  {{ json(eventType + " event body", message.resource) }}
+
+  </ul><hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+  {{ json("Webhook source", webhook) }}
+  {{ json("Webhook message source", message) }}
+{% endblock %}
