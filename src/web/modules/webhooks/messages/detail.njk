@@ -1,7 +1,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "common/json.njk" import json %}
 {% extends "layout/layout.njk" %}
-{% from "../webhookStatus.macro.njk" import webhookStatusTag %}
+{% from "../webhookMessageStatus.macro.njk" import webhookMessageStatusTag %}
 
 {% set isTestData = webhook and not webhook.live %}
 
@@ -32,7 +32,37 @@
 
   {{ json(eventType + " event body", message.resource) }}
 
-  </ul><hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+  <div class="govuk-!-margin-top-8">
+    <h2 class="govuk-heading-s">Delivery attempts</h2>
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="col">Attempt date</th>
+            <th class="govuk-table__header" scope="col">Status</th>
+            <th class="govuk-table__header" scope="col">Status code</th>
+            <th class="govuk-table__header" scope="col">Result</th>
+          </tr>
+        </thead>
+
+        <tbody class="govuk-table__body">
+        {% for attempt in attempts %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">{{ attempt.send_at | formatDate }}</td>
+            <td class="govuk-table__cell">{{ webhookMessageStatusTag(attempt.status) }}</td>
+            <td class="govuk-table__cell">{{ attempt.status_code or '-' }}</td>
+            <td class="govuk-table__cell">{{ attempt.result }}</td>
+          </tr>
+
+        {% else %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell" colspan="4">
+              <i>No delivery attempts found for event</i>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+  </div>
 
   {{ json("Webhook source", webhook) }}
   {{ json("Webhook message source", message) }}

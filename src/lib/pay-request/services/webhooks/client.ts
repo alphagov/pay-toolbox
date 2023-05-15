@@ -9,6 +9,7 @@ import type {
 } from './types'
 import { App, SearchResponse } from '../../shared'
 import { handleEntityNotFound } from '../../utils/error';
+import { DeliveryAttempt } from './types';
 
 export default class Webhooks extends Client {
   constructor() {
@@ -51,6 +52,16 @@ export default class Webhooks extends Client {
       return client._axios
         .get(`/v1/webhook/${webhookId}/message/${messageId}`)
         .then(response => client._unpackResponseData<WebhookMessage>(response))
+        .catch(handleEntityNotFound('Webhook message', messageId))
+    },
+
+    listMessageAttempts(
+      webhookId: string,
+      messageId: string
+    ): Promise<DeliveryAttempt[] | undefined> {
+      return client._axios
+        .get(`/v1/webhook/${webhookId}/message/${messageId}/attempt`)
+        .then(response => client._unpackResponseData<DeliveryAttempt[]>(response))
         .catch(handleEntityNotFound('Webhook message', messageId))
     }
   }))(this)

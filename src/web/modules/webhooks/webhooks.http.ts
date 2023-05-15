@@ -117,9 +117,11 @@ export async function messageDetail(req: Request, res: Response, next: NextFunct
   try {
     const webhook = await Webhooks.webhooks.retrieve(req.params.webhookId, { override_account_or_service_id_restriction: true })
     const message = await Webhooks.webhooks.retrieveMessage(req.params.webhookId, req.params.messageId)
+    const attempts = await Webhooks.webhooks.listMessageAttempts(req.params.webhookId, req.params.messageId)
     res.render('webhooks/messages/detail', {
       webhook,
       message,
+      attempts,
       human_readable_subscriptions: constants.webhooks.humanReadableSubscriptions
     })
   } catch (error) {
