@@ -160,7 +160,7 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
       service_went_live_date: moment.utc().format(),
       service_created_date: moment.utc(service.created_date).format(),
       service_using_provider: account.provider,
-      service_is_internal_service: service.internal
+      service_is_internal_service: account.internalFlag
     })
   }
 
