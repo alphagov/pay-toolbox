@@ -57,7 +57,7 @@ export enum ExternalAgreementState {
   Created = 'created',
   Active = 'active',
   Cancelled = 'cancelled',
-  Expired = 'expired'
+  Inactive = 'inactive'
 }
 
 export enum PaymentInstrumentType {
