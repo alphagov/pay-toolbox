@@ -18,7 +18,7 @@
   <h1 class="govuk-heading-m">Agreements</h1>
 
   <div class="list-page-filter__container govuk-body">
-    {% for status in ["created", "active", "cancelled", "all"] %}
+    {% for status in ["created", "active", "cancelled", "inactive", "all"] %}
       <a
         class="list-page-filter__item {% if selectedStatus === status %}selected{% endif %} no-decoration"
         href="/agreements?status={{ status }}{{ linkQueryParams }}">

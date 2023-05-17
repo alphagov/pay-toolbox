@@ -1,14 +1,14 @@
 {% set statusStyleMap = {
   "CREATED": "govuk-tag--grey",
   "ACTIVE": "govuk-tag--green",
-  "EXPIRED": "govuk-tag--yellow",
+  "INACTIVE": "govuk-tag--yellow",
   "CANCELLED": "govuk-tag--yellow"
 } %}
 {% set statusTextMap = {
   "CREATED": "created",
   "ACTIVE": "active",
+  "INACTIVE": "inactive"
   "CANCELLED": "cancelled",
-  "EXPIRED": "expired"
 } %}
 
 {% macro agreementStatusTag(status) %}
