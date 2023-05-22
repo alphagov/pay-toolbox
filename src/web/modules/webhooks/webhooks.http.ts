@@ -46,6 +46,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
 
     const webhooks = await Webhooks.webhooks.list({
       service_id: service.external_id,
+      gateway_account_id: account.gateway_account_id,
       live: account.type === AccountType.Live
     })
 
