@@ -19,10 +19,9 @@ COPY webpack.config.js webpack.config.js
 
 # questionable method of setting build defaults - this should be removed when
 # tunneling is no longer required
-RUN node ./scripts/generate-dev-environment.js docker
-
-RUN npm run build
-RUN npm prune --production
+RUN node ./scripts/generate-dev-environment.js docker && \
+    npm run build && \
+    npm prune --production
 
 EXPOSE 3000
 
