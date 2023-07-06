@@ -39,8 +39,6 @@ export interface GatewayAccount {
   allow_apple_pay: boolean;
   allow_google_pay: boolean;
   block_prepaid_cards: boolean;
-  /** Gateway account has 3ds enabled */
-  toggle_3ds: boolean;
   allow_zero_amount: boolean;
   integration_version_3ds: number;
   allow_moto: boolean;
@@ -57,6 +55,12 @@ export interface GatewayAccount {
   recurring_enabled: boolean;
   provider_switch_enabled: boolean;
   service_id: string;
+  worldpay_3ds_flex: Worldpay3dsFlexCredentials;
+  gateway_account_credentials: GatewayAccountCredential[];
+  live: boolean;
+  /** Gateway account has 3ds enabled */
+  requires3ds: boolean;
+  sendPayerIpAddressToGateway: boolean;
 }
 
 export interface GatewayAccountCredential {
@@ -73,26 +77,6 @@ export interface StripeCredentials {
 export interface Credentials {
   merchant_id?: string;
   username?: string;
-}
-
-export interface GatewayAccountFrontend extends GatewayAccount {
-  gateway_account_credentials: GatewayAccountCredential[];
-  live: boolean;
-  /** Gateway account has 3ds enabled */
-  requires3ds: boolean;
-  sendPayerIpAddressToGateway: boolean;
-  version: number;
-
-  // notificationCredentials
-  // notifySettings
-}
-
-export interface GatewayAccountAPI extends GatewayAccount {
-  /** Gateway account has 3ds enabled */
-  toggle_3ds: boolean;
-  worldpay_3ds_flex: Worldpay3dsFlexCredentials;
-
-  // _links: PayLinks
 }
 
 export interface Worldpay3dsFlexCredentials {

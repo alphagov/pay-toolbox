@@ -14,7 +14,6 @@ import {GoLiveStage, Service, UpdateServiceRequest} from '../../../lib/pay-reque
 import {Product, ProductType} from '../../../lib/pay-request/services/products/types'
 import {
   GatewayAccount,
-  GatewayAccountFrontend,
   StripeCredentials,
   StripeSetup
 } from '../../../lib/pay-request/services/connector/types'
@@ -209,7 +208,7 @@ async function detail(req: Request, res: Response): Promise<void> {
   if (isDirectDebitID) {
     throw new Error(`Direct debit accounts are no longer supported`)
   } else {
-    [account, acceptedCards, stripeSetup] = await Promise.all([Connector.accounts.retrieveFrontend(id), Connector.accounts.listCardTypes(id), Connector.accounts.retrieveStripeSetup(id)])
+    [account, acceptedCards, stripeSetup] = await Promise.all([Connector.accounts.retrieve(id), Connector.accounts.listCardTypes(id), Connector.accounts.retrieveStripeSetup(id)])
   }
 
   try {
@@ -247,7 +246,7 @@ async function detail(req: Request, res: Response): Promise<void> {
   })
 }
 
-function getCurrentCredential(account: GatewayAccountFrontend) {
+function getCurrentCredential(account: GatewayAccount) {
   const credentials = account.gateway_account_credentials || []
   return credentials.find(credential => credential.state === 'ACTIVE') || credentials[0]
 }
@@ -280,7 +279,7 @@ async function getAccount(id: string): Promise<any> {
   if (isDirectDebitID) {
     throw new Error(`Direct debit accounts are no longer supported`)
   }
-  return Connector.accounts.retrieveAPI(id)
+  return Connector.accounts.retrieve(id)
 }
 
 async function surcharge(req: Request, res: Response): Promise<void> {
@@ -345,7 +344,7 @@ async function toggleBlockPrepaidCards(
   res: Response
 ): Promise<void> {
   const {id} = req.params
-  const account = await Connector.accounts.retrieveAPI(id)
+  const account = await Connector.accounts.retrieve(id)
   const block = !account.block_prepaid_cards
   await Connector.accounts.update(id, {block_prepaid_cards: block})
 
@@ -358,7 +357,7 @@ async function toggleMotoPayments(
   res: Response
 ): Promise<void> {
   const {id} = req.params
-  const account = await Connector.accounts.retrieveAPI(id)
+  const account = await Connector.accounts.retrieve(id)
   const enable = !account.allow_moto
   await Connector.accounts.update(id, {allow_moto: enable})
 
@@ -368,7 +367,7 @@ async function toggleMotoPayments(
 
 async function toggleWorldpayExemptionEngine(req: Request, res: Response): Promise<void> {
   const {id} = req.params
-  const account = await Connector.accounts.retrieveAPI(id)
+  const account = await Connector.accounts.retrieve(id)
   const enable = !(account.worldpay_3ds_flex && account.worldpay_3ds_flex.exemption_engine_enabled)
   await Connector.accounts.update(id, {worldpay_exemption_engine_enabled: enable})
   req.flash('info', `Worldpay Exception Engine ${enable ? 'enabled' : 'disabled'}`)
@@ -380,7 +379,7 @@ async function toggleAllowTelephonePaymentNotifications(
   res: Response
 ): Promise<void> {
   const {id} = req.params
-  const account = await Connector.accounts.retrieveAPI(id)
+  const account = await Connector.accounts.retrieve(id)
   const enable = !account.allow_telephone_payment_notifications
   await Connector.accounts.update(id, {allow_telephone_payment_notifications: enable})
 
@@ -393,7 +392,7 @@ async function toggleSendPayerIpAddressToGateway(
   res: Response
 ): Promise<void> {
   const {id} = req.params
-  const account = await Connector.accounts.retrieveAPI(id)
+  const account = await Connector.accounts.retrieve(id)
   const enable = !account.send_payer_ip_address_to_gateway
   await Connector.accounts.update(id, {send_payer_ip_address_to_gateway: enable})
 
@@ -406,7 +405,7 @@ async function toggleSendPayerEmailToGateway(
   res: Response
 ): Promise<void> {
   const {id} = req.params
-  const account = await Connector.accounts.retrieveAPI(id)
+  const account = await Connector.accounts.retrieve(id)
   const enable = !account.send_payer_email_to_gateway
   await Connector.accounts.update(id, {send_payer_email_to_gateway: enable})
 
@@ -419,7 +418,7 @@ async function toggleSendReferenceToGateway(
   res: Response
 ): Promise<void> {
   const {id} = req.params
-  const account = await Connector.accounts.retrieveAPI(id)
+  const account = await Connector.accounts.retrieve(id)
   const enable = !account.send_reference_to_gateway
   const enabled = await Connector.accounts.update(id, {send_reference_to_gateway: enable})
 
@@ -469,7 +468,7 @@ async function toggleAllowAuthorisationApi(
   res: Response
 ): Promise<void> {
   const {id} = req.params
-  const account = await Connector.accounts.retrieveAPI(id)
+  const account = await Connector.accounts.retrieve(id)
   const enable = !account.allow_authorisation_api
   await Connector.accounts.update(id, {allow_authorisation_api: enable})
 
@@ -482,7 +481,7 @@ async function toggleRecurringEnabled(
   res: Response
 ): Promise<void> {
   const {id} = req.params
-  const account = await Connector.accounts.retrieveAPI(id)
+  const account = await Connector.accounts.retrieve(id)
   const enable = !account.recurring_enabled
   await Connector.accounts.update(id, {recurring_enabled: enable})
 
@@ -582,12 +581,12 @@ const search = async function search(req: Request, res: Response): Promise<void>
 async function searchRequest(req: Request, res: Response, next: NextFunction): Promise<void> {
   const id = req.body.id.trim()
   try {
-    await Connector.accounts.retrieveAPI(id)
+    await Connector.accounts.retrieve(id)
     return res.redirect(`/gateway_accounts/${id}`)
   } catch (err) {
     if (err instanceof EntityNotFoundError) {
       try {
-        const accountByExternalId = await Connector.accounts.retrieveFrontendByExternalId(id)
+        const accountByExternalId = await Connector.accounts.retrieveByExternalId(id)
         return res.redirect(`/gateway_accounts/${accountByExternalId.gateway_account_id}`)
       } catch (err) {
         if (err instanceof EntityNotFoundError) {

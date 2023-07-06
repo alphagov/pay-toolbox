@@ -114,7 +114,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
 
     if (req.query.account) {
       service = await AdminUsers.services.retrieve({gatewayAccountId: accountId as string})
-      account = await Connector.accounts.retrieveAPI(accountId as string)
+      account = await Connector.accounts.retrieve(accountId as string)
     }
 
     res.render('transactions/list', {
@@ -135,7 +135,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
 export async function show(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const transaction = await Ledger.transactions.retrieve(req.params.id)
-    const account = await Connector.accounts.retrieveAPI(transaction.gateway_account_id)
+    const account = await Connector.accounts.retrieve(transaction.gateway_account_id)
     const service = await AdminUsers.services.retrieve({gatewayAccountId: transaction.gateway_account_id})
     const relatedTransactions = []
     let stripeDashboardUri = ''
@@ -225,7 +225,7 @@ export async function statistics(req: Request, res: Response, next: NextFunction
     const fromDate: string = moment().utc().startOf(momentKey).format()
     const toDate: string = moment().utc().endOf(momentKey).format()
 
-    const account = await Connector.accounts.retrieveAPI(accountId);
+    const account = await Connector.accounts.retrieve(accountId);
     const includeMotoStatistics = account.allow_moto;
 
     const paymentsByState = await Ledger.reports.retrievePaymentSummaryByState({
@@ -326,7 +326,7 @@ export async function streamCsv(req: Request, res: Response, next: NextFunction)
   try {
     if (accountId) {
       serviceDetails = await AdminUsers.services.retrieve({gatewayAccountId: accountId})
-      gatewayAccountDetails = await Connector.accounts.retrieveAPI(accountId)
+      gatewayAccountDetails = await Connector.accounts.retrieve(accountId)
     }
 
     const feeHeaders = gatewayAccountDetails && gatewayAccountDetails.payment_provider === 'stripe'

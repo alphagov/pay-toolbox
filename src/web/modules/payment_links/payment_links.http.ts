@@ -103,7 +103,7 @@ async function fetchUsageContext(sortKey: string, filterLiveAccounts: Boolean, a
   if (accountId) {
     serviceRequest = AdminUsers.services.retrieve({gatewayAccountId: accountId})
       .then((service) => [service])
-    liveAccountsRequest = Connector.accounts.retrieveAPI(accountId)
+    liveAccountsRequest = Connector.accounts.retrieve(accountId)
       .then((account) => [account])
   } else {
     serviceRequest = AdminUsers.services.list()

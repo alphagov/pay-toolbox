@@ -54,7 +54,7 @@ const performancePlatformCsv = async function performancePlatformCsv(req: Reques
 const getServiceGatewayAccounts = async (gateway_account_ids: Array<string>) => {
   const serviceGatewayAccounts = []
   for (const id of gateway_account_ids) {
-    serviceGatewayAccounts.push(await Connector.accounts.retrieveAPI(id))
+    serviceGatewayAccounts.push(await Connector.accounts.retrieve(id))
   }
   return serviceGatewayAccounts
 }
