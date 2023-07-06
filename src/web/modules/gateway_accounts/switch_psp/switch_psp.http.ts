@@ -7,7 +7,7 @@ import logger from "../../../../lib/logger";
 import stripeTestAccount from '../../stripe/basic/test-account.http'
 
 export async function switchPSPPage(req: Request, res: Response, next: NextFunction) {
-  const account = await Connector.accounts.retrieveFrontend(req.params.id)
+  const account = await Connector.accounts.retrieve(req.params.id)
   const service = await AdminUsers.services.retrieve({gatewayAccountId: account.gateway_account_id})
   res.render('gateway_accounts/switch_psp/switch_psp', {account, service, flash: req.flash(), csrf: req.csrfToken()})
 }
@@ -17,7 +17,7 @@ export async function postSwitchPSP(req: Request, res: Response, next: NextFunct
   let stripeCredentials: { stripe_account_id: string }
 
   try {
-    const account = await Connector.accounts.retrieveFrontend(req.params.id)
+    const account = await Connector.accounts.retrieve(req.params.id)
     const service = await AdminUsers.services.retrieve({gatewayAccountId: gatewayAccountId})
 
     if (!req.body.paymentProvider) {

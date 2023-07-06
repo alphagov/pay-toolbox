@@ -41,7 +41,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
       throw new Error('Webhooks can currently only be shown for a single account')
     }
 
-    const account = await Connector.accounts.retrieveAPI(accountId as string)
+    const account = await Connector.accounts.retrieve(accountId as string)
     const service = await AdminUsers.services.retrieve(account.service_id)
 
     const webhooks = await Webhooks.webhooks.list({

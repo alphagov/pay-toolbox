@@ -18,7 +18,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
 
     if (req.query.account) {
       service = await AdminUsers.services.retrieve({gatewayAccountId})
-      account = await Connector.accounts.retrieveAPI(gatewayAccountId)
+      account = await Connector.accounts.retrieve(gatewayAccountId)
     }
 
     res.render('ledger_payouts/list', {

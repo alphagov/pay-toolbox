@@ -66,7 +66,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
 
     if (req.query.account) {
       service = await AdminUsers.services.retrieve({gatewayAccountId: accountId as string})
-      account = await Connector.accounts.retrieveAPI(accountId as string)
+      account = await Connector.accounts.retrieve(accountId as string)
     }
 
     res.render('agreements/list', {

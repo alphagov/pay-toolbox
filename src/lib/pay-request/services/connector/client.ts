@@ -3,8 +3,7 @@ import Client from '../../base'
 import {mapRequestParamsToOperation} from '../../utils/request'
 import {
   Charge,
-  GatewayAccountAPI,
-  GatewayAccountFrontend,
+  GatewayAccount,
   StripeCredentials,
   ListCardTypesResponse,
   ListGatewayAccountsRequest,
@@ -13,7 +12,10 @@ import {
   CreateGatewayAccountResponse,
   GatewayStatusComparison,
   StripeSetup,
-  UpdateGatewayAccountRequest, UpdateStripeSetupRequest, GatewayAccountCredentials, AddGatewayAccountCredentialsRequest, GatewayAccount
+  UpdateGatewayAccountRequest,
+  UpdateStripeSetupRequest,
+  GatewayAccountCredentials,
+  AddGatewayAccountCredentialsRequest
 } from './types'
 import {App} from '../../shared'
 import {handleEntityNotFound} from "../../utils/error";
@@ -74,38 +76,26 @@ export default class Connector extends Client {
 
   accounts = ((client: Connector) => ({
     /**
-     * Internal API view for gateway account
+     * Get gateway account by gateway account ID
      * @param id - Gateway account ID
      * @returns Gateway account object
      */
-    retrieveAPI(id: string): Promise<GatewayAccountAPI | undefined> {
+    retrieve(id: string): Promise<GatewayAccount | undefined> {
       return client._axios
         .get(`/v1/api/accounts/${id}`)
-        .then(response => client._unpackResponseData<GatewayAccountAPI>(response))
+        .then(response => client._unpackResponseData<GatewayAccount>(response))
         .catch(handleEntityNotFound("Account by ID", id))
     },
 
     /**
-     * Frontend view for gateway account
-     * @param id - Gateway account ID
-     * @returns Gateway account object
-     */
-    retrieveFrontend(id: string): Promise<GatewayAccountFrontend | undefined> {
-      return client._axios
-        .get(`/v1/frontend/accounts/${id}`)
-        .then(response => client._unpackResponseData<GatewayAccountFrontend>(response))
-        .catch(handleEntityNotFound("Account by ID", id))
-    },
-
-    /**
-     * Frontend view for gateway account, retrieved by the gateway account external ID`
+     * Get gateway account by external ID
      * @param externalId - Gateway account external ID
      * @returns Gateway account object
      */
-    retrieveFrontendByExternalId(externalId: string): Promise<GatewayAccountFrontend | undefined> {
+    retrieveByExternalId(externalId: string): Promise<GatewayAccount| undefined> {
       return client._axios
         .get(`/v1/frontend/accounts/external-id/${externalId}`)
-        .then(response => client._unpackResponseData<GatewayAccountFrontend>(response))
+        .then(response => client._unpackResponseData<GatewayAccount>(response))
         .catch(handleEntityNotFound("Account by external ID", externalId));
     },
 
@@ -209,7 +199,7 @@ export default class Connector extends Client {
           return
         });
       // @TODO(sfount) decide if this should return the updated account -- could determine through uses of it
-      // .then(() => this.retrieveAPI(id))
+      // .then(() => this.retrieve(id))
     },
 
     updateStripeSetup(id: string, params: UpdateStripeSetupRequest): Promise<void> {
