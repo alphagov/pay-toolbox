@@ -31,8 +31,8 @@
   "license": "MIT",
   "homepage": "https://github.com/alphagov/pay-toolbox#readme",
   "dependencies": {
-    "@aws-sdk/client-ecs": "~3.348.0",
-    "@aws-sdk/client-s3": "~3.348.0",
+    "@aws-sdk/client-ecs": "~3.364.0",
+    "@aws-sdk/client-s3": "~3.367.0",
     "@govuk-pay/pay-js-commons": "3.9.0",
     "@sentry/node": "^6.12.0",
     "axios": "0.26.1",
