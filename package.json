@@ -63,7 +63,7 @@
     "rfc822-validate": "^1.0.0",
     "sass": "^1.62.1",
     "stripe": "^8.174.0",
-    "winston": "^3.8.2"
+    "winston": "^3.10.0"
   },
   "devDependencies": {
     "@juggle/resize-observer": "^3.3.1",
