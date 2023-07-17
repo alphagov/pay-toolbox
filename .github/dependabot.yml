@@ -33,7 +33,7 @@ updates:
   labels:
   - dependencies
   - govuk-pay
-  - javascript
+  - docker
   ignore:
   - dependency-name: node
     versions:
