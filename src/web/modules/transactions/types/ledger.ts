@@ -61,6 +61,8 @@ export interface Transaction {
   parent_transaction_id?: string;
   parent?: Transaction;
   live: boolean;
+  authorisation_mode: string,
+  agreement_id?: string
 }
 
 export interface Event {

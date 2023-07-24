@@ -45,7 +45,8 @@ const transaction: Transaction = {
   },
   transaction_id: 'rs7l0c6ka8b0hr2ho7omkpo6ot',
   transaction_type: 'PAYMENT',
-  live: true
+  live: true,
+  authorisation_mode: "web"
 }
 
 export default transaction
