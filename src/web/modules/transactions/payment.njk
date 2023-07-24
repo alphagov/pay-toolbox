@@ -157,7 +157,11 @@
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Recurring</span></th>
-          <td class="govuk-table__cell payment__cell">{{ "True" if transaction.authorisation_mode == "agreement" else "False" | string }}</td>
+          {% if transaction.authorisation_mode === "agreement" }
+            <td class="govuk-table__cell payment__cell">True</td>
+          {% else %}
+            <td class="govuk-table__cell payment__cell">False</td>
+          {% endif %}
         </tr>
         {% if transaction.agreement_id %}
           <tr class="govuk-table__row">
