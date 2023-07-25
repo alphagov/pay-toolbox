@@ -109,7 +109,15 @@
         <dd class="govuk-summary-list__actions"></dd>
       </div>
       {% endif %}
-      {% if currentCredential and currentCredential.credentials.merchant_id %}
+      {% if currentCredential
+        and currentCredential.credentials.one_off_customer_initiated|length
+        and currentCredential.credentials.one_off_customer_initiated.merchant_code %}
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Worldpay merchant code</span></dt>
+          <dd class="govuk-summary-list__value">{{ currentCredential.credentials.one_off_customer_initiated.merchant_code }}</dd>
+          <dd class="govuk-summary-list__actions"></dd>
+        </div>
+      {% elif currentCredential and currentCredential.credentials.merchant_id %}
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key"><span class="govuk-caption-m">PSP merchant ID</span></dt>
         <dd class="govuk-summary-list__value">{{ currentCredential.credentials.merchant_id }}</dd>
