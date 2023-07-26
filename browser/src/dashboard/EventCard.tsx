@@ -71,18 +71,21 @@ const profileMap: { [key: string]: CardProfile } = {
 }
 
 interface EventCardProps {
-  event: Event
+  event: Event,
+  showAllEvents: boolean
 }
 
 export class EventCard extends React.Component<EventCardProps, {}> {
   render() {
-    const profile = profileMap[this.props.event.event_type] || DefaultProfile
+    const profile = this.props.showAllEvents ? (profileMap[this.props.event.event_type] || DefaultProfile) : DefaultProfile
     const paymentTypeIcon = paymentTypeMap[this.props.event.card_brand] || UnknownIcon
     const paymentProviderIcon = providerLogoMap[this.props.event.payment_provider]
 
     let statusIcon: string
 
-    if (this.props.event.event_type === 'PAYMENT_DETAILS_ENTERED') {
+    if (!this.props.showAllEvents) {
+      statusIcon = paymentTypeIcon
+    } else if (this.props.event.event_type === 'PAYMENT_DETAILS_ENTERED') {
       statusIcon = paymentTypeIcon
     } else if (eventsActiveSuccess.includes(this.props.event.event_type)) {
       statusIcon = StatusSuccessIcon

@@ -10,7 +10,8 @@ interface EventListPanelProps {
   numberOfAggregateSyncs: number,
   events: Event[],
   fetchedServices: boolean,
-  isFetching: boolean
+  isFetching: boolean,
+  showAllEvents: boolean
 }
 
 function LoadingCard(props: any): JSX.Element {
@@ -23,7 +24,7 @@ function LoadingCard(props: any): JSX.Element {
 export class EventListPanel extends React.Component<EventListPanelProps, {}> {
   render() {
     let syncStatus
-    const events = this.props.events.map((event, index) => <EventCard key={event.key} event={event} />)
+    const events = this.props.events.map((event, index) => <EventCard key={event.key} event={event} showAllEvents={this.props.showAllEvents} />)
     
     if(this.props.sync && this.props.sync.pending && this.props.numberOfAggregateSyncs <= 1) {
       syncStatus = <LoadingCard>Sync</LoadingCard>
