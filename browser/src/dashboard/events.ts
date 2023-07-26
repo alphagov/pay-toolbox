@@ -7,6 +7,13 @@ const eventsSuccess = [
 
 // only include the first salient successful event - this will mitigate background processes capturing old payments from
 // impacting optimistic numbers
+
+// notes: ideally user approved for capture await service approval would show up on the events feed and "service approved for capture" would change the stats
+// there's an existing behaviour 
+
+// (note notes) if we've increased the aggregate amounts for the "awaiting service approval" event we _shouldn't_ then update it for the service approved for capture, if we haven't then we should but shouldn't show it(?)
+
+// this should probably be done as a separate PR, we have similar mechanisms to avoid double counting it can just updated for this scenario
 export const eventsActiveSuccess = [
   'USER_APPROVED_FOR_CAPTURE_AWAITING_SERVICE_APPROVAL',
   'USER_APPROVED_FOR_CAPTURE',
