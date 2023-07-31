@@ -75,7 +75,20 @@ interface EventCardProps {
   showAllEvents: boolean
 }
 
-export class EventCard extends React.Component<EventCardProps, {}> {
+export class EventCard extends React.Component<EventCardProps, { shouldShow: boolean, showTimer?: NodeJS.Timer }> {
+  state = {
+    shouldShow: false,
+  }
+
+  componentDidMount() {
+    setTimeout(() => this.setState({ shouldShow: true }))
+  }
+  componentWillUnmount() {
+    // if(this.state.showTimer) {
+        // clearTimeout(this.state.showTimer)
+    // }
+  }
+
   render() {
     const profile = this.props.showAllEvents ? (profileMap[this.props.event.event_type] || DefaultProfile) : DefaultProfile
     const paymentTypeIcon = paymentTypeMap[this.props.event.card_brand] || UnknownIcon
@@ -104,8 +117,9 @@ export class EventCard extends React.Component<EventCardProps, {}> {
     if (this.props.event.is_recent) {
       recentTag = <div style={{ textAlign: 'left', marginBottom: '8px', marginLeft: '8px', marginTop: '16px' }}><span className="govuk-tag govuk-tag--blue">new service</span></div>
     }
+    const showClass = this.state.shouldShow ? 'show' : ''
     return (
-      <div>
+      <div className={ "slide-card slide-fade " + showClass }>
         <OpacitySpring>
           { recentTag }
           <div className="event-card govuk-!-margin-bottom-2" style={{ backgroundColor: profile.backgroundColour }}>
