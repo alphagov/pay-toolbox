@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const express = require('express')
+const metrics = require('@govuk-pay/pay-js-metrics')
 const helmet = require('helmet')
 const flash = require('connect-flash')
 const sessions = require('client-sessions')
@@ -68,7 +69,7 @@ function configureSecureHeaders(instance) {
 
 function configureRequestParsing(instance) {
   if (!common.development) {
-    // service is behind a front-facing proxy - set req IP values accordinglyi
+    // service is behind a front-facing proxy - set req IP values accordingly
     instance.enable('trust proxy')
   }
 
@@ -168,6 +169,10 @@ const configureSentry = function configureSentry() {
   })
 }
 
+function configureMetrics (instance) {
+  instance.use(metrics.initialise())
+}
+
 function configureSentryRequestHandler(instance) {
   instance.use(Sentry.Handlers.requestHandler())
 }
@@ -193,6 +198,7 @@ function readManifest(name) {
 
 // order of configuration options important given the nature of Express Middleware
 const configure = [
+  configureMetrics,
   configureSentry,
   configureSentryRequestHandler,
   configureRequestParsing,
