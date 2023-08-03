@@ -62,7 +62,6 @@ export interface ServiceRole {
 
 export interface User {
   external_id: string;
-  username: string;
   email: string;
   telephone_number: string;
   service_roles: ServiceRole[];
