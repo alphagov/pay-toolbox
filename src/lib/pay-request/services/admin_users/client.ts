@@ -97,7 +97,7 @@ export default class AdminUsers extends Client {
 
     findByEmail(email: string) : Promise<User | undefined> {
       return client._axios
-        .post('/v1/api/users/find', { username: email, email: email })
+        .post('/v1/api/users/find', { email: email })
         .then(response => client._unpackResponseData<User>(response))
         .then(user => redactOTP(user))
         .catch(handleEntityNotFound('User', email));
