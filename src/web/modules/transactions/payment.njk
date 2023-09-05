@@ -88,6 +88,12 @@
     </table>
   </div>
 
+  {{ govukButton({
+    text: "Resend confirmation email",
+    href: "/v1/api/accounts/{{ transaction.gateway_account_id }}/charges/{{ transaction.transaction_id }}/resend-confirmation-email"
+    })
+  }}
+
 {% if relatedTransactions.length %}
   <div>
     <h1 class="govuk-heading-s payment__header">Related transactions</h1>
