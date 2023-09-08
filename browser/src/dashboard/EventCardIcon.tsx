@@ -7,7 +7,11 @@ interface CardIconProps {
 }
 export const CardIcon = (props: CardIconProps) => (
   <div style={{ marginRight: 10 }}>
-    <SVG src={props.icon} width={35} height={35} />
+    <SVG
+        src={props.icon}
+        width={35}
+        height={35}
+      />
   </div>
 )
 

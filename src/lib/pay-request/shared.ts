@@ -164,7 +164,7 @@ export enum Language {
 export interface BroadcastResult {
   app: string;
   success: boolean;
-  result: object;
+  result: object | unknown;
 }
 
 export type kv = { [key: string ]: string | boolean | undefined }

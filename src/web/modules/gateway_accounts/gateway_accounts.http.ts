@@ -213,7 +213,7 @@ async function detail(req: Request, res: Response): Promise<void> {
 
   try {
     services = await AdminUsers.services.retrieve({gatewayAccountId: id})
-  } catch (error) {
+  } catch (error: any) {
     logger.warn(`Services request for gateway account ${id} returned "${error.message}"`)
   }
 
@@ -289,7 +289,7 @@ async function surcharge(req: Request, res: Response): Promise<void> {
 
   try {
     service = await AdminUsers.services.retrieve({gatewayAccountId: id})
-  } catch (error) {
+  } catch (error: any) {
     logger.warn(`Services request for gateway account ${id} returned "${error.message}"`)
   }
 
