@@ -85,7 +85,7 @@ export async function postSwitchPSP(req: Request, res: Response, next: NextFunct
 
     req.flash('info', 'Switching PSP enabled for gateway account')
     res.redirect(`/gateway_accounts/${req.params.id}`)
-  } catch (error) {
+  } catch (error: any) {
     req.flash('error', `Error during setup: ${error.message}`)
     res.redirect(`/gateway_accounts/${req.params.id}/switch_psp`)
   }

@@ -62,7 +62,7 @@ const uploadToS3 = async function uploadToS3(content: string, user: any): Promis
       fileExpiration: response.Expiration
     })
     return key
-  } catch (err) {
+  } catch (err: any) {
     logger.error(`Error uploading to s3: ${err.message}`)
     throw new Error('There was an error uploading the file to S3')
   }
@@ -102,7 +102,7 @@ const runEcsTask = async function runEcsTask(fileKey: string, jobId: string): Pr
       throw new Error('No task data returned in ECS run task response')
     }
     return response.tasks[0].containers[0].runtimeId
-  } catch (err) {
+  } catch (err: any) {
     logger.error(`Error running ECS task: ${err.message}`)
     throw new Error('There was an error starting the update transactions task')
   }
@@ -241,7 +241,7 @@ export async function update(req: Request, res: Response): Promise<void> {
     await runEcsTask(fileKey, jobId)
     req.session.updateTransactionJobId = jobId
     res.redirect('/transactions/update/success')
-  } catch (err) {
+  } catch (err: any) {
     logger.warn('Error updating transactions', {
       message: err.message,
       filename: req.file && req.file.filename
