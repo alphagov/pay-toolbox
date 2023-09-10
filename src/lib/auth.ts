@@ -36,10 +36,8 @@ export function unauthorised(req: Request, res: Response) {
   res.status(403).send('User does not have permissions to access the resource')
 }
 
-export function revokeSession(req: Request, res: Response, next: NextFunction) {
+export function revokeSession(req: Request, res: Response) {
   logger.info(`Revoking session for user ${req.user && req.user.username}`)
-  req.logout(function(err) {
-    if (err) { return next(err) }
-    res.redirect('/')
-  })
+  req.logout()
+  res.redirect('/') 
 }
