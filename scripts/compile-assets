@@ -14,7 +14,7 @@ MANIFEST_TARGET="$BUILD_FOLDER/manifest.json"
 VERSION=$(npm run version --silent)
 
 TEMP_FILE="$BUILD_FOLDER/$BUILD_TARGET.tmp"
-sass --style=compressed --load-path=node_modules $APPLICATION_SASS > $TEMP_FILE
+sass --style=compressed --load-path=node_modules --quietDeps $APPLICATION_SASS > $TEMP_FILE
 
 # Version file based on file hash
 HASH=$(sha1sum $TEMP_FILE | awk '{ print $1 }')
