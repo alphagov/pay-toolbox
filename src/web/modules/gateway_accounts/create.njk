@@ -101,9 +101,9 @@
     {% if linkedCredentials %}
     <div class="govuk-form-group">
       <label class="govuk-label">Stripe credentials</label>
-      <span class="govuk-hint">
+      <div class="govuk-hint">
         This is only required for Stripe accounts
-      </span>
+      </div>
       <input readonly class="govuk-input" id="credentials" name="credentials" type="text" value="{{ linkedCredentials }}" autocomplete="off">
       <input hidden id="systemLinkedCredentials" name="systemLinkedCredentials" value="{{ linkedCredentials }}">
     </div>
