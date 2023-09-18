@@ -17,7 +17,6 @@
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Name</dt>
       <dd class="govuk-summary-list__value">{{ paymentLink.name }}</dd>
-      <dd class="govuk-summary-list__actions"></dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Description</dt>
@@ -28,22 +27,18 @@
         <i>(None set)</i>
         {% endif %}
       </dd>
-      <dd class="govuk-summary-list__actions"></dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">URL</dt>
       <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="{{ url }}">{{ url }}</a></dd>
-      <dd class="govuk-summary-list__actions"></dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Gateway account</dt>
       <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ paymentLink.gateway_account_id }}">{{ paymentLink.gateway_account_id }}</a></dd>
-      <dd class="govuk-summary-list__actions"></dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Language</dt>
       <dd class="govuk-summary-list__value">{{ paymentLink.language }}</dd>
-      <dd class="govuk-summary-list__actions"></dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Amount</dt>
@@ -54,12 +49,10 @@
         <i>(User can choose)</i>
         {% endif %}
       </dd>
-      <dd class="govuk-summary-list__actions"></dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Reference enabled</dt>
       <dd class="govuk-summary-list__value">{{ paymentLink.reference_enabled | string | capitalize }}</dd>
-      <dd class="govuk-summary-list__actions"></dd>
     </div>
 
     {% if paymentLink.reference_enabled %}
@@ -72,7 +65,6 @@
         <i>(None set)</i>
         {% endif %}
       </dd>
-      <dd class="govuk-summary-list__actions"></dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">Reference hint</dt>
@@ -83,7 +75,6 @@
         <i>(None set)</i>
         {% endif %}
       </dd>
-      <dd class="govuk-summary-list__actions"></dd>
     </div>
     {% endif%}
   </dl>
@@ -97,7 +88,7 @@
       {% endif %}
     </h1>
 
-    <p class="govuk-body">If enabled, a CAPTCHA widget will be displayed on the payment link pages which must be completed before proceeding to the card details page.<p> 
+    <p class="govuk-body">If enabled, a CAPTCHA widget will be displayed on the payment link pages which must be completed before proceeding to the card details page.<p>
     <p class="govuk-body">This can be enabled if we suspect payment link is being accessed by bots for the purpose of card testing.<p>
 
     <form method="POST" action="/payment_links/{{ paymentLink.external_id }}/toggle_require_captcha">
@@ -112,7 +103,7 @@
           classes: "govuk-button--warning"
           })
         }}
-      {% endif %}  
+      {% endif %}
       <input type="hidden" name="_csrf" value="{{ csrf }}">
     </form>
   </div>
