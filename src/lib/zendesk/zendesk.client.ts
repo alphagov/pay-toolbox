@@ -17,7 +17,7 @@ function updateZendeskTicket(zendeskTicketNumber: number, zendeskTicketBody: str
       username: process.env.ZENDESK_USER + '/token',
       password: process.env.ZENDESK_API_KEY
     }
-  }) 
+  })
 }
 
 
@@ -53,6 +53,7 @@ If you want to get back to these settings you can do this from the 'Settings' pa
 * the card types you want to enable in ‘Settings’
 * if you want to collect billing or email address, or send payment and refund confirmation emails, or customise the payment confirmation email
 * your team’s account permissions
+* Wallet payments are enabled by default. You can disable them in ‘Settings’.
 
 
 **3. Let us know if you want us to change the descriptions shown on bank statements**
