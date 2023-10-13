@@ -119,6 +119,8 @@ export interface CreateGatewayAccountRequest {
   credentials?: Credentials | StripeCredentials;
   analytics_id?: string;
   requires_3ds?: boolean;
+  allow_apple_pay?: boolean;
+  allow_google_pay?: boolean;
 }
 
 export interface ListCardTypesResponse {

@@ -5,9 +5,9 @@ import {
 } from 'class-validator'
 
 import Validated from '../common/validated'
-import { ValidationError } from '../../../lib/errors'
-import { CreateGatewayAccountRequest } from '../../../lib/pay-request/services/connector/types'
-import { AccountType } from '../../../lib/pay-request/shared'
+import {ValidationError} from '../../../lib/errors'
+import {CreateGatewayAccountRequest} from '../../../lib/pay-request/services/connector/types'
+import {AccountType} from '../../../lib/pay-request/shared'
 
 const liveStatus = {
   live: 'live',
@@ -41,14 +41,14 @@ class GatewayAccount extends Validated {
   public paymentMethod: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Please enter a description' })
+  @IsNotEmpty({message: 'Please enter a description'})
   public description: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Please enter a service name' })
+  @IsNotEmpty({message: 'Please enter a service name'})
   public serviceName: string;
 
-  @IsIn([ ...Object.values(cardProviders) ])
+  @IsIn([...Object.values(cardProviders)])
   @IsString()
   @IsNotEmpty()
   public provider: string;
@@ -56,7 +56,7 @@ class GatewayAccount extends Validated {
   public credentials: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Please select a sector' })
+  @IsNotEmpty({message: 'Please select a sector'})
   public sector: string;
 
   public internalFlag: boolean;
@@ -105,15 +105,19 @@ class GatewayAccount extends Validated {
       service_id: this.serviceId
     }
 
-    if (this.isLive() || this.provider === 'stripe' || this.provider === 'worldpay' ) {
+    if (this.isLive() || this.provider === 'stripe' || this.provider === 'worldpay') {
       payload.requires_3ds = true
     } else {
       payload.requires_3ds = false
     }
 
-    if (this.provider === 'stripe' && this.credentials) {
-      payload.credentials = {
-        stripe_account_id: this.credentials
+    if (this.provider === 'stripe') {
+      payload.allow_apple_pay = true
+      payload.allow_google_pay = true
+      if (this.credentials) {
+        payload.credentials = {
+          stripe_account_id: this.credentials
+        }
       }
     }
 
