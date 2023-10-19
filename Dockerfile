@@ -1,5 +1,6 @@
 FROM node:18.18.2-alpine3.18@sha256:435dcad253bb5b7f347ebc69c8cc52de7c912eb7241098b920f2fc2d7843183d
 
+RUN apk -U upgrade --available
 WORKDIR /app
 
 # takes both package and package-lock for CI
