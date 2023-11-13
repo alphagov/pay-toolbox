@@ -21,12 +21,16 @@ export class EntityNotFoundError extends RequestError {
   }
 }
 
+export interface ErrorData {
+  errors?: string[]
+}
+
 // wrap errors from other frameworks in a format that this service can report on
 // @FIXME(sfount) stack trace isn't respected
 export class RESTClientError extends Error {
   public name: string
 
-  public data: AxiosError
+  public data: AxiosError<ErrorData>
 
   public service: string
 

@@ -1,6 +1,13 @@
 import http from 'http'
 import https from 'https'
-import axios, {AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig, Method} from 'axios'
+import axios, {
+  AxiosInstance,
+  AxiosResponse,
+  AxiosError,
+  AxiosRequestConfig,
+  Method,
+  InternalAxiosRequestConfig
+} from 'axios'
 import {App} from './shared'
 
 const {RESTClientError} = require('../errors')
@@ -41,7 +48,7 @@ export default class Client {
         'Content-Type': 'application/json'
       },
     })
-    this._axios.interceptors.request.use((request): AxiosRequestConfigWithMetadata => {
+    this._axios.interceptors.request.use((request) => {
       const headers = options.transformRequestAddHeaders ? options.transformRequestAddHeaders() : {}
       Object.entries(headers)
         .forEach(([headerKey, headerValue]) => {
@@ -103,7 +110,7 @@ export interface PayRequestContext {
   status?: number;
   url?: string;
   code?: number | string;
-  method?: Method;
+  method?: Method | string;
 }
 
 interface AxiosRequestConfigWithMetadata extends AxiosRequestConfig {
