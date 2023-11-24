@@ -238,10 +238,19 @@
     {% set serviceActionName = "Un-archive this service" if service.archived else "Archive this service" %}
 
     <h1 class="govuk-heading-s">{{ serviceActionName }}</h1>
-    <p class="govuk-body">
-      Toggle the archived status of this service. Archived status will impact internal Pay team reports only. There is currently no change to the service user journey
-    </p>
-    <p class="govuk-body">This should not be used if you need to suspend a service</p>
+
+    {% if service.archived %}
+      <p class="govuk-body">Unarchiving service impacts internal team reports only</p>
+    {% else %}
+      <p class="govuk-body">
+        Toggle the archived status of this service.
+      </p>
+      <p class="govuk-body">
+        This will remove ALL users from service, redacts gateway account credentials and impacts internal Pay team reports
+      </p>
+      <p class="govuk-body">This should not be used if you need to suspend a service</p>
+    {% endif %}
+
     {{ govukButton({
       text: serviceActionName,
       classes: "govuk-button--warning",
