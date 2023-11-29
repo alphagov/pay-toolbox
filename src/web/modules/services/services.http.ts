@@ -2,7 +2,7 @@ import {Request, Response} from 'express'
 import {ParsedQs, stringify} from 'qs'
 
 import logger from '../../../lib/logger'
-import {AdminUsers, Connector} from '../../../lib/pay-request/client'
+import {AdminUsers, Connector, PublicAuth} from '../../../lib/pay-request/client'
 import type {Service, User} from '../../../lib/pay-request/services/admin_users/types'
 import {wrapAsyncErrorHandler} from '../../../lib/routes'
 import {sanitiseCustomBrandingURL} from './branding'
@@ -47,7 +47,7 @@ const performancePlatformCsv = async function performancePlatformCsv(req: Reques
   const liveActiveServices = await getLiveNotArchivedServices()
 
   res.set('Content-Type', 'text/csv')
-  res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_live_services_for_perfomance_platform.csv"`)
+  res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_live_services_for_performance_platform.csv"`)
   res.status(200).send(formatPerformancePlatformCsv(liveActiveServices))
 }
 
@@ -207,7 +207,7 @@ const toggleTerminalStateRedirectFlag = async function toggleTerminalStateRedire
   })
   logger.info(`Toggled redirect to service on terminal state flag to ${enable} for service ${serviceId}`, {externalId: serviceId})
 
-  req.flash('info', `Redirect to service on terminal state ${ enable? 'enabled' : 'disabled'}`)
+  req.flash('info', `Redirect to service on terminal state ${enable ? 'enabled' : 'disabled'}`)
   res.redirect(`/services/${serviceId}`)
 }
 
@@ -313,12 +313,26 @@ const toggleArchiveService = async function toggleArchiveService(
 
   const service = await AdminUsers.services.retrieve(serviceId);
   const archive = !service.archived
+
+  if (archive) {
+    const serviceGatewayAccounts = await getServiceGatewayAccounts(service.gateway_account_ids)
+
+    serviceGatewayAccounts.map(async account => {
+      const tokensResponse = await PublicAuth.tokens.list({gateway_account_id: account.gateway_account_id})
+
+      tokensResponse.tokens.map(async token => {
+        await PublicAuth.tokens.delete({gateway_account_id: account.gateway_account_id, token_link: token.token_link})
+        logger.info(`Deleted API Token with token_link ${token.token_link} for Gateway Account ${account.gateway_account_id}`)
+      })
+    })
+  }
+
   await AdminUsers.services.update(serviceId, {
     archived: archive
   })
   logger.info(`Toggled archive status to ${archive} for service ${serviceId}`, {externalId: serviceId})
 
-  req.flash('info', `Service ${archive ? 'archived': 'un-archived'}`)
+  req.flash('info', `Service ${archive ? 'archived' : 'un-archived'}`)
   res.redirect(`/services/${serviceId}`)
 }
 
