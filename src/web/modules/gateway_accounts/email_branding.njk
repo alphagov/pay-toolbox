@@ -14,6 +14,15 @@
 
   <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/email_branding">
     {{ govukInput({
+      id: "service_id",
+      name: "service_id",
+      label: { text: "Notify Service ID" },
+      hint: { html: "Get this from the page URL when you've navigated into the service in Notify" },
+      autocomplete: "off",
+      value: account.notifySettings.service_id
+    })
+    }}
+    {{ govukInput({
       id: "api_token",
       name: "api_token",
       label: { text: "Notify API key" },
@@ -24,14 +33,16 @@
       id: "template_id",
       name: "template_id",
       label: { text: "Payment confirmation template ID" },
-      autocomplete: "off"
+      autocomplete: "off",
+      value: account.notifySettings.template_id
     })
     }}
     {{ govukInput({
       id: "refund_issued_template_id",
       name: "refund_issued_template_id",
       label: { text: "Refund template ID" },
-      autocomplete: "off"
+      autocomplete: "off",
+      value: account.notifySettings.refund_issued_template_id
     })
     }}
     {{ govukInput({
@@ -39,7 +50,8 @@
       name: "email_reply_to_id",
       label: { text: "Reply-to email address ID (optional)" },
       hint: { html: "Enter an existing ID, not an email address" },
-      autocomplete: "off"
+      autocomplete: "off",
+      value: account.notifySettings.email_reply_to_id
     })
     }}
 
