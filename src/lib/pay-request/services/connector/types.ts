@@ -86,9 +86,11 @@ export interface Worldpay3dsFlexCredentials {
 }
 
 export interface NotifySettings {
+  service_id: string,
   api_token: string;
   template_id: string;
   refund_issued_template_id: string;
+  email_reply_to_id?: string;
 }
 
 export interface UpdateGatewayAccountRequest {

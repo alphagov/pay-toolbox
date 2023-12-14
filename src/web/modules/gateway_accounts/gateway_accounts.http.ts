@@ -14,6 +14,7 @@ import {GoLiveStage, Service, UpdateServiceRequest} from '../../../lib/pay-reque
 import {Product, ProductType} from '../../../lib/pay-request/services/products/types'
 import {
   GatewayAccount,
+  NotifySettings,
   StripeCredentials,
   StripeSetup
 } from '../../../lib/pay-request/services/connector/types'
@@ -24,7 +25,7 @@ import {format} from './csv'
 import {formatWithAdminEmails} from './csv_with_admin_emails'
 import {createCsvData, createCsvWithAdminEmailsData} from './csv_data'
 import CreateAgentInitiatedMotoProductFormRequest from './CreateAgentInitiatedMotoProductFormRequest'
-import {EntityNotFoundError, IOValidationError} from '../../../lib/errors'
+import {EntityNotFoundError, IOValidationError, ValidationError} from '../../../lib/errors'
 
 import * as stripeClient from '../../../lib/stripe/stripe.client'
 import {TokenSource, TokenType} from '../../../lib/pay-request/services/public_auth/types'
@@ -33,6 +34,9 @@ import {
   getTicket,
   updateTicketWithStripeGoLiveResponse
 } from "../../../lib/zendesk/zendesk.client";
+import Joi from "joi";
+
+const NOTIFY_ID_PATTERN = /^[a-zA-Z0-9-]*$/
 
 async function overview(req: Request, res: Response): Promise<void> {
   const filters = extractFiltersFromQuery(req.query)
@@ -321,17 +325,21 @@ async function emailBranding(req: Request, res: Response): Promise<void> {
 async function updateEmailBranding(req: Request, res: Response):
   Promise<void> {
   const {id} = req.params
-  const {api_token, template_id, refund_issued_template_id, email_reply_to_id} = req.body
-
-  if (email_reply_to_id && email_reply_to_id.includes('@')) {
-    throw new Error('Reply-to email address ID must be an ID or left blank (not an email address)')
+  const schema: Joi.ObjectSchema<NotifySettings> = Joi.object({
+    service_id: Joi.string().required().pattern(NOTIFY_ID_PATTERN).label("Notify Service ID").trim(),
+    api_token: Joi.string().required().label("Notify API key").trim(),
+    template_id: Joi.string().required().pattern(NOTIFY_ID_PATTERN).label("Payment confirmation template ID").trim(),
+    refund_issued_template_id: Joi.string().required().pattern(NOTIFY_ID_PATTERN).label("Refund template ID").trim(),
+    email_reply_to_id: Joi.string().optional().pattern(NOTIFY_ID_PATTERN).allow('')
+        .error(new ValidationError('Reply-to email address ID must be an ID or left blank (not an email address)'))
+        .trim()
+  }).options({ stripUnknown: true })
+  const {error, value: notifySettings} = schema.validate(req.body)
+  if (error) {
+    throw error
   }
-
-  const notifySettings = {
-    api_token,
-    template_id,
-    refund_issued_template_id,
-    ...email_reply_to_id && {email_reply_to_id}
+  if (!notifySettings.email_reply_to_id) {
+    delete notifySettings.email_reply_to_id
   }
 
   await Connector.accounts.update(id, {notify_settings: notifySettings})
