@@ -39,7 +39,7 @@
   {% endfor %}
 
   <div>
-    <h2 class="govuk-heading-s payment__header">Gateway account details</h1>
+    <h2 class="govuk-heading-s payment__header">Gateway account details</h2>
     <dl class="govuk-summary-list">
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key"><span class="govuk-caption-m">ID</span></dt>
@@ -88,7 +88,7 @@
     </dl>
   </div>
   <div>
-    <h2 class="govuk-heading-s payment__header">PSP details</h1>
+    <h2 class="govuk-heading-s payment__header">PSP details</h2>
     <dl class="govuk-summary-list">
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Payment provider</span></dt>
@@ -189,7 +189,7 @@
     </dl>
   </div>
   <div>
-    <h2 class="govuk-heading-s payment__header">Toolbox configurable settings</h1>
+    <h2 class="govuk-heading-s payment__header">Toolbox configurable settings</h2>
     <dl class="govuk-summary-list">
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Switching PSP</span></dt>
@@ -214,87 +214,86 @@
     href: "/gateway_accounts/" + gatewayAccountId + "/api_keys"
     })
     }}
+
     {# @TODO(sfount) use standard enum for provider type #}
     {% if account.payment_provider == 'stripe' %}
-    {{ govukButton({
-    text: "View Payouts",
-    href: "/payouts?account=" + gatewayAccountId
-    })
-    }}
-    {{ govukButton({
-    text: "Update statement descriptor",
-    href: "/gateway_accounts/" + gatewayAccountId + "/stripe_statement_descriptor"
-    })
-    }}
-    {{ govukButton({
-    text: "Update payout descriptor",
-    href: "/gateway_accounts/" + gatewayAccountId + "/stripe_payout_descriptor"
-    })
-    }}
-
+      {{ govukButton({
+        text: "View Payouts",
+        href: "/payouts?account=" + gatewayAccountId
+      })
+      }}
+      {{ govukButton({
+        text: "Update statement descriptor",
+        href: "/gateway_accounts/" + gatewayAccountId + "/stripe_statement_descriptor"
+      })
+      }}
+      {{ govukButton({
+        text: "Update payout descriptor",
+        href: "/gateway_accounts/" + gatewayAccountId + "/stripe_payout_descriptor"
+      })
+      }}
     {% endif %}
-    {% if account.payment_method !== "DIRECT_DEBIT" %}
-      {{ govukButton({
-        text: "View payments",
-        href: "/transactions?account=" + gatewayAccountId
-      })
-      }}
-      {{ govukButton({
-        text: "View refunds",
-        href: "/transactions?account=" + gatewayAccountId + "&type=REFUND"
-      })
-      }}
-      {{ govukButton({
-        text: "View payment links",
-        href: "/gateway_accounts/" + gatewayAccountId + "/payment_links"
-      })
-      }}
-      {{ govukButton({
-        text: "View agreements",
-        href: "/agreements?account=" + gatewayAccountId
-      })
-      }}
-      {{ govukButton({
-      text: "View webhooks",
-      href: "/webhooks?account=" + gatewayAccountId
-      })
-      }}
-      {{ govukButton({
-      text: "Download transaction CSV reports",
-      href: "/transactions/csv?account=" + gatewayAccountId
-      })
-      }}
-      {{ govukButton({
-        text: "View statistics",
-        href: "/transactions/statistics?account=" + gatewayAccountId
-      })
-      }}
-      {{ govukButton({
-        text: "Update surcharge amounts",
-        href: "/gateway_accounts/" + gatewayAccountId + "/surcharge"
-      })
-      }}
-      {{ govukButton({
-        text: "Edit email branding",
-        href: "/gateway_accounts/" + gatewayAccountId + "/email_branding"
-      })
-      }}
-      {{ govukButton({
-        text: "Configure agent-initiated MOTO payments",
-        href: "/gateway_accounts/" + gatewayAccountId + "/agent_initiated_moto"
-      })
-      }}
-      {{ govukButton({
-        text: "Switch PSP",
-        href: "/gateway_accounts/" + gatewayAccountId + "/switch_psp"
-      })
-      }}
-   {% endif %}
+
+    {{ govukButton({
+      text: "View payments",
+      href: "/transactions?account=" + gatewayAccountId
+    })
+    }}
+    {{ govukButton({
+      text: "View refunds",
+      href: "/transactions?account=" + gatewayAccountId + "&type=REFUND"
+    })
+    }}
+    {{ govukButton({
+      text: "View payment links",
+      href: "/gateway_accounts/" + gatewayAccountId + "/payment_links"
+    })
+    }}
+    {{ govukButton({
+      text: "View agreements",
+      href: "/agreements?account=" + gatewayAccountId
+    })
+    }}
+    {{ govukButton({
+    text: "View webhooks",
+    href: "/webhooks?account=" + gatewayAccountId
+    })
+    }}
+    {{ govukButton({
+    text: "Download transaction CSV reports",
+    href: "/transactions/csv?account=" + gatewayAccountId
+    })
+    }}
+    {{ govukButton({
+      text: "View statistics",
+      href: "/transactions/statistics?account=" + gatewayAccountId
+    })
+    }}
+    {{ govukButton({
+      text: "Update surcharge amounts",
+      href: "/gateway_accounts/" + gatewayAccountId + "/surcharge"
+    })
+    }}
+    {{ govukButton({
+      text: "Edit email branding",
+      href: "/gateway_accounts/" + gatewayAccountId + "/email_branding"
+    })
+    }}
+    {{ govukButton({
+      text: "Configure agent-initiated MOTO payments",
+      href: "/gateway_accounts/" + gatewayAccountId + "/agent_initiated_moto"
+    })
+    }}
+    {{ govukButton({
+      text: "Switch PSP",
+      href: "/gateway_accounts/" + gatewayAccountId + "/switch_psp"
+    })
+    }}
   </div>
 
   {% if account.allow_moto === false %}
     <div>
-      <h1 class="govuk-heading-s">Enable MOTO payments</h1>
+      <h2 class="govuk-heading-s">Enable MOTO payments</h2>
       <p class="govuk-body">Please ensure the service has passed PCI requirements before enabling MOTO payments.</p>
       <p class="govuk-body">MOTO payments allow services to create payments that bypass security. MOTO payments have no 3DS checks and billing addresses aren't required. This is inherently insecure.</p>
       <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_moto_payments">
@@ -310,7 +309,7 @@
 
   {% if account.allow_moto === true %}
     <div>
-      <h1 class="govuk-heading-s">MOTO payments are enabled</h1>
+      <h2 class="govuk-heading-s">MOTO payments are enabled</h2>
       <p class="govuk-body">MOTO payments allow services to create payments that bypass security. MOTO payments have no 3DS checks and billing addresses aren't required. This is inherently insecure.</p>
       <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_moto_payments">
         {{ govukButton({
@@ -324,7 +323,7 @@
 
   {% if account.block_prepaid_cards === true %}
     <div>
-      <h1 class="govuk-heading-s">Allow prepaid cards</h1>
+      <h2 class="govuk-heading-s">Allow prepaid cards</h2>
       <p class="govuk-body">Prepaid cards are currently blocked on this service, users cannot use them to make payments.<p>
       <p class="govuk-body">Allowing prepaid cards could potentially mean that more fraudulent users can access the service.<p>
         {{ govukButton({
@@ -337,7 +336,7 @@
 
   {% if account.block_prepaid_cards === false %}
     <div>
-      <h1 class="govuk-heading-s">Block prepaid cards</h1>
+      <h2 class="govuk-heading-s">Block prepaid cards</h2>
       <p class="govuk-body">Prepaid cards are allowed on this service, users can make payments using them.<p>
       <p class="govuk-body">Blocking prepaid cards will mean that some users that only have access to them will no longer be able to use the service.<p>
         {{ govukButton({
@@ -351,7 +350,7 @@
 
   {% if account.allow_telephone_payment_notifications === false %}
     <div>
-      <h1 class="govuk-heading-s">Enable telephone payment notifications</h1>
+      <h2 class="govuk-heading-s">Enable telephone payment notifications</h2>
       <p class="govuk-body">Allows use of the <a class="govuk-link govuk-link--no-visited-state" href="https://github.com/alphagov/pay-telephone-payments">API to store records of telephone payments</a> which were taken outside of GOV.UK Pay.</p>
       <p class="govuk-body">It should be ensured that the gateway account is only used for this purpose by the service and they have a separate service if they take payments using our payment pages.</p>
       <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_allow_telephone_payment_notifications">
@@ -367,7 +366,7 @@
 
   {% if account.allow_telephone_payment_notifications === true %}
     <div>
-      <h1 class="govuk-heading-s">Telephone payment notifications are enabled</h1>
+      <h2 class="govuk-heading-s">Telephone payment notifications are enabled</h2>
       <p class="govuk-body">Use of the <a class="govuk-link govuk-link--no-visited-state" href="https://github.com/alphagov/pay-telephone-payments">telephone payment notifications API</a> is enabled for this account. This is used to store records of telephone payments which were taken outside of GOV.UK Pay.</p>
       <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_allow_telephone_payment_notifications">
         {{ govukButton({
@@ -381,7 +380,7 @@
 
     {% if account.allow_authorisation_api === false %}
     <div>
-      <h1 class="govuk-heading-s">Use of the payment authorisation API is disabled</h1>
+      <h2 class="govuk-heading-s">Use of the payment authorisation API is disabled</h2>
       <p class="govuk-body">Allows creating MOTO payments with an authorisation_mode of ‘api‘. These payments are authorised by sending the card details in a POST request to Public API.</p>
       <p class="govuk-body">Note that corporate card surcharges will not be applied to payments created in this way.</p>
       <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_allow_authorisation_api">
@@ -397,7 +396,7 @@
 
   {% if account.allow_authorisation_api === true %}
     <div>
-      <h1 class="govuk-heading-s">Use of the payment authorisation API is enabled</h1>
+      <h2 class="govuk-heading-s">Use of the payment authorisation API is enabled</h2>
       <p class="govuk-body">Creating MOTO payments with an authorisation_mode of ‘api‘ is allowed for this account. These payments are authorised by sending the card details in a POST request to Public API.</p>
       <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_allow_authorisation_api">
         {{ govukButton({
@@ -411,7 +410,7 @@
 
     {% if account.recurring_enabled === false %}
     <div>
-      <h1 class="govuk-heading-s">Recurring card payments disabled</h1>
+      <h2 class="govuk-heading-s">Recurring card payments disabled</h2>
       <p class="govuk-body">If enabled, recurring card payments can be taken, and agreements and their payment instruments show in the admin tool.</p>
       <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_recurring_enabled">
         {{ govukButton({
@@ -426,7 +425,7 @@
 
   {% if account.recurring_enabled === true %}
     <div>
-      <h1 class="govuk-heading-s">Recurring card payments enabled</h1>
+      <h2 class="govuk-heading-s">Recurring card payments enabled</h2>
       <p class="govuk-body">Recurring card payments can be taken, and agreements and their payment instruments show in the admin tool.</p>
       <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_recurring_enabled">
         {{ govukButton({
@@ -440,7 +439,7 @@
 
   {% if account.send_payer_ip_address_to_gateway === true %}
     <div>
-      <h1 class="govuk-heading-s">Sending payer IP address to gateway is enabled</h1>
+      <h2 class="govuk-heading-s">Sending payer IP address to gateway is enabled</h2>
       <p class="govuk-body">If enabled, the paying user's IP address is sent to the payment gateway for fraud prevention purposes. This is not implemented for Stripe accounts.</p>
       <p class="govuk-body">3D Secure must also be enabled for the IP address to be sent to the gateway.</p>
       <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_payer_ip_address_to_gateway">
@@ -455,7 +454,7 @@
 
   {% if account.send_payer_ip_address_to_gateway === false %}
     <div>
-      <h1 class="govuk-heading-s">Enable sending payer IP address to gateway</h1>
+      <h2 class="govuk-heading-s">Enable sending payer IP address to gateway</h2>
       <p class="govuk-body">If enabled, the paying user's IP address is sent to the payment gateway for fraud prevention purposes. This is not implemented for Stripe accounts.</p>
       <p class="govuk-body">3D Secure must also be enabled for the IP address to be sent to the gateway.</p>
       <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_payer_ip_address_to_gateway">
@@ -470,13 +469,13 @@
   {% endif %}
 
   <div>
-    <h1 class="govuk-heading-s">
+    <h2 class="govuk-heading-s">
       {% if account.send_payer_email_to_gateway %}
         Sending payer email to gateway is enabled
       {% else %}
         Enable sending payer email to gateway
       {% endif %}
-    </h1>
+    </h2>
 
     <p class="govuk-body">If enabled, the paying user's email is sent to the payment gateway for fraud prevention purposes. This is not implemented for Stripe accounts.</p>
 
@@ -510,7 +509,7 @@
     {% set exemptionEngineAction = "Disable Worldpay Exemption Engine" if exemptionEngineEnabled else "Enable Worldpay Exemption Engine" %}
 
     <div>
-      <h1 class="govuk-heading-s">{{ exemptionEngineHeader }}</h1>
+      <h2 class="govuk-heading-s">{{ exemptionEngineHeader }}</h2>
       <p class="govuk-body">The Worldpay Exemption Engine can only be enabled if the service has configured Worldpay 3DS Flex. This action will be requested by the service through support.</p>
       <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_worldpay_exemption_engine">
         {{ govukButton({
@@ -526,7 +525,7 @@
 
   {% if account.send_reference_to_gateway === true %}
     <div>
-      <h1 class="govuk-heading-s">Sending reference to gateway is enabled</h1>
+      <h2 class="govuk-heading-s">Sending reference to gateway is enabled</h2>
       <p class="govuk-body">If enabled, the payment <b>reference</b> is sent to gateway, otherwise <b>description</b> is sent to gateway. Only applicable for Worldpay accounts</p>
       <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_reference_to_gateway">
         {{ govukButton({
@@ -540,7 +539,7 @@
 
   {% if account.send_reference_to_gateway === false %}
     <div>
-      <h1 class="govuk-heading-s">Enable sending reference to gateway</h1>
+      <h2 class="govuk-heading-s">Enable sending reference to gateway</h2>
       <p class="govuk-body">If enabled, the payment <b>reference</b> is sent to gateway, otherwise <b>description</b> is sent to gateway. Only applicable for Worldpay accounts</p>
       <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_reference_to_gateway">
         {{ govukButton({
@@ -555,7 +554,7 @@
 
   {% if account.disabled === true %}
   <div>
-    <h1 class="govuk-heading-s">Gateway account is disabled</h1>
+    <h2 class="govuk-heading-s">Gateway account is disabled</h2>
     <p class="govuk-body">If a gateway account is disabled, new payments cannot be initiated and refunds cannot be made.</p>
     <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/enable">
       {{ govukButton({
@@ -570,7 +569,7 @@
 
   {% if account.disabled === false %}
   <div>
-    <h1 class="govuk-heading-s">Disable gateway account</h1>
+    <h2 class="govuk-heading-s">Disable gateway account</h2>
     <p class="govuk-body">If a gateway account is disabled, new payments cannot be initiated and refunds cannot be made.</p>
     {{ govukButton({
       text: "Disable gateway account",
