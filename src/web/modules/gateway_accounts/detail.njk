@@ -208,6 +208,42 @@
     </dl>
   </div>
 
+  {% if account.notifySettings %}
+    <div>
+      <h2 class="govuk-heading-s payment__header">Email branding</h2>
+        <dl class="govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Notify service ID</span></dt>
+            <dd class="govuk-summary-list__value">{{ account.notifySettings.service_id or "(Not set)" }}</dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ gatewayAccountId }}/email_branding">Change<span class="govuk-visually-hidden"> Notify service ID</span></a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Payment template ID</span></dt>
+            <dd class="govuk-summary-list__value">{{ account.notifySettings.template_id }}</dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ gatewayAccountId }}/email_branding">Change<span class="govuk-visually-hidden"> Payment template ID</span></a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Refund template ID</span></dt>
+            <dd class="govuk-summary-list__value">{{ account.notifySettings.refund_issued_template_id }}</dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ gatewayAccountId }}/email_branding">Change<span class="govuk-visually-hidden"> Refund template ID</span></a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Reply-to email address ID</span></dt>
+            <dd class="govuk-summary-list__value">{{ account.notifySettings.email_reply_to_id or "(Default for Notify service)" }}</dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ gatewayAccountId }}/email_branding">Change<span class="govuk-visually-hidden"> Reply-to email address ID</span></a>
+            </dd>
+          </div>
+        </dl>
+    </div>
+  {% endif %}
+
   <div>
     {{ govukButton({
     text: "Manage API keys",
