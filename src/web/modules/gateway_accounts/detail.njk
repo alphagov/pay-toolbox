@@ -214,7 +214,12 @@
         <dl class="govuk-summary-list">
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Notify service ID</span></dt>
-            <dd class="govuk-summary-list__value">{{ account.notifySettings.service_id or "(Not set)" }}</dd>
+            <dd class="govuk-summary-list__value">
+              {% if account.notifySettings.service_id %}
+                <a class="govuk-link govuk-link--no-visited-state" href="https://www.notifications.service.gov.uk/services/{{ account.notifySettings.service_id }}">{{ account.notifySettings.service_id }}</a>
+              {% else %}
+                (Not set)
+              {% endif %}</dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ gatewayAccountId }}/email_branding">Change<span class="govuk-visually-hidden"> Notify service ID</span></a>
             </dd>
