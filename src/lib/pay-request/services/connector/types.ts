@@ -48,7 +48,7 @@ export interface GatewayAccount {
   send_reference_to_gateway: boolean;
   email_collection_mode?: EmailCollectionMode,
   email_notifications: EmailNotifications,
-  notify_settings: NotifySettings
+  notifySettings: NotifySettings
   disabled: boolean;
   disabled_reason: string;
   allow_authorisation_api: boolean;

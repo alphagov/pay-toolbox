@@ -28,7 +28,7 @@ export async function createCsvData(filters: Filters): Promise<any> {
         payment_email_enabled: account.email_notifications['PAYMENT_CONFIRMED'] && account.email_notifications['PAYMENT_CONFIRMED'].enabled || false,
         refund_email_emailed: account.email_notifications['REFUND_ISSUED'] && account.email_notifications['REFUND_ISSUED'].enabled || false,
         custom_branding: service.custom_branding !== undefined,
-        email_branding: account.notify_settings !== undefined,
+        email_branding: account.notifySettings !== undefined,
         corporate_surcharge: account.corporate_prepaid_debit_card_surcharge_amount
           + account.corporate_credit_card_surcharge_amount
           + account.corporate_debit_card_surcharge_amount !== 0
@@ -65,7 +65,7 @@ export async function createCsvWithAdminEmailsData(filters: Filters): Promise<an
         payment_email_enabled: account.email_notifications['PAYMENT_CONFIRMED'] && account.email_notifications['PAYMENT_CONFIRMED'].enabled || false,
         refund_email_emailed: account.email_notifications['REFUND_ISSUED'] && account.email_notifications['REFUND_ISSUED'].enabled || false,
         custom_branding: service.custom_branding !== undefined,
-        email_branding: account.notify_settings !== undefined,
+        email_branding: account.notifySettings !== undefined,
         corporate_surcharge: account.corporate_prepaid_debit_card_surcharge_amount
           + account.corporate_credit_card_surcharge_amount
           + account.corporate_debit_card_surcharge_amount !== 0
