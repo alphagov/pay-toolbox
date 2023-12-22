@@ -25,7 +25,6 @@ const paymentLinks = require('./modules/payment_links/payment_links.http')
 const ledgerPayouts = require('./modules/ledger_payouts/payout.http')
 const performance = require('./modules/statistics/performance.http')
 const events = require('./modules/events')
-const {tempCheckNotifyServiceId} = require('./modules/gateway_accounts/check_notify_service_id.http')
 
 // @TODO(sfount) remove `default`s on update to import export syntax
 const users = require('./modules/users/users.http').default
@@ -182,8 +181,6 @@ router.get('/events-by-date', auth.secured(PermissionLevel.USER_SUPPORT), events
 router.post('/events/by_date', auth.secured(PermissionLevel.USER_SUPPORT), events.emitByDate)
 router.get('/parity-checker', auth.secured(PermissionLevel.USER_SUPPORT), events.parityCheckerPage)
 router.post('/parity-checker', auth.secured(PermissionLevel.USER_SUPPORT), events.parityCheck)
-
-router.get('/temp-check-notify-service-id/:accountId', auth.secured(PermissionLevel.ADMIN), tempCheckNotifyServiceId)
 
 router.get('/logout', auth.secured(PermissionLevel.VIEW_ONLY), auth.revokeSession)
 
