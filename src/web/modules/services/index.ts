@@ -1,27 +1,44 @@
-import http from './services.http'
 import * as exceptions from './services.exceptions'
+import {
+  branding,
+  detail,
+  linkAccounts,
+  listCsv,
+  overview,
+  performancePlatformCsv,
+  search,
+  searchRequest,
+  toggleAgentInitiatedMotoEnabledFlag,
+  toggleArchiveService,
+  toggleExperimentalFeaturesEnabledFlag,
+  toggleTerminalStateRedirectFlag,
+  updateBranding,
+  updateLinkAccounts,
+  updateOrganisation,
+  updateOrganisationForm
+} from './services.http'
 
 export default {
-  overview: http.overview,
-  listCsv: http.listCsv,
-  performancePlatformCsv: http.performancePlatformCsv,
+  overview: overview,
+  listCsv: listCsv,
+  performancePlatformCsv: performancePlatformCsv,
   detail: {
-    http: http.detail,
+    http: detail,
     exceptions: exceptions.detail
   },
-  branding: http.branding,
-  updateBranding: http.updateBranding,
-  linkAccounts: http.linkAccounts,
+  branding: branding,
+  updateBranding: updateBranding,
+  linkAccounts: linkAccounts,
   updateLinkAccounts: {
-    http: http.updateLinkAccounts,
+    http: updateLinkAccounts,
     exceptions: exceptions.updateLinkAccounts
   },
-  search: http.search,
-  searchRequest: http.searchRequest,
-  toggleTerminalStateRedirectFlag: http.toggleTerminalStateRedirectFlag,
-  toggleExperimentalFeaturesEnabled: http.toggleExperimentalFeaturesEnabledFlag,
-  toggleAgentInitiatedMotoEnabled: http.toggleAgentInitiatedMotoEnabled,
-  updateOrganisationForm: http.updateOrganisationForm,
-  updateOrganisation: http.updateOrganisation,
-  toggleArchiveService: http.toggleArchiveService
+  search: search,
+  searchRequest: searchRequest,
+  toggleTerminalStateRedirectFlag: toggleTerminalStateRedirectFlag,
+  toggleExperimentalFeaturesEnabled: toggleExperimentalFeaturesEnabledFlag,
+  toggleAgentInitiatedMotoEnabled: toggleAgentInitiatedMotoEnabledFlag,
+  updateOrganisationForm: updateOrganisationForm,
+  updateOrganisation: updateOrganisation,
+  toggleArchiveService: toggleArchiveService
 }
