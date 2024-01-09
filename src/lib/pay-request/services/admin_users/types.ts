@@ -4,6 +4,7 @@ export enum GoLiveStage {
   EnteredOrganisationAddress = 'ENTERED_ORGANISATION_ADDRESS',
   ChosenPSPStripe = 'CHOSEN_PSP_STRIPE',
   TermsAgreedStripe = 'TERMS_AGREED_STRIPE',
+  TermsAgreedWorldpay = 'TERMS_AGREED_GOV_BANKING_WORLDPAY',
   Denied = 'DENIED',
   Live = 'LIVE'
 }

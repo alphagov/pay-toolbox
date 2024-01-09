@@ -8,6 +8,8 @@ import {
   performancePlatformCsv,
   search,
   searchRequest,
+  addTestAccount,
+  submitTestAccountProvider,
   toggleAgentInitiatedMotoEnabledFlag,
   toggleArchiveService,
   toggleExperimentalFeaturesEnabledFlag,
@@ -15,7 +17,8 @@ import {
   updateBranding,
   updateLinkAccounts,
   updateOrganisation,
-  updateOrganisationForm
+  updateOrganisationForm,
+  goLive
 } from './services.http'
 
 export default {
@@ -40,5 +43,8 @@ export default {
   toggleAgentInitiatedMotoEnabled: toggleAgentInitiatedMotoEnabledFlag,
   updateOrganisationForm: updateOrganisationForm,
   updateOrganisation: updateOrganisation,
-  toggleArchiveService: toggleArchiveService
+  toggleArchiveService: toggleArchiveService,
+  goLive: goLive,
+  addTestAccount: addTestAccount,
+  submitTestAccountProvider: submitTestAccountProvider
 }

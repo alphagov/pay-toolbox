@@ -12,6 +12,8 @@ import GatewayAccountFormModel from "../gateway_accounts/gatewayAccount.model";
 import {stripeTestAccountDetails} from './model/account.model'
 import {stripeTestResponsiblePersonDetails} from './model/person.model'
 import {CreateGatewayAccountResponse} from "../../../lib/pay-request/services/connector/types";
+import {liveStatus} from "../../../lib/liveStatus";
+import {providers} from "../../../lib/providers";
 
 const { StripeError } = Stripe.errors
 
@@ -70,7 +72,7 @@ const createTestAccountConfirm = async function createTestAccountConfirm(req: Re
         if (error instanceof StripeError) {
             logger.error(`Stripe Error - ${error.message}`)
             req.flash('error', `Stripe Error: ${error.message}`)
-            res.redirect(`/stripe/create-test-account?service=${systemLinkService}`)
+            res.redirect(`/stripe/create-test-account?service=${systemLinkService}&live=${liveStatus.notLive}&provider=${providers.stripe}`)
         } else {
             next(error)
         }

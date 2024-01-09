@@ -75,7 +75,7 @@ describe('Gateway Accounts', () => {
       expect(() => {
         const details = _.cloneDeep(validGatewayAccountDetails)
         details.live = 'live'
-        details.provider = 'card-sandbox'
+        details.provider = 'sandbox'
 
         // eslint-disable-next-line no-new
         new GatewayAccount(details)

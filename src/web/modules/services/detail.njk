@@ -108,46 +108,29 @@
   </div>
 
   <div>
-    <h1 class="govuk-heading-m">Stripe payment provider</h1>
-
-    <h2 class="govuk-heading-s">Going live</h2>
-    <p class="govuk-body">This will guide you through:</p>
-    <ul class="govuk-list govuk-list--number">
-      <li>Creating new Stripe account through the Stripe API</li>
-      <li>Creating a GOV.UK Pay gateway account, with the correct Stripe credentials</li>
-    </ul>
+    <h2 class="govuk-heading-m">Going live</h2>
+    <p class="govuk-body">Make this service live in response to receiving a go-live request Zendesk ticket.</p>
 
     {{ govukButton({
-      text: "Setup live Stripe account",
-      href: "/stripe/create?service=" + service.external_id
+      text: "Go live",
+      href: "/services/" + serviceId + "/go_live"
       })
     }}
-    <h2 class="govuk-heading-s">Test account</h2>
+  </div>
+
+  <div>
+    <h2 class="govuk-heading-m">Test account</h2>
+    <p class="govuk-body">Add a test account to this service.</p>
+
     {{ govukButton({
-      text: "Setup test Stripe account",
+      text: "Add test account",
       classes: "govuk-button--secondary",
-      href: "/stripe/create-test-account?service=" + service.external_id
+      href: "/services/" + serviceId + "/test_account"
       })
     }}
 
-  </div>
-
   <div>
-    <h1 class="govuk-heading-m">Going live - existing payment provider</h1>
-    <p class="govuk-body">This will guide you through:</p>
-    <ul class="govuk-list govuk-list--number">
-      <li>Creating a GOV.UK Pay gateway account</li>
-    </ul>
-
-  {{ govukButton({
-      text: "Setup gateway account",
-      href: "/gateway_accounts/create?service=" + service.external_id
-      })
-      }}
-  </div>
-
-  <div>
-    <h1 class="govuk-heading-m">Service actions</h1>
+    <h2 class="govuk-heading-m">Service actions</h2>
     {{ govukButton({
       text: "Edit custom branding",
       href: "/services/" + serviceId + "/branding"
@@ -162,7 +145,7 @@
 
   {% if service.redirect_to_service_immediately_on_terminal_state %}
   <div>
-    <h1 class="govuk-heading-s">Redirect to service on terminal state is enabled</h1>
+    <h2 class="govuk-heading-s">Redirect to service on terminal state is enabled</h2>
     <p class="govuk-body">Reference the <a <a class="govuk-link" href="https://docs.payments.service.gov.uk/optional_features/use_your_own_error_pages/#use-your-own-payment-failure-pages">use your own error pages</a> documentation for more details.</p>
     {{ govukButton({
       text: "Disable redirect to service on terminal state",
@@ -173,7 +156,7 @@
   </div>
   {% else %}
   <div>
-    <h1 class="govuk-heading-s">Enable redirect to service on terminal state</h1>
+    <h2 class="govuk-heading-s">Enable redirect to service on terminal state</h2>
     <p class="govuk-body">Enabling this flag for a service will change the payment flow across all gateway accounts, this should never be done without consulting the service.</p>
     <p class="govuk-body">Reference the <a <a class="govuk-link" href="https://docs.payments.service.gov.uk/optional_features/use_your_own_error_pages/#use-your-own-payment-failure-pages">use your own error pages</a> documentation for more details.</p>
     {{ govukButton({
@@ -187,7 +170,7 @@
 
   {% if service.agent_initiated_moto_enabled%}
   <div>
-    <h1 class="govuk-heading-s">Agent-initiated MOTO payments are enabled</h1>
+    <h2 class="govuk-heading-s">Agent-initiated MOTO payments are enabled</h2>
     <p class="govuk-body">Enabling this flag for a service shows a ‘Take a telephone payment’ link on the admin tool dashboard if there is at least one agent-initiated MOTO product for the linked gateway account.</p>
     <p class="govuk-body">It also allows administrators to assign users to the ‘View and take telephone payments’ and ‘View, refund and take telephone payments’ roles.</p>
     <p class="govuk-body">Linked gateway accounts must have MOTO payments enabled or payment creation will fail.</p>
@@ -199,7 +182,7 @@
   </div>
   {% else %}
   <div>
-    <h1 class="govuk-heading-s">Enable agent-initiated MOTO payments</h1>
+    <h2 class="govuk-heading-s">Enable agent-initiated MOTO payments</h2>
     <p class="govuk-body">Enabling this flag for a service shows a ‘Take a telephone payment’ link on the admin tool dashboard if there is at least one agent-initiated MOTO product for the linked gateway account.</p>
     <p class="govuk-body">It also allows administrators to assign users to the ‘View and take telephone payments’ and ‘View, refund and take telephone payments’ roles.</p>
     <p class="govuk-body">Linked gateway accounts must have MOTO payments enabled or payment creation will fail.</p>
@@ -213,7 +196,7 @@
 
   {% if service.experimental_features_enabled %}
   <div>
-    <h1 class="govuk-heading-s">Experimental features are enabled</h1>
+    <h2 class="govuk-heading-s">Experimental features are enabled</h2>
     <p class="govuk-body">Enabling this flag for a service will opt the service into any features checking for this flag to be set on the service.</p>
     {{ govukButton({
       text: "Disable experimental features",
@@ -223,7 +206,7 @@
   </div>
   {% else %}
   <div>
-    <h1 class="govuk-heading-s">Enable experimental features</h1>
+    <h2 class="govuk-heading-s">Enable experimental features</h2>
     <p class="govuk-body">Enabling this flag for a service will opt the service into any features checking for this flag to be set on the service.</p>
     <p class="govuk-body">This flag should only be enabled while the service is testing functionality that will not be made available to all users/ services initially.</p>
     {{ govukButton({
@@ -237,7 +220,7 @@
   <div>
     {% set serviceActionName = "Un-archive this service" if service.archived else "Archive this service" %}
 
-    <h1 class="govuk-heading-s">{{ serviceActionName }}</h1>
+    <h2 class="govuk-heading-s">{{ serviceActionName }}</h2>
 
     {% if service.archived %}
       <p class="govuk-body">Unarchiving service impacts internal team reports only</p>

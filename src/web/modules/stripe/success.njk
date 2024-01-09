@@ -29,7 +29,7 @@
 
  {{ govukButton({
     text: "Create Pay Live Gateway Account for " + service.merchant_details.name + "(" + service.name + ")",
-    href: "/gateway_accounts/create?service=" + systemLinkService + "&credentials=" + response.id
+    href: "/gateway_accounts/create?service=" + systemLinkService + "&live=live&provider=stripe" +  "&credentials=" + response.id
     })
     }}
   <br>

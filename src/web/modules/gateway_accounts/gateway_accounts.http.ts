@@ -2,6 +2,7 @@
 import {NextFunction, Request, Response} from 'express'
 import {stringify} from 'qs'
 import moment from 'moment'
+import {capitalize} from "lodash"
 
 import logger from '../../../lib/logger'
 
@@ -73,16 +74,28 @@ async function listCSV(req: Request, res: Response): Promise<void> {
 
 async function create(req: Request, res: Response): Promise<void> {
   const serviceId = req.query.service as string
+  const live = req.query.live as string
+  const provider = req.query.provider as string
+
+  if (!live || !provider) {
+    throw new Error('Expected "live" and "provider" query parameters')
+  }
+
   const context: {
     linkedCredentials: string;
+    live: string;
+    provider: string;
     recovered?: object;
     service?: Service;
+    description?: string;
     flash: object;
     errors?: ClientFormError[];
     errorMap?: object;
     csrf: string;
   } = {
     linkedCredentials: req.query.credentials as string,
+    live,
+    provider,
     flash: req.flash(),
     csrf: req.csrfToken()
   }
@@ -107,13 +120,18 @@ async function create(req: Request, res: Response): Promise<void> {
   if (serviceId) {
     const service = await AdminUsers.services.retrieve(serviceId)
     context.service = service
+    context.description = `${service.merchant_details.name} ${service.name} ${capitalize(provider)} ${live === 'live' && 'LIVE' || 'TEST'}`
   }
   res.render('gateway_accounts/create', context)
 }
 
-async function confirm(req: Request, res: Response): Promise<void> {
-  const account = new GatewayAccountFormModel(req.body)
-  res.render('gateway_accounts/confirm', {account, request: req.body, csrf: req.csrfToken()})
+async function confirm(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const account = new GatewayAccountFormModel(req.body)
+    res.render('gateway_accounts/confirm', {account, request: req.body, csrf: req.csrfToken()})
+  }  catch (error) {
+    next(error)
+  }
 }
 
 function getGoLiveUrlForServiceUsingWorldpay(serviceId: string) {

@@ -9,10 +9,14 @@ import GatewayAccountRequest from './gatewayAccountRequest.model'
 import {formatPerformancePlatformCsv} from './performancePlatformCsv'
 import {formatErrorsForTemplate, ClientFormError} from '../common/validationErrorFormat'
 import UpdateOrganisationFormRequest from './UpdateOrganisationForm'
-import {IOValidationError} from '../../../lib/errors'
+import {IOValidationError, ValidationError as CustomValidationError} from '../../../lib/errors'
 import {formatServiceExportCsv} from './serviceExportCsv'
 import {BooleanFilterOption} from '../common/BooleanFilterOption'
 import {ServiceFilters, fetchAndFilterServices, getLiveNotArchivedServices} from './getFilteredServices'
+import AddTestAccountFormRequest from "./AddTestAccountForm";
+import {liveStatus} from "../../../lib/liveStatus";
+import {GoLiveStage} from "../../../lib/pay-request/services/admin_users/types";
+import {providers} from "../../../lib/providers";
 
 function extractFiltersFromQuery(query: ParsedQs): ServiceFilters {
   return {
@@ -395,6 +399,70 @@ export async function toggleArchiveService(
     req.flash('info', `Service ${archive ? 'archived' : 'un-archived'}`)
     res.redirect(`/services/${serviceId}`)
   } catch (error) {
+    next(error)
+  }
+}
+
+export async function goLive(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) : Promise<void> {
+  try {
+    const serviceId = req.params.id
+    const service = await AdminUsers.services.retrieve(serviceId);
+    const provider = getProviderForGoLive(service)
+    res.render('services/go_live', {
+      serviceId,
+      provider,
+      serviceName: service.name,
+      organisation: service.merchant_details.name
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+function getProviderForGoLive(service: Service) {
+  switch (service.current_go_live_stage) {
+    case GoLiveStage.TermsAgreedStripe:
+      return providers.stripe
+    case GoLiveStage.TermsAgreedWorldpay:
+      return providers.worldpay
+    default:
+      throw new CustomValidationError('The service has not completed a request to go live. Current go-live stage: ' + service.current_go_live_stage)
+  }
+}
+
+export async function addTestAccount(
+    req: Request,
+    res: Response
+) : Promise<void> {
+  const serviceId = req.params.id
+  res.render('services/test_account', { serviceId, csrf: req.csrfToken() })
+}
+
+export async function submitTestAccountProvider(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) : Promise<void> {
+  const serviceId = req.params.id
+  try {
+    const request = new AddTestAccountFormRequest(req.body)
+    if (request.provider === providers.stripe) {
+        res.redirect(`/stripe/create-test-account?service=${serviceId}`)
+    } else {
+      res.redirect(`/gateway_accounts/create?service=${serviceId}&live=${liveStatus.notLive}&provider=${request.provider}`)
+    }
+  } catch (error) {
+    if (error instanceof IOValidationError) {
+      return res.render('services/test_account', {
+        serviceId,
+        errors: formatErrorsForTemplate(error.source),
+        csrf: req.csrfToken()
+      })
+    }
     next(error)
   }
 }

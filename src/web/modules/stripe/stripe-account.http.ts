@@ -10,6 +10,8 @@ import AccountDetails from './accountDetails.model'
 import {setupProductionStripeAccount} from './account'
 
 import Stripe from "stripe";
+import {liveStatus} from "../../../lib/liveStatus";
+import {providers} from "../../../lib/providers";
 const {StripeError} = Stripe.errors
 
 const createAccountForm = async function createAccountForm(
@@ -94,7 +96,7 @@ const submitAccountCreate = async function submitAccountCreate(
       formValues: req.body,
       errors
     }
-    res.redirect(`/stripe/create?service=${systemLinkService}`)
+    res.redirect(`/stripe/create?service=${systemLinkService}&live=${liveStatus.live}&provider=${providers.stripe}`)
   }
 }
 

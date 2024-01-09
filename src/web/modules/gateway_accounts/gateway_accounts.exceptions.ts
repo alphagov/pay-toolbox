@@ -13,7 +13,9 @@ import { formatErrorsForTemplate } from '../common/validationErrorFormat'
 const buildPreservedQuery = function buildPreservedQuery(body: { [key: string]: string }): string {
   const supported: { [key: string]: string } = {
     systemLinkedService: 'service',
-    systemLinkedCredentials: 'credentials'
+    systemLinkedCredentials: 'credentials',
+    provider: 'provider',
+    live: 'live'
   }
 
   const queryElements: string[] = []

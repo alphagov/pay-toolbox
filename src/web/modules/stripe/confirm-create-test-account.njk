@@ -8,7 +8,8 @@
     <a href="/services/{{ systemLinkService }}" class="govuk-back-link">Back to service ({{ systemLinkService }})</a>
   </div>
 
-  <h1 class="govuk-heading-m">Create test stripe account</h1>
+  <span class="govuk-caption-m">Add test account</span>
+  <h1 class="govuk-heading-m">Create test Stripe account</h1>
 
   {{ govukTable({
     firstCellIsHeader: true,
@@ -23,7 +24,7 @@
 
   {% if not stripeTestAccountRequested %}
     {{ govukWarningText({
-      text: "This service has not requested a Stripe test account using the self service tool",
+      text: "This service has not requested a Stripe test account using the admin tool",
       iconFallbackTest: "Warning"
     }) }}
   {% endif %}
@@ -31,14 +32,14 @@
   <form method="POST" action="/stripe/create-test-account">
     <p class="govuk-body">You are about to create a Stripe account for the service. This will create:</p>
     <ul class="govuk-list govuk-list--number">
-      <li>Stripe test connect account through the Stripe API</li>
+      <li>Stripe test Connect account through the Stripe API</li>
       <li>GOV.UK Pay test gateway account setting the provider to Stripe. This will be available for service immediately on the admin tool "My services" page</li>
     </ul>
 
     <input hidden="hidden" name="systemLinkService" id="systemLinkService" value="{{ systemLinkService }}">
     <div class="govuk-form-group">
       {{ govukButton({
-		    text: "Create test stripe account"
+		    text: "Create test Stripe account"
         })
       }}
     </div>
