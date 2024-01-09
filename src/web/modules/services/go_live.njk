@@ -1,0 +1,40 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+    <div class="govuk-body">
+        <a href="/services/{{ serviceId }}" class="govuk-back-link">Back to service ({{ serviceId }})</a>
+    </div>
+
+    <span class="govuk-caption-m">Go live</span>
+    <h1 class="govuk-heading-m">Confirm provider</h1>
+
+    <p class="govuk-body">Check that the correct payment service provider has been chosen for the organisation before continuing.</p>
+
+    {{ govukTable({
+        firstCellIsHeader: true,
+        rows: [
+            [ { text: 'Organisation' }, { text: organisation } ],
+            [ { text: 'Service name' }, { text: serviceName } ],
+            [ { text: 'Chosen PSP' }, { text: provider | capitalize } ]
+        ]
+    })
+    }}
+
+    <div class="govuk-button-group">
+        {% if provider === 'stripe' %}
+            {{ govukButton({
+                text: "Continue",
+                href: "/stripe/create?service=" + serviceId
+            }) }}
+        {% else %}
+            {{ govukButton({
+                text: "Continue",
+                href: "/gateway_accounts/create?service=" + serviceId + "&live=live&provider=worldpay"
+            }) }}
+        {% endif %}
+        <a class="govuk-link" href="/services/{{ serviceId }}">Cancel</a>
+    </div>
+{% endblock %}

@@ -8,23 +8,8 @@ import Validated from '../common/validated'
 import {ValidationError} from '../../../lib/errors'
 import {CreateGatewayAccountRequest} from '../../../lib/pay-request/services/connector/types'
 import {AccountType} from '../../../lib/pay-request/shared'
-
-const liveStatus = {
-  live: 'live',
-  notLive: 'not-live'
-}
-
-const sandbox = {
-  card: 'card-sandbox'
-}
-
-const cardProviders = {
-  sandbox: sandbox.card,
-  worldpay: 'worldpay',
-  smartpay: 'smartpay',
-  epdq: 'epdq',
-  stripe: 'stripe'
-}
+import {liveStatus} from "../../../lib/liveStatus";
+import {providers} from "../../../lib/providers";
 
 class GatewayAccount extends Validated {
   @IsIn(Object.values(liveStatus))
@@ -39,7 +24,7 @@ class GatewayAccount extends Validated {
   @IsNotEmpty({message: 'Please enter a service name'})
   public serviceName: string;
 
-  @IsIn([...Object.values(cardProviders)])
+  @IsIn([...Object.values(providers)])
   @IsString()
   @IsNotEmpty()
   public provider: string;
@@ -57,11 +42,11 @@ class GatewayAccount extends Validated {
   public validate(): void {
     super.validate()
 
-    if (this.live === liveStatus.live && Object.values(sandbox).includes(this.provider)) {
+    if (this.isLive() && this.provider === providers.sandbox) {
       throw new ValidationError('Live accounts cannot have Sandbox provider')
     }
 
-    if (this.provider === cardProviders.stripe && !this.credentials.trim()) {
+    if (this.provider === providers.stripe && !this.credentials.trim()) {
       throw new ValidationError('Stripe credentials are required')
     }
   }
@@ -80,8 +65,6 @@ class GatewayAccount extends Validated {
 
   // formats gateway account according to the Connector patch standard
   public formatPayload(): CreateGatewayAccountRequest {
-    if (Object.values(sandbox).includes(this.provider)) this.provider = 'sandbox'
-
     const payload: CreateGatewayAccountRequest = {
       payment_provider: this.provider,
       description: this.description,

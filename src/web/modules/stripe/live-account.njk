@@ -5,6 +5,11 @@
 {% from "common/errorSummary.njk" import errorSummary %}
 
 {% block main %}
+  <div class="govuk-body">
+    <a href="/services/{{ systemLinkService }}" class="govuk-back-link">Back to service ({{ systemLinkService }})</a>
+  </div>
+
+  <span class="govuk-caption-m">Go live</span>
   <h1 class="govuk-heading-m">Create Stripe account for service</h1>
 
   {% if errors %}
