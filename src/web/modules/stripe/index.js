@@ -1,6 +1,6 @@
 // @TODO(sfount) improve TS export -> JS import
-const httpBasic = require('./basic/basic.http').default
-const httpBasicTest = require('./basic/test-account.http').default
+const httpBasic = require('./stripe-account.http').default
+const httpBasicTest = require('./test-account.http').default
 
 module.exports = {
   basic: httpBasic.createAccountForm,

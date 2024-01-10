@@ -1,10 +1,10 @@
 import Stripe from "stripe";
-import {AdminUsers} from '../../../../lib/pay-request/client'
-import AccountDetails from './basicAccountDetails.model'
-import {Service, StripeAgreement} from '../../../../lib/pay-request/services/admin_users/types'
-import {ValidationError as CustomValidationError} from '../../../../lib/errors'
-import logger from '../../../../lib/logger'
-import * as stripeClient from '../../../../lib/stripe/stripe.client'
+import {AdminUsers} from '../../../lib/pay-request/client'
+import AccountDetails from './accountDetails.model'
+import {Service, StripeAgreement} from '../../../lib/pay-request/services/admin_users/types'
+import {ValidationError as CustomValidationError} from '../../../lib/errors'
+import logger from '../../../lib/logger'
+import * as stripeClient from '../../../lib/stripe/stripe.client'
 
 const STRIPE_ACCOUNT_API_KEY: string = process.env.STRIPE_ACCOUNT_API_KEY || ''
 

@@ -2,16 +2,16 @@ import HTTPSProxyAgent from 'https-proxy-agent'
 import Stripe from "stripe";
 
 import {NextFunction, Request, Response} from 'express'
-import logger from '../../../../lib/logger'
-import * as config from '../../../../config'
-import {AdminUsers, Connector} from '../../../../lib/pay-request/client'
-import {ValidationError as CustomValidationError} from '../../../../lib/errors'
-import {wrapAsyncErrorHandler} from '../../../../lib/routes'
-import {PSPTestAccountStage, Service} from '../../../../lib/pay-request/services/admin_users/types'
-import GatewayAccountFormModel from "../../gateway_accounts/gatewayAccount.model";
-import {stripeTestAccountDetails} from '../model/account.model'
-import {stripeTestResponsiblePersonDetails} from '../model/person.model'
-import {CreateGatewayAccountResponse} from "../../../../lib/pay-request/services/connector/types";
+import logger from '../../../lib/logger'
+import * as config from '../../../config'
+import {AdminUsers, Connector} from '../../../lib/pay-request/client'
+import {ValidationError as CustomValidationError} from '../../../lib/errors'
+import {wrapAsyncErrorHandler} from '../../../lib/routes'
+import {PSPTestAccountStage, Service} from '../../../lib/pay-request/services/admin_users/types'
+import GatewayAccountFormModel from "../gateway_accounts/gatewayAccount.model";
+import {stripeTestAccountDetails} from './model/account.model'
+import {stripeTestResponsiblePersonDetails} from './model/person.model'
+import {CreateGatewayAccountResponse} from "../../../lib/pay-request/services/connector/types";
 
 const { StripeError } = Stripe.errors
 
@@ -43,7 +43,7 @@ const createTestAccount = async function createTestAccount(req: Request, res: Re
         stripeTestAccountRequested: service.current_psp_test_account_stage === 'REQUEST_SUBMITTED'
     }
 
-    return res.render('stripe/basic/confirm-create-test-account', context)
+    return res.render('stripe/confirm-create-test-account', context)
 }
 
 const createTestAccountConfirm = async function createTestAccountConfirm(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -70,7 +70,7 @@ const createTestAccountConfirm = async function createTestAccountConfirm(req: Re
         if (error instanceof StripeError) {
             logger.error(`Stripe Error - ${error.message}`)
             req.flash('error', `Stripe Error: ${error.message}`)
-            res.redirect(`/stripe/basic/create-test-account?service=${systemLinkService}`)
+            res.redirect(`/stripe/create-test-account?service=${systemLinkService}`)
         } else {
             next(error)
         }

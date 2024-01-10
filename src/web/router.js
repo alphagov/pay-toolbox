@@ -112,10 +112,10 @@ router.get('/discrepancies/search', auth.secured(PermissionLevel.USER_SUPPORT), 
 router.post('/discrepancies/search', auth.secured(PermissionLevel.USER_SUPPORT), discrepancies.getDiscrepancyReport)
 router.post('/discrepancies/resolve/:id', auth.secured(PermissionLevel.USER_SUPPORT), discrepancies.resolveDiscrepancy)
 
-router.get('/stripe/basic/create', auth.secured(PermissionLevel.VIEW_ONLY), stripe.basic)
-router.post('/stripe/basic/create', auth.secured(PermissionLevel.USER_SUPPORT), stripe.basicCreate)
-router.get('/stripe/basic/create-test-account', auth.secured(PermissionLevel.VIEW_ONLY), stripe.createTestAccount)
-router.post('/stripe/basic/create-test-account', auth.secured(PermissionLevel.USER_SUPPORT), stripe.createTestAccountConfirm)
+router.get('/stripe/create', auth.secured(PermissionLevel.VIEW_ONLY), stripe.basic)
+router.post('/stripe/create', auth.secured(PermissionLevel.USER_SUPPORT), stripe.basicCreate)
+router.get('/stripe/create-test-account', auth.secured(PermissionLevel.VIEW_ONLY), stripe.createTestAccount)
+router.post('/stripe/create-test-account', auth.secured(PermissionLevel.USER_SUPPORT), stripe.createTestAccountConfirm)
 
 // @TODO(sfount) simple to integrate into table action - should be reconsidered for POST or PATCH
 router.get('/users/search', auth.secured(PermissionLevel.VIEW_ONLY), users.searchPage)

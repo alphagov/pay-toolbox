@@ -119,14 +119,14 @@
 
     {{ govukButton({
       text: "Setup live Stripe account",
-      href: "/stripe/basic/create?service=" + service.external_id
+      href: "/stripe/create?service=" + service.external_id
       })
     }}
     <h2 class="govuk-heading-s">Test account</h2>
     {{ govukButton({
       text: "Setup test Stripe account",
       classes: "govuk-button--secondary",
-      href: "/stripe/basic/create-test-account?service=" + service.external_id
+      href: "/stripe/create-test-account?service=" + service.external_id
       })
     }}
 
