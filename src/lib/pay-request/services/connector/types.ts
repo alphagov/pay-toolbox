@@ -27,6 +27,7 @@ export interface Charge {
 
 export interface GatewayAccount {
   gateway_account_id: string;
+  external_id: string;
   payment_provider: PaymentProvider;
   type: AccountType;
   description: string;

@@ -23,8 +23,8 @@
     }) }}
   {% endif %}
 
-  <span class="govuk-caption-m">{{ account.description or account.gateway_account_id }}</span>
-  <h1 class="govuk-heading-m">Gateway account details</h1>
+<span class="govuk-caption-m">{{ services.name }}</span>
+  <h1 class="govuk-heading-m">Gateway account details <span><strong class="govuk-tag govuk-tag--grey">{{ account.payment_provider }} {{ account.type }}</strong></span></h1>
 
   {% if services.external_id %}
   <div>
@@ -38,22 +38,20 @@
     </div>
   {% endfor %}
 
-  <div>
-    <h2 class="govuk-heading-s payment__header">Gateway account details</h2>
+  <div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+      <h2 class="govuk-heading-s">Account details</h2>
+      <div><a class="govuk-link govuk-link--no-visited-state" href="#">Disable account</a></div>
+    </div>
+    <div class="govuk-summary-card__content">
     <dl class="govuk-summary-list">
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key"><span class="govuk-caption-m">ID</span></dt>
         <dd class="govuk-summary-list__value">{{ account.gateway_account_id }}</dd>
       </div>
-      {% if account.gateway_account_external_id %}
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Gateway account external ID</span></dt>
-          <dd class="govuk-summary-list__value">{{ account.gateway_account_external_id }}</dd>
-        </div>
-      {% endif %}
       <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Type</span></dt>
-        <dd class="govuk-summary-list__value">{{ account.type | capitalize }}</dd>
+        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">External ID</span></dt>
+        <dd class="govuk-summary-list__value">{{ account.external_id }}</dd>
       </div>
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Description</span></dt>
@@ -66,16 +64,6 @@
         </dd>
       </div>
       <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Payment method</span></dt>
-          <dd class="govuk-summary-list__value">
-              {% if account.payment_method %} {{ account.payment_method }}  {% else %} CARD {% endif %}
-          </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Service</span></dt>
-        <dd class="govuk-summary-list__value">{{ account.service_name }}</dd>
-      </div>
-      <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Analytics</span></dt>
         <dd class="govuk-summary-list__value">
           {% if account.analytics_id %}
@@ -85,224 +73,55 @@
           {% endif %}
         </dd>
       </div>
-    </dl>
-  </div>
-  <div>
-    <h2 class="govuk-heading-s payment__header">PSP details</h2>
-    <dl class="govuk-summary-list">
       <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Payment provider</span></dt>
-        <dd class="govuk-summary-list__value">{{ account.payment_provider | capitalize }}</dd>
-      </div>
-      {% if currentCredential and currentCredential.state %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Credentials state</span></dt>
-        <dd class="govuk-summary-list__value">{{ currentCredential.state }}</dd>
-      </div>
-      {% endif %}
-      {% if currentCredential
-        and currentCredential.credentials.one_off_customer_initiated|length
-        and currentCredential.credentials.one_off_customer_initiated.merchant_code %}
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Worldpay merchant code</span></dt>
-          <dd class="govuk-summary-list__value">{{ currentCredential.credentials.one_off_customer_initiated.merchant_code }}</dd>
-        </div>
-      {% elif currentCredential and currentCredential.credentials.merchant_id %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">PSP merchant ID</span></dt>
-        <dd class="govuk-summary-list__value">{{ currentCredential.credentials.merchant_id }}</dd>
-      </div>
-      {% endif %}
-      {% if currentCredential and currentCredential.credentials.stripe_account_id %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Connected Stripe account</span></dt>
-        <dd class="govuk-summary-list__value">
-          <a class="govuk-link govuk-link--no-visited-state" target="_blank" href="{{ stripeDashboardUri }}">
-            {{ currentCredential.credentials.stripe_account_id }}
-          </a>
+        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">API</span></dt>
+        <dd class="govuk-summary-list__value">3 access tokens</dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="#">Manage<span class="govuk-visually-hidden"> API tokens</span></a>
         </dd>
       </div>
-      {% endif %}
-      {% if account.payment_provider === 'stripe' %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Outstanding Stripe setup tasks</span></dt>
-        <dd class="govuk-summary-list__value">
-          {% if outstandingStripeSetupTasks | length %}
-          <ul class="govuk-list">
-            {% for task in outstandingStripeSetupTasks %}
-            <li>{{ task | capitalize }}</li>
-            {% endfor %}
-          </ul>
-          {% else %}
-            (All setup tasks completed)
-          {% endif %}
-        </dd>
-      </div>
-      {% endif %}
     </dl>
-  </div>
-  <div>
-    <h2 class="govuk-heading-s payment__header">Self-serve settings</h2>
-    <dl class="govuk-summary-list">
-      {% if is3DSFlexApplicable %}
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">3DS Flex enabled</span></dt>
-          <dd class="govuk-summary-list__value">{{ threeDSFlexEnabled | string | capitalize }}</dd>
-        </div>
-      {% endif %}
-      {% if account.payment_provider === 'worldpay' %}
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Exemption Engine</span></dt>
-          <dd class="govuk-summary-list__value">{{ "Enabled" if account.worldpay_3ds_flex and account.worldpay_3ds_flex.exemption_engine_enabled else "Disabled" }}</dd>
-        </div>
-      {% endif %}
-    {% if account.allow_apple_pay != undefined %}
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Apple Pay enabled</span></dt>
-          <dd class="govuk-summary-list__value">{{ account.allow_apple_pay | string | capitalize }}</dd>
-        </div>
-    {% endif %}
-    {% if account.allow_google_pay != undefined %}
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Google Pay enabled</span></dt>
-          <dd class="govuk-summary-list__value">{{ account.allow_google_pay | string | capitalize }}</dd>
-        </div>
-    {% endif %}
-    {% if account.email_collection_mode != undefined %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Email collection mode</span></dt>
-        <dd class="govuk-summary-list__value">{{ account.email_collection_mode }}</dd>
-      </div>
-    {% endif %}
-    {% if account.email_notifications != undefined %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Payment confirmation email</span></dt>
-        <dd class="govuk-summary-list__value">{{ 'Enabled' if (account.email_notifications.PAYMENT_CONFIRMED
-          and account.email_notifications.PAYMENT_CONFIRMED.enabled) else 'Disabled' }}</dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Refund issued email</span></dt>
-        <dd class="govuk-summary-list__value">{{ 'Enabled' if (account.email_notifications.REFUND_ISSUED
-          and account.email_notifications.REFUND_ISSUED.enabled) else 'Disabled' }}</dd>
-      </div>
-    {% endif %}
-    </dl>
-  </div>
-  <div>
-    <h2 class="govuk-heading-s payment__header">Toolbox configurable settings</h2>
-    <dl class="govuk-summary-list">
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Switching PSP</span></dt>
-        <dd class="govuk-summary-list__value">{{ 'Enabled' if account.provider_switch_enabled else 'Disabled' }}</dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Recurring enabled</span></dt>
-        <dd class="govuk-summary-list__value">{{ account.recurring_enabled | string | capitalize }}</dd>
-      </div>
-      {% if account.block_prepaid_cards != undefined %}
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Blocked prepaid cards</span></dt>
-          <dd class="govuk-summary-list__value">{{ account.block_prepaid_cards | string | capitalize }}</dd>
-        </div>
-      {% endif %}
-    </dl>
-  </div>
-
-  {% if account.notifySettings %}
-    <div>
-      <h2 class="govuk-heading-s payment__header">Email branding</h2>
-        <dl class="govuk-summary-list">
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Notify service ID</span></dt>
-            <dd class="govuk-summary-list__value">
-              {% if account.notifySettings.service_id %}
-                <a class="govuk-link govuk-link--no-visited-state" href="https://www.notifications.service.gov.uk/services/{{ account.notifySettings.service_id }}">{{ account.notifySettings.service_id }}</a>
-              {% else %}
-                (Not set)
-              {% endif %}</dd>
-            <dd class="govuk-summary-list__actions">
-              <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ gatewayAccountId }}/email_branding">Change<span class="govuk-visually-hidden"> Notify service ID</span></a>
-            </dd>
-          </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Payment template ID</span></dt>
-            <dd class="govuk-summary-list__value">{{ account.notifySettings.template_id }}</dd>
-            <dd class="govuk-summary-list__actions">
-              <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ gatewayAccountId }}/email_branding">Change<span class="govuk-visually-hidden"> Payment template ID</span></a>
-            </dd>
-          </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Refund template ID</span></dt>
-            <dd class="govuk-summary-list__value">{{ account.notifySettings.refund_issued_template_id }}</dd>
-            <dd class="govuk-summary-list__actions">
-              <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ gatewayAccountId }}/email_branding">Change<span class="govuk-visually-hidden"> Refund template ID</span></a>
-            </dd>
-          </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Reply-to email address ID</span></dt>
-            <dd class="govuk-summary-list__value">{{ account.notifySettings.email_reply_to_id or "(Default for Notify service)" }}</dd>
-            <dd class="govuk-summary-list__actions">
-              <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ gatewayAccountId }}/email_branding">Change<span class="govuk-visually-hidden"> Reply-to email address ID</span></a>
-            </dd>
-          </div>
-        </dl>
     </div>
-  {% endif %}
+  </div>
 
   <div>
-    {{ govukButton({
-    text: "Manage API keys",
-    href: "/gateway_accounts/" + gatewayAccountId + "/api_keys"
-    })
-    }}
-
-    {# @TODO(sfount) use standard enum for provider type #}
-    {% if account.payment_provider == 'stripe' %}
-      {{ govukButton({
-        text: "View Payouts",
-        href: "/payouts?account=" + gatewayAccountId
-      })
-      }}
-      {{ govukButton({
-        text: "Update statement descriptor",
-        href: "/gateway_accounts/" + gatewayAccountId + "/stripe_statement_descriptor"
-      })
-      }}
-      {{ govukButton({
-        text: "Update payout descriptor",
-        href: "/gateway_accounts/" + gatewayAccountId + "/stripe_payout_descriptor"
-      })
-      }}
-    {% endif %}
-
-    {{ govukButton({
-      text: "View payments",
-      href: "/transactions?account=" + gatewayAccountId
-    })
-    }}
-    {{ govukButton({
-      text: "View refunds",
-      href: "/transactions?account=" + gatewayAccountId + "&type=REFUND"
-    })
-    }}
-    {{ govukButton({
-      text: "View payment links",
-      href: "/gateway_accounts/" + gatewayAccountId + "/payment_links"
-    })
-    }}
-    {{ govukButton({
-      text: "View agreements",
-      href: "/agreements?account=" + gatewayAccountId
-    })
-    }}
-    {{ govukButton({
-    text: "View webhooks",
+  {{ govukButton({
+    text: "Payments",
+    href: "/transactions?account=" + gatewayAccountId
+  })
+  }}
+  {{ govukButton({
+    text: "Refunds",
+    href: "/transactions?account=" + gatewayAccountId + "&type=REFUND"
+  })
+  }}
+  {{ govukButton({
+    text: "Payment links",
+    href: "/gateway_accounts/" + gatewayAccountId + "/payment_links"
+  })
+  }}
+  {{ govukButton({
+    text: "Agreements",
+    href: "/agreements?account=" + gatewayAccountId
+  })
+  }}
+  {{ govukButton({
+    text: "Webhooks",
     href: "/webhooks?account=" + gatewayAccountId
+  })
+  }}
+  {% if account.payment_provider == 'stripe' %}
+    {{ govukButton({
+      text: "Payouts",
+      href: "/payouts?account=" + gatewayAccountId
     })
     }}
+  {% endif %}
+  </div>
+  <div>
     {{ govukButton({
-    text: "Download transaction CSV reports",
-    href: "/transactions/csv?account=" + gatewayAccountId
+      text: "Download transaction CSV reports",
+      href: "/transactions/csv?account=" + gatewayAccountId
     })
     }}
     {{ govukButton({
@@ -310,317 +129,195 @@
       href: "/transactions/statistics?account=" + gatewayAccountId
     })
     }}
-    {{ govukButton({
-      text: "Update surcharge amounts",
-      href: "/gateway_accounts/" + gatewayAccountId + "/surcharge"
-    })
-    }}
-    {{ govukButton({
-      text: "Edit email branding",
-      href: "/gateway_accounts/" + gatewayAccountId + "/email_branding"
-    })
-    }}
-    {{ govukButton({
-      text: "Configure agent-initiated MOTO payments",
-      href: "/gateway_accounts/" + gatewayAccountId + "/agent_initiated_moto"
-    })
-    }}
-    {{ govukButton({
-      text: "Switch PSP",
-      href: "/gateway_accounts/" + gatewayAccountId + "/switch_psp"
-    })
-    }}
   </div>
 
-  {% if account.allow_moto === false %}
-    <div>
-      <h2 class="govuk-heading-s">Enable MOTO payments</h2>
-      <p class="govuk-body">Please ensure the service has passed PCI requirements before enabling MOTO payments.</p>
-      <p class="govuk-body">MOTO payments allow services to create payments that bypass security. MOTO payments have no 3DS checks and billing addresses aren't required. This is inherently insecure.</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_moto_payments">
-        {{ govukButton({
-          text: "Enable MOTO payments",
-          classes: "govuk-button--warning"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
+  <div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+      <h2 class="govuk-heading-s">{{ account.payment_provider | capitalize }} configuration</h2>
+      <span><a class="govuk-link govuk-link--no-visited-state" href="#">Switch PSP</a></span>
     </div>
-  {% endif %}
-
-  {% if account.allow_moto === true %}
-    <div>
-      <h2 class="govuk-heading-s">MOTO payments are enabled</h2>
-      <p class="govuk-body">MOTO payments allow services to create payments that bypass security. MOTO payments have no 3DS checks and billing addresses aren't required. This is inherently insecure.</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_moto_payments">
-        {{ govukButton({
-          text: "Disable MOTO payments"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
+    <div class="govuk-summary-card__content">
+      <dl class="govuk-summary-list">
+        {% if currentCredential and currentCredential.state %}
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Credentials state</span></dt>
+          <dd class="govuk-summary-list__value">{{ currentCredential.state }}</dd>
+        </div>
+        {% endif %}
+        {% if currentCredential
+          and currentCredential.credentials.one_off_customer_initiated|length
+          and currentCredential.credentials.one_off_customer_initiated.merchant_code %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Worldpay merchant code</span></dt>
+            <dd class="govuk-summary-list__value">{{ currentCredential.credentials.one_off_customer_initiated.merchant_code }}</dd>
+          </div>
+        {% elif currentCredential and currentCredential.credentials.merchant_id %}
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">PSP merchant ID</span></dt>
+          <dd class="govuk-summary-list__value">{{ currentCredential.credentials.merchant_id }}</dd>
+        </div>
+        {% endif %}
+        {% if currentCredential and currentCredential.credentials.stripe_account_id %}
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Connected Stripe account</span></dt>
+          <dd class="govuk-summary-list__value">
+            <a class="govuk-link govuk-link--no-visited-state" target="_blank" href="{{ stripeDashboardUri }}">
+              {{ currentCredential.credentials.stripe_account_id }}
+            </a>
+          </dd>
+        </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Statement descriptor</span></dt>
+            <dd class="govuk-summary-list__value">
+              PAY-FOR-CAKE
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="#">Manage<span class="govuk-visually-hidden"> statement descriptor</span></a>
+            </dd>
+          </div>
+        {% endif %}
+        {% if account.payment_provider === 'stripe' %}
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Outstanding Stripe setup tasks</span></dt>
+          <dd class="govuk-summary-list__value">
+            {% if outstandingStripeSetupTasks | length %}
+            <ul class="govuk-list">
+              {% for task in outstandingStripeSetupTasks %}
+              <li>{{ task | capitalize }}</li>
+              {% endfor %}
+            </ul>
+            {% else %}
+              (All setup tasks completed)
+            {% endif %}
+          </dd>
+        </div>
+        {% elif account.payment_provider === 'worldpay' %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Payment details sent to Worldpay</span></dt>
+            <dd class="govuk-summary-list__value">
+              <ul class="govuk-list">
+                {% if account.send_reference_to_gateway === true %}
+                  <li>Reference</li>
+                {% else %}
+                  <li>Payment description</li>
+                {% endif %}
+                {% if account.send_payer_email_to_gateway === true %}
+                  <li>Email</li>
+                {% endif %}
+                {% if account.send_payer_ip_address_to_gateway === true %}
+                  <li>IP address</li>
+                {% endif %}
+              </ul>
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="#">Manage<span class="govuk-visually-hidden"> payment details sent to Worldpay</span></a>
+            </dd>
+          </div>
+          {% if is3DSFlexApplicable %}
+            <div class="govuk-summary-list__row">
+              <dt class="govuk-summary-list__key"><span class="govuk-caption-m">3DS Flex</span></dt>
+              <dd class="govuk-summary-list__value">{% if account.worldpay_3ds_flex %}Enabled{% else %}Disabled{% endif %}</dd>
+            </div>
+          {% endif %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Exemption engine</span></dt>
+            <dd class="govuk-summary-list__value">
+              {% if account.worldpay_3ds_flex and account.worldpay_3ds_flex.exemption_engine_enabled %}
+                Enabled
+              {% else %}
+                Disabled
+              {% endif %}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="#">Manage<span class="govuk-visually-hidden"> Worldpay exemption engine</span></a>
+            </dd>
+          </div>
+        {% endif %}
+      </dl>
     </div>
-  {% endif %}
-
-  {% if account.block_prepaid_cards === true %}
-    <div>
-      <h2 class="govuk-heading-s">Allow prepaid cards</h2>
-      <p class="govuk-body">Prepaid cards are currently blocked on this service, users cannot use them to make payments.<p>
-      <p class="govuk-body">Allowing prepaid cards could potentially mean that more fraudulent users can access the service.<p>
-        {{ govukButton({
-          text: "Allow prepaid cards",
-          href: "/gateway_accounts/" + gatewayAccountId + "/block_prepaid_cards/toggle"
-          })
-        }}
-    </div>
-  {% endif %}
-
-  {% if account.block_prepaid_cards === false %}
-    <div>
-      <h2 class="govuk-heading-s">Block prepaid cards</h2>
-      <p class="govuk-body">Prepaid cards are allowed on this service, users can make payments using them.<p>
-      <p class="govuk-body">Blocking prepaid cards will mean that some users that only have access to them will no longer be able to use the service.<p>
-        {{ govukButton({
-          text: "Block prepaid cards",
-          classes: "govuk-button--warning",
-          href: "/gateway_accounts/" + gatewayAccountId + "/block_prepaid_cards/toggle"
-          })
-        }}
-    </div>
-  {% endif %}
-
-  {% if account.allow_telephone_payment_notifications === false %}
-    <div>
-      <h2 class="govuk-heading-s">Enable telephone payment notifications</h2>
-      <p class="govuk-body">Allows use of the <a class="govuk-link govuk-link--no-visited-state" href="https://github.com/alphagov/pay-telephone-payments">API to store records of telephone payments</a> which were taken outside of GOV.UK Pay.</p>
-      <p class="govuk-body">It should be ensured that the gateway account is only used for this purpose by the service and they have a separate service if they take payments using our payment pages.</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_allow_telephone_payment_notifications">
-        {{ govukButton({
-          text: "Enable telephone payment notifications",
-          classes: "govuk-button--warning"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
-    </div>
-  {% endif %}
-
-  {% if account.allow_telephone_payment_notifications === true %}
-    <div>
-      <h2 class="govuk-heading-s">Telephone payment notifications are enabled</h2>
-      <p class="govuk-body">Use of the <a class="govuk-link govuk-link--no-visited-state" href="https://github.com/alphagov/pay-telephone-payments">telephone payment notifications API</a> is enabled for this account. This is used to store records of telephone payments which were taken outside of GOV.UK Pay.</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_allow_telephone_payment_notifications">
-        {{ govukButton({
-          text: "Disable telephone payment notifications"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
-    </div>
-  {% endif %}
-
-    {% if account.allow_authorisation_api === false %}
-    <div>
-      <h2 class="govuk-heading-s">Use of the payment authorisation API is disabled</h2>
-      <p class="govuk-body">Allows creating MOTO payments with an authorisation_mode of ‘api‘. These payments are authorised by sending the card details in a POST request to Public API.</p>
-      <p class="govuk-body">Note that corporate card surcharges will not be applied to payments created in this way.</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_allow_authorisation_api">
-        {{ govukButton({
-          text: "Enable use of the payment authorisation API",
-          classes: "govuk-button--warning"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
-    </div>
-  {% endif %}
-
-  {% if account.allow_authorisation_api === true %}
-    <div>
-      <h2 class="govuk-heading-s">Use of the payment authorisation API is enabled</h2>
-      <p class="govuk-body">Creating MOTO payments with an authorisation_mode of ‘api‘ is allowed for this account. These payments are authorised by sending the card details in a POST request to Public API.</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_allow_authorisation_api">
-        {{ govukButton({
-          text: "Disable use of the payment authorisation API"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
-    </div>
-  {% endif %}
-
-    {% if account.recurring_enabled === false %}
-    <div>
-      <h2 class="govuk-heading-s">Recurring card payments disabled</h2>
-      <p class="govuk-body">If enabled, recurring card payments can be taken, and agreements and their payment instruments show in the admin tool.</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_recurring_enabled">
-        {{ govukButton({
-          text: "Enable recurring card payments",
-          classes: "govuk-button--warning"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
-    </div>
-  {% endif %}
-
-  {% if account.recurring_enabled === true %}
-    <div>
-      <h2 class="govuk-heading-s">Recurring card payments enabled</h2>
-      <p class="govuk-body">Recurring card payments can be taken, and agreements and their payment instruments show in the admin tool.</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_recurring_enabled">
-        {{ govukButton({
-          text: "Disable recurring card payments"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
-    </div>
-  {% endif %}
-
-  {% if account.send_payer_ip_address_to_gateway === true %}
-    <div>
-      <h2 class="govuk-heading-s">Sending payer IP address to gateway is enabled</h2>
-      <p class="govuk-body">If enabled, the paying user's IP address is sent to the payment gateway for fraud prevention purposes. This is not implemented for Stripe accounts.</p>
-      <p class="govuk-body">3D Secure must also be enabled for the IP address to be sent to the gateway.</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_payer_ip_address_to_gateway">
-        {{ govukButton({
-          text: "Disable sending payer IP address to gateway"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
-    </div>
-  {% endif %}
-
-  {% if account.send_payer_ip_address_to_gateway === false %}
-    <div>
-      <h2 class="govuk-heading-s">Enable sending payer IP address to gateway</h2>
-      <p class="govuk-body">If enabled, the paying user's IP address is sent to the payment gateway for fraud prevention purposes. This is not implemented for Stripe accounts.</p>
-      <p class="govuk-body">3D Secure must also be enabled for the IP address to be sent to the gateway.</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_payer_ip_address_to_gateway">
-        {{ govukButton({
-          text: "Enable sending payer IP address to gateway",
-          classes: "govuk-button--warning"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
-    </div>
-  {% endif %}
-
-  <div>
-    <h2 class="govuk-heading-s">
-      {% if account.send_payer_email_to_gateway %}
-        Sending payer email to gateway is enabled
-      {% else %}
-        Enable sending payer email to gateway
-      {% endif %}
-    </h2>
-
-    <p class="govuk-body">If enabled, the paying user's email is sent to the payment gateway for fraud prevention purposes. This is not implemented for Stripe accounts.</p>
-
-    {{ govukWarningText({
-      text: "Ensure that the service does not have the setting enabled in Worldpay that will send emails to the payer.",
-      iconFallbackText: "Warning"
-    }) }}
-
-    <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_payer_email_to_gateway">
-      {% if account.send_payer_email_to_gateway %}
-        {{ govukButton({
-          text: "Disable sending payer email to gateway"
-          })
-        }}
-      {% else %}
-        {{ govukButton({
-          text: "Enable sending payer email to gateway",
-          classes: "govuk-button--warning"
-          })
-        }}
-      {% endif %}
-      <input type="hidden" name="_csrf" value="{{ csrf }}">
-    </form>
   </div>
 
-  {% if account.payment_provider === 'worldpay' %}
-    {% set 3dsFlexEnabled = account.worldpay_3ds_flex %}
-    {% set exemptionEngineEnabled = account.worldpay_3ds_flex and account.worldpay_3ds_flex.exemption_engine_enabled %}
-
-    {% set exemptionEngineHeader = "Worldpay Exemption Engine is enabled" if exemptionEngineEnabled else "Worldpay Exemption Engine is disabled" %}
-    {% set exemptionEngineAction = "Disable Worldpay Exemption Engine" if exemptionEngineEnabled else "Enable Worldpay Exemption Engine" %}
-
-    <div>
-      <h2 class="govuk-heading-s">{{ exemptionEngineHeader }}</h2>
-      <p class="govuk-body">The Worldpay Exemption Engine can only be enabled if the service has configured Worldpay 3DS Flex. This action will be requested by the service through support.</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_worldpay_exemption_engine">
-        {{ govukButton({
-          text: exemptionEngineAction,
-          classes: "" if exemptionEngineEnabled else "govuk-button--warning"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
+  <div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+      <h2 class="govuk-heading-s">Card settings</h2>
     </div>
-    <div>
-  {% endif %}
-
-  {% if account.send_reference_to_gateway === true %}
-    <div>
-      <h2 class="govuk-heading-s">Sending reference to gateway is enabled</h2>
-      <p class="govuk-body">If enabled, the payment <b>reference</b> is sent to gateway, otherwise <b>description</b> is sent to gateway. Only applicable for Worldpay accounts</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_reference_to_gateway">
-        {{ govukButton({
-          text: "Disable sending reference to gateway"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
+    <div class="govuk-summary-card__content">
+      <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Wallets</span></dt>
+          <dd class="govuk-summary-list__value">
+            {% if account.allow_apple_pay or account.allow_google_pay %}
+              {% if account.allow_apple_pay %} <span><strong class="govuk-tag govuk-tag--grey">Apple Pay</strong></span>{% endif %}
+              {% if account.allow_google_pay %} <span><strong class="govuk-tag govuk-tag--grey">Google Pay</strong></span>{% endif %}
+            {% else %}
+              (No wallets enabled)
+            {% endif %}
+          </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">MOTO</span></dt>
+          <dd class="govuk-summary-list__value">Disabled</dd>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="#">Manage<span class="govuk-visually-hidden"> MOTO</span></a>
+          </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Recurring enabled</span></dt>
+          <dd class="govuk-summary-list__value">{{ account.recurring_enabled | string | capitalize }}</dd>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="#">Manage<span class="govuk-visually-hidden"> recurring enabled</span></a>
+          </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Blocked prepaid cards</span></dt>
+          <dd class="govuk-summary-list__value">{{ account.block_prepaid_cards | string | capitalize }}</dd>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="#">Manage<span class="govuk-visually-hidden"> prepaid cards</span></a>
+          </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Corporate surcharge</span></dt>
+          <dd class="govuk-summary-list__value">Disabled</dd>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="#">Manage<span class="govuk-visually-hidden"> corporate surcharge</span></a>
+          </dd>
+        </div>
+      </dl>
     </div>
-  {% endif %}
-
-  {% if account.send_reference_to_gateway === false %}
-    <div>
-      <h2 class="govuk-heading-s">Enable sending reference to gateway</h2>
-      <p class="govuk-body">If enabled, the payment <b>reference</b> is sent to gateway, otherwise <b>description</b> is sent to gateway. Only applicable for Worldpay accounts</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_reference_to_gateway">
-        {{ govukButton({
-          text: "Enable sending reference to gateway",
-          classes: "govuk-button--warning"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
-    </div>
-  {% endif %}
-
-  {% if account.disabled === true %}
-  <div>
-    <h2 class="govuk-heading-s">Gateway account is disabled</h2>
-    <p class="govuk-body">If a gateway account is disabled, new payments cannot be initiated and refunds cannot be made.</p>
-    <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/enable">
-      {{ govukButton({
-      text: "Enable gateway account",
-      classes: "govuk-button--warning"
-      })
-      }}
-      <input type="hidden" name="_csrf" value="{{ csrf }}">
-    </form>
   </div>
-  {% endif %}
 
-  {% if account.disabled === false %}
-  <div>
-    <h2 class="govuk-heading-s">Disable gateway account</h2>
-    <p class="govuk-body">If a gateway account is disabled, new payments cannot be initiated and refunds cannot be made.</p>
-    {{ govukButton({
-      text: "Disable gateway account",
-      href: "/gateway_accounts/" + gatewayAccountId + "/disable",
-      classes: "govuk-button--warning"
-    }) }}
+  <div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+      <h2 class="govuk-heading-s">Email settings</h2>
+    </div>
+    <div class="govuk-summary-card__content">
+      <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Email collection mode</span></dt>
+          <dd class="govuk-summary-list__value">{{ account.email_collection_mode }}</dd>
+        </div>
+        {% if account.email_notifications != undefined %}
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Payment confirmation email</span></dt>
+          <dd class="govuk-summary-list__value">{{ 'Enabled' if (account.email_notifications.PAYMENT_CONFIRMED
+            and account.email_notifications.PAYMENT_CONFIRMED.enabled) else 'Disabled' }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Refund issued email</span></dt>
+          <dd class="govuk-summary-list__value">{{ 'Enabled' if (account.email_notifications.REFUND_ISSUED
+            and account.email_notifications.REFUND_ISSUED.enabled) else 'Disabled' }}</dd>
+        </div>
+        {% endif %}
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Email branding</span></dt>
+          <dd class="govuk-summary-list__value">{{ 'Enabled' if account.notifySettings else 'Disabled' }}</dd>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="#">Manage<span class="govuk-visually-hidden"> email branding</span></a>
+          </dd>
+        </div>
+      </dl>
+    </div>
   </div>
-  {% endif %}
-
-
 
   {{ json("Gateway account details source", account) }}
   {{ json("Accepted cards source", acceptedCards) }}
