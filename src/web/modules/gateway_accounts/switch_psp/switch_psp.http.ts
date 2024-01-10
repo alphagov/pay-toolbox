@@ -1,10 +1,10 @@
 import {NextFunction, Request, Response} from 'express'
 import {AdminUsers, Connector} from '../../../../lib/pay-request/client'
-import AccountDetails from '../../stripe/basic/basicAccountDetails.model'
-import {setupProductionStripeAccount} from '../../stripe/basic/account'
+import AccountDetails from '../../stripe/accountDetails.model'
+import {setupProductionStripeAccount} from '../../stripe/account'
 import logger from "../../../../lib/logger";
 
-import stripeTestAccount from '../../stripe/basic/test-account.http'
+import stripeTestAccount from '../../stripe/test-account.http'
 
 export async function switchPSPPage(req: Request, res: Response, next: NextFunction) {
   const account = await Connector.accounts.retrieve(req.params.id)

@@ -1,12 +1,12 @@
 import {Request, Response} from 'express'
 
-import logger from '../../../../lib/logger'
-import {AdminUsers} from '../../../../lib/pay-request/client'
-import {IOValidationError, ValidationError as CustomValidationError} from '../../../../lib/errors'
-import {wrapAsyncErrorHandler} from '../../../../lib/routes'
-import {ClientFormError, formatErrorsForTemplate} from '../../common/validationErrorFormat'
-import {Service} from '../../../../lib/pay-request/services/admin_users/types'
-import AccountDetails from './basicAccountDetails.model'
+import logger from '../../../lib/logger'
+import {AdminUsers} from '../../../lib/pay-request/client'
+import {IOValidationError, ValidationError as CustomValidationError} from '../../../lib/errors'
+import {wrapAsyncErrorHandler} from '../../../lib/routes'
+import {ClientFormError, formatErrorsForTemplate} from '../common/validationErrorFormat'
+import {Service} from '../../../lib/pay-request/services/admin_users/types'
+import AccountDetails from './accountDetails.model'
 import {setupProductionStripeAccount} from './account'
 
 import Stripe from "stripe";
@@ -66,7 +66,7 @@ const createAccountForm = async function createAccountForm(
       statementDescriptor: defaultStatementDescriptor
     }
   }
-  res.render('stripe/basic/basic', context)
+  res.render('stripe/live-account', context)
 }
 
 const submitAccountCreate = async function submitAccountCreate(
@@ -94,7 +94,7 @@ const submitAccountCreate = async function submitAccountCreate(
       formValues: req.body,
       errors
     }
-    res.redirect(`/stripe/basic/create?service=${systemLinkService}`)
+    res.redirect(`/stripe/create?service=${systemLinkService}`)
   }
 }
 

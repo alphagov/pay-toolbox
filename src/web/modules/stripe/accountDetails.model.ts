@@ -5,7 +5,7 @@ import {
   Matches
 } from 'class-validator'
 
-import Validated from '../../common/validated'
+import Validated from '../common/validated'
 
 class AccountDetails extends Validated {
   @Matches(/^[^<>'"\\]+$/, { message: 'Statement descriptor cannot contain the following < > \\ \' "' })
