@@ -26,19 +26,10 @@ const cardProviders = {
   stripe: 'stripe'
 }
 
-const paymentMethod = {
-  card: 'card'
-}
-
 class GatewayAccount extends Validated {
   @IsIn(Object.values(liveStatus))
   @IsNotEmpty()
   public live: string;
-
-  @IsIn(Object.values(paymentMethod))
-  @IsString()
-  @IsNotEmpty()
-  public paymentMethod: string;
 
   @IsString()
   @IsNotEmpty({message: 'Please enter a description'})
@@ -66,11 +57,6 @@ class GatewayAccount extends Validated {
   public validate(): void {
     super.validate()
 
-    if (this.paymentMethod === paymentMethod.card
-      && !Object.values(cardProviders).includes(this.provider)) {
-      throw new ValidationError(`For Card accounts, provider must be one of ${Object.values(cardProviders)}`)
-    }
-
     if (this.live === liveStatus.live && Object.values(sandbox).includes(this.provider)) {
       throw new ValidationError('Live accounts cannot have Sandbox provider')
     }
@@ -83,7 +69,6 @@ class GatewayAccount extends Validated {
   public constructor(formValues: { [key: string]: string }) {
     super()
     this.live = formValues.live
-    this.paymentMethod = formValues.paymentMethod
     this.description = formValues.description
     this.serviceName = formValues.serviceName
     this.provider = formValues.provider

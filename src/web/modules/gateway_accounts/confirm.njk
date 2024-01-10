@@ -9,7 +9,6 @@
   {{ govukTable({
     firstCellIsHeader: true,
     rows: [
-    [ { text: 'Payment method' }, { text: request.paymentMethod | capitalize } ],
     [ { text: 'Account type' }, { text: request.provider | capitalize } ],
     [ { text: 'Service name' }, { text: request.serviceName } ],
     [ { text: 'Description' }, { text: request.description } ],
@@ -22,7 +21,6 @@
   }}
 
   <form method="post" action="/gateway_accounts/create">
-    <input type="hidden" name="paymentMethod" value="{{ request.paymentMethod }}">
     <input type="hidden" name="provider" value="{{ request.provider }}">
     <input type="hidden" name="serviceName" value="{{ request.serviceName }}">
     <input type="hidden" name="description" value="{{ request.description }}">

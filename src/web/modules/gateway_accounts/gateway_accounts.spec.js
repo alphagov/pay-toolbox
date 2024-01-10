@@ -6,7 +6,6 @@ const { ValidationError, IOValidationError } = require('./../../../lib/errors')
 
 const validGatewayAccountDetails = {
   live: 'live',
-  paymentMethod: 'card',
   description: 'Valid gateway account details',
   serviceName: 'Valid gateway account service',
   provider: 'stripe',
@@ -36,26 +35,6 @@ describe('Gateway Accounts', () => {
       expect(() => {
         const details = _.cloneDeep(validGatewayAccountDetails)
         details.live = 'not-valid'
-
-        // eslint-disable-next-line no-new
-        new GatewayAccount(details)
-      }).to.throw(IOValidationError)
-    })
-
-    it('rejects when payment method is empty', () => {
-      expect(() => {
-        const details = _.cloneDeep(validGatewayAccountDetails)
-        details.paymentMethod = ''
-
-        // eslint-disable-next-line no-new
-        new GatewayAccount(details)
-      }).to.throw(IOValidationError)
-    })
-
-    it('rejects when payment method is not allowed value', () => {
-      expect(() => {
-        const details = _.cloneDeep(validGatewayAccountDetails)
-        details.paymentMethod = 'not-allowed'
 
         // eslint-disable-next-line no-new
         new GatewayAccount(details)
@@ -92,21 +71,10 @@ describe('Gateway Accounts', () => {
       }).to.throw(Error)
     })
 
-    it('rejects when paymentMethod is direct-debit ', () => {
-      expect(() => {
-        const details = _.cloneDeep(validGatewayAccountDetails)
-        details.paymentMethod = 'direct-debit'
-
-        // eslint-disable-next-line no-new
-        new GatewayAccount(details)
-      }).to.throw(Error)
-    })
-
     it('rejects when account is live and provider is card sandbox', () => {
       expect(() => {
         const details = _.cloneDeep(validGatewayAccountDetails)
         details.live = 'live'
-        details.paymentMethod = 'card'
         details.provider = 'card-sandbox'
 
         // eslint-disable-next-line no-new

@@ -80,7 +80,6 @@ const createTestAccountConfirm = async function createTestAccountConfirm(req: Re
 async function createTestGatewayAccount(serviceId: string, serviceName: string, stripeConnectId: string): Promise<CreateGatewayAccountResponse> {
     const account = new GatewayAccountFormModel({
         live: 'not-live',
-        paymentMethod: 'card',
         description: `Stripe test account for service ${serviceName}`,
         sector: 'Other',
         serviceName: serviceName,
