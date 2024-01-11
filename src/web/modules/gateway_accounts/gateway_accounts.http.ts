@@ -72,6 +72,19 @@ async function listCSV(req: Request, res: Response): Promise<void> {
   res.status(200).send(format(data))
 }
 
+interface CreateGatewayAccountPageData {
+  linkedCredentials: string;
+  live: string;
+  provider: string;
+  recovered?: object;
+  service?: Service;
+  description?: string;
+  flash: object;
+  errors?: ClientFormError[];
+  errorMap?: object;
+  csrf: string;
+}
+
 async function create(req: Request, res: Response): Promise<void> {
   const serviceId = req.query.service as string
   const live = req.query.live as string
@@ -81,18 +94,7 @@ async function create(req: Request, res: Response): Promise<void> {
     throw new Error('Expected "live" and "provider" query parameters')
   }
 
-  const context: {
-    linkedCredentials: string;
-    live: string;
-    provider: string;
-    recovered?: object;
-    service?: Service;
-    description?: string;
-    flash: object;
-    errors?: ClientFormError[];
-    errorMap?: object;
-    csrf: string;
-  } = {
+  const context: CreateGatewayAccountPageData = {
     linkedCredentials: req.query.credentials as string,
     live,
     provider,
@@ -630,6 +632,17 @@ async function searchRequest(req: Request, res: Response, next: NextFunction): P
   }
 }
 
+interface AgentInitiatedMotoPageData {
+  account: GatewayAccount;
+  service: Service;
+  products: Product[];
+  csrf: string;
+  formValues?: object;
+  flash: object;
+  errors?: object;
+  errorMap?: object[];
+}
+
 async function agentInitiatedMotoPage(
   req: Request,
   res: Response
@@ -642,16 +655,7 @@ async function agentInitiatedMotoPage(
     Products.accounts.listProductsByType(id, ProductType.Moto)
   ])
 
-  const context: {
-    account: GatewayAccount;
-    service: Service;
-    products: Product[];
-    csrf: string;
-    formValues?: object;
-    flash: object;
-    errors?: object;
-    errorMap?: object[];
-  } = {
+  const context: AgentInitiatedMotoPageData = {
     account: account,
     service: service,
     products: products,
