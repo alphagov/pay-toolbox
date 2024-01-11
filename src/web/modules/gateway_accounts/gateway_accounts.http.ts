@@ -131,7 +131,7 @@ async function confirm(req: Request, res: Response, next: NextFunction): Promise
   try {
     const account = new GatewayAccountFormModel(req.body)
     res.render('gateway_accounts/confirm', {account, request: req.body, csrf: req.csrfToken()})
-  }  catch (error) {
+  } catch (error) {
     next(error)
   }
 }
@@ -225,18 +225,16 @@ async function detail(req: Request, res: Response): Promise<void> {
   let stripeDashboardUri = ''
 
   const {id} = req.params
-  let services = {}
-  const isDirectDebitID = id.match(/^DIRECT_DEBIT:/)
+  const [account, acceptedCards, stripeSetup, motoProducts] = await Promise.all([
+    Connector.accounts.retrieve(id),
+    Connector.accounts.listCardTypes(id),
+    Connector.accounts.retrieveStripeSetup(id),
+    Products.accounts.listProductsByType(id, ProductType.Moto)
+  ])
 
-  let account, acceptedCards, stripeSetup: StripeSetup
-  if (isDirectDebitID) {
-    throw new Error(`Direct debit accounts are no longer supported`)
-  } else {
-    [account, acceptedCards, stripeSetup] = await Promise.all([Connector.accounts.retrieve(id), Connector.accounts.listCardTypes(id), Connector.accounts.retrieveStripeSetup(id)])
-  }
-
+  let service = {}
   try {
-    services = await AdminUsers.services.retrieve({gatewayAccountId: id})
+    service = await AdminUsers.services.retrieve({gatewayAccountId: id})
   } catch (error: any) {
     logger.warn(`Services request for gateway account ${id} returned "${error.message}"`)
   }
@@ -254,17 +252,19 @@ async function detail(req: Request, res: Response): Promise<void> {
 
   const is3DSFlexApplicable = (currentCredential.payment_provider === PaymentProvider.Worldpay && !account.allow_moto)
   const threeDSFlexEnabled = (account.integration_version_3ds === 2)
+  const motoPaymentLinkExists = motoProducts.length > 0
 
   res.render('gateway_accounts/detail', {
     account,
     acceptedCards,
     gatewayAccountId: id,
-    services,
+    services: service,
     currentCredential,
     outstandingStripeSetupTasks,
     stripeDashboardUri,
     is3DSFlexApplicable,
     threeDSFlexEnabled,
+    motoPaymentLinkExists,
     messages: req.flash('info'),
     csrf: req.csrfToken()
   })
@@ -351,9 +351,9 @@ async function updateEmailBranding(req: Request, res: Response):
     template_id: Joi.string().required().pattern(NOTIFY_ID_PATTERN).label("Payment confirmation template ID").trim(),
     refund_issued_template_id: Joi.string().required().pattern(NOTIFY_ID_PATTERN).label("Refund template ID").trim(),
     email_reply_to_id: Joi.string().optional().pattern(NOTIFY_ID_PATTERN).allow('')
-        .error(new ValidationError('Reply-to email address ID must be an ID or left blank (not an email address)'))
-        .trim()
-  }).options({ stripUnknown: true })
+      .error(new ValidationError('Reply-to email address ID must be an ID or left blank (not an email address)'))
+      .trim()
+  }).options({stripUnknown: true})
   const {error, value: notifySettings} = schema.validate(req.body)
   if (error) {
     throw error
@@ -380,38 +380,12 @@ async function toggleBlockPrepaidCards(
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-async function toggleMotoPayments(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
-  const account = await Connector.accounts.retrieve(id)
-  const enable = !account.allow_moto
-  await Connector.accounts.update(id, {allow_moto: enable})
-
-  req.flash('info', `MOTO payments ${enable ? 'enabled' : 'disabled'}`)
-  res.redirect(`/gateway_accounts/${id}`)
-}
-
 async function toggleWorldpayExemptionEngine(req: Request, res: Response): Promise<void> {
   const {id} = req.params
   const account = await Connector.accounts.retrieve(id)
   const enable = !(account.worldpay_3ds_flex && account.worldpay_3ds_flex.exemption_engine_enabled)
   await Connector.accounts.update(id, {worldpay_exemption_engine_enabled: enable})
   req.flash('info', `Worldpay Exception Engine ${enable ? 'enabled' : 'disabled'}`)
-  res.redirect(`/gateway_accounts/${id}`)
-}
-
-async function toggleAllowTelephonePaymentNotifications(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
-  const account = await Connector.accounts.retrieve(id)
-  const enable = !account.allow_telephone_payment_notifications
-  await Connector.accounts.update(id, {allow_telephone_payment_notifications: enable})
-
-  req.flash('info', `Telephone payment notifications ${enable ? 'enabled' : 'disabled'}`)
   res.redirect(`/gateway_accounts/${id}`)
 }
 
@@ -488,19 +462,6 @@ async function enable(
   await Connector.accounts.update(id, {disabled: false})
 
   req.flash('info', `Gateway account enabled`)
-  res.redirect(`/gateway_accounts/${id}`)
-}
-
-async function toggleAllowAuthorisationApi(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
-  const account = await Connector.accounts.retrieve(id)
-  const enable = !account.allow_authorisation_api
-  await Connector.accounts.update(id, {allow_authorisation_api: enable})
-
-  req.flash('info', `Use of the payment authorisation API is ${enable ? 'enabled' : 'disabled'}`)
   res.redirect(`/gateway_accounts/${id}`)
 }
 
@@ -632,117 +593,6 @@ async function searchRequest(req: Request, res: Response, next: NextFunction): P
   }
 }
 
-interface AgentInitiatedMotoPageData {
-  account: GatewayAccount;
-  service: Service;
-  products: Product[];
-  csrf: string;
-  formValues?: object;
-  flash: object;
-  errors?: object;
-  errorMap?: object[];
-}
-
-async function agentInitiatedMotoPage(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
-
-  const [account, service, products] = await Promise.all([
-    getAccount(id),
-    AdminUsers.services.retrieve({gatewayAccountId: id}),
-    Products.accounts.listProductsByType(id, ProductType.Moto)
-  ])
-
-  const context: AgentInitiatedMotoPageData = {
-    account: account,
-    service: service,
-    products: products,
-    flash: req.flash(),
-    csrf: req.csrfToken()
-  }
-
-  const {recovered} = req.session
-
-  if (recovered) {
-    context.formValues = recovered.formValues
-
-    if (recovered.errors) {
-      context.errors = recovered.errors
-      context.errorMap = recovered.errors.reduce((aggregate: {
-        [key: string]: string;
-      }, error: ClientFormError) => {
-        // eslint-disable-next-line no-param-reassign
-        aggregate[error.id] = error.message
-        return aggregate
-      }, {})
-    }
-    delete req.session.recovered
-  }
-
-  res.render('gateway_accounts/agent_initiated_moto', context)
-}
-
-async function createAgentInitiatedMotoProduct(
-  req: Request,
-  res: Response
-): Promise<void> {
-  delete req.session.recovered
-
-  const {id: gatewayAccountId} = req.params
-
-  let formValues
-  try {
-    formValues = new CreateAgentInitiatedMotoProductFormRequest(req.body)
-  } catch (error) {
-    if (error instanceof IOValidationError) {
-      req.session.recovered = {
-        formValues: req.body,
-        errors: formatErrorsForTemplate(error.source)
-      }
-      res.redirect(`/gateway_accounts/${gatewayAccountId}/agent_initiated_moto`)
-      return
-    }
-  }
-
-  const account = await getAccount(gatewayAccountId)
-
-  const apiTokenDescription = `Agent-initiated MOTO API token: ${formValues.name}`
-
-  const createApiTokenRequest = {
-    account_id: gatewayAccountId,
-    description: apiTokenDescription,
-    created_by: 'govuk-pay-support@digital.cabinet-office.gov.uk',
-    token_type: TokenType.Card,
-    type: TokenSource.Products,
-    token_account_type: account.type
-  }
-
-  const {token} = await PublicAuth.tokens.create(createApiTokenRequest)
-
-  logger.info(`Created agent-initiated MOTO API token for gateway account ${gatewayAccountId} with description [${apiTokenDescription}]`)
-
-  const createAgentInitiatedMotoProductRequest = {
-    gateway_account_id: gatewayAccountId,
-    pay_api_token: token,
-    name: formValues.name,
-    description: formValues.description,
-    reference_enabled: true,
-    reference_label: formValues.reference_label,
-    reference_hint: formValues.reference_hint,
-    type: ProductType.Moto
-  }
-
-  const {external_id} = await Products.products.create(createAgentInitiatedMotoProductRequest)
-
-  logger.info(`Created agent-initiated MOTO product with ID ${external_id} for gateway account ${gatewayAccountId}`)
-
-  req.flash('generic', 'Agent-intiated MOTO product created')
-
-  res.redirect(`/gateway_accounts/${gatewayAccountId}/agent_initiated_moto`)
-}
-
 export default {
   overview: wrapAsyncErrorHandler(overview),
   listCSV: wrapAsyncErrorHandler(listCSV),
@@ -758,8 +608,6 @@ export default {
   emailBranding: wrapAsyncErrorHandler(emailBranding),
   updateEmailBranding: wrapAsyncErrorHandler(updateEmailBranding),
   toggleBlockPrepaidCards: wrapAsyncErrorHandler(toggleBlockPrepaidCards),
-  toggleMotoPayments: wrapAsyncErrorHandler(toggleMotoPayments),
-  toggleAllowTelephonePaymentNotifications: wrapAsyncErrorHandler(toggleAllowTelephonePaymentNotifications),
   toggleSendPayerIpAddressToGateway: wrapAsyncErrorHandler(toggleSendPayerIpAddressToGateway),
   toggleSendPayerEmailToGateway: wrapAsyncErrorHandler(toggleSendPayerEmailToGateway),
   toggleSendReferenceToGateway: wrapAsyncErrorHandler(toggleSendReferenceToGateway),
@@ -772,9 +620,6 @@ export default {
   updateStripePayoutDescriptor: wrapAsyncErrorHandler(updateStripePayoutDescriptor),
   search: wrapAsyncErrorHandler(search),
   searchRequest: wrapAsyncErrorHandler(searchRequest),
-  agentInitiatedMotoPage: wrapAsyncErrorHandler(agentInitiatedMotoPage),
-  createAgentInitiatedMotoProduct: wrapAsyncErrorHandler(createAgentInitiatedMotoProduct),
   toggleWorldpayExemptionEngine: wrapAsyncErrorHandler(toggleWorldpayExemptionEngine),
-  toggleAllowAuthorisationApi: wrapAsyncErrorHandler(toggleAllowAuthorisationApi),
-  toggleRecurringEnabled: wrapAsyncErrorHandler(toggleRecurringEnabled)
+  toggleRecurringEnabled: wrapAsyncErrorHandler(toggleRecurringEnabled),
 }

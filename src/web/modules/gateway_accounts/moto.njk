@@ -1,0 +1,113 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "common/json.njk" import json %}
+{% extends "layout/layout.njk" %}
+
+{% set serviceName = service.service_name.en if account.gateway_account_id else "" %}
+
+{% block main %}
+  <div>
+    <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Gateway account {{serviceName}} ({{ account.gateway_account_id }})</a>
+  </div>
+
+  <span class="govuk-caption-m">
+    {% if account.gateway_account_id %}
+      <span>{{ serviceName }}</span>
+    {% else %}
+      <span>GOV.UK Pay platform</span>
+    {% endif %}
+  </span>
+
+  <h1 class="govuk-heading-m">MOTO settings</h1>
+
+  {% if account.allow_moto === false %}
+    <div>
+      <h2 class="govuk-heading-s">Taking MOTO payments using the GOV.UK Pay payment pages is disabled</h2>
+      <p class="govuk-body">Please ensure the service has passed PCI requirements before enabling MOTO payments.</p>
+      <p class="govuk-body">MOTO payments allow services to create payments that bypass security. MOTO payments have no 3DS checks and billing addresses aren't required. This is inherently insecure.</p>
+      <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/toggle_moto_payments">
+        {{ govukButton({
+          text: "Enable MOTO payments",
+          classes: "govuk-button--warning"
+        })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    </div>
+  {% endif %}
+
+  {% if account.allow_moto === true %}
+    <div>
+      <h2 class="govuk-heading-s">Taking MOTO payments using the GOV.UK Pay payment pages is enabled</h2>
+      <p class="govuk-body">MOTO payments allow services to create payments that bypass security. MOTO payments have no 3DS checks and billing addresses aren't required. This is inherently insecure.</p>
+      <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/toggle_moto_payments">
+        {{ govukButton({
+          text: "Disable MOTO payments"
+        })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    </div>
+  {% endif %}
+
+  {% if account.allow_authorisation_api === false %}
+    <div>
+      <h2 class="govuk-heading-s">Use of the payment authorisation API is disabled</h2>
+      <p class="govuk-body">Allows creating MOTO payments with an authorisation_mode of ‘api‘. These payments are authorised by sending the card details in a POST request to Public API.</p>
+      <p class="govuk-body">Note that corporate card surcharges will not be applied to payments created in this way.</p>
+      <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/toggle_allow_authorisation_api">
+        {{ govukButton({
+          text: "Enable use of the payment authorisation API",
+          classes: "govuk-button--warning"
+        })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    </div>
+  {% endif %}
+
+  {% if account.allow_authorisation_api === true %}
+    <div>
+      <h2 class="govuk-heading-s">Use of the payment authorisation API is enabled</h2>
+      <p class="govuk-body">Creating MOTO payments with an authorisation_mode of ‘api‘ is allowed for this account. These payments are authorised by sending the card details in a POST request to Public API.</p>
+      <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/toggle_allow_authorisation_api">
+        {{ govukButton({
+          text: "Disable use of the payment authorisation API"
+        })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    </div>
+  {% endif %}
+
+  {% if account.allow_telephone_payment_notifications === false %}
+    <div>
+      <h2 class="govuk-heading-s">Telephone payment notifications are disabled</h2>
+      <p class="govuk-body">Allows use of the <a class="govuk-link govuk-link--no-visited-state" href="https://github.com/alphagov/pay-telephone-payments">API to store records of telephone payments</a> which were taken outside of GOV.UK Pay.</p>
+      <p class="govuk-body">It should be ensured that the gateway account is only used for this purpose by the service and they have a separate service if they take payments using our payment pages.</p>
+      <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/toggle_allow_telephone_payment_notifications">
+        {{ govukButton({
+          text: "Enable telephone payment notifications",
+          classes: "govuk-button--warning"
+        })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    </div>
+  {% endif %}
+
+  {% if account.allow_telephone_payment_notifications === true %}
+    <div>
+      <h2 class="govuk-heading-s">Telephone payment notifications are enabled</h2>
+      <p class="govuk-body">Use of the <a class="govuk-link govuk-link--no-visited-state" href="https://github.com/alphagov/pay-telephone-payments">telephone payment notifications API</a> is enabled for this account. This is used to store records of telephone payments which were taken outside of GOV.UK Pay.</p>
+      <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/toggle_allow_telephone_payment_notifications">
+        {{ govukButton({
+          text: "Disable telephone payment notifications"
+        })
+        }}
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+      </form>
+    </div>
+  {% endif %}
+
+{% endblock %}

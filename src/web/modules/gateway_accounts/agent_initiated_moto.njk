@@ -1,15 +1,26 @@
-{% from "govuk/components/input/macro.njk" import govukInput %}
-{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
-{% from "common/errorSummary.njk" import errorSummary %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "common/json.njk" import json %}
 {% extends "layout/layout.njk" %}
 
 {% set serviceName = service.service_name.en if account.gateway_account_id else "" %}
 
 {% block main %}
+  <div>
+    <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Gateway account {{serviceName}} ({{ account.gateway_account_id }})</a>
+  </div>
+
+  {% if (motoPaymentLinkExists and service.agent_initiated_moto_enabled) and not account.allow_moto %}
+    {% set notificationBannerHtml %}
+      <p class="govuk-notification-banner__heading">The agent initiated MOTO link is enabled for this account but MOTO payments are not enabled</p>
+      <p class="govuk-body">You must <a class="govuk-notification-banner__link" href="/gateway_accounts/{{ account.gateway_account_id }}/moto">enable MOTO payments</a> otherwise the link will be shown in the admin tool but payments will fail</p>
+    {% endset %}
+  {{ govukNotificationBanner({
+    html: notificationBannerHtml
+  }) }}
+  {% endif %}
+
   <span class="govuk-caption-m">
     {% if account.gateway_account_id %}
       <span>{{ serviceName }}</span>
@@ -18,131 +29,74 @@
     {% endif %}
   </span>
 
-  <h1 class="govuk-heading-m">Agent-initiated MOTO payments</h1>
-
-  <div>
-    <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Associated gateway account {{serviceName}} ({{ account.gateway_account_id }})</a>
-  </div>
-
-  {% if errors %}
-    {{ errorSummary({ errors: errors }) }}
-  {% endif %}
+  <h1 class="govuk-heading-m">Agent initiated MOTO</h1>
 
   <p class="govuk-body">
     Agent-initiated MOTO payments (‘telephone payment links’) allow service users with appropriate permissions to take telephone payments using a link on the admin tool dashboard.
   </p>
 
-  <p class="govuk-body">
-    For the link to appear and work, several things must be set up.
-  </p>
+  <p class="govuk-body">The gateway account must have MOTO enabled for this to work</p>
 
-  <h2 class="govuk-heading-s">The service must have agent-initiated MOTO payments enabled</h2>
+  <div class="govuk-inset-text">
+    {% if account.allow_moto %}
+      <p class="govuk-body">MOTO is enabled for this gateway account.</p>
+    {% else %}
+      <p class="govuk-body">MOTO is disabled for this gateway account.</p>
+    {% endif %}
+  </div>
+
+  {% if motoPaymentLinkExists %}
+    <h2 class="govuk-heading-s">Agent-initiated MOTO payment link is configured</h2>
+
+    {{ json("Agent-initiated MOTO products source", products) }}
+
+    <p class="govuk-body">You can add another link, but only the first one is used so this is not advised.</p>
+    {{ govukButton({
+      text: "Add another MOTO payment link (not advised)",
+      href: "/gateway_accounts/" + account.gateway_account_id + "/agent_initiated_moto_product",
+      classes: "govuk-button--warning"
+    })
+    }}
+  {% else %}
+    <h2 class="govuk-heading-s">Agent-initiated MOTO payment link is not set up</h2>
+    <p class="govuk-body">You need to add a MOTO payment link to enable agent-initiated MOTO payments. When a service user clicks the dashboard link in the admin tool, they will visit this payment link.</p>
+
+    {{ govukButton({
+      text: "Add agent-initated MOTO payment link",
+      href: "/gateway_accounts/" + account.gateway_account_id + "/agent_initiated_moto_product"
+    })
+    }}
+  {% endif %}
+
   {% if service.agent_initiated_moto_enabled %}
-    <p class="govuk-body">Agent-initiated MOTO payments are enabled for this service.</p>
-  {% else %}
-    <p class="govuk-body">Agent-initiated MOTO payments are disabled for this service.</p>
-  {% endif %}
-
-  <h2 class="govuk-heading-s">The gateway account must have MOTO enabled</h2>
-  {% if account.allow_moto %}
-    <p class="govuk-body">MOTO is enabled for this gateway account.</p>
-  {% else %}
-    <p class="govuk-body">MOTO is disabled for this gateway account.</p>
+    <h2 class="govuk-heading-s">Agent-initiated MOTO payments are enabled</h2>
     {{ govukWarningText({
-      text: "If you complete the other steps but do not enable MOTO for the gateway account, the link will appear but payments will not create successfully.",
+      text: "This setting affects both live and test accounts on the service",
       iconFallbackText: "Warning"
     }) }}
-  {% endif %}
-
-  <h2 class="govuk-heading-s">An agent-initiated MOTO product must exist</h2>
-
-  {% if products.length === 0 %}
-    <p class="govuk-body">There are no agent-initiated MOTO products. Why don’t you create one?</p>
-  {% elif products.length === 1 %}
-    <p class="govuk-body">There is 1 agent-initiated MOTO product.</p>
-    {{ govukWarningText({
-      text: "Only the first agent-initiated MOTO product is used, so you probably do not want to create another.",
-      iconFallbackText: "Warning"
-    }) }}
+    <p class="govuk-body">Enabling this flag for a service shows a ‘Take a telephone payment’ link on the admin tool dashboard if there is at least one agent-initiated MOTO product for the linked gateway account.</p>
+    <p class="govuk-body">It also allows administrators to assign users to the ‘View and take telephone payments’ and ‘View, refund and take telephone payments’ roles.</p>
+    <p class="govuk-body">All gateway accounts for the service must have MOTO payments enabled or payment creation will fail.</p>
+    {{ govukButton({
+      text: "Disable agent-initiated MOTO payments",
+      href: "/gateway_accounts/" + account.gateway_account_id + "/toggle_agent_initiated_moto_enabled"
+    })
+    }}
   {% else %}
-    <p class="govuk-body">There is {{ products | length }} agent-initiated MOTO products.</p>
+    <h2 class="govuk-heading-s">Agent-initiated MOTO payments are disabled</h2>
     {{ govukWarningText({
-      text: "Only the first agent-initiated MOTO product is used so something probably is not right here.",
+      text: "This setting affects both live and test accounts on the service",
       iconFallbackText: "Warning"
     }) }}
+    <p class="govuk-body">Enabling this flag for a service shows a ‘Take a telephone payment’ link on the admin tool dashboard if there is at least one agent-initiated MOTO product for the linked gateway account.</p>
+    <p class="govuk-body">It also allows administrators to assign users to the ‘View and take telephone payments’ and ‘View, refund and take telephone payments’ roles.</p>
+    <p class="govuk-body">All gateway accounts for the service must have MOTO payments enabled or payment creation will fail.</p>
+    {{ govukButton({
+      text: "Enable agent-initiated MOTO payments",
+      href: "/gateway_accounts/" + account.gateway_account_id + "/toggle_agent_initiated_moto_enabled",
+      classes: "govuk-button--warning"
+    })
+    }}
   {% endif %}
-
-  <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/agent_initiated_moto">
-    <input type="hidden" name="_csrf" value="{{ csrf }}">
-
-    {{ govukInput({
-      id: "name",
-      name: "name",
-      label: { 
-        text: "Payment description",
-        classes: "govuk-label--s"
-      },
-      hint: {
-        text: "A description of the purpose of the payment. The agent sees the payment description while taking the payment and it is included in the payment confirmation email sent to the paying user. "
-      },
-      spellcheck: true,
-      value: formValues.name,
-      errorMessage: errorMap.name and { text: errorMap.name }
-    }) }}
-
-    {{ govukCharacterCount({
-      id: "description",
-      name: "description",
-      maxlength: 255,
-      label: {
-        text: "Details (optional)",
-        classes: "govuk-label--s"
-      },
-      hint: {
-        text: "Additional details about the payment. The agent sees these details at the beginning of the payment process."
-      },
-      spellcheck: true,
-      value: formValues.description,
-      errorMessage: errorMap.description and { text: errorMap.description }
-    }) }}
-
-    {{ govukInput({
-      id: "reference_label",
-      name: "reference_label",
-      label: { 
-        text: "Name of the reference",
-        classes: "govuk-label--s"
-      },
-      hint: {
-        text: "The name that a service uses for their reference, such as ‘Invoice number’. The agent sees the reference name at the point they need to enter the paying user’s reference."
-      },
-      spellcheck: true,
-      value: formValues.reference_label,
-      errorMessage: errorMap.reference_label and { text: errorMap.reference_label }
-    }) }}
-
-    {{ govukCharacterCount({
-      id: "reference_hint",
-      name: "reference_hint",
-      maxlength: 255,
-      label: {
-        text: "Reference hint text (optional)",
-        classes: "govuk-label--s"
-      },
-      hint: {
-        text: "Can be used to describe what the payment reference looks like and where a paying user can find it. The agent sees the reference hint text at the point they need to enter the paying user’s reference."
-      },
-      spellcheck: true,
-      value: formValues.reference_hint,
-      errorMessage: errorMap.reference_hint and { text: errorMap.reference_hint }
-    }) }}
-
-
-  {{ govukButton({
-    text: "Create product"
-    }) }}
-  </form>
-
-  {{ json("Agent-initiated MOTO products source", products) }}
 
 {% endblock %}

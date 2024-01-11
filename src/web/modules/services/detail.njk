@@ -23,7 +23,6 @@
       { key: { text: "Go live status" }, value: { text: service.current_go_live_stage | upper } },
       { key: { text: "Archived" }, value: { text: service.archived | string | capitalize } },
       { key: { text: "Redirect to service on terminal state" }, value: { text: service.redirect_to_service_immediately_on_terminal_state | string | capitalize } },
-      { key: { text: "Agent-initiated MOTO payments are enabled" }, value: { text: service.agent_initiated_moto_enabled | string | capitalize } },
       { key: { text: "Experimental features are enabled" }, value: { text: service.experimental_features_enabled | string | capitalize } }
     ]
     })
@@ -163,32 +162,6 @@
       text: "Enable redirect to service on terminal state",
       classes: "govuk-button--warning",
       href: "/services/" + serviceId + "/toggle_terminal_state_redirect"
-      })
-    }}
-  </div>
-  {% endif %}
-
-  {% if service.agent_initiated_moto_enabled%}
-  <div>
-    <h2 class="govuk-heading-s">Agent-initiated MOTO payments are enabled</h2>
-    <p class="govuk-body">Enabling this flag for a service shows a ‘Take a telephone payment’ link on the admin tool dashboard if there is at least one agent-initiated MOTO product for the linked gateway account.</p>
-    <p class="govuk-body">It also allows administrators to assign users to the ‘View and take telephone payments’ and ‘View, refund and take telephone payments’ roles.</p>
-    <p class="govuk-body">Linked gateway accounts must have MOTO payments enabled or payment creation will fail.</p>
-    {{ govukButton({
-      text: "Disable agent-initiated MOTO payments",
-      href: "/services/" + serviceId + "/toggle_agent_initiated_moto_enabled"
-      })
-    }}
-  </div>
-  {% else %}
-  <div>
-    <h2 class="govuk-heading-s">Enable agent-initiated MOTO payments</h2>
-    <p class="govuk-body">Enabling this flag for a service shows a ‘Take a telephone payment’ link on the admin tool dashboard if there is at least one agent-initiated MOTO product for the linked gateway account.</p>
-    <p class="govuk-body">It also allows administrators to assign users to the ‘View and take telephone payments’ and ‘View, refund and take telephone payments’ roles.</p>
-    <p class="govuk-body">Linked gateway accounts must have MOTO payments enabled or payment creation will fail.</p>
-    {{ govukButton({
-      text: "Enable agent-initiated MOTO payments",
-      href: "/services/" + serviceId + "/toggle_agent_initiated_moto_enabled"
       })
     }}
   </div>

@@ -1,5 +1,12 @@
 import http from './gateway_accounts.http'
 import exceptions from './gateway_accounts.exceptions'
+import {
+  agentInitiatedMoto,
+  agentInitiatedMotoProduct,
+  createAgentInitiatedMotoProduct,
+  motoSettings, toggleAgentInitiatedMotoEnabledFlag,
+  toggleAllowAuthorisationApi, toggleAllowTelephonePaymentNotifications, toggleMotoPayments
+} from "./moto.http";
 
 export default {
   overview: http.overview,
@@ -28,8 +35,6 @@ export default {
   emailBranding: http.emailBranding,
   updateEmailBranding: http.updateEmailBranding,
   toggleBlockPrepaidCards: http.toggleBlockPrepaidCards,
-  toggleMotoPayments: http.toggleMotoPayments,
-  toggleAllowTelephonePaymentNotifications: http.toggleAllowTelephonePaymentNotifications,
   toggleSendPayerIpAddressToGateway: http.toggleSendPayerIpAddressToGateway,
   toggleSendPayerEmailToGateway: http.toggleSendPayerEmailToGateway,
   toggleSendReferenceToGateway: http.toggleSendReferenceToGateway,
@@ -42,9 +47,15 @@ export default {
   updateStripePayoutDescriptor: http.updateStripePayoutDescriptor,
   search: http.search,
   searchRequest: http.searchRequest,
-  agentInitiatedMotoPage: http.agentInitiatedMotoPage,
-  createAgentInitiatedMotoProduct: http.createAgentInitiatedMotoProduct,
   toggleWorldpayExemptionEngine: http.toggleWorldpayExemptionEngine,
-  toggleAllowAuthorisationApi: http.toggleAllowAuthorisationApi,
-  toggleRecurringEnabled: http.toggleRecurringEnabled
+  toggleRecurringEnabled: http.toggleRecurringEnabled,
+  motoSettings: motoSettings,
+  toggleMotoPayments: toggleMotoPayments,
+  agentInitiatedMoto: agentInitiatedMoto,
+  agentInitiatedMotoProduct: agentInitiatedMotoProduct,
+  createAgentInitiatedMotoProduct: createAgentInitiatedMotoProduct,
+  toggleAgentInitiatedMotoEnabledFlag: toggleAgentInitiatedMotoEnabledFlag,
+  toggleAllowTelephonePaymentNotifications: toggleAllowTelephonePaymentNotifications,
+  toggleAllowAuthorisationApi: toggleAllowAuthorisationApi
+
 }
