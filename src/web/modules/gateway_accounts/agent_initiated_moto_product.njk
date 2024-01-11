@@ -1,0 +1,123 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "common/errorSummary.njk" import errorSummary %}
+{% from "common/json.njk" import json %}
+{% extends "layout/layout.njk" %}
+
+{% set serviceName = service.service_name.en if account.gateway_account_id else "" %}
+
+{% block main %}
+  <div>
+    <a href="/gateway_accounts/{{ account.gateway_account_id }}/agent_initiated_moto" class="govuk-back-link">Agent initiated MOTO settings for {{serviceName}} ({{ account.gateway_account_id }})</a>
+  </div>
+
+  <span class="govuk-caption-m">
+    {% if account.gateway_account_id %}
+      <span>{{ serviceName }}</span>
+    {% else %}
+      <span>GOV.UK Pay platform</span>
+    {% endif %}
+  </span>
+
+  <h1 class="govuk-heading-m">Agent-initiated MOTO payments</h1>
+
+  {% if errors %}
+    {{ errorSummary({ errors: errors }) }}
+  {% endif %}
+
+
+  {% if products.length === 1 %}
+    <div class="govuk-inset-text">
+    <p class="govuk-body">There is already an agent-initiated MOTO product set up.</p>
+    {{ govukWarningText({
+      text: "Only the first agent-initiated MOTO product is used, so you probably do not want to create another.",
+      iconFallbackText: "Warning"
+    }) }}
+    </div>
+  {% elif products.length > 1 %}
+    <div class="govuk-inset-text">
+    <p class="govuk-body">There are already {{ products | length }} agent-initiated MOTO products.</p>
+    {{ govukWarningText({
+      text: "Only the first agent-initiated MOTO product is used so something probably is not right here.",
+      iconFallbackText: "Warning"
+    }) }}
+    </div>
+  {% endif %}
+
+  <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/agent_initiated_moto_product">
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+
+    {{ govukInput({
+      id: "name",
+      name: "name",
+      label: {
+        text: "Payment description",
+        classes: "govuk-label--s"
+      },
+      hint: {
+        text: "A description of the purpose of the payment. The agent sees the payment description while taking the payment and it is included in the payment confirmation email sent to the paying user. "
+      },
+      spellcheck: true,
+      value: formValues.name,
+      errorMessage: errorMap.name and { text: errorMap.name }
+    }) }}
+
+    {{ govukCharacterCount({
+      id: "description",
+      name: "description",
+      maxlength: 255,
+      label: {
+        text: "Details (optional)",
+        classes: "govuk-label--s"
+      },
+      hint: {
+        text: "Additional details about the payment. The agent sees these details at the beginning of the payment process."
+      },
+      spellcheck: true,
+      value: formValues.description,
+      errorMessage: errorMap.description and { text: errorMap.description }
+    }) }}
+
+    {{ govukInput({
+      id: "reference_label",
+      name: "reference_label",
+      label: {
+        text: "Name of the reference",
+        classes: "govuk-label--s"
+      },
+      hint: {
+        text: "The name that a service uses for their reference, such as ‘Invoice number’. The agent sees the reference name at the point they need to enter the paying user’s reference."
+      },
+      spellcheck: true,
+      value: formValues.reference_label,
+      errorMessage: errorMap.reference_label and { text: errorMap.reference_label }
+    }) }}
+
+    {{ govukCharacterCount({
+      id: "reference_hint",
+      name: "reference_hint",
+      maxlength: 255,
+      label: {
+        text: "Reference hint text (optional)",
+        classes: "govuk-label--s"
+      },
+      hint: {
+        text: "Can be used to describe what the payment reference looks like and where a paying user can find it. The agent sees the reference hint text at the point they need to enter the paying user’s reference."
+      },
+      spellcheck: true,
+      value: formValues.reference_hint,
+      errorMessage: errorMap.reference_hint and { text: errorMap.reference_hint }
+    }) }}
+
+
+  {{ govukButton({
+    text: "Create product"
+    }) }}
+  </form>
+
+  {{ json("Agent-initiated MOTO products source", products) }}
+
+{% endblock %}

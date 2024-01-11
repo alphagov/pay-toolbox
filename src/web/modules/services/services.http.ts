@@ -278,28 +278,6 @@ export async function toggleExperimentalFeaturesEnabledFlag(
   }
 }
 
-export async function toggleAgentInitiatedMotoEnabledFlag(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
-  try {
-    const serviceId = req.params.id
-
-    const service = await AdminUsers.services.retrieve(serviceId);
-    const enable = !service.agent_initiated_moto_enabled
-    await AdminUsers.services.update(serviceId, {
-      agent_initiated_moto_enabled: enable
-    })
-    logger.info(`Toggled agent-initiated MOTO enabled flag to ${enable} for service ${serviceId}`, {externalId: serviceId})
-
-    req.flash('info', `Agent-initiated MOTO ${enable ? 'enabled' : 'disabled'}`)
-    res.redirect(`/services/${serviceId}`)
-  } catch (error) {
-    next(error)
-  }
-}
-
 interface RecoverContext {
   service: Service;
   csrf: string;
