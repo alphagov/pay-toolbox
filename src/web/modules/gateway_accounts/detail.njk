@@ -84,51 +84,17 @@
     </div>
   </div>
 
-  <div>
-  {{ govukButton({
-    text: "Payments",
-    href: "/transactions?account=" + gatewayAccountId
-  })
-  }}
-  {{ govukButton({
-    text: "Refunds",
-    href: "/transactions?account=" + gatewayAccountId + "&type=REFUND"
-  })
-  }}
-  {{ govukButton({
-    text: "Payment links",
-    href: "/gateway_accounts/" + gatewayAccountId + "/payment_links"
-  })
-  }}
-  {{ govukButton({
-    text: "Agreements",
-    href: "/agreements?account=" + gatewayAccountId
-  })
-  }}
-  {{ govukButton({
-    text: "Webhooks",
-    href: "/webhooks?account=" + gatewayAccountId
-  })
-  }}
-  {% if account.payment_provider == 'stripe' %}
-    {{ govukButton({
-      text: "Payouts",
-      href: "/payouts?account=" + gatewayAccountId
-    })
-    }}
-  {% endif %}
-  </div>
-  <div>
-    {{ govukButton({
-      text: "Download transaction CSV reports",
-      href: "/transactions/csv?account=" + gatewayAccountId
-    })
-    }}
-    {{ govukButton({
-      text: "View statistics",
-      href: "/transactions/statistics?account=" + gatewayAccountId
-    })
-    }}
+  <div class="govuk-!-margin-bottom-8">
+    <ul class="govuk-list">
+      <li><a class="govuk-link govuk-link--no-visited-state" href="/transactions?account={{ gatewayAccountId }}">View account payments</a></li>
+      <li><a class="govuk-link govuk-link--no-visited-state" href="/transactions?account={{ gatewayAccountId }}&type=REFUND">View account refunds</a></li>
+      <li><a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ gatewayAccountId }}/payment_links">View account payment links</a></li>
+      <li><a class="govuk-link govuk-link--no-visited-state" href="/agreements?account={{ gatewayAccountId }}">View account agreements</a></li>
+      <li><a class="govuk-link govuk-link--no-visited-state" href="/webhooks?account={{ gatewayAccountId }}">View account webhooks</a></li>
+      <li><a class="govuk-link govuk-link--no-visited-state" href="/payouts?account={{ gatewayAccountId }}">View account payouts</a></li>
+      <li><a class="govuk-link govuk-link--no-visited-state" href="/transactions/csv?account={{ gatewayAccountId }}">Download transaction CSV reports</a></li>
+      <li><a class="govuk-link govuk-link--no-visited-state" href="/transactions/statistics?account={{ gatewayAccountId }}">View payment statistics</a></li>
+    </ul>
   </div>
 
   <div class="govuk-summary-card">
