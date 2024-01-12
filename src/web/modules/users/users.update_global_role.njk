@@ -1,0 +1,57 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% from "common/errorSummary.njk" import errorSummary %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">Update admintool global role</span>
+  <h1 class="govuk-heading-m">Admintool global role</h1>
+
+  <div>
+    <a href="/users/{{ user.external_id }}" class="govuk-back-link">Back to user ({{ user.email }})</a>
+  </div>
+
+  {% if errors %}
+    {{ errorSummary({ errors: errors }) }}
+  {% endif %}
+
+  <form action="/users/{{ user.external_id }}/global-admintool-role" method="POST">
+
+    <p class="govuk-body">Assign a global role to this user. Users with these roles will have access to all services and
+      data in admintool
+    </p>
+
+    {{ govukWarningText({
+      text: "This action is audited. Make sure there is a Jira ticket for this action",
+      iconFallbackText: "Warning"
+    }) }}
+
+    {{ govukRadios({
+      classes: "govuk-radios--inline",
+      idPrefix: "roleName",
+      name: "roleName",
+      fieldset: {
+        legend: {
+          text: "Role to assign",
+          isPageHeading: false
+        }
+      },
+      items: [
+        { value: "admin", text: "Admin", checked: user.role and user.role.name === "admin" },
+        { value: "view-only", text: "View only", checked: user.role and user.role.name === "view-only" }
+      ]
+    }) }}
+
+    <div class="govuk-button-group">
+      {{ govukButton({
+        text: "Update user role"
+      }) }}
+      <a href="/users/{{ user.external_id }}" class="govuk-link">Cancel</a>
+    </div>
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+
+  </form>
+{% endblock %}

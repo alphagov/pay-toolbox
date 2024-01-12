@@ -134,6 +134,10 @@ router.post('/users/:id/phone', auth.secured(PermissionLevel.USER_SUPPORT), user
 router.get('/users/:id/email', auth.secured(PermissionLevel.USER_SUPPORT), users.updateEmailForm)
 router.post('/users/:id/email', auth.secured(PermissionLevel.USER_SUPPORT), users.updateEmail)
 
+router.get('/users/:id/global-admintool-role', auth.secured(PermissionLevel.ADMIN), users.updateGlobalRoleForm)
+router.post('/users/:id/global-admintool-role', auth.secured(PermissionLevel.ADMIN), users.updateGlobalRole)
+router.get('/users/:id/global-admintool-role/remove', auth.secured(PermissionLevel.ADMIN), users.removeGlobalRole)
+
 // @TODO(sfount) PATCH and DELETE respectively
 router.get('/users/:id/toggle', auth.secured(PermissionLevel.USER_SUPPORT), users.toggleUserEnabled)
 router.post('/users/:userId/service/:serviceId/delete', auth.secured(PermissionLevel.ADMIN), users.removeUserFromService)

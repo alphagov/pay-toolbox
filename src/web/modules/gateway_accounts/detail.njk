@@ -46,7 +46,11 @@
     <dl class="govuk-summary-list">
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key"><span class="govuk-caption-m">ID</span></dt>
-        <dd class="govuk-summary-list__value">{{ account.gateway_account_id }}</dd>
+        <dd class="govuk-summary-list__value">{{ account.gateway_account_id }}
+            <span class="govuk-!-text-align-right toolbox-right">
+              <a href="http://localhost:3000/account/{{ account.external_id }}/dashboard" target="_blank">View in admintool</a>
+            </span>
+        </dd>
       </div>
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key"><span class="govuk-caption-m">External ID</span></dt>

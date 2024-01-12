@@ -11,9 +11,14 @@ import {EntityNotFoundError, IOValidationError} from '../../../lib/errors'
 
 const show = async function show(req: Request, res: Response): Promise<void> {
   const payUser = await AdminUsers.users.retrieve(req.params.id)
-  const context = {payUser, messages: req.flash('info'), csrf: req.csrfToken()}
+  const isInternalUser = isInternalGDSEmail(payUser.email)
+  const context = {payUser, isInternalUser, messages: req.flash('info'), csrf: req.csrfToken()}
 
   res.render('users/users.show.njk', context)
+}
+
+function isInternalGDSEmail(email: string) {
+  return email.includes(process.env.GDS_INTERNAL_USER_EMAIL_DOMAIN)
 }
 
 // @TODO(sfount) user should be defined through pay-request library, recovery values through `/lib`
@@ -139,7 +144,7 @@ const toggleUserEnabled = async function toggleUserEnabled(
   const disable = !user.disabled
   await AdminUsers.users.update(id, {disabled: disable})
 
-  req.flash('info', `User ${disable? 'disabled' : 'enabled'}`)
+  req.flash('info', `User ${disable ? 'disabled' : 'enabled'}`)
   res.redirect(`/users/${id}`)
 }
 
@@ -205,6 +210,37 @@ const search = async function search(
 
 }
 
+const updateGlobalRoleForm = async function updateGlobalRoleForm(req: Request, res: Response): Promise<void> {
+  const user = await AdminUsers.users.retrieve(req.params.id)
+
+  if(!isInternalGDSEmail(user.email)){
+    req.flash('error', `User is not an internal user`)
+    return res.redirect(`/users/${user.external_id}`)
+  }
+  else {
+    const context: RecoverContext = {user, csrf: req.csrfToken()}
+
+    res.render('users/users.update_global_role.njk', context)
+  }
+}
+
+const updateGlobalRole = async function updateGlobalRole(req: Request, res: Response): Promise<void> {
+  const {id} = req.params
+  const {roleName} = req.body
+  await AdminUsers.users.updateGlobalRole(id, roleName)
+
+  req.flash('info', `Role '${roleName}' assigned to User`)
+  res.redirect(`/users/${id}`)
+}
+
+const removeGlobalRole = async function removeGlobalRole(req: Request, res: Response): Promise<void> {
+  const {id} = req.params
+  await AdminUsers.users.deleteGlobalRole(id)
+
+  req.flash('info', `User role removed`)
+  res.redirect(`/users/${id}`)
+}
+
 export default {
   show: wrapAsyncErrorHandler(show),
   updateEmailForm: wrapAsyncErrorHandler(updateEmailForm),
@@ -216,5 +252,8 @@ export default {
   search: wrapAsyncErrorHandler(search),
   searchPage: wrapAsyncErrorHandler(searchPage),
   updateEmail,
-  updatePhoneNumber
+  updatePhoneNumber,
+  updateGlobalRoleForm,
+  updateGlobalRole,
+  removeGlobalRole
 }

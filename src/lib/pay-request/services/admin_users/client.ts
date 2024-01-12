@@ -29,7 +29,7 @@ export default class AdminUsers extends Client {
         ? '/v1/api/services'
         : `/v1/api/services/${idOrParams}`
       const config = isRetrieveServiceParams(idOrParams)
-        ? { params: idOrParams } || {}
+        ? {params: idOrParams} || {}
         : {}
       return client._axios
         .get(url, config)
@@ -80,7 +80,7 @@ export default class AdminUsers extends Client {
         .then(response => client._unpackResponseData<User[]>(response));
     },
 
-    removeUser(serviceId: string, userId: string) : Promise<void> {
+    removeUser(serviceId: string, userId: string): Promise<void> {
       return client._axios
         .delete(`/v1/api/toolbox/services/${serviceId}/users/${userId}`)
     }
@@ -95,9 +95,9 @@ export default class AdminUsers extends Client {
         .catch(handleEntityNotFound('User', id));
     },
 
-    findByEmail(email: string) : Promise<User | undefined> {
+    findByEmail(email: string): Promise<User | undefined> {
       return client._axios
-        .post('/v1/api/users/find', { email: email })
+        .post('/v1/api/users/find', {email: email})
         .then(response => client._unpackResponseData<User>(response))
         .then(user => redactOTP(user))
         .catch(handleEntityNotFound('User', email));
@@ -127,10 +127,21 @@ export default class AdminUsers extends Client {
     },
 
     listAdminEmailsForGatewayAccounts(gatewayAccountIds: string[]): Promise<Map<string, string[]> | undefined> {
-      const request = { 'gatewayAccountIds': gatewayAccountIds }
+      const request = {'gatewayAccountIds': gatewayAccountIds}
       return client._axios
         .post('/v1/api/users/admin-emails-for-gateway-accounts', request)
         .then(response => client._unpackResponseData<Map<string, string[]>>(response))
+    },
+    updateGlobalRole(userExternalId: string, roleName: string) {
+      const request = {'role_name': roleName}
+      return client._axios
+        .put(`/v1/api/users/${userExternalId}/roles`, request)
+        .then(response => client._unpackResponseData<User>(response))
+    },
+    deleteGlobalRole(userExternalId: string) {
+      return client._axios
+        .delete(`/v1/api/users/${userExternalId}/roles`)
+        .then(response => client._unpackResponseData<User>(response))
     }
   }))(this)
 }

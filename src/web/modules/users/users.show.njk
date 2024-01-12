@@ -31,6 +31,14 @@
     { key: { text: "Email" }, value: { text: payUser.email | truncate(35) }, actions: { items: [{ href: "/users/" + payUser.external_id + "/email", text: "Change" }] } },
     { key: { text: "Phone" }, value: { text: payUser.telephone_number if payUser.telephone_number else "(None set)" }, actions: { items: [{ href: "/users/" + payUser.external_id + "/phone", text: "Change" }] } },
     { key: { text: "MFA" }, value: { text: payUser.second_factor }, actions: { items: [{ href: "/users/" + payUser.external_id + "/2FA/reset", text: "Reset" }] } },
+    { key: { text: "Global Role" }, value: { text: payUser.role.name if isInternalUser else "N/A" },
+      actions: {
+        items: [
+          { href: "/users/" + payUser.external_id + "/global-admintool-role", text: "Change" if isInternalUser },
+          { href: "/users/" + payUser.external_id + "/global-admintool-role/remove", text: "Remove" if isInternalUser and payUser.role and payUser.role.name }
+        ]
+      }
+    },
     { key: { text: "Disabled" }, value: { text: "True" if payUser.disabled else "False" }, actions: { items: [{ href: "/users/" + payUser.external_id + "/toggle", text: "Enable" if payUser.disabled else "Disable" }] }  }
   ]
   })
