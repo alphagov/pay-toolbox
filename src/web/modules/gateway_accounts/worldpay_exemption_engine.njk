@@ -18,22 +18,15 @@
 
     {{ govukRadios({
       name: "enabled",
-      fieldset: {
-        legend: {
-          text: "Should the Exemption Engine be enabled?",
-          isPageHeading: false,
-          classes: "govuk-fieldset__legend--m"
-        }
-      },
       items: [
         {
           value: "enabled",
-          text: "Enabled",
+          text: "Turn on Exemption Engine",
           checked: enabled
         },
         {
           value: "disabled",
-          text: "Disabled",
+          text: "Turn off Exemption Engine",
           checked: not enabled
         }
       ]
