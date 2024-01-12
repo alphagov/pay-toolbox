@@ -1,0 +1,49 @@
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% extends "layout/layout.njk" %}
+
+{% set isTestData = account and not (account.type === "live") %}
+
+{% block main %}
+  <h1 class="govuk-heading-m">Worldpay 3DS Exemption Engine</h1>
+
+  <div>
+    <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Gateway account ({{ account.gateway_account_id }})</a>
+  </div>
+
+  <p class="govuk-body">The Worldpay Exemption Engine uses real-time risk analysis to exempt as many transactions as possible from SCA (Strong Customer Authentication).</p>
+  <p class="govuk-body">This feature will be requested by a service through support.</p>
+
+  <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/worldpay_exemption_engine">
+
+    {{ govukRadios({
+      name: "enabled",
+      fieldset: {
+        legend: {
+          text: "Should the Exemption Engine be enabled?",
+          isPageHeading: false,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "enabled",
+          text: "Enabled",
+          checked: enabled
+        },
+        {
+          value: "disabled",
+          text: "Disabled",
+          checked: not enabled
+        }
+      ]
+    }) }}
+
+    {{ govukButton({
+      text: "Save"
+    })
+    }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}

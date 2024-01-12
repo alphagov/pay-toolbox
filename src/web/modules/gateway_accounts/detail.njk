@@ -157,11 +157,10 @@
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Exemption engine</span></dt>
           <dd class="govuk-summary-list__value">
-            {% if account.worldpay_3ds_flex and account.worldpay_3ds_flex.exemption_engine_enabled %}
-              Enabled
-            {% else %}
-              Disabled
-            {% endif %}
+            {{ 'Enabled' if account.worldpay_3ds_flex and account.worldpay_3ds_flex.exemption_engine_enabled else 'Disabled' }}
+          </dd>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/worldpay_exemption_engine">Manage<span class="govuk-visually-hidden"> Worldpay Exemption Engine</span></a>
           </dd>
         </div>
       {% endif %}
@@ -381,28 +380,6 @@
     })
     }}
   </div>
-
-  {% if account.payment_provider === 'worldpay' %}
-    {% set 3dsFlexEnabled = account.worldpay_3ds_flex %}
-    {% set exemptionEngineEnabled = account.worldpay_3ds_flex and account.worldpay_3ds_flex.exemption_engine_enabled %}
-
-    {% set exemptionEngineHeader = "Worldpay Exemption Engine is enabled" if exemptionEngineEnabled else "Worldpay Exemption Engine is disabled" %}
-    {% set exemptionEngineAction = "Disable Worldpay Exemption Engine" if exemptionEngineEnabled else "Enable Worldpay Exemption Engine" %}
-
-    <div>
-      <h2 class="govuk-heading-s">{{ exemptionEngineHeader }}</h2>
-      <p class="govuk-body">The Worldpay Exemption Engine can only be enabled if the service has configured Worldpay 3DS Flex. This action will be requested by the service through support.</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_worldpay_exemption_engine">
-        {{ govukButton({
-          text: exemptionEngineAction,
-          classes: "" if exemptionEngineEnabled else "govuk-button--warning"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
-    </div>
-    <div>
-  {% endif %}
 
   {% if account.disabled === true %}
   <div>
