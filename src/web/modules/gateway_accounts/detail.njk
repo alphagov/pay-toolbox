@@ -75,7 +75,13 @@
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key"><span class="govuk-caption-m">API</span></dt>
         <dd class="govuk-summary-list__value">
-          {{ tokensCount }} API keys
+          {% if tokensCount === 0 %}
+            <i>(No API keys configured)</i>
+          {% elif tokensCount === 1 %}
+            1 API Key
+          {% else %}
+            {{ tokensCount }} API keys
+          {% endif %}
         </dd>
         <dd class="govuk-summary-list__actions">
           <a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/api_keys">Manage<span class="govuk-visually-hidden"> API keys</span></a>
@@ -146,14 +152,14 @@
                 {% endfor %}
               </ul>
             {% else %}
-              (All setup tasks completed)
+              <i>(All setup tasks completed)</i>
             {% endif %}
           </dd>
         </div>
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Payments statement descriptor</span></dt>
           <dd class="govuk-summary-list__value">
-            {{ stripePaymentsStatementDescriptor or '(Unable to fetch from Stripe)' }}
+            {% if stripePaymentsStatementDescriptor %}{{ stripePaymentsStatementDescriptor }}{% else %}<i>(Unable to fetch from Stripe)</i>{% endif %}
           </dd>
           <dd class="govuk-summary-list__actions">
             <a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/stripe_statement_descriptor">Manage<span class="govuk-visually-hidden"> Stripe payments statement descriptor</span></a>
@@ -162,7 +168,7 @@
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Payouts statement descriptor</span></dt>
           <dd class="govuk-summary-list__value">
-            {{ stripePayoutsStatementDescriptor or '(Unable to fetch from Stripe)' }}
+            {% if stripePayoutsStatementDescriptor %}{{ stripePayoutsStatementDescriptor }}{% else %}<i>(Unable to fetch from Stripe)</i>{% endif %}
           </dd>
           <dd class="govuk-summary-list__actions">
             <a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/stripe_payout_descriptor">Manage<span class="govuk-visually-hidden"> Stripe payouts statement descriptor</span></a>
@@ -230,7 +236,7 @@
             {% if account.allow_apple_pay %} <span><strong class="govuk-tag govuk-tag--grey">Apple Pay</strong></span>{% endif %}
             {% if account.allow_google_pay %} <span><strong class="govuk-tag govuk-tag--grey">Google Pay</strong></span>{% endif %}
           {% else %}
-            (No wallets enabled)
+            <i>(No wallets enabled)</i>
           {% endif %}
         </dd>
       </div>
@@ -326,7 +332,7 @@
                 {% if account.notifySettings.service_id %}
                   <a class="govuk-link govuk-link--no-visited-state" href="https://www.notifications.service.gov.uk/services/{{ account.notifySettings.service_id }}">{{ account.notifySettings.service_id }}</a>
                 {% else %}
-                  (Not set)
+                  <i>(Not set)</i>
                 {% endif %}</dd>
               <dd class="govuk-summary-list__actions">
                 <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ gatewayAccountId }}/email_branding">Change<span class="govuk-visually-hidden"> Notify service ID</span></a>
@@ -348,7 +354,8 @@
             </div>
             <div class="govuk-summary-list__row">
               <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Reply-to email address ID</span></dt>
-              <dd class="govuk-summary-list__value">{{ account.notifySettings.email_reply_to_id or "(Default for Notify service)" }}</dd>
+              <dd class="govuk-summary-list__value">
+                {% if account.notifySettings.email_reply_to_id %}{{ account.notifySettings.email_reply_to_id }}{% else %}<i>(Default for Notify service)</i>{% endif %}
               <dd class="govuk-summary-list__actions">
                 <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ gatewayAccountId }}/email_branding">Change<span class="govuk-visually-hidden"> Reply-to email address ID</span></a>
               </dd>
