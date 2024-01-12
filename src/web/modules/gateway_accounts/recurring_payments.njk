@@ -1,0 +1,52 @@
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% extends "layout/layout.njk" %}
+
+{% set isTestData = account and not (account.type === "live") %}
+
+{% block main %}
+  <h1 class="govuk-heading-m">Recurring payments</h1>
+
+  <div>
+    <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Gateway account ({{ account.gateway_account_id }})</a>
+  </div>
+
+  {% if account.recurring_enabled %}
+    <p class="govuk-body">Recurring card payments can be taken, and agreements and their payment instruments show in the admin tool.</p>
+  {% else %}
+    <p class="govuk-body">If enabled, recurring card payments can be taken, and agreements and their payment instruments show in the admin tool.</p>
+  {% endif %}
+
+  <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/recurring_payments">
+
+    {{ govukRadios({
+      name: "enabled",
+      fieldset: {
+        legend: {
+          text: "Should recurring payments be enabled?",
+          isPageHeading: false,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "enabled",
+          text: "Enabled",
+          checked: account.recurring_enabled
+        },
+        {
+          value: "disabled",
+          text: "Disabled",
+          checked: not account.recurring_enabled
+        }
+      ]
+    }) }}
+
+    {{ govukButton({
+      text: "Save"
+    })
+    }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}

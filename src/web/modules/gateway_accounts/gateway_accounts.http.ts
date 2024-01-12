@@ -479,16 +479,27 @@ async function enable(
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-async function toggleRecurringEnabled(
+async function recurringPayments(
   req: Request,
   res: Response
 ): Promise<void> {
   const {id} = req.params
   const account = await Connector.accounts.retrieve(id)
-  const enable = !account.recurring_enabled
-  await Connector.accounts.update(id, {recurring_enabled: enable})
+  res.render('gateway_accounts/recurring_payments', {
+    account,
+    csrf: req.csrfToken()
+  })
+}
 
-  req.flash('info', `Recurring card payments ${enable ? 'enabled' : 'disabled'}`)
+async function updateRecurringPayments(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const {id} = req.params
+  const enabled = req.body.enabled === 'enabled'
+  await Connector.accounts.update(id, {recurring_enabled: enabled})
+
+  req.flash('info', `Recurring card payments ${enabled ? 'enabled' : 'disabled'}`)
   res.redirect(`/gateway_accounts/${id}`)
 }
 
@@ -636,5 +647,6 @@ export default {
   search: wrapAsyncErrorHandler(search),
   searchRequest: wrapAsyncErrorHandler(searchRequest),
   toggleWorldpayExemptionEngine: wrapAsyncErrorHandler(toggleWorldpayExemptionEngine),
-  toggleRecurringEnabled: wrapAsyncErrorHandler(toggleRecurringEnabled),
+  recurringPayments: wrapAsyncErrorHandler(recurringPayments),
+  updateRecurringPayments: wrapAsyncErrorHandler(updateRecurringPayments)
 }
