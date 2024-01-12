@@ -222,11 +222,12 @@ async function detail(req: Request, res: Response): Promise<void> {
   let stripeDashboardUri = ''
 
   const {id} = req.params
-  const [account, acceptedCards, stripeSetup, motoProducts] = await Promise.all([
+  const [account, acceptedCards, stripeSetup, motoProducts, tokens] = await Promise.all([
     Connector.accounts.retrieve(id),
     Connector.accounts.listCardTypes(id),
     Connector.accounts.retrieveStripeSetup(id),
-    Products.accounts.listProductsByType(id, ProductType.Moto)
+    Products.accounts.listProductsByType(id, ProductType.Moto),
+    PublicAuth.tokens.list({gateway_account_id: id})
   ])
 
   let service = {}
@@ -234,6 +235,18 @@ async function detail(req: Request, res: Response): Promise<void> {
     service = await AdminUsers.services.retrieve({gatewayAccountId: id})
   } catch (error: any) {
     logger.warn(`Services request for gateway account ${id} returned "${error.message}"`)
+  }
+
+  let stripePaymentsStatementDescriptor, stripePayoutsStatementDescriptor
+  try {
+    if (account.payment_provider === 'stripe') {
+      const {stripe_account_id} = await Connector.accounts.retrieveStripeCredentials(id)
+      const stripeAccount = await stripeClient.getStripeApi().accounts.retrieve(stripe_account_id)
+      stripePaymentsStatementDescriptor = stripeAccount.settings.payments.statement_descriptor
+      stripePayoutsStatementDescriptor = stripeAccount.settings.payouts.statement_descriptor
+    }
+  } catch (error) {
+    logger.warn('Unable to retrieve account details from Stripe. Make sure the Stripe API key is configured in the environment variables')
   }
 
   const currentCredential = getCurrentCredential(account)
@@ -265,6 +278,9 @@ async function detail(req: Request, res: Response): Promise<void> {
     threeDSFlexEnabled,
     motoPaymentLinkExists,
     corporateSurchargeEnabled,
+    tokensCount: tokens.tokens.length,
+    stripePaymentsStatementDescriptor,
+    stripePayoutsStatementDescriptor,
     messages: req.flash('info'),
     csrf: req.csrfToken()
   })

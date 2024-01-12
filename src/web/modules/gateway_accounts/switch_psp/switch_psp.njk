@@ -11,6 +11,10 @@
   <span class="govuk-caption-m">{{ service.service_name and service.service_name.en }} ({{ account.payment_provider | capitalize }})
   <h1 class="govuk-heading-m">Set up provider switching</h1>
 
+  <div>
+    <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Gateway account {{serviceName}} ({{ account.gateway_account_id }})</a>
+  </div>
+
   <p class="govuk-body">You can set an account up for switching payment service provider.</p>
 
   <p class="govuk-body">This will add a new credentials record to the account and enable the switching feature flag.</p>
