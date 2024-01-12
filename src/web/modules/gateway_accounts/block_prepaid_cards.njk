@@ -1,0 +1,54 @@
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% extends "layout/layout.njk" %}
+
+{% set isTestData = account and not (account.type === "live") %}
+
+{% block main %}
+  <h1 class="govuk-heading-m">Prepaid cards</h1>
+
+  <div>
+    <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Gateway account ({{ account.gateway_account_id }})</a>
+  </div>
+
+  {% if allowed %}
+    <p class="govuk-body">Prepaid cards are allowed on this service, users can make payments using them.<p>
+    <p class="govuk-body">Blocking prepaid cards will mean that some users that only have access to them will no longer be able to use the service.<p>
+  {% else %}
+    <p class="govuk-body">Prepaid cards are currently blocked on this service, users cannot use them to make payments.<p>
+    <p class="govuk-body">Allowing prepaid cards could potentially mean that more fraudulent users can access the service.<p>
+  {% endif %}
+
+  <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/block_prepaid_cards">
+
+    {{ govukRadios({
+      name: "blocked",
+      fieldset: {
+        legend: {
+          text: "Should prepaid cards be allowed?",
+          isPageHeading: false,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "allowed",
+          text: "Allowed",
+          checked: allowed
+        },
+        {
+          value: "blocked",
+          text: "Blocked",
+          checked: not allowed
+        }
+      ]
+    }) }}
+
+    {{ govukButton({
+      text: "Save"
+    })
+    }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}
