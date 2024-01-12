@@ -367,13 +367,27 @@ async function updateEmailBranding(req: Request, res: Response):
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-async function toggleBlockPrepaidCards(
+async function blockPrepaidCards(
   req: Request,
   res: Response
 ): Promise<void> {
   const {id} = req.params
   const account = await Connector.accounts.retrieve(id)
-  const block = !account.block_prepaid_cards
+
+  const allowed = !account.block_prepaid_cards
+  res.render('gateway_accounts/block_prepaid_cards', {
+    account,
+    allowed,
+    csrf: req.csrfToken()
+  })
+}
+
+async function updateBlockPrepaidCards(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const {id} = req.params
+  const block = req.body.blocked === 'blocked'
   await Connector.accounts.update(id, {block_prepaid_cards: block})
 
   req.flash('info', `Prepaid cards are ${block ? 'blocked' : 'allowed'}`)
@@ -607,7 +621,8 @@ export default {
   updateSurcharge: wrapAsyncErrorHandler(updateSurcharge),
   emailBranding: wrapAsyncErrorHandler(emailBranding),
   updateEmailBranding: wrapAsyncErrorHandler(updateEmailBranding),
-  toggleBlockPrepaidCards: wrapAsyncErrorHandler(toggleBlockPrepaidCards),
+  blockPrepaidCards: wrapAsyncErrorHandler(blockPrepaidCards),
+  updateBlockPrepaidCards: wrapAsyncErrorHandler(updateBlockPrepaidCards),
   toggleSendPayerIpAddressToGateway: wrapAsyncErrorHandler(toggleSendPayerIpAddressToGateway),
   toggleSendPayerEmailToGateway: wrapAsyncErrorHandler(toggleSendPayerEmailToGateway),
   toggleSendReferenceToGateway: wrapAsyncErrorHandler(toggleSendReferenceToGateway),

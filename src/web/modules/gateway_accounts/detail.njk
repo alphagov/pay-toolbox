@@ -221,8 +221,11 @@
         <dd class="govuk-summary-list__value">{{ account.recurring_enabled | string | capitalize }}</dd>
       </div>
       <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Blocked prepaid cards</span></dt>
-        <dd class="govuk-summary-list__value">{{ account.block_prepaid_cards | string | capitalize }}</dd>
+        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Prepaid cards</span></dt>
+        <dd class="govuk-summary-list__value">{{ 'Blocked' if account.block_prepaid_cards else 'Allowed' }}</dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/block_prepaid_cards">Manage<span class="govuk-visually-hidden"> prepaid cards</span></a>
+        </dd>
       </div>
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Corporate surcharge</span></dt>
@@ -372,33 +375,6 @@
     })
     }}
   </div>
-
-  {% if account.block_prepaid_cards === true %}
-    <div>
-      <h2 class="govuk-heading-s">Allow prepaid cards</h2>
-      <p class="govuk-body">Prepaid cards are currently blocked on this service, users cannot use them to make payments.<p>
-      <p class="govuk-body">Allowing prepaid cards could potentially mean that more fraudulent users can access the service.<p>
-        {{ govukButton({
-          text: "Allow prepaid cards",
-          href: "/gateway_accounts/" + gatewayAccountId + "/block_prepaid_cards/toggle"
-          })
-        }}
-    </div>
-  {% endif %}
-
-  {% if account.block_prepaid_cards === false %}
-    <div>
-      <h2 class="govuk-heading-s">Block prepaid cards</h2>
-      <p class="govuk-body">Prepaid cards are allowed on this service, users can make payments using them.<p>
-      <p class="govuk-body">Blocking prepaid cards will mean that some users that only have access to them will no longer be able to use the service.<p>
-        {{ govukButton({
-          text: "Block prepaid cards",
-          classes: "govuk-button--warning",
-          href: "/gateway_accounts/" + gatewayAccountId + "/block_prepaid_cards/toggle"
-          })
-        }}
-    </div>
-  {% endif %}
 
     {% if account.recurring_enabled === false %}
     <div>
