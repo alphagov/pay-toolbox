@@ -21,22 +21,15 @@
 
     {{ govukRadios({
       name: "enabled",
-      fieldset: {
-        legend: {
-          text: "Should recurring payments be enabled?",
-          isPageHeading: false,
-          classes: "govuk-fieldset__legend--m"
-        }
-      },
       items: [
         {
           value: "enabled",
-          text: "Enabled",
+          text: "Enable recurring payments",
           checked: account.recurring_enabled
         },
         {
           value: "disabled",
-          text: "Disabled",
+          text: "Disable recurring payments",
           checked: not account.recurring_enabled
         }
       ]
