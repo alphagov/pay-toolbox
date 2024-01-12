@@ -36,9 +36,6 @@ export default {
   updateEmailBranding: http.updateEmailBranding,
   blockPrepaidCards: http.blockPrepaidCards,
   updateBlockPrepaidCards: http.updateBlockPrepaidCards,
-  toggleSendPayerIpAddressToGateway: http.toggleSendPayerIpAddressToGateway,
-  toggleSendPayerEmailToGateway: http.toggleSendPayerEmailToGateway,
-  toggleSendReferenceToGateway: http.toggleSendReferenceToGateway,
   disableReasonPage: http.disableReasonPage,
   disable: http.disable,
   enable: http.enable,
@@ -51,6 +48,8 @@ export default {
   toggleWorldpayExemptionEngine: http.toggleWorldpayExemptionEngine,
   recurringPayments: http.recurringPayments,
   updateRecurringPayments: http.updateRecurringPayments,
+  worldpayPaymentData: http.worldpayPaymentData,
+  updateWorldpayPaymentData: http.updateWorldpayPaymentData,
   motoSettings: motoSettings,
   toggleMotoPayments: toggleMotoPayments,
   agentInitiatedMoto: agentInitiatedMoto,
@@ -59,5 +58,4 @@ export default {
   toggleAgentInitiatedMotoEnabledFlag: toggleAgentInitiatedMotoEnabledFlag,
   toggleAllowTelephonePaymentNotifications: toggleAllowTelephonePaymentNotifications,
   toggleAllowAuthorisationApi: toggleAllowAuthorisationApi
-
 }

@@ -144,6 +144,9 @@
               {% endif %}
             </ul>
           </dd>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/worldpay_payment_data">Manage<span class="govuk-visually-hidden"> payment details sent to Worldpay</span></a>
+          </dd>
         </div>
         {% if is3DSFlexApplicable %}
           <div class="govuk-summary-list__row">
@@ -379,70 +382,6 @@
     }}
   </div>
 
-  {% if account.send_payer_ip_address_to_gateway === true %}
-    <div>
-      <h2 class="govuk-heading-s">Sending payer IP address to gateway is enabled</h2>
-      <p class="govuk-body">If enabled, the paying user's IP address is sent to the payment gateway for fraud prevention purposes. This is not implemented for Stripe accounts.</p>
-      <p class="govuk-body">3D Secure must also be enabled for the IP address to be sent to the gateway.</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_payer_ip_address_to_gateway">
-        {{ govukButton({
-          text: "Disable sending payer IP address to gateway"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
-    </div>
-  {% endif %}
-
-  {% if account.send_payer_ip_address_to_gateway === false %}
-    <div>
-      <h2 class="govuk-heading-s">Enable sending payer IP address to gateway</h2>
-      <p class="govuk-body">If enabled, the paying user's IP address is sent to the payment gateway for fraud prevention purposes. This is not implemented for Stripe accounts.</p>
-      <p class="govuk-body">3D Secure must also be enabled for the IP address to be sent to the gateway.</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_payer_ip_address_to_gateway">
-        {{ govukButton({
-          text: "Enable sending payer IP address to gateway",
-          classes: "govuk-button--warning"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
-    </div>
-  {% endif %}
-
-  <div>
-    <h2 class="govuk-heading-s">
-      {% if account.send_payer_email_to_gateway %}
-        Sending payer email to gateway is enabled
-      {% else %}
-        Enable sending payer email to gateway
-      {% endif %}
-    </h2>
-
-    <p class="govuk-body">If enabled, the paying user's email is sent to the payment gateway for fraud prevention purposes. This is not implemented for Stripe accounts.</p>
-
-    {{ govukWarningText({
-      text: "Ensure that the service does not have the setting enabled in Worldpay that will send emails to the payer.",
-      iconFallbackText: "Warning"
-    }) }}
-
-    <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_payer_email_to_gateway">
-      {% if account.send_payer_email_to_gateway %}
-        {{ govukButton({
-          text: "Disable sending payer email to gateway"
-          })
-        }}
-      {% else %}
-        {{ govukButton({
-          text: "Enable sending payer email to gateway",
-          classes: "govuk-button--warning"
-          })
-        }}
-      {% endif %}
-      <input type="hidden" name="_csrf" value="{{ csrf }}">
-    </form>
-  </div>
-
   {% if account.payment_provider === 'worldpay' %}
     {% set 3dsFlexEnabled = account.worldpay_3ds_flex %}
     {% set exemptionEngineEnabled = account.worldpay_3ds_flex and account.worldpay_3ds_flex.exemption_engine_enabled %}
@@ -463,35 +402,6 @@
       </form>
     </div>
     <div>
-  {% endif %}
-
-  {% if account.send_reference_to_gateway === true %}
-    <div>
-      <h2 class="govuk-heading-s">Sending reference to gateway is enabled</h2>
-      <p class="govuk-body">If enabled, the payment <b>reference</b> is sent to gateway, otherwise <b>description</b> is sent to gateway. Only applicable for Worldpay accounts</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_reference_to_gateway">
-        {{ govukButton({
-          text: "Disable sending reference to gateway"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
-    </div>
-  {% endif %}
-
-  {% if account.send_reference_to_gateway === false %}
-    <div>
-      <h2 class="govuk-heading-s">Enable sending reference to gateway</h2>
-      <p class="govuk-body">If enabled, the payment <b>reference</b> is sent to gateway, otherwise <b>description</b> is sent to gateway. Only applicable for Worldpay accounts</p>
-      <form method="POST" action="/gateway_accounts/{{ gatewayAccountId }}/toggle_send_reference_to_gateway">
-        {{ govukButton({
-          text: "Enable sending reference to gateway",
-          classes: "govuk-button--warning"
-          })
-        }}
-        <input type="hidden" name="_csrf" value="{{ csrf }}">
-      </form>
-    </div>
   {% endif %}
 
   {% if account.disabled === true %}
