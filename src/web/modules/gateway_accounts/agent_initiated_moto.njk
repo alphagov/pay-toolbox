@@ -48,6 +48,13 @@
   {% if motoPaymentLinkExists %}
     <h2 class="govuk-heading-s">Agent-initiated MOTO payment link is configured</h2>
 
+    {% if products.length > 1 %}
+      {{ govukWarningText({
+        text: "There are " + products.length + " MOTO payment links. Only the first payment link is used so something probably is not right here.",
+        iconFallbackText: "Warning"
+      }) }}
+    {% endif %}
+
     {{ json("Agent-initiated MOTO products source", products) }}
 
     <p class="govuk-body">You can add another link, but only the first one is used so this is not advised.</p>
