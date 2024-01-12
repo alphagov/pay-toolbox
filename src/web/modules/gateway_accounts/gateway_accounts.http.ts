@@ -403,45 +403,6 @@ async function toggleWorldpayExemptionEngine(req: Request, res: Response): Promi
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-async function toggleSendPayerIpAddressToGateway(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
-  const account = await Connector.accounts.retrieve(id)
-  const enable = !account.send_payer_ip_address_to_gateway
-  await Connector.accounts.update(id, {send_payer_ip_address_to_gateway: enable})
-
-  req.flash('info', `Sending payer IP address to gateway ${enable ? 'enabled' : 'disabled'}`)
-  res.redirect(`/gateway_accounts/${id}`)
-}
-
-async function toggleSendPayerEmailToGateway(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
-  const account = await Connector.accounts.retrieve(id)
-  const enable = !account.send_payer_email_to_gateway
-  await Connector.accounts.update(id, {send_payer_email_to_gateway: enable})
-
-  req.flash('info', `Sending payer email to gateway ${enable ? 'enabled' : 'disabled'}`)
-  res.redirect(`/gateway_accounts/${id}`)
-}
-
-async function toggleSendReferenceToGateway(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
-  const account = await Connector.accounts.retrieve(id)
-  const enable = !account.send_reference_to_gateway
-  const enabled = await Connector.accounts.update(id, {send_reference_to_gateway: enable})
-
-  req.flash('info', `Sending reference (instead of description) to gateway ${enable ? 'enabled' : 'disabled'}`)
-  res.redirect(`/gateway_accounts/${id}`)
-}
-
 async function disableReasonPage(
   req: Request,
   res: Response
@@ -618,6 +579,28 @@ async function searchRequest(req: Request, res: Response, next: NextFunction): P
   }
 }
 
+async function worldpayPaymentData(req: Request, res: Response): Promise<void> {
+  const {id} = req.params
+  const account = await Connector.accounts.retrieve(id)
+  res.render('gateway_accounts/worldpay_payment_data', {
+    account,
+    csrf: req.csrfToken()
+  })
+}
+
+async function updateWorldpayPaymentData(req: Request, res: Response): Promise<void> {
+  const {id} = req.params
+  const sendReferenceInDescription = req.body.description === 'reference'
+  const sendEmail = req.body.email === 'yes'
+  const sendIp = req.body.ip === 'yes'
+  await Connector.accounts.update(id, {send_reference_to_gateway: sendReferenceInDescription})
+  await Connector.accounts.update(id, {send_payer_email_to_gateway: sendEmail})
+  await Connector.accounts.update(id, {send_payer_ip_address_to_gateway: sendIp})
+
+  req.flash('info', 'Payment details sent to Worldpay updated')
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
 export default {
   overview: wrapAsyncErrorHandler(overview),
   listCSV: wrapAsyncErrorHandler(listCSV),
@@ -634,9 +617,6 @@ export default {
   updateEmailBranding: wrapAsyncErrorHandler(updateEmailBranding),
   blockPrepaidCards: wrapAsyncErrorHandler(blockPrepaidCards),
   updateBlockPrepaidCards: wrapAsyncErrorHandler(updateBlockPrepaidCards),
-  toggleSendPayerIpAddressToGateway: wrapAsyncErrorHandler(toggleSendPayerIpAddressToGateway),
-  toggleSendPayerEmailToGateway: wrapAsyncErrorHandler(toggleSendPayerEmailToGateway),
-  toggleSendReferenceToGateway: wrapAsyncErrorHandler(toggleSendReferenceToGateway),
   disableReasonPage: wrapAsyncErrorHandler(disableReasonPage),
   disable: wrapAsyncErrorHandler(disable),
   enable: wrapAsyncErrorHandler(enable),
@@ -648,5 +628,7 @@ export default {
   searchRequest: wrapAsyncErrorHandler(searchRequest),
   toggleWorldpayExemptionEngine: wrapAsyncErrorHandler(toggleWorldpayExemptionEngine),
   recurringPayments: wrapAsyncErrorHandler(recurringPayments),
-  updateRecurringPayments: wrapAsyncErrorHandler(updateRecurringPayments)
+  updateRecurringPayments: wrapAsyncErrorHandler(updateRecurringPayments),
+  worldpayPaymentData: wrapAsyncErrorHandler(worldpayPaymentData),
+  updateWorldpayPaymentData: wrapAsyncErrorHandler(updateWorldpayPaymentData)
 }
