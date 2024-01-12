@@ -23,22 +23,15 @@
 
     {{ govukRadios({
       name: "blocked",
-      fieldset: {
-        legend: {
-          text: "Should prepaid cards be allowed?",
-          isPageHeading: false,
-          classes: "govuk-fieldset__legend--m"
-        }
-      },
       items: [
         {
           value: "allowed",
-          text: "Allowed",
+          text: "Allow prepaid cards",
           checked: allowed
         },
         {
           value: "blocked",
-          text: "Blocked",
+          text: "Block prepaid cards",
           checked: not allowed
         }
       ]
