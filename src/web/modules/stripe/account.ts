@@ -25,7 +25,7 @@ export async function setupProductionStripeAccount(serviceExternalId: string, st
 
   logger.info('Requesting new Stripe account from stripe API')
 
-  const stripeAccount = await stripeClient.getStripeApi().accounts.create({
+  const data = {
     type: 'custom',
     country: 'GB',
     business_type: 'government_agency',
@@ -61,7 +61,9 @@ export async function setupProductionStripeAccount(serviceExternalId: string, st
       ip: tosAcceptance.ip_address,
       date: Math.floor(new Date(tosAcceptance.agreement_time).getTime() / 1000)
     }
-  })
+  };
+  // @ts-ignore
+  const stripeAccount = await stripeClient.getStripeApi(true).accounts.create(data)
   logger.info(`Stripe API responded with success, account ${stripeAccount.id} created.`)
   return stripeAccount
 }

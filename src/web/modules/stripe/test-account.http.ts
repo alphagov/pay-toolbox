@@ -3,7 +3,6 @@ import Stripe from "stripe";
 
 import {NextFunction, Request, Response} from 'express'
 import logger from '../../../lib/logger'
-import * as config from '../../../config'
 import {AdminUsers, Connector} from '../../../lib/pay-request/client'
 import {ValidationError as CustomValidationError} from '../../../lib/errors'
 import {wrapAsyncErrorHandler} from '../../../lib/routes'
@@ -14,20 +13,11 @@ import {stripeTestResponsiblePersonDetails} from './model/person.model'
 import {CreateGatewayAccountResponse} from "../../../lib/pay-request/services/connector/types";
 import {liveStatus} from "../../../lib/liveStatus";
 import {providers} from "../../../lib/providers";
+import * as stripeClient from "../../../lib/stripe/stripe.client";
 
 const { StripeError } = Stripe.errors
 
 const STRIPE_ACCOUNT_TEST_API_KEY: string = process.env.STRIPE_ACCOUNT_TEST_API_KEY || ''
-
-const stripeConfig: Stripe.StripeConfig = {
-  'apiVersion': '2020-08-27'
-}
-if (config.server.HTTPS_PROXY) {
-  // @ts-ignore
-  stripeConfig.httpAgent = new HTTPSProxyAgent(config.server.HTTPS_PROXY)
-}
-
-const stripe = new Stripe(STRIPE_ACCOUNT_TEST_API_KEY, {...stripeConfig})
 
 const createTestAccount = async function createTestAccount(req: Request, res: Response): Promise<void> {
     if (!STRIPE_ACCOUNT_TEST_API_KEY) {
@@ -120,7 +110,7 @@ async function createTestGatewayAccount(serviceId: string, serviceName: string, 
 async function createStripeTestAccount(serviceName: string): Promise<Stripe.Account> {
     logger.info('Requesting new Stripe test account from stripe API')
 
-    const stripeAccountCreated = await stripe.accounts.create(stripeTestAccountDetails(serviceName))
+    const stripeAccountCreated = await stripeClient.getStripeApi(false).accounts.create(stripeTestAccountDetails(serviceName))
     await createRepresentative(stripeAccountCreated.id)
 
     logger.info(`Stripe API responded with success, account ${stripeAccountCreated.id} created.`)
@@ -128,7 +118,7 @@ async function createStripeTestAccount(serviceName: string): Promise<Stripe.Acco
 }
 
 async function createRepresentative(connectAccountId: string) {
-    await stripe.accounts.createPerson(connectAccountId, stripeTestResponsiblePersonDetails())
+    await stripeClient.getStripeApi(false).accounts.createPerson(connectAccountId, stripeTestResponsiblePersonDetails())
 }
 
 export default {

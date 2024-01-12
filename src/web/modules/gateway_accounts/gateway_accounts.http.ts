@@ -190,7 +190,7 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
   } = {}
 
   if (account.provider === PaymentProvider.Stripe) {
-    const stripeAccountDetails = await stripeClient.getStripeApi().accounts.retrieve(account.credentials)
+    const stripeAccountDetails = await stripeClient.getStripeApi(account.isLive()).accounts.retrieve(account.credentials)
     stripeAccountStatementDescriptors.payoutStatementDescriptor = stripeAccountDetails.settings.payouts.statement_descriptor
     stripeAccountStatementDescriptors.statementDescriptor = stripeAccountDetails.settings.payments.statement_descriptor
   }
@@ -241,7 +241,7 @@ async function detail(req: Request, res: Response): Promise<void> {
   try {
     if (account.payment_provider === 'stripe') {
       const {stripe_account_id} = await Connector.accounts.retrieveStripeCredentials(id)
-      const stripeAccount = await stripeClient.getStripeApi().accounts.retrieve(stripe_account_id)
+      const stripeAccount = await stripeClient.getStripeApi(account.live).accounts.retrieve(stripe_account_id)
       stripePaymentsStatementDescriptor = stripeAccount.settings.payments.statement_descriptor
       stripePayoutsStatementDescriptor = stripeAccount.settings.payouts.statement_descriptor
     }
@@ -523,7 +523,11 @@ async function updateStripeStatementDescriptor(
 ): Promise<void> {
   const {statement_descriptor} = req.body
   const {id} = req.params
-  const {stripe_account_id} = await Connector.accounts.retrieveStripeCredentials(id)
+  const [account, stripeCredentials] = await Promise.all([
+    getAccount(id),
+    Connector.accounts.retrieveStripeCredentials(id)
+  ])
+  const {stripe_account_id} = stripeCredentials
 
   if (!statement_descriptor) {
     throw new Error('Cannot update empty state descriptor')
@@ -541,7 +545,7 @@ async function updateStripeStatementDescriptor(
       }
     }
   }
-  await stripeClient.getStripeApi().accounts.update(
+  await stripeClient.getStripeApi(account.live).accounts.update(
     stripe_account_id,
     // @ts-ignore
     updateParams
@@ -556,7 +560,11 @@ async function updateStripePayoutDescriptor(
 ): Promise<void> {
   const {statement_descriptor} = req.body
   const {id} = req.params
-  const {stripe_account_id} = await Connector.accounts.retrieveStripeCredentials(id)
+  const [account, stripeCredentials] = await Promise.all([
+    getAccount(id),
+    Connector.accounts.retrieveStripeCredentials(id)
+  ])
+  const {stripe_account_id} = stripeCredentials
 
   if (!statement_descriptor) {
     throw new Error('Cannot update empty state descriptor')
@@ -574,7 +582,7 @@ async function updateStripePayoutDescriptor(
       }
     }
   }
-  await stripeClient.getStripeApi().accounts.update(
+  await stripeClient.getStripeApi(account.live).accounts.update(
     stripe_account_id,
     // @ts-ignore
     updateParams
