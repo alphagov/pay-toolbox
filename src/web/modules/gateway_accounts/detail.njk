@@ -224,6 +224,15 @@
         <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Blocked prepaid cards</span></dt>
         <dd class="govuk-summary-list__value">{{ account.block_prepaid_cards | string | capitalize }}</dd>
       </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Corporate surcharge</span></dt>
+        <dd class="govuk-summary-list__value">
+          {{ 'Enabled' if motoPaymentLinkExists and corporateSurchargeEnabled else 'Disabled' }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/surcharge">Manage<span class="govuk-visually-hidden"> corporate surcharge</span></a>
+        </dd>
+      </div>
     </dl>
   </div>
 </div>
@@ -355,11 +364,6 @@
     {{ govukButton({
       text: "View statistics",
       href: "/transactions/statistics?account=" + gatewayAccountId
-    })
-    }}
-    {{ govukButton({
-      text: "Update surcharge amounts",
-      href: "/gateway_accounts/" + gatewayAccountId + "/surcharge"
     })
     }}
     {{ govukButton({

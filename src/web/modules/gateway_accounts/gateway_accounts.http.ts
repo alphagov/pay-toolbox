@@ -16,20 +16,17 @@ import {Product, ProductType} from '../../../lib/pay-request/services/products/t
 import {
   GatewayAccount,
   NotifySettings,
-  StripeCredentials,
-  StripeSetup
+  StripeCredentials
 } from '../../../lib/pay-request/services/connector/types'
 import {PaymentProvider} from '../../../lib/pay-request/shared'
-import {ClientFormError, formatErrorsForTemplate} from '../common/validationErrorFormat'
+import {ClientFormError} from '../common/validationErrorFormat'
 import * as config from '../../../config'
 import {format} from './csv'
 import {formatWithAdminEmails} from './csv_with_admin_emails'
 import {createCsvData, createCsvWithAdminEmailsData} from './csv_data'
-import CreateAgentInitiatedMotoProductFormRequest from './CreateAgentInitiatedMotoProductFormRequest'
-import {EntityNotFoundError, IOValidationError, ValidationError} from '../../../lib/errors'
+import {EntityNotFoundError, ValidationError} from '../../../lib/errors'
 
 import * as stripeClient from '../../../lib/stripe/stripe.client'
-import {TokenSource, TokenType} from '../../../lib/pay-request/services/public_auth/types'
 import {
   updateTicketWithWorldpayGoLiveResponse,
   getTicket,
@@ -253,6 +250,8 @@ async function detail(req: Request, res: Response): Promise<void> {
   const is3DSFlexApplicable = (currentCredential.payment_provider === PaymentProvider.Worldpay && !account.allow_moto)
   const threeDSFlexEnabled = (account.integration_version_3ds === 2)
   const motoPaymentLinkExists = motoProducts.length > 0
+  const corporateSurchargeEnabled = account.corporate_credit_card_surcharge_amount ||
+    account.corporate_debit_card_surcharge_amount || account.corporate_prepaid_debit_card_surcharge_amount
 
   res.render('gateway_accounts/detail', {
     account,
@@ -265,6 +264,7 @@ async function detail(req: Request, res: Response): Promise<void> {
     is3DSFlexApplicable,
     threeDSFlexEnabled,
     motoPaymentLinkExists,
+    corporateSurchargeEnabled,
     messages: req.flash('info'),
     csrf: req.csrfToken()
   })
