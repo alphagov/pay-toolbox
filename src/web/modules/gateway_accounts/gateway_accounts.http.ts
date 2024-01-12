@@ -394,10 +394,28 @@ async function updateBlockPrepaidCards(
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-async function toggleWorldpayExemptionEngine(req: Request, res: Response): Promise<void> {
+async function worldpayExemptionEngine(
+  req: Request,
+  res: Response
+): Promise<void> {
   const {id} = req.params
   const account = await Connector.accounts.retrieve(id)
-  const enable = !(account.worldpay_3ds_flex && account.worldpay_3ds_flex.exemption_engine_enabled)
+
+  if (!account.worldpay_3ds_flex) {
+    throw new ValidationError('Worldpay 3DS Flex must be configured before you can enable the exemption engine.')
+  }
+
+  const enabled = account.worldpay_3ds_flex && account.worldpay_3ds_flex.exemption_engine_enabled
+  res.render('gateway_accounts/worldpay_exemption_engine', {
+    account,
+    enabled,
+    csrf: req.csrfToken()
+  })
+}
+
+async function updateWorldpayExemptionEngine(req: Request, res: Response): Promise<void> {
+  const {id} = req.params
+  const enable = req.body.enabled === 'enabled'
   await Connector.accounts.update(id, {worldpay_exemption_engine_enabled: enable})
   req.flash('info', `Worldpay Exception Engine ${enable ? 'enabled' : 'disabled'}`)
   res.redirect(`/gateway_accounts/${id}`)
@@ -626,7 +644,8 @@ export default {
   updateStripePayoutDescriptor: wrapAsyncErrorHandler(updateStripePayoutDescriptor),
   search: wrapAsyncErrorHandler(search),
   searchRequest: wrapAsyncErrorHandler(searchRequest),
-  toggleWorldpayExemptionEngine: wrapAsyncErrorHandler(toggleWorldpayExemptionEngine),
+  worldpayExemptionEngine: wrapAsyncErrorHandler(worldpayExemptionEngine),
+  updateWorldpayExemptionEngine: wrapAsyncErrorHandler(updateWorldpayExemptionEngine),
   recurringPayments: wrapAsyncErrorHandler(recurringPayments),
   updateRecurringPayments: wrapAsyncErrorHandler(updateRecurringPayments),
   worldpayPaymentData: wrapAsyncErrorHandler(worldpayPaymentData),
