@@ -10,10 +10,6 @@
 {% set serviceName = service.service_name.en if account.gateway_account_id else "" %}
 
 {% block main %}
-  <div>
-    <a href="/gateway_accounts/{{ account.gateway_account_id }}/agent_initiated_moto" class="govuk-back-link">Agent initiated MOTO settings for {{serviceName}} ({{ account.gateway_account_id }})</a>
-  </div>
-
   <span class="govuk-caption-m">
     {% if account.gateway_account_id %}
       <span>{{ serviceName }}</span>
@@ -23,6 +19,10 @@
   </span>
 
   <h1 class="govuk-heading-m">Agent-initiated MOTO payments</h1>
+
+  <div>
+    <a href="/gateway_accounts/{{ account.gateway_account_id }}/agent_initiated_moto" class="govuk-back-link">Agent initiated MOTO settings for {{serviceName}} ({{ account.gateway_account_id }})</a>
+  </div>
 
   {% if errors %}
     {{ errorSummary({ errors: errors }) }}
