@@ -286,7 +286,7 @@
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Corporate surcharge</span></dt>
         <dd class="govuk-summary-list__value">
-          {{ 'Enabled' if motoPaymentLinkExists and corporateSurchargeEnabled else 'Disabled' }}
+          {{ 'Enabled' if corporateSurchargeEnabled else 'Disabled' }}
         </dd>
         <dd class="govuk-summary-list__actions">
           <a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/surcharge">Manage<span class="govuk-visually-hidden"> corporate surcharge</span></a>
