@@ -112,6 +112,21 @@ describe('Gateway Accounts', () => {
       account.serviceId = 'service-id'
       const payload = account.formatPayload()
       expect(payload.requires_3ds).to.eql(true)
+      expect(payload.allow_apple_pay).to.eql(true)
+      expect(payload.allow_google_pay).to.not.exist
+    });
+
+    it('successfully creates model when provider is stripe and test account', function () {
+      const details = _.cloneDeep(validGatewayAccountDetails)
+      details.live = 'not-live'
+
+      const account = new GatewayAccount(details)
+      expect(account).to.be.an('object')
+      account.serviceId = 'service-id'
+      const payload = account.formatPayload()
+      expect(payload.requires_3ds).to.eql(true)
+      expect(payload.allow_apple_pay).to.eql(true)
+      expect(payload.allow_google_pay).to.eql(true)
     });
   })
 })

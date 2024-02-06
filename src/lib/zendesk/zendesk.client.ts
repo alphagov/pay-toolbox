@@ -104,6 +104,7 @@ Click this link to go to the live version of your service: ${worldpayGoLiveUrl}
 Once you’re in your account, you should confirm:
 
 * which card types you want to enable in 'Settings' (3D Secure is enabled by default)
+* Apple Pay is enabled by default. You can disable it in ‘Settings’
 * if you want to collect billing or email address, or send payment and refund confirmation emails
 * customise the payment confirmation email, including adding your service support contact details should your users need to query a payment
 * your team’s account permissions
