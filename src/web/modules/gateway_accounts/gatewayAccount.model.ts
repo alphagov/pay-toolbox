@@ -79,8 +79,11 @@ class GatewayAccount extends Validated {
       payload.requires_3ds = false
     }
 
-    if (this.provider === 'stripe') {
+    if (this.provider === 'worldpay' || this.provider === 'stripe') {
       payload.allow_apple_pay = true
+    }
+
+    if (this.provider === 'stripe') {
       payload.allow_google_pay = true
       if (this.credentials) {
         payload.credentials = {
