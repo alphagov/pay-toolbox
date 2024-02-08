@@ -101,14 +101,14 @@ You’ll find guidance about how to do this for your PSP in our documentation at
 
 Click this link to go to the live version of your service: ${worldpayGoLiveUrl}
 
-Once you’re in your account, you should confirm:
+Before you start taking payments, you should:
 
-* which card types you want to enable in 'Settings' (3D Secure is enabled by default)
-* Apple Pay is enabled by default. You can disable it in ‘Settings’
-* if you want to collect billing or email address, or send payment and refund confirmation emails
-* customise the payment confirmation email, including adding your service support contact details should your users need to query a payment
-* your team’s account permissions
-
+* choose which cards types you want to accept in **Settings** in the GOV.UK Pay admin tool (3D Secure is enabled by default)
+* decide if you want to collect billing or email addresses in **Settings**
+* decide if you want to send payment and refund confirmation emails in **Settings**
+* customise your payment confirmation email, including adding your service support contact details should your users need to query a payment
+* decide if you want to accept digital wallet payments and turn them on or off in **Settings** (Apple Pay is turned on by default)
+* understand how digital wallet cardholder information differs from standard payments if you want to accept digital wallet payments (https://docs.payments.service.gov.uk/digital_wallets/#stored-cardholder-information-in-digital-wallet-payments)
 
 Then you’re ready to start taking payments.
 
