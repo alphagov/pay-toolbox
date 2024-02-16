@@ -1,4 +1,4 @@
-FROM node:18.19.0-alpine3.18@sha256:ae124a073f5655a04381a2d95b3c32da4adf5c279f912af432885e7249814156
+FROM node:18.19.1-alpine3.18@sha256:3b50a0a2324cbaa28d57dad57019f8656b784a67743c58194718389cd29c18fe
 
 RUN apk -U upgrade --available
 WORKDIR /app
