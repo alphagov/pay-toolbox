@@ -140,7 +140,7 @@
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Provider transaction</span></th>
           <td class="govuk-table__cell payment__cell">
             {% if stripeDashboardUri %}
-              <a class="govuk-link govuk-link--no-visited-state" target="_blank" href="{{ stripeDashboardUri }}">{{ transaction.gateway_transaction_id }}</a>
+              <a class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer" href="{{ stripeDashboardUri }}">{{ transaction.gateway_transaction_id }}</a>
             {% else %}
               {{ transaction.gateway_transaction_id }}
             {% endif %}
