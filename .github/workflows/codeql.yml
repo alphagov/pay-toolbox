@@ -5,6 +5,8 @@ on:
     branches: [ "master" ]
     paths:
       - 'src/**'
+  push:
+    branches: [ "master" ]
   schedule:
     # Weekly schedule
     - cron: '43 7 * * 1'
@@ -17,6 +19,9 @@ jobs:
     permissions:
       # required for CodeQL to raise security issues on the repo
       security-events: write
+
+    paths:
+      - 'src/**'
 
     steps:
       - name: Checkout repository
