@@ -20,9 +20,6 @@ jobs:
       # required for CodeQL to raise security issues on the repo
       security-events: write
 
-    paths:
-      - 'src/**'
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
@@ -35,6 +32,9 @@ jobs:
         with:
           # CodeQL options: [ 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'swift' ]
           languages: 'javascript-typescript'
+          config: |
+            paths:
+              - 'src/**'
 
       - name: Parse Node version
         id: parse-node-version
