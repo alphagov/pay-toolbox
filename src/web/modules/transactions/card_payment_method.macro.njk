@@ -1,0 +1,33 @@
+{% macro card_payment_method(transaction) %}
+
+{% if transaction.wallet_type === "APPLE_PAY" %}
+<img height="24" width="37" src="/assets/logos/apple-pay.png" alt="Apple Pay">
+{% elif transaction.wallet_type === "GOOGLE_PAY" %}
+<img height="24" width="37" src="/assets/logos/google-pay.png" alt="Google Pay">
+{% endif %}
+
+{% if transaction.card_details.card_brand === "Visa" %}
+<img height="24" width="36" src="/assets/logos/visa.png" alt="Visa">
+{% elif transaction.card_details.card_brand === "Mastercard" %}
+<img height="24" width="36" src="/assets/logos/mastercard.png" alt="Mastercard">
+{% elif transaction.card_details.card_brand === "American Express" %}
+<img height="24" width="36" src="/assets/logos/american-express.png" alt="American Express">
+{% elif transaction.card_details.card_brand === "Diners Club" %}
+<img height="24" width="36" src="/assets/logos/diners-club.png" alt="Diners Club">
+{% elif transaction.card_details.card_brand === "Discover" %}
+<img height="24" width="36" src="/assets/logos/discover.png" alt="Discover">
+{% elif transaction.card_details.card_brand === "Jcb" %}
+<img height="24" width="36" src="/assets/logos/jcb.png" alt="JCB">
+{% elif transaction.card_details.card_brand === "Union Pay" %}
+<img height="24" width="36" src="/assets/logos/unionpay.png" alt="UnionPay">
+{% elif transaction.card_details.card_brand === "Maestro" %}
+<img height="24" width="36" src="/assets/logos/maestro.png" alt="Maestro">
+{% endif %}
+
+{% if transaction.card_details.card_type === "debit" %}
+Debit
+{% elif transaction.card_details.card_type === "credit" %}
+Credit
+{% endif %}
+
+{% endmacro %}

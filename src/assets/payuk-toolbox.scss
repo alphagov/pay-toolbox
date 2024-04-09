@@ -110,7 +110,7 @@
   margin-top: 15px;
 }
 
-.payment-detail-row div:not(:last-child) {
+.payment-detail-row > div:not(:last-child) {
   border-right: 1px solid $govuk-border-colour;
 }
 
@@ -203,6 +203,10 @@
 
 .filter-select {
   min-width: 100%;
+}
+
+.inline-images img {
+  vertical-align: bottom;
 }
 
 .test-data-banner {

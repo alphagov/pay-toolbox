@@ -1,0 +1,23 @@
+{% macro features(transaction) %}
+
+{% if transaction.authorisation_mode === "agreement" %}
+<span class="govuk-tag govuk-tag--grey">Recurring</span>
+{% endif %}
+
+{% if transaction.delayed_capture %}
+<span class="govuk-tag govuk-tag--grey">Delayed capture</span>
+{% endif %}
+
+{% if transaction.source == 'CARD_PAYMENT_LINK' %}
+<span class="govuk-tag govuk-tag--grey">Payment link</span>
+{% elif transaction.source == 'CARD_AGENT_INITIATED_MOTO' %}
+<span class="govuk-tag govuk-tag--grey">Call centre via admin tool</span>
+{% elif transaction.source == 'CARD_EXTERNAL_TELEPHONE' %}
+<span class="govuk-tag govuk-tag--grey">External phone</span>
+{% endif %}
+
+{% if transaction.moto %}
+<span class="govuk-tag govuk-tag--grey">MOTO</span>
+{% endif %}
+
+{% endmacro %}
