@@ -1,4 +1,6 @@
 {% from "transactions/status.macro.njk" import status %}
+{% from "transactions/features.macro.njk" import features %}
+{% from "transactions/card_payment_method.macro.njk" import card_payment_method %}
 {% from "common/json.njk" import json %}
 {% from "./../webhooks/webhookMessageStatus.macro.njk" import webhookMessageStatusTag %}
 {% extends "layout/layout.njk" %}
@@ -6,35 +8,48 @@
 {% set isTestData = not transaction.live %}
 
 {% block main %}
+  <span class="govuk-caption-m">{{ transaction.created_date | formatDate }}</span>
   <h1 class="govuk-heading-m">Payment</h1>
 
-  <div class="status-inline-spacer">
-  <span class="govuk-body-l status-amount">{{ (transaction.total_amount or transaction.amount) | currency }}</span>
+  <div class="govuk-grid-row">
 
-  {{ status(
-    transaction.state.status,
-    transaction.state.finished,
-    transaction.refund_summary and transaction.refund_summary.status,
-    transaction.refund_summary and transaction.refund_summary.amount_submitted
-    ) }}
   </div>
 
-  <div class="govuk-grid-row status-spacer payment-detail-row">
+  <div class="govuk-grid-row status-spacer">
     <div class="govuk-grid-column-one-quarter">
-      <span class="govuk-caption-m">Date</span>
-      <span class="govuk-body">{{ transaction.created_date | formatDate }}</span>
+      <span class="govuk-body-l status-amount">{{ (transaction.total_amount or transaction.amount) | currency }}</span>
     </div>
-    {% if transaction.card_details %}
-    <div class="govuk-grid-column-one-quarter ellipses-text-wrap">
+    <div class="govuk-grid-column-three-quarters text-right">
+      {{ features(transaction) }}
+      {{ status(
+        transaction.state.status,
+        transaction.state.finished,
+        transaction.refund_summary and transaction.refund_summary.status,
+        transaction.refund_summary and transaction.refund_summary.amount_submitted
+        ) }}
+    </div>
+  </div>
+
+
+  {% if transaction.card_details %}
+  <div class="govuk-grid-row status-spacer payment-detail-row">
+    <div class="govuk-grid-column-one-half ellipses-text-wrap">
       <span class="govuk-caption-m">Payer</span>
       <span class="govuk-body">{{ transaction.card_details.cardholder_name }}</span>
     </div>
-    <div class="govuk-grid-column-one-quarter">
+    <div class="govuk-grid-column-one-half">
       <span class="govuk-caption-m">Payment method</span>
-      <span class="govuk-body">{{ transaction.card_details.card_brand | capitalize }} <strong>••••</strong> {{ transaction.card_details.last_digits_card_number }}</span>
+      <div class="govuk-grid-row govuk-body">
+        <div class="govuk-grid-column-one-half inline-images">
+        {{ card_payment_method(transaction) }}
+        </div>
+        <div class="govuk-grid-column-one-half text-right">
+        {{ transaction.card_details.first_digits_card_number }}••••{{ transaction.card_details.last_digits_card_number }}
+        </div>
+      </div>
     </div>
-    {% endif %}
   </div>
+  {% endif %}
 
   <div>
     <h1 class="govuk-heading-s payment__header">Payment details</h1>
@@ -137,7 +152,15 @@
         </tr>
         {% if transaction.gateway_transaction_id %}
         <tr class="govuk-table__row">
-          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Provider transaction</span></th>
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">
+          {% if transaction.payment_provider === "worldpay" %}
+          Worldpay order code
+          {% elif transaction.payment_provider === "stripe" %}
+          Stripe payment intent
+          {% else %}
+          Provider transaction
+          {% endif %}
+          </span></th>
           <td class="govuk-table__cell payment__cell">
             {% if stripeDashboardUri %}
               <a class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer" href="{{ stripeDashboardUri }}">{{ transaction.gateway_transaction_id }}</a>
@@ -148,12 +171,32 @@
         </tr>
         {% endif %}
         <tr class="govuk-table__row">
-          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Delayed capture</span></th>
-          <td class="govuk-table__cell payment__cell">{{ transaction.delayed_capture | string | capitalize }}</td>
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Language</span></th>
+          <td class="govuk-table__cell payment__cell">{{ "Welsh" if transaction.language === "cy" else "English" }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Source</span></th>
+          <td class="govuk-table__cell payment__cell">
+          {% if transaction.source === 'CARD_API' %}
+          Payment created using API
+          {% elif transaction.source === 'CARD_PAYMENT_LINK' %}
+          Payment link
+          {% elif transaction.source === 'CARD_AGENT_INITIATED_MOTO' %}
+          Call centre agent took payment over phone using admin tool
+          {% elif transaction.source === 'CARD_EXTERNAL_TELEPHONE' %}
+          External phone payment taken outside of GOV.UK Pay
+          {% else %}
+          Payment created before we recorded source
+          {% endif %}
+          </td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">MOTO</span></th>
           <td class="govuk-table__cell payment__cell">{{ transaction.moto | string | capitalize }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Delayed capture</span></th>
+          <td class="govuk-table__cell payment__cell">{{ transaction.delayed_capture | string | capitalize }}</td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Recurring</span></th>
@@ -177,7 +220,6 @@
 
   <div>
     <h1 class="govuk-heading-s payment__header">Metadata</h1>
-
     {% if transaction.metadata %}
       <table class="govuk-table">
         <tbody class="govuk-table__body">

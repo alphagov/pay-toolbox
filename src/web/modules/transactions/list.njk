@@ -1,4 +1,5 @@
 {% from "transactions/status.macro.njk" import status %}
+{% from "transactions/card_payment_method.macro.njk" import card_payment_method %}
 
 {% extends "layout/layout.njk" %}
 
@@ -76,6 +77,7 @@
           <th class="govuk-table__header" scope="col"></th>
           <th class="govuk-table__header" scope="col">Description</th>
           <th class="govuk-table__header" scope="col">Date created</th>
+          <th class="govuk-table__header" scope="col">Method</th>
         </tr>
       </thead>
       <tbody class="govuk-table__body">
@@ -97,10 +99,13 @@
               ) }}
           </td>
           <td class="govuk-table__cell">
-            <span class="govuk-caption-m">{{ payment.description | truncate(20) }}</span>
+            <span class="govuk-caption-m">{{ payment.description | truncate(30) }}</span>
           </td>
           <td class="govuk-table__cell">
             <span class="govuk-caption-m">{{ payment.created_date | formatDateLocalTimeZone }}</span>
+          </td>
+          <td class="govuk-table__cell">
+            <span class="govuk-caption-m inline-images">{{ card_payment_method(payment) }}</span>
           </td>
         </tr>
         {% else %}
@@ -126,11 +131,11 @@
       {% if set.page <= 1 %}
         disabled
       {% elseif filters.gateway_payout_id %}
-        href="/transactions?page={{ set.page - 1 }}&account={{ accountId }}&gateway_payout_id={{ filters.gateway_payout_id }}"
+        href="/transactions?page={{ set.page - 1 }}&amp;account={{ accountId }}&amp;gateway_payout_id={{ filters.gateway_payout_id }}"
       {% elseif filters.agreement_id %}
-        href="/transactions?page={{ set.page - 1 }}&account={{ accountId }}&agreement_id={{ filters.agreement_id }}"
+        href="/transactions?page={{ set.page - 1 }}&amp;account={{ accountId }}&amp;agreement_id={{ filters.agreement_id }}"
       {% else %}
-        href="/transactions?page={{ set.page - 1 }}&status={{ selectedStatus }}{{ linkQueryParams }}"
+        href="/transactions?page={{ set.page - 1 }}&amp;status={{ selectedStatus }}{{ linkQueryParams }}"
       {% endif %}
 
       class="govuk-button govuk-button--secondary">
@@ -140,11 +145,11 @@
       {% if not(set._links.next_page) %}
         disabled
       {% elseif filters.gateway_payout_id %}
-        href="/transactions?page={{ set.page + 1 }}&account={{ accountId }}&gateway_payout_id={{ filters.gateway_payout_id }}"
+        href="/transactions?page={{ set.page + 1 }}&amp;account={{ accountId }}&amp;gateway_payout_id={{ filters.gateway_payout_id }}"
       {% elseif filters.agreement_id %}
-        href="/transactions?page={{ set.page + 1 }}&account={{ accountId }}&agreement_id={{ filters.agreement_id }}"
+        href="/transactions?page={{ set.page + 1 }}&amp;account={{ accountId }}&amp;agreement_id={{ filters.agreement_id }}"
       {% else %}
-        href="/transactions?page={{ set.page + 1 }}&status={{ selectedStatus }}{{ linkQueryParams }}"
+        href="/transactions?page={{ set.page + 1 }}&amp;status={{ selectedStatus }}{{ linkQueryParams }}"
       {% endif %}
 
       class="govuk-button govuk-button--secondary">

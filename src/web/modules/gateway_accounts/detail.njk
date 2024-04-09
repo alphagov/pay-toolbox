@@ -230,11 +230,11 @@
   <div class="govuk-summary-card__content">
     <dl class="govuk-summary-list">
       <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Wallets</span></dt>
-        <dd class="govuk-summary-list__value">
+        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Digital wallets</span></dt>
+        <dd class="govuk-summary-list__value govuk-body inline-images">
           {% if account.allow_apple_pay or account.allow_google_pay %}
-            {% if account.allow_apple_pay %} <span><strong class="govuk-tag govuk-tag--grey">Apple Pay</strong></span>{% endif %}
-            {% if account.allow_google_pay %} <span><strong class="govuk-tag govuk-tag--grey">Google Pay</strong></span>{% endif %}
+            {% if account.allow_apple_pay %} <img height="24" width="37" src="/assets/logos/apple-pay.png" alt="Apple Pay">{% endif %}
+            {% if account.allow_google_pay %} <img height="24" width="37" src="/assets/logos/google-pay.png" alt="Google Pay">{% endif %}
           {% else %}
             <i>(No wallets enabled)</i>
           {% endif %}
@@ -261,7 +261,7 @@
         </dd>
       </div>
       <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Agent-initiated MOTO link</span></dt>
+        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Agent-initiated MOTO</span></dt>
         <dd class="govuk-summary-list__value">
           {{ 'Enabled' if motoPaymentLinkExists and services.agent_initiated_moto_enabled else 'Disabled' }}
         </dd>
@@ -284,7 +284,7 @@
         </dd>
       </div>
       <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Corporate surcharge</span></dt>
+        <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Corporate card surcharge</span></dt>
         <dd class="govuk-summary-list__value">
           {{ 'Enabled' if corporateSurchargeEnabled else 'Disabled' }}
         </dd>

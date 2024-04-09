@@ -1,12 +1,12 @@
 {% macro status(state, final, refundedStatus, refundedAmount) %}
 {# @TODO(sfount) this map could be done a lot better with more time + standard definitions being used #}
 {% set success = ['success'] %}
-{% set failed = ['failed', 'cancelled', 'timedout', 'error'] %}
+{% set failed = ['failed', 'declined', 'cancelled', 'timedout', 'error'] %}
 
 <strong class="govuk-tag
     {% if final and success.includes(state) %} govuk-tag--green {% endif %}
     {% if final and failed.includes(state) %} govuk-tag--orange {% endif %}
-    {% if not final %} govuk-tag--grey {% endif %}
+    {% if not final %} govuk-tag--blue {% endif %}
   ">
 
   {# 0p payments are supported and will be flagged as 'full' even though they are not refunded #}
