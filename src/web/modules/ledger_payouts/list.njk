@@ -4,7 +4,7 @@
   <strong class="govuk-tag
         {% if (status=='paidout') %} govuk-tag--green {% endif %}
         {% if (status=='failed') %} govuk-tag--orange {% endif %}
-        {% if (status=='intransit') %} govuk-tag--light-blue {% endif %}
+        {% if (status=='intransit') %} govuk-tag--blue {% endif %}
       ">
     <span>{{ status | capitalize }}</span>
   </strong>
@@ -34,7 +34,7 @@
     {% for status in["intransit", "paidout", "failed", "all"] %}
       <a
         class="list-page-filter__item {% if selectedStatus === status %}selected{% endif %} no-decoration"
-        href="/payouts?status={{ status }}{% if service %}&account={{ accountId }}{% endif %}">
+        href="/payouts?status={{ status }}{% if service %}&amp;account={{ accountId }}{% endif %}">
         <span>{{ status | capitalize }}</span>
       </a>
     {% endfor %}
@@ -98,12 +98,12 @@
 
   <div class="toolbox-right">
     <a  {% if set.page <= 1 %} disabled
-        {% else %} href="/payouts?page={{ set.page - 1 }}&status={{ selectedStatus }}{% if service %}&account={{ accountId }}{% endif %}"
+        {% else %} href="/payouts?page={{ set.page - 1 }}&amp;status={{ selectedStatus }}{% if service %}&amp;account={{ accountId }}{% endif %}"
         {% endif %} class="govuk-button govuk-button--secondary">
       Previous
     </a>
     <a  {% if not(set._links.next_page) %} disabled
-        {% else %} href="/payouts?page={{ set.page + 1 }}&status={{ selectedStatus }}{% if service %}&account={{ accountId }}{% endif %}"
+        {% else %} href="/payouts?page={{ set.page + 1 }}&amp;status={{ selectedStatus }}{% if service %}&amp;account={{ accountId }}{% endif %}"
       {% endif %} class="govuk-button govuk-button--secondary">
       Next
     </a>

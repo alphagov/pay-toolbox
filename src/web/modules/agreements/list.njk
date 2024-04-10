@@ -4,7 +4,7 @@
 
 {% set isTestData = account and not (account.type === "live") %}
 
-{% set linkQueryParams %}{% if service %}&account={{ accountId }}{% endif %}{% if filters.reference %}&reference={{ filters.reference }}{% endif %}{% endset %}
+{% set linkQueryParams %}{% if service %}&amp;account={{ accountId }}{% endif %}{% if filters.reference %}&amp;reference={{ filters.reference }}{% endif %}{% endset %}
 
 {% block main %}
   <span class="govuk-caption-m">
@@ -91,7 +91,7 @@
       {% if set.page <= 1 %}
         disabled
       {% else %}
-        href="/agreements?page={{ set.page - 1 }}&status={{ selectedStatus }}{{ linkQueryParams }}"
+        href="/agreements?page={{ set.page - 1 }}&amp;status={{ selectedStatus }}{{ linkQueryParams }}"
       {% endif %}
 
       class="govuk-button govuk-button--secondary">
@@ -101,7 +101,7 @@
       {% if not(set._links.next_page) %}
         disabled
       {% else %}
-        href="/agreements?page={{ set.page + 1 }}&status={{ selectedStatus }}{{ linkQueryParams }}"
+        href="/agreements?page={{ set.page + 1 }}&amp;status={{ selectedStatus }}{{ linkQueryParams }}"
       {% endif %}
 
       class="govuk-button govuk-button--secondary">

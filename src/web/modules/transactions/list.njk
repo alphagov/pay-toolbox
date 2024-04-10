@@ -5,7 +5,7 @@
 
 {% set isTestData = account and not (account.type === "live") %}
 
-{% set linkQueryParams %}{% if service %}&account={{ accountId }}{% endif %}{% if transactionType %}&type={{ transactionType }}{% endif %}{% if filters.reference %}&reference={{ filters.reference }}{% endif %}{% if filters.email %}&email={{ filters.email }}{% endif %}{% endset %}
+{% set linkQueryParams %}{% if service %}&amp;account={{ accountId }}{% endif %}{% if transactionType %}&amp;type={{ transactionType }}{% endif %}{% if filters.reference %}&amp;reference={{ filters.reference }}{% endif %}{% if filters.email %}&amp;email={{ filters.email }}{% endif %}{% endset %}
 
 {% block main %}
   <span class="govuk-caption-m">
