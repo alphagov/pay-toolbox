@@ -44,7 +44,9 @@
         {{ card_payment_method(transaction) }}
         </div>
         <div class="govuk-grid-column-one-half text-right">
+        {% if transaction.card_details.first_digits_card_number or transaction.card_details.last_digits_card_number %}
         {{ transaction.card_details.first_digits_card_number }}••••{{ transaction.card_details.last_digits_card_number }}
+        {% endif %}
         </div>
       </div>
     </div>

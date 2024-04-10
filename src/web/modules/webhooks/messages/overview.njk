@@ -72,7 +72,7 @@
     {% if webhookMessages.page <= 1 %}
       disabled
     {% else %}
-      href="/webhooks/{{webhook.external_id}}/messages?page={{ webhookMessages.page - 1 }}&status={{ selectedStatus }}"
+      href="/webhooks/{{webhook.external_id}}/messages?page={{ webhookMessages.page - 1 }}&amp;status={{ selectedStatus }}"
     {% endif %}
 
     class="govuk-button govuk-button--secondary">
@@ -82,7 +82,7 @@
     {% if webhookMessages.count < webhookMessagePageSize %}
       disabled
     {% else %}
-      href="/webhooks/{{webhook.external_id}}/messages?page={{ webhookMessages.page + 1 }}&status={{ selectedStatus }}"
+      href="/webhooks/{{webhook.external_id}}/messages?page={{ webhookMessages.page + 1 }}&amp;status={{ selectedStatus }}"
     {% endif %}
 
     class="govuk-button govuk-button--secondary">
