@@ -4,7 +4,8 @@
 
 {% set isTestData = account and not (account.type === "live") %}
 
-{% set linkQueryParams %}{% if service %}&amp;account={{ accountId }}{% endif %}{% if filters.reference %}&amp;reference={{ filters.reference }}{% endif %}{% endset %}
+{# Autoescaping will convert & to &amp; when linkQueryParams variable is used in template #}
+{% set linkQueryParams %}{% if service %}&account={{ accountId }}{% endif %}{% if filters.reference %}&reference={{ filters.reference }}{% endif %}{% endset %}
 
 {% block main %}
   <span class="govuk-caption-m">
