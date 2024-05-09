@@ -14,7 +14,7 @@ concurrency: toolbox-post-merge
 
 jobs:
   tests:
-    uses: ./.github/workflows/run-tests.yml
+    uses: ./.github/workflows/_run-tests.yml
 
   tag-release:
     needs:
