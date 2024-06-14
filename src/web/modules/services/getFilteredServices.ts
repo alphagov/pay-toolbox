@@ -8,7 +8,7 @@ export interface ServiceFilters {
   archived: BooleanFilterOption;
 }
 
-function serviceAttributeMatchesFilter(filterValue: BooleanFilterOption, serviceValue: Boolean) {
+function serviceAttributeMatchesFilter(filterValue: BooleanFilterOption, serviceValue: boolean) {
   return filterValue === BooleanFilterOption.True && serviceValue ||
     filterValue === BooleanFilterOption.False && !serviceValue ||
     filterValue === BooleanFilterOption.All
