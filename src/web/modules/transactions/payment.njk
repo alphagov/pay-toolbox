@@ -1,6 +1,7 @@
 {% from "transactions/status.macro.njk" import status %}
 {% from "transactions/features.macro.njk" import features %}
 {% from "transactions/card_payment_method.macro.njk" import card_payment_method %}
+{% from "transactions/summary_3ds.macro.njk" import summary_3ds %}
 {% from "common/json.njk" import json %}
 {% from "./../webhooks/webhookMessageStatus.macro.njk" import webhookMessageStatusTag %}
 {% extends "layout/layout.njk" %}
@@ -191,6 +192,10 @@
           Payment created before we recorded source
           {% endif %}
           </td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">3D Secure</span></th>
+          <td class="govuk-table__cell payment__cell">{{ summary_3ds(transaction, events) }}</td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">MOTO</span></th>
