@@ -20,4 +20,8 @@
 <span class="govuk-tag govuk-tag--grey">MOTO</span>
 {% endif %}
 
+{% if transaction.authorisation_summary and transaction.authorisation_summary.three_d_secure and transaction.authorisation_summary.three_d_secure.required %}
+<span class="govuk-tag govuk-tag--grey">3DS</span>
+{% endif %}
+
 {% endmacro %}

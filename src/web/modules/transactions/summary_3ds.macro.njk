@@ -1,0 +1,23 @@
+{% macro summary_3ds(transaction, events) %}
+
+{% if transaction.authorisation_summary and transaction.authorisation_summary.three_d_secure and transaction.authorisation_summary.three_d_secure.required %}
+Required {% if transaction.authorisation_summary.three_d_secure.version %} — version {{ transaction.authorisation_summary.three_d_secure.version }}{% endif %}
+{% else %}
+Not required
+{% endif %}
+
+{% for event in events %}
+  {% if event.event_type == 'GATEWAY_3DS_EXEMPTION_RESULT_OBTAINED' and event.data %}
+    {% if event.data.exemption3ds == 'EXEMPTION_NOT_REQUESTED' %}
+    (exemption not requested)
+    {% elif event.data.exemption3ds == 'EXEMPTION_HONOURED' %}
+    (exemption requested and honoured)
+    {% elif event.data.exemption3ds == 'EXEMPTION_REJECTION' %}
+    (exemption requested but rejected)
+    {% elif event.data.exemption3ds == 'EXEMPTION_OUT_OF_SCOPE' %}
+    (exemption requested but payment out of scope)
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+{% endmacro %}
