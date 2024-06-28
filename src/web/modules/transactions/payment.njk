@@ -198,6 +198,10 @@
           <td class="govuk-table__cell payment__cell">{{ summary_3ds(transaction, events) }}</td>
         </tr>
         <tr class="govuk-table__row">
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">User journey duration</span></th>
+          <td class="govuk-table__cell payment__cell">{{ userJourneyDurationFriendly }}</td>
+        </tr>
+        <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">MOTO</span></th>
           <td class="govuk-table__cell payment__cell">{{ transaction.moto | string | capitalize }}</td>
         </tr>

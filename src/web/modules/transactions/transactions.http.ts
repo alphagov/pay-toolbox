@@ -151,6 +151,34 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
         return event
       })
 
+    let userJourneyDurationFriendly: string = 'Not available'
+    const paymentStartedEvent = events.find((event: any) => event.event_type === 'PAYMENT_STARTED')
+    if (paymentStartedEvent) {
+      const userApprovedForCaptureEvent = events.find((event: any) => event.event_type === 'USER_APPROVED_FOR_CAPTURE' ||
+                                                                      event.event_type === 'USER_APPROVED_FOR_CAPTURE_AWAITING_SERVICE_APPROVAL');
+      if (userApprovedForCaptureEvent) {
+        const userJourneyDurationMillis : number = Date.parse(userApprovedForCaptureEvent.timestamp) - Date.parse(paymentStartedEvent.timestamp)
+        const userJourneyDurationSeconds : number = Math.floor(userJourneyDurationMillis / 1000)
+
+        userJourneyDurationFriendly = ''
+
+        const hours : number = Math.floor(userJourneyDurationSeconds / 3600)
+        if (hours) {
+          userJourneyDurationFriendly += hours + ' hour' + (hours !== 1 ? 's, ' : ', ')
+        }
+
+        const minutes : number = Math.floor(userJourneyDurationSeconds / 60) % 60
+        if (hours || minutes) {
+          userJourneyDurationFriendly += minutes + ' minute' + (minutes !== 1 ? 's and ' : ' and ')
+        }
+
+        const seconds : number = userJourneyDurationSeconds % 60
+        if (hours || minutes || seconds) {
+          userJourneyDurationFriendly += seconds + ' second' + (seconds !== 1 ? 's' : '')
+        }
+      }
+    }
+
     const relatedResult = await Ledger.transactions.retrieveRelatedTransactions(transaction.transaction_id,
       {gateway_account_id: transaction.gateway_account_id})
     relatedTransactions.push(...relatedResult.transactions)
@@ -193,7 +221,8 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
       events,
       stripeDashboardUri,
       webhookMessages,
-      humanReadableSubscriptions: constants.webhooks.humanReadableSubscriptions
+      humanReadableSubscriptions: constants.webhooks.humanReadableSubscriptions,
+      userJourneyDurationFriendly
     })
   } catch (error) {
     next(error)
