@@ -154,10 +154,13 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     let userJourneyDurationFriendly: string = 'Not available'
     const paymentStartedEvent = events.find((event: any) => event.event_type === 'PAYMENT_STARTED')
     if (paymentStartedEvent) {
-      const userApprovedForCaptureEvent = events.find((event: any) => event.event_type === 'USER_APPROVED_FOR_CAPTURE' ||
-                                                                      event.event_type === 'USER_APPROVED_FOR_CAPTURE_AWAITING_SERVICE_APPROVAL');
-      if (userApprovedForCaptureEvent) {
-        const userJourneyDurationMillis : number = Date.parse(userApprovedForCaptureEvent.timestamp) - Date.parse(paymentStartedEvent.timestamp)
+      const endOfUserJourneyEvent = events.find((event: any) => event.event_type === 'USER_APPROVED_FOR_CAPTURE' ||
+                                                                event.event_type === 'USER_APPROVED_FOR_CAPTURE_AWAITING_SERVICE_APPROVAL' ||
+                                                                event.event_type === 'CANCELLED_BY_USER' ||
+                                                                event.event_type === 'AUTHORISATION_REJECTED' ||
+                                                                event.event_type === 'GATEWAY_ERROR_DURING_AUTHORISATION');
+      if (endOfUserJourneyEvent) {
+        const userJourneyDurationMillis : number = Date.parse(endOfUserJourneyEvent.timestamp) - Date.parse(paymentStartedEvent.timestamp)
         const userJourneyDurationSeconds : number = Math.floor(userJourneyDurationMillis / 1000)
 
         userJourneyDurationFriendly = ''
