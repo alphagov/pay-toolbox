@@ -3,8 +3,8 @@
   "version": "0.3.0",
   "description": "Internal administrative tools service for the GOV.UK Pay products.",
   "engines": {
-    "node": "^18.17.1",
-    "npm": "^9.6.7"
+    "node": "^18.20.4",
+    "npm": "^10.7.0"
   },
   "private": true,
   "main": "dist/index.js",
