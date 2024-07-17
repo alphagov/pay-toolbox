@@ -210,3 +210,8 @@ export interface AddGatewayAccountCredentialsRequest {
   payment_provider: string;
   credentials?: StripeCredentials;
 }
+
+export interface AddGitHubAndZendeskCredential {
+  zendesk_ticket_id: string;
+  github_user_id: string;
+}
