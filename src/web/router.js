@@ -25,11 +25,14 @@ const paymentLinks = require('./modules/payment_links/payment_links.http')
 const ledgerPayouts = require('./modules/ledger_payouts/payout.http')
 const performance = require('./modules/statistics/performance.http')
 const events = require('./modules/events')
+const fixRefunds = require('./modules/transactions/fix_async_failed_stripe_refund')
+
 
 // @TODO(sfount) remove `default`s on update to import export syntax
 const users = require('./modules/users/users.http').default
 
 const {PermissionLevel} = require('../lib/auth/types')
+const { fixAsyncFailedStripeRefund } = require("./modules/transactions/fix_async_failed_stripe_refund");
 
 const router = express.Router()
 
@@ -158,6 +161,8 @@ router.get('/agreements/search', auth.secured(PermissionLevel.VIEW_ONLY), agreem
 router.post('/agreements/search', auth.secured(PermissionLevel.VIEW_ONLY), agreements.search)
 router.get('/agreements/:id', auth.secured(PermissionLevel.VIEW_ONLY), agreements.detail)
 router.get('/agreements', auth.secured(PermissionLevel.VIEW_ONLY), agreements.list)
+router.get('/confirm-fix-async-failed-stripe-refund/:id', auth.secured(PermissionLevel.USER_SUPPORT), fixRefunds.show)
+router.post('/confirm-fix-async-failed-stripe-refund/:id', auth.secured(PermissionLevel.USER_SUPPORT), fixRefunds.fixAsyncFailedStripeRefund)
 
 router.get('/payment_links', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.list)
 router.get('/payment_links/search', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.search)

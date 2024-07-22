@@ -1,0 +1,55 @@
+{% from "common/json.njk" import json %}
+
+{% extends "layout/layout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+
+{% set isTestData = not (parentTransaction and parentTransaction.live) %}
+
+{% block main %}
+  <h1 class="govuk-heading-m">Refund</h1>
+
+  <div class="govuk-body govuk-!-margin-bottom-4">
+    <a href="/transactions/{{ transaction.transaction_id }}" class="govuk-back-link">Refunds
+      payment {{ transaction.transaction_id }}</a>
+  </div>
+
+  <div class="status-inline-spacer">
+    <span class="govuk-body-l status-amount">{{ (transaction.total_amount or transaction.amount) | currency }}</span>
+  </div>
+
+  <div class="govuk-grid-row status-spacer payment-detail-row">
+    <div class="govuk-grid-column-one-quarter">
+      <span class="govuk-caption-m">Date</span>
+      <span class="govuk-body">{{ transaction.created_date | formatDate }}</span>
+    </div>
+  </div>
+
+  <h1 class="govuk-heading-m">Confirm refund</h1>
+
+  <form method="post" action="/confirm-fix-async-failed-stripe-refund/:id">
+
+    {{ govukInput({
+      label: { text: "Zendesk ticket number" },
+      id: "zendeskTicketNumber",
+      name: "zendeskTicketNumber",
+      autocomplete: "off"
+    }) }}
+
+    {{ govukWarningText({
+      text: "This feature is under development and you should NOT press the button yet.",
+      iconFallbackText: "Warning"
+    }) }}
+
+    {{ govukButton({
+      text: "Correct asynchronously failed Stripe refund "
+    }) }}
+
+  </form>
+{% endblock %}
+
