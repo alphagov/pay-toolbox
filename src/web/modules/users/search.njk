@@ -4,7 +4,7 @@
 
 {% block main %}
   <span class="govuk-caption-m">GOV.UK Pay platform</span>
-  <h1 class="govuk-heading-m">Find a user</h1>
+  <h1 class="govuk-heading-m">Find a service user</h1>
 
   <form method="POST" action="/users/search">
     {{ govukInput({
@@ -22,3 +22,5 @@
     <input type="hidden" name="_csrf" value="{{ csrf }}">
   </form>
 {% endblock %}
+
+<p class="govuk-body">To search for a paying user, use <a class="govuk-link" href="/transactions/search">Find a transaction</a>.</p>
