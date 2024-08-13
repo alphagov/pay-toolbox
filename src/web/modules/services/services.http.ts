@@ -294,6 +294,7 @@ export async function updateOrganisationForm(
   try {
     const service = await AdminUsers.services.retrieve(req.params.id)
     const context: RecoverContext = {service, csrf: req.csrfToken()}
+    const messages = req.flash('info')
     const {recovered} = req.session
 
     if (recovered) {
@@ -312,7 +313,10 @@ export async function updateOrganisationForm(
       delete req.session.recovered
     }
 
-    res.render('services/services.update_organisation.njk', context)
+    res.render('services/services.update_organisation.njk', {
+      ...context,
+      messages
+    })
   } catch (error) {
     next(error)
   }
