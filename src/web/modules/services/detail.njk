@@ -10,71 +10,63 @@
 
   {% for message in messages %}
     <div class="govuk-error-summary success-summary" role="alert">
-      <h2 class="govuk-error-summary__title">{{message}}</h2>
+      <h2 class="govuk-error-summary__title">{{ message }}</h2>
     </div>
   {% endfor %}
 
-  {{ govukSummaryList({
-    rows: [
-      { key: { text: "Service ID" }, value: { text: service.id } },
-      { key: { text: "External ID" }, value: { html: "<code>" + service.external_id + "</code>" } },
-      { key: { text: "Name" }, value: { text: service.name } },
-      { key: { text: "Organisation" }, value: { text: service.merchant_details.name or "(Not set)" }, actions: { items: [{ href: "/services/" + service.external_id + "/organisation", text: "Change" }] } },
-      { key: { text: "Go live status" }, value: { text: service.current_go_live_stage | upper } },
-      { key: { text: "Archived" }, value: { text: service.archived | string | capitalize } },
-      { key: { text: "Redirect to service on terminal state" }, value: { text: service.redirect_to_service_immediately_on_terminal_state | string | capitalize } },
-      { key: { text: "Experimental features are enabled" }, value: { text: service.experimental_features_enabled | string | capitalize } }
-    ]
-    })
-  }}
+  <div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+      <h2 class="govuk-heading-s">Service overview</h2>
+    </div>
+    <div class="govuk-summary-card__content">
+      {{ govukSummaryList({
+        rows: [
+          { key: { html: "<span class='govuk-caption-m'>ID</span>" }, value: { text: service.id } },
+          { key: { html: "<span class='govuk-caption-m'>External ID</span>" }, value: { html: "<code>" + service.external_id + "</code>" } },
+          { key: { html: "<span class='govuk-caption-m'>Name</span>" }, value: { text: service.name } },
+          { key: { html: "<span class='govuk-caption-m'>Organisation</span>" }, value: { text: service.merchant_details.name or "(Not set)" }, actions: { items: [{ href: "/services/" + service.external_id + "/organisation", text: "Manage" }] } },
+          { key: { html: "<span class='govuk-caption-m'>Go live status</span>" }, value: { text: service.current_go_live_stage | upper } },
+          { key: { html: "<span class='govuk-caption-m'>Archived</span>" }, value: { text: service.archived | string | capitalize } },
+          { key: { html: "<span class='govuk-caption-m'>Redirect to service on terminal state</span>" }, value: { text: service.redirect_to_service_immediately_on_terminal_state | string | capitalize } },
+          { key: { html: "<span class='govuk-caption-m'>Experimental features are enabled</span>" }, value: { text: service.experimental_features_enabled | string | capitalize } }
+        ]
+      }) }}
+    </div>
+  </div>
 
-  <div>
-    <table class="govuk-table">
-      <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-          <th class="govuk-table__header" scope="col" colspan="2">Reporting details</th>
-        </tr>
-      </thead>
-      <tbody class="govuk-table__body">
-        <tr class="govuk-table__row">
-          <th class="govuk-table__header" scope="col">Sector</th>
-          <td class="govuk-table__cell">{{service.sector | capitalize or "(This is set when the service is made live)"}}</td>
-        </tr>
-        <tr class="govuk-table__row">
-          <th class="govuk-table__header" scope="col">Internal service</th>
-          <td class="govuk-table__cell">{{service.internal | string | capitalize }}</td>
-        </tr>
-        <tr class="govuk-table__row">
-          <th class="govuk-table__header" scope="col">Created date</th>
-          <td class="govuk-table__cell">
-            {{service.created_date | formatToSimpleDate or "(Service was created before we captured this date)" }}
-          </td>
-        </tr>
-        <tr class="govuk-table__row">
-          <th class="govuk-table__header" scope="col">Went live date</th>
-          <td class="govuk-table__cell">
-            {{service.went_live_date | formatToSimpleDate or "(This is set when the service is made live)"}}
-          </td>
-        </tr>
-    </tbody>
-    </table>
+  <div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+      <h2 class="govuk-heading-s">Reporting details</h2>
+    </div>
+    <div class="govuk-summary-card__content">
+      {{ govukSummaryList({
+        rows: [
+          { key: { html: "<span class='govuk-caption-m'>Sector</span>" }, value: { text: service.sector | capitalize or "(This is set when the service is made live)" } },
+          { key: { html: "<span class='govuk-caption-m'>Internal service</span>" }, value: { text: service.internal | string | capitalize } },
+          { key: { html: "<span class='govuk-caption-m'>Created date</span>" }, value: { text: service.created_date | formatToSimpleDate or "(Service was created before we captured this date)" } },
+          { key: { html: "<span class='govuk-caption-m'>Went live date</span>" }, value: { text: service.went_live_date | formatToSimpleDate or "(This is set when the service is made live)" } }
+        ]
+      }) }}
+    </div>
   </div>
 
   <div>
     <table class="govuk-table">
       <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-          <th class="govuk-table__header" scope="col" colspan="2">Gateway accounts</th>
-        </tr>
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col" colspan="2">Gateway accounts</th>
+      </tr>
       </thead>
       <tbody class="govuk-table__body">
-        {% for account in serviceGatewayAccounts %}
+      {% for account in serviceGatewayAccounts %}
         <tr class="govuk-table__row">
           <td class="govuk-table__cell">
-            <a class="govuk-link govuk-link--no-visited-state" href="/gateway_accounts/{{ account.gateway_account_id }}">{{account.payment_provider}} ({{account.type}})</a>
+            <a class="govuk-link govuk-link--no-visited-state"
+               href="/gateway_accounts/{{ account.gateway_account_id }}">{{ account.payment_provider }}
+              ({{ account.type }})</a>
           </td>
         </tr>
-        {% endfor %}
+      {% endfor %}
       </tbody>
     </table>
   </div>
@@ -82,28 +74,29 @@
   <div>
     <table class="govuk-table">
       <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-          <th class="govuk-table__header" scope="col">Email</th>
-          <th class="govuk-table__header" scope="col">Role</th>
-          <th class="govuk-table__header" scope="col">Disabled</th>
-        </tr>
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Email</th>
+        <th class="govuk-table__header" scope="col">Role</th>
+        <th class="govuk-table__header" scope="col">Disabled</th>
+      </tr>
       </thead>
       <tbody class="govuk-table__body">
-        {% for user in users %}
-          <tr class="govuk-table__row">
-            <td class="govuk-table__cell">
-              <a href="/users/{{ user.external_id }}" class="govuk-link govuk-link--no-visited-state">{{ user.email }}
-            </td>
-            <td class="govuk-table__cell">{{ user.role | capitalize }}</td>
-            <td class="govuk-table__cell">{{ user.disabled | string | capitalize }}</td>
-          </tr>
-        {% endfor %}
-      </body>
+      {% for user in users %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">
+            <a href="/users/{{ user.external_id }}" class="govuk-link govuk-link--no-visited-state">{{ user.email }}
+          </td>
+          <td class="govuk-table__cell">{{ user.role | capitalize }}</td>
+          <td class="govuk-table__cell">{{ user.disabled | string | capitalize }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
     </table>
   </div>
 
   <div>
-    <a href="mailto:{{ adminEmails }}?cc=govuk-pay-support@digital.cabinet-office.gov.uk" class="govuk-button govuk-button--secondary">Email all admin users</a>
+    <a href="mailto:{{ adminEmails }}?cc=govuk-pay-support@digital.cabinet-office.gov.uk"
+       class="govuk-button govuk-button--secondary">Email all admin users</a>
   </div>
 
   <div>
@@ -113,8 +106,7 @@
     {{ govukButton({
       text: "Go live",
       href: "/services/" + serviceId + "/go_live"
-      })
-    }}
+    }) }}
   </div>
 
   <div>
@@ -125,95 +117,98 @@
       text: "Add test account",
       classes: "govuk-button--secondary",
       href: "/services/" + serviceId + "/test_account"
-      })
-    }}
+    }) }}
 
-  <div>
-    <h2 class="govuk-heading-m">Service actions</h2>
-    {{ govukButton({
-      text: "Edit custom branding",
-      href: "/services/" + serviceId + "/branding"
-      })
-      }}
-    {{ govukButton({
-      text: "Link gateway accounts",
-      href: "/services/" + serviceId + "/link_accounts"
-      })
-    }}
-  </div>
+    <div>
+      <h2 class="govuk-heading-m">Service actions</h2>
+      {{ govukButton({
+        text: "Edit custom branding",
+        href: "/services/" + serviceId + "/branding"
+      }) }}
+      {{ govukButton({
+        text: "Link gateway accounts",
+        href: "/services/" + serviceId + "/link_accounts"
+      }) }}
+    </div>
 
-  {% if service.redirect_to_service_immediately_on_terminal_state %}
-  <div>
-    <h2 class="govuk-heading-s">Redirect to service on terminal state is enabled</h2>
-    <p class="govuk-body">Reference the <a <a class="govuk-link" href="https://docs.payments.service.gov.uk/optional_features/use_your_own_error_pages/#use-your-own-payment-failure-pages">use your own error pages</a> documentation for more details.</p>
-    {{ govukButton({
-      text: "Disable redirect to service on terminal state",
-      classes: "govuk-button--warning",
-      href: "/services/" + serviceId + "/toggle_terminal_state_redirect"
-      })
-    }}
-  </div>
-  {% else %}
-  <div>
-    <h2 class="govuk-heading-s">Enable redirect to service on terminal state</h2>
-    <p class="govuk-body">Enabling this flag for a service will change the payment flow across all gateway accounts, this should never be done without consulting the service.</p>
-    <p class="govuk-body">Reference the <a <a class="govuk-link" href="https://docs.payments.service.gov.uk/optional_features/use_your_own_error_pages/#use-your-own-payment-failure-pages">use your own error pages</a> documentation for more details.</p>
-    {{ govukButton({
-      text: "Enable redirect to service on terminal state",
-      classes: "govuk-button--warning",
-      href: "/services/" + serviceId + "/toggle_terminal_state_redirect"
-      })
-    }}
-  </div>
-  {% endif %}
-
-  {% if service.experimental_features_enabled %}
-  <div>
-    <h2 class="govuk-heading-s">Experimental features are enabled</h2>
-    <p class="govuk-body">Enabling this flag for a service will opt the service into any features checking for this flag to be set on the service.</p>
-    {{ govukButton({
-      text: "Disable experimental features",
-      href: "/services/" + serviceId + "/toggle_experimental_features_enabled"
-      })
-    }}
-  </div>
-  {% else %}
-  <div>
-    <h2 class="govuk-heading-s">Enable experimental features</h2>
-    <p class="govuk-body">Enabling this flag for a service will opt the service into any features checking for this flag to be set on the service.</p>
-    <p class="govuk-body">This flag should only be enabled while the service is testing functionality that will not be made available to all users/ services initially.</p>
-    {{ govukButton({
-      text: "Enable experimental features",
-      href: "/services/" + serviceId + "/toggle_experimental_features_enabled"
-      })
-    }}
-  </div>
-  {% endif %}
-
-  <div>
-    {% set serviceActionName = "Un-archive this service" if service.archived else "Archive this service" %}
-
-    <h2 class="govuk-heading-s">{{ serviceActionName }}</h2>
-
-    {% if service.archived %}
-      <p class="govuk-body">Unarchiving service impacts internal team reports only</p>
+    {% if service.redirect_to_service_immediately_on_terminal_state %}
+      <div>
+        <h2 class="govuk-heading-s">Redirect to service on terminal state is enabled</h2>
+        <p class="govuk-body">Reference the <a <a class="govuk-link"
+                                                  href="https://docs.payments.service.gov.uk/optional_features/use_your_own_error_pages/#use-your-own-payment-failure-pages">use
+            your own error pages</a> documentation for more details.</p>
+        {{ govukButton({
+          text: "Disable redirect to service on terminal state",
+          classes: "govuk-button--warning",
+          href: "/services/" + serviceId + "/toggle_terminal_state_redirect"
+        }) }}
+      </div>
     {% else %}
-      <p class="govuk-body">
-        Toggle the archived status of this service.
-      </p>
-      <p class="govuk-body">
-        This will remove ALL users from the service, revoke API keys, and redact gateway account credentials. Also impacts internal Pay team reports
-      </p>
-      <p class="govuk-body">This should not be used if you need to suspend a service</p>
+      <div>
+        <h2 class="govuk-heading-s">Enable redirect to service on terminal state</h2>
+        <p class="govuk-body">Enabling this flag for a service will change the payment flow across all gateway accounts,
+          this should never be done without consulting the service.</p>
+        <p class="govuk-body">Reference the <a <a class="govuk-link"
+                                                  href="https://docs.payments.service.gov.uk/optional_features/use_your_own_error_pages/#use-your-own-payment-failure-pages">use
+            your own error pages</a> documentation for more details.</p>
+        {{ govukButton({
+          text: "Enable redirect to service on terminal state",
+          classes: "govuk-button--warning",
+          href: "/services/" + serviceId + "/toggle_terminal_state_redirect"
+        }) }}
+      </div>
     {% endif %}
 
-    {{ govukButton({
-      text: serviceActionName,
-      classes: "govuk-button--warning",
-      href: "/services/" + serviceId + "/toggle_archived_status"
-    }) }}
-  </div>
+    {% if service.experimental_features_enabled %}
+      <div>
+        <h2 class="govuk-heading-s">Experimental features are enabled</h2>
+        <p class="govuk-body">Enabling this flag for a service will opt the service into any features checking for this
+          flag to be set on the service.</p>
+        {{ govukButton({
+          text: "Disable experimental features",
+          href: "/services/" + serviceId + "/toggle_experimental_features_enabled"
+        }) }}
+      </div>
+    {% else %}
+      <div>
+        <h2 class="govuk-heading-s">Enable experimental features</h2>
+        <p class="govuk-body">Enabling this flag for a service will opt the service into any features checking for this
+          flag to be set on the service.</p>
+        <p class="govuk-body">This flag should only be enabled while the service is testing functionality that will not
+          be made available to all users/ services initially.</p>
+        {{ govukButton({
+          text: "Enable experimental features",
+          href: "/services/" + serviceId + "/toggle_experimental_features_enabled"
+        }) }}
+      </div>
+    {% endif %}
 
-  {{ json("Service details source", service) }}
-  {{ json("Users details source", users) }}
+    <div>
+      {% set serviceActionName = "Un-archive this service" if service.archived else "Archive this service" %}
+
+      <h2 class="govuk-heading-s">{{ serviceActionName }}</h2>
+
+      {% if service.archived %}
+        <p class="govuk-body">Unarchiving service impacts internal team reports only</p>
+      {% else %}
+        <p class="govuk-body">
+          Toggle the archived status of this service.
+        </p>
+        <p class="govuk-body">
+          This will remove ALL users from the service, revoke API keys, and redact gateway account credentials. Also
+          impacts internal Pay team reports
+        </p>
+        <p class="govuk-body">This should not be used if you need to suspend a service</p>
+      {% endif %}
+
+      {{ govukButton({
+        text: serviceActionName,
+        classes: "govuk-button--warning",
+        href: "/services/" + serviceId + "/toggle_archived_status"
+      }) }}
+    </div>
+
+    {{ json("Service details source", service) }}
+    {{ json("Users details source", users) }}
+  </div>
 {% endblock %}

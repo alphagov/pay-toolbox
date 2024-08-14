@@ -119,6 +119,10 @@ async function create(req: Request, res: Response): Promise<void> {
   if (serviceId) {
     const service = await AdminUsers.services.retrieve(serviceId)
     context.service = service
+    if (!service.merchant_details?.name) {
+      req.flash('info','Organisation name is required to create a new gateway account')
+      res.redirect(`/services/${serviceId}/organisation`)
+    }
     context.description = `${service.merchant_details.name} ${service.name} ${capitalize(provider)} ${live === 'live' && 'LIVE' || 'TEST'}`
   }
   res.render('gateway_accounts/create', context)
