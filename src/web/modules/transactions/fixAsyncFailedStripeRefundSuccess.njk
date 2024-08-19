@@ -1,0 +1,20 @@
+{% extends "layout/layout.njk" %}
+  {% set isTestData = not (parentTransaction and parentTransaction.live) %}
+
+{% block main %}
+
+  <div class="govuk-body govuk-!-margin-bottom-4">
+    <a href="/transactions/{{ transaction.transaction_id }}" class="govuk-back-link">Refunds
+      payment {{ transaction.transaction_id }}</a>
+  </div>
+  <div class="govuk-panel govuk-panel--confirmation">
+    <h1 class="govuk-panel__title">
+      Asynchronously failed Stripe refund was successfully fixed
+    </h1>
+    <div class="govuk-panel__body">
+      transaction reference id: {{ transaction.transaction_id }}
+    </div>
+  </div>
+
+{% endblock %}
+

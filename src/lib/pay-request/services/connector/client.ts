@@ -2,25 +2,26 @@ import _ from 'lodash'
 import Client from '../../base'
 import {mapRequestParamsToOperation} from '../../utils/request'
 import {
+    AddGatewayAccountCredentialsRequest,
+    AddGitHubAndZendeskCredential,
     Charge,
+    CreateGatewayAccountRequest,
+    CreateGatewayAccountResponse,
     GatewayAccount,
-    StripeCredentials,
+    GatewayAccountCredentials,
+    GatewayStatusComparison,
     ListCardTypesResponse,
     ListGatewayAccountsRequest,
     ListGatewayAccountsResponse,
-    CreateGatewayAccountRequest,
-    CreateGatewayAccountResponse,
-    GatewayStatusComparison,
+    StripeCredentials,
     StripeSetup,
     UpdateGatewayAccountRequest,
-    UpdateStripeSetupRequest,
-    GatewayAccountCredentials,
-    AddGatewayAccountCredentialsRequest,
-    AddGitHubAndZendeskCredential
+    UpdateStripeSetupRequest
 } from './types'
 import {App} from '../../shared'
 import {handleEntityNotFound} from "../../utils/error";
-import { EntityNotFoundError } from '../../../errors'
+import {EntityNotFoundError} from '../../../errors'
+import {Refund} from "../ledger/types";
 
 /**
  * Convenience methods for accessing resource endpoints for the Connector
@@ -178,21 +179,21 @@ export default class Connector extends Client {
                 .then(response => client._unpackResponseData<CreateGatewayAccountResponse>(response));
         },
 
-    /**
-     * Update an existing gateway account. The patch endpoint for accounts only
-     * accepts one operation. The patch endpoint for accounts will respond with
-     * an empty success response
-     * @param id - Gateway account ID
-     * @param params - keys to update on the gateway account
-     * @returns The updated gateway account object
-     */
-    update(
-      id: string,
-      params: UpdateGatewayAccountRequest
-    ): Promise<void | undefined> {
-      // @TODO(sfount) move to utility so that it can be unit tested
-      // Note that connector only supports single update per request, rather than an array of updates
-      const payload = mapRequestParamsToOperation(params).pop()
+        /**
+         * Update an existing gateway account. The patch endpoint for accounts only
+         * accepts one operation. The patch endpoint for accounts will respond with
+         * an empty success response
+         * @param id - Gateway account ID
+         * @param params - keys to update on the gateway account
+         * @returns The updated gateway account object
+         */
+        update(
+            id: string,
+            params: UpdateGatewayAccountRequest
+        ): Promise<void | undefined> {
+            // @TODO(sfount) move to utility so that it can be unit tested
+            // Note that connector only supports single update per request, rather than an array of updates
+            const payload = mapRequestParamsToOperation(params).pop()
 
             return client._axios
                 .patch(`/v1/api/accounts/${id}`, payload)
@@ -285,12 +286,11 @@ export default class Connector extends Client {
 
 
     fixAsyncFailedStripeRefund = ((client: Connector) => ({
-        fixStripeRefund(gatewayAccountId: string, chargeId: string, refundId: string, params: AddGitHubAndZendeskCredential): Promise<void> {
+        fixStripeRefund(gatewayAccountId: string, chargeId: string, refundId: string, params: AddGitHubAndZendeskCredential): Promise<Refund> {
             return client._axios
                 .post(`/v1/api/accounts/${gatewayAccountId}/charges/${chargeId}/refunds/${refundId}/reverse-failed`, params)
-                .then(() => {
-                    return
-                })
+                .then(response => client._unpackResponseData<Refund>(response))
+                .catch(handleEntityNotFound("refund", refundId));
         }
     }))(this)
 }

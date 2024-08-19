@@ -32,7 +32,7 @@
 
   <h1 class="govuk-heading-m">Confirm refund</h1>
 
-  <form method="post" action="/confirm-fix-async-failed-stripe-refund/:id">
+  <form method="post" action="/confirm-fix-async-failed-stripe-refund/{{ transaction.transaction_id }}">
 
     {{ govukInput({
       label: { text: "Zendesk ticket number" },
@@ -46,9 +46,12 @@
       iconFallbackText: "Warning"
     }) }}
 
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
     {{ govukButton({
       text: "Correct asynchronously failed Stripe refund "
     }) }}
+
+
 
   </form>
 {% endblock %}
