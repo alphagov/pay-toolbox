@@ -127,14 +127,14 @@ export default class Ledger extends Client {
   transactions = ((client: Ledger) => ({
     retrieve(id: string): Promise<Transaction | undefined> {
       return client._axios
-        .get(`/v1/transaction/${id}`, { params: {override_account_id_restriction: true}})
+        .get(`/v1/transaction/${encodeURIComponent(id)}`, { params: {override_account_id_restriction: true}})
         .then(response => client._unpackResponseData<Transaction>(response))
         .catch(handleEntityNotFound('Transaction', id))
     },
 
     retrieveRelatedTransactions(id: string, params: RelatedTransactionsRequest): Promise<TransactionsForTransactionResponse | undefined> {
       return client._axios
-        .get(`/v1/transaction/${id}/transaction`, {params})
+        .get(`/v1/transaction/${encodeURIComponent(id)}/transaction`, {params})
         .then(response => client._unpackResponseData<TransactionsForTransactionResponse>(response));
     },
 
