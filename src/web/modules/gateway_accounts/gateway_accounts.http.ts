@@ -441,6 +441,33 @@ async function updateWorldpayExemptionEngine(req: Request, res: Response): Promi
   res.redirect(`/gateway_accounts/${id}`)
 }
 
+async function worldpayCorporateExemptions(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const {id} = req.params
+  const account = await Connector.accounts.retrieve(id)
+
+  if (!account.worldpay_3ds_flex) {
+    throw new ValidationError('Worldpay 3DS Flex must be configured before you can enable the corporate exemptions.')
+  }
+
+  const enabled = account.worldpay_3ds_flex && account.worldpay_3ds_flex.corporate_exemptions_enabled
+  res.render('gateway_accounts/worldpay_corporate_exemptions', {
+    account,
+    enabled,
+    csrf: req.csrfToken()
+  })
+}
+
+async function updateWorldpayCorporateExemptions(req: Request, res: Response): Promise<void> {
+  const {id} = req.params
+  const enable = req.body.enabled === 'enabled'
+  await Connector.accounts.update(id, {worldpay_corporate_exemptions_enabled: enable})
+  req.flash('info', `Worldpay Corporate Exemptions ${enable ? 'enabled' : 'disabled'}`)
+  res.redirect(`/gateway_accounts/${id}`)
+}
+
 async function disableReasonPage(
   req: Request,
   res: Response
@@ -674,6 +701,8 @@ export default {
   searchRequest: wrapAsyncErrorHandler(searchRequest),
   worldpayExemptionEngine: wrapAsyncErrorHandler(worldpayExemptionEngine),
   updateWorldpayExemptionEngine: wrapAsyncErrorHandler(updateWorldpayExemptionEngine),
+  worldpayCorporateExemptions: wrapAsyncErrorHandler(worldpayCorporateExemptions),
+  updateWorldpayCorporateExemptions: wrapAsyncErrorHandler(updateWorldpayCorporateExemptions),
   recurringPayments: wrapAsyncErrorHandler(recurringPayments),
   updateRecurringPayments: wrapAsyncErrorHandler(updateRecurringPayments),
   worldpayPaymentData: wrapAsyncErrorHandler(worldpayPaymentData),

@@ -47,6 +47,8 @@ export default {
   searchRequest: http.searchRequest,
   worldpayExemptionEngine: http.worldpayExemptionEngine,
   updateWorldpayExemptionEngine: http.updateWorldpayExemptionEngine,
+  worldpayCorporateExemptions: http.worldpayCorporateExemptions,
+  updateWorldpayCorporateExemptions: http.updateWorldpayCorporateExemptions,
   recurringPayments: http.recurringPayments,
   updateRecurringPayments: http.updateRecurringPayments,
   worldpayPaymentData: http.worldpayPaymentData,

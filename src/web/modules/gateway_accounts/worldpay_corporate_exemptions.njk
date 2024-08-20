@@ -1,0 +1,44 @@
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% extends "layout/layout.njk" %}
+
+{% set isTestData = account and not (account.type === "live") %}
+
+{% block main %}
+  <h1 class="govuk-heading-m">Worldpay 3DS Corporate Exemptions</h1>
+
+  <div>
+    <a href="/gateway_accounts/{{ account.gateway_account_id }}" class="govuk-back-link">Gateway account ({{ account.gateway_account_id }})</a>
+  </div>
+
+  <p class="govuk-body">With corporate exemptions, we can request that a payment be exempt from SCA (Strong Customer Authentication) because the cardholder is working in a secure corporate environment.</p>
+  <p class="govuk-body">When enabled, we will request a corporate exemption for any payments made using a corporate card (determined by the card number) when authorising.</p>
+  <p class="govuk-body">Unlike other exemptions, if our request for a corporate exemption is rejected by the bank and the payment is declined, we will not try again without requesting an exemption (soft declines are treated as hard declines).</p>
+  <p class="govuk-body">This feature will be requested by a service through support.</p>
+
+  <form method="POST" action="/gateway_accounts/{{ account.gateway_account_id }}/worldpay_corporate_exemptions">
+
+    {{ govukRadios({
+      name: "enabled",
+      items: [
+        {
+          value: "enabled",
+          text: "Turn on Corporate Exemptions",
+          checked: enabled
+        },
+        {
+          value: "disabled",
+          text: "Turn off Corporate Exemptions",
+          checked: not enabled
+        }
+      ]
+    }) }}
+
+    {{ govukButton({
+      text: "Save"
+    })
+    }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+{% endblock %}

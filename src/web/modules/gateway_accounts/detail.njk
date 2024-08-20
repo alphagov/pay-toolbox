@@ -24,7 +24,7 @@
   {% endif %}
 
 <span class="govuk-caption-m">{{ services.name }}</span>
-<h1 class="govuk-heading-m">Gateway account details <span><strong class="govuk-tag govuk-tag--grey">{{ account.payment_provider }} {{ account.type }}</strong></span></h1>
+<h1 class="govuk-heading-m">Gateway account details<span><strong class="govuk-tag govuk-tag--grey">{{ account.payment_provider }} {{ account.type }}</strong></span></h1>
 
 {% if services.external_id %}
   <div>
@@ -209,6 +209,15 @@
           </dd>
           <dd class="govuk-summary-list__actions">
             <a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/worldpay_exemption_engine">Manage<span class="govuk-visually-hidden"> Worldpay Exemption Engine</span></a>
+          </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key"><span class="govuk-caption-m">Corporate exemptions</span></dt>
+          <dd class="govuk-summary-list__value">
+            {{ 'Enabled' if account.worldpay_3ds_flex and account.worldpay_3ds_flex.corporate_exemptions_enabled else 'Disabled' }}
+          </dd>
+          <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/worldpay_corporate_exemptions">Manage<span class="govuk-visually-hidden"> Worldpay Exemption Engine</span></a>
           </dd>
         </div>
       {% endif %}
