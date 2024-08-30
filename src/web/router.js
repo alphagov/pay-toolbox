@@ -74,6 +74,8 @@ router.get('/gateway_accounts/:id/email_branding', auth.secured(PermissionLevel.
 router.post('/gateway_accounts/:id/email_branding', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.updateEmailBranding)
 router.get('/gateway_accounts/:id/worldpay_exemption_engine', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.worldpayExemptionEngine)
 router.post('/gateway_accounts/:id/worldpay_exemption_engine', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.updateWorldpayExemptionEngine)
+router.get('/gateway_accounts/:id/worldpay_corporate_exemptions', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.worldpayCorporateExemptions)
+router.post('/gateway_accounts/:id/worldpay_corporate_exemptions', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.updateWorldpayCorporateExemptions)
 router.get('/gateway_accounts/:id/disable', auth.secured(PermissionLevel.VIEW_ONLY), gatewayAccounts.disableReasonPage)
 router.post('/gateway_accounts/:id/disable', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.disable)
 router.post('/gateway_accounts/:id/enable', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.enable)

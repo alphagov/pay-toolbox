@@ -83,6 +83,8 @@ export interface Worldpay3dsFlexCredentials {
   issuer: string;
   organisational_unit_id: string;
   exemption_engine_enabled: boolean;
+  corporate_exemptions_enabled: boolean;
+
 }
 
 export interface NotifySettings {
@@ -98,6 +100,7 @@ export interface UpdateGatewayAccountRequest {
   block_prepaid_cards?: boolean;
   allow_moto?: boolean;
   worldpay_exemption_engine_enabled?: boolean;
+  worldpay_corporate_exemptions_enabled?: boolean;
   allow_telephone_payment_notifications?: boolean;
   send_payer_ip_address_to_gateway?: boolean;
   send_payer_email_to_gateway?: boolean;
