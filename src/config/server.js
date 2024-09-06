@@ -1,6 +1,7 @@
 const Joi = require('joi')
 
 const expectedServerEnvironmentValues = Joi.object({
+  BIND_HOST: Joi.string().ip().default("127.0.0.1"),
   PORT: Joi.number().integer().required(),
   COOKIE_SESSION_ENCRYPTION_SECRET: Joi.string().required(),
   HTTP_PROXY: Joi.string(),

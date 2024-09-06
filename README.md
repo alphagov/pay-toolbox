@@ -41,8 +41,9 @@ If the above doesn't work, try the following:
 
 ## Key runtime environment variables
 
-| Variable                 | Description                               |
-| ------------------------ |:----------------------------------------- |
+| Variable                 | Description                                                          |
+| ------------------------ |:-------------------------------------------------------------------- |
+| `BIND_HOST`              | The IP address for the application to bind to. Defaults to 127.0.0.1
 | `NODE_ENV`               |
 | `STRIPE_ACCOUNT_API_KEY` |
 | `https_proxy`            |
