@@ -16,19 +16,30 @@ export async function validateLedgerTransaction(
     const connectorEntry = await Connector.charges.retrieveAPI(req.params.id, ledgerEntry.gateway_account_id)
 
     const ledgerResponseWithoutLedgerSpecificFields = _.omit(ledgerEntry, [
-      'gateway_account_id',
-      'transaction_id',
-      'disputed',
-      'source',
-      'live',
-      'transaction_type',
-      'credential_external_id',
-      'service_id',
-      'refund_summary.amount_refunded'
+        'gateway_account_id',
+        'transaction_id',
+        'disputed',
+        'source',
+        'live',
+        'transaction_type',
+        'credential_external_id',
+        'service_id',
+        'refund_summary.amount_refunded',
+        'evidence_due_date',
+        'gateway_payout_id',
+        'parent_transaction_id',
+        'payment_details',
+        'reason'
     ])
     const connectorResponseWithoutConnectorSpecificFields = _.omit(connectorEntry, [
         'links',
-        'charge_id'
+        'charge_id',
+        'auth_code',
+        'authorised_date',
+        'payment_outcome',
+        'processor_id',
+        'provider_id',
+        'telephone_number'
     ])
 
     const parity = diff(connectorResponseWithoutConnectorSpecificFields, ledgerResponseWithoutLedgerSpecificFields).filter(obj => {
