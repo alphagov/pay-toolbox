@@ -15,7 +15,7 @@ export async function validateLedgerTransaction(
     const ledgerEntry = await Ledger.transactions.retrieve(req.params.id)
     const connectorEntry = await Connector.charges.retrieveAPI(req.params.id, ledgerEntry.gateway_account_id)
 
-    const ledgerPreparedForDiff = _.omit(ledgerEntry, [
+    const ledgerResponseWithoutLedgerSpecificFields = _.omit(ledgerEntry, [
       'gateway_account_id',
       'transaction_id',
       'disputed',
@@ -26,12 +26,12 @@ export async function validateLedgerTransaction(
       'service_id',
       'refund_summary.amount_refunded'
     ])
-    const connectorPreparedForDiff = _.omit(connectorEntry, [
+    const connectorResponseWithoutConnectorSpecificFields = _.omit(connectorEntry, [
         'links',
         'charge_id'
     ])
 
-    const parity = diff(connectorPreparedForDiff, ledgerPreparedForDiff).filter(obj => {
+    const parity = diff(connectorResponseWithoutConnectorSpecificFields, ledgerResponseWithoutLedgerSpecificFields).filter(obj => {
         if (obj.path[0] !== 'created_date' && obj.kind === EDIT) {
             return true
         }
