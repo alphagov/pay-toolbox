@@ -45,11 +45,11 @@ export default class Connector extends Client {
                 .catch(handleEntityNotFound("Charge", id))
         },
 
-        retrieveAPI(externalChargeId: string, accountId: string): Promise<Charge | undefined> {
+        parityCheck(externalChargeId: string, accountId: string): Promise<Charge | String> {
             return client._axios
                 .get(`/v1/api/accounts/${accountId}/charges/${externalChargeId}`)
                 .then(response => client._unpackResponseData<Charge>(response))
-                .catch(handleChargeNotFoundForParityCheck("Charge", externalChargeId, true))
+                .catch(handleChargeNotFoundForParityCheck("Charge", externalChargeId))
         },
 
         /**

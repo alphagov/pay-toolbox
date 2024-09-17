@@ -11,9 +11,9 @@
   <div>
     <a href="/transactions/{{ ledgerEntry.transaction_id }}" class="govuk-back-link">Back to transaction ({{ ledgerEntry.transaction_id }})</a>
   </div>
-  {% if connectorEntry.charge_id === 'Not found' %}
+  {% if message %}
     {{ govukWarningText({
-      text: "Charge not found in connector",
+      text: message,
       iconFallbackText: "Warning"
       })
     }}
@@ -78,7 +78,7 @@
 
   {{ json("Ledger source", ledgerEntry) }}
 
-  {% if connectorEntry.charge_id !== 'Not found' %}
+  {% if message === undefined %}
     {{ json("Connector source", connectorEntry) }}
   {% endif %}
 
