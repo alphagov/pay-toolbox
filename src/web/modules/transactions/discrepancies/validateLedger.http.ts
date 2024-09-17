@@ -15,7 +15,7 @@ export async function validateLedgerTransaction(
     const ledgerEntry = await Ledger.transactions.retrieve(req.params.id)
     const connectorEntry = await Connector.charges.retrieveAPI(req.params.id, ledgerEntry.gateway_account_id)
 
-    const ledgerResponseWithoutLedgerSpecificFields = _.omit(ledgerEntry, [
+      const ledgerResponseWithoutLedgerSpecificFields = _.omit(ledgerEntry, [
         'gateway_account_id',
         'transaction_id',
         'disputed',

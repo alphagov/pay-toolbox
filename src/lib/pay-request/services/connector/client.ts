@@ -19,7 +19,7 @@ import {
     UpdateStripeSetupRequest
 } from './types'
 import {App} from '../../shared'
-import {handleEntityNotFound} from "../../utils/error";
+import {handleEntityNotFound, handleChargeNotFoundForParityCheck} from "../../utils/error";
 import {EntityNotFoundError} from '../../../errors'
 import {Refund} from "../ledger/types";
 
@@ -49,7 +49,7 @@ export default class Connector extends Client {
             return client._axios
                 .get(`/v1/api/accounts/${accountId}/charges/${externalChargeId}`)
                 .then(response => client._unpackResponseData<Charge>(response))
-                .catch(handleEntityNotFound("Charge", externalChargeId))
+                .catch(handleChargeNotFoundForParityCheck("Charge", externalChargeId, true))
         },
 
         /**
