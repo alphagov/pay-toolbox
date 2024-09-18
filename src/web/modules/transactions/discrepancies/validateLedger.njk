@@ -11,69 +11,70 @@
   <div>
     <a href="/transactions/{{ ledgerEntry.transaction_id }}" class="govuk-back-link">Back to transaction ({{ ledgerEntry.transaction_id }})</a>
   </div>
-  {% if message %}
+  {% if warningMessage %}
     {{ govukWarningText({
-      text: message,
+      text: warningMessage,
       iconFallbackText: "Warning"
       })
     }}
   {% else %}
-    {% if parity.length %}
+
+    {% if not parityDisplay %}
+      {{ govukPanel({
+        titleText: "Parity",
+        html: "No meaningful differences found between in-flight and Ledger payment record"
+      })
+      }}
+
+    {% else %}
       {{ govukWarningText({
         text: "Differences found between in-flight and Ledger payment records.",
         iconFallbackText: "Warning"
         })
       }}
-    {% endif %}
-
-    {% if not parity.length %}
-      {{ govukPanel({
-        titleText: "Parity",
-        html: "No meaningful differences found between in-flight and Ledger payment record"
-        })
-      }}
-    {% endif %}
-
-    {% for diff in parity %}
+      <br/>
       <div>
-        <span class="govuk-body-s">
-        {% if diff.kind === "E" %}Mismatched property value
-        {% elif diff.kind === "D" %}<span class="missing-text">Property missing</span>
-        {% elif diff.kind === "N" %}<span class="extra-text">Extra property</span>
-        {% elif diff.kind === "A" %}Mismatched array property values
-        {% endif %}
-        </span>
-        <h4 class="govuk-heading-s">
-          <code>{{ diff.path | join(' > ') }}</code>
-        </h4>
-
-        <table class="govuk-table">
-          <tbody class="govuk-table__body">
-            <tr class="govuk-table__row">
-              <td class="govuk-table__cell fixed-cell"><span class="govuk-caption-m">Connector</span></td>
-              <td class="govuk-table__cell">
-                {% if diff.lhs | isObject %}
-                  {{ diff.lhs | dump | truncate(60) }}
-                {% else %}
-                  {{ diff.lhs }}
-                {% endif %}
-              </td>
-
-            </tr>
-            <tr class="govuk-table__row">
-              <td class="govuk-table__cell fixed-cell"><span class="govuk-caption-m">Ledger</span></td>
-              <td class="govuk-table__cell">
-                {% if diff.rhs | isObject %}
-                  {{ diff.rhs | dump | truncate(60) }}
-                {% else %}
-                  {{ diff.rhs }}
-                {% endif %}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        {% for kind, diffList in parityDisplay %}
+        <div>
+          <span class="govuk-heading-s">
+          {{ kind }}
+          </span>
+          {% for diff in diffList %}
+            <table class="govuk-table">
+              <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell">
+                    <code>{{ diff.path | join(' > ') }}</code>
+                  </td>
+                  <td class="govuk-table__cell"></td>
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell fixed-cell"><span class="govuk-caption-m">Connector</span></td>
+                  <td class="govuk-table__cell">
+                    {% if diff.lhs | isObject %}
+                      {{ diff.lhs | dump | truncate(60) }}
+                    {% else %}
+                      {{ diff.lhs }}
+                    {% endif %}
+                  </td>
+                </tr>
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell fixed-cell"><span class="govuk-caption-m">Ledger</span></td>
+                  <td class="govuk-table__cell">
+                    {% if diff.rhs | isObject %}
+                      {{ diff.rhs | dump | truncate(60) }}
+                    {% else %}
+                      {{ diff.rhs }}
+                    {% endif %}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <br/>
+          {% endfor %}
+        </div>
+        {% endfor %}
       </div>
-    {% endfor %}
+      {% endif %}
   {% endif %}
 
   {{ json("Ledger source", ledgerEntry) }}
