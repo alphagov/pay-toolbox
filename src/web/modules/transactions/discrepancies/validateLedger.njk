@@ -1,5 +1,6 @@
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "common/json.njk" import json %}
 
 {% extends "layout/layout.njk" %}
@@ -11,9 +12,9 @@
   <div>
     <a href="/transactions/{{ ledgerEntry.transaction_id }}" class="govuk-back-link">Back to transaction ({{ ledgerEntry.transaction_id }})</a>
   </div>
-  {% if warningMessage %}
-    {{ govukWarningText({
-      text: warningMessage,
+  {% if message %}
+    {{ govukInsetText({
+      text: message,
       iconFallbackText: "Warning"
       })
     }}

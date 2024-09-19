@@ -4,9 +4,11 @@ import { Ledger, Connector } from '../../../../lib/pay-request/client'
 import * as _ from 'lodash'
 import moment from 'moment'
 
-const EDIT = 'E'
-const DELETED = 'D'
-const NEW = 'N'
+enum DiffKind {
+    Edit = 'E',
+    Deleted = 'D',
+    New = 'N'
+}
 
 export async function validateLedgerTransaction(
   req: Request,
@@ -16,9 +18,9 @@ export async function validateLedgerTransaction(
   try {
     const ledgerEntry = await Ledger.transactions.retrieve(req.params.id)
     const connectorEntry = await Connector.charges.parityCheck(req.params.id, ledgerEntry.gateway_account_id)
-    let warningMessage
+    let message
     if (typeof connectorEntry === 'string') {
-        warningMessage = connectorEntry
+        message = connectorEntry
     }
 
     const ledgerResponseWithoutLedgerSpecificFields = _.omit(ledgerEntry, [
@@ -50,21 +52,21 @@ export async function validateLedgerTransaction(
 
     const parity = diff(connectorResponseWithoutConnectorSpecificFields, ledgerResponseWithoutLedgerSpecificFields).filter(obj => {
         switch (obj.kind) {
-            case EDIT: {
+            case DiffKind.Edit: {
                 if (obj.path[0] !== 'created_date') {
                     return true
                 } else {
                     const castedDiffObj = obj as DiffEdit<string>
                     const lhsDate = moment(castedDiffObj.lhs)
                     const rhsDate = moment(castedDiffObj.rhs)
-                    return Math.abs(lhsDate.diff(rhsDate)) > 10;
+                    return Math.abs(lhsDate.diff(rhsDate)) > 5000;
                 }
             }
-            case DELETED: {
+            case DiffKind.Deleted: {
                 const castedDeletedObj = obj as DiffDeleted<string>
                 return castedDeletedObj.lhs != null;
             }
-            case NEW: {
+            case DiffKind.New: {
                 const castedNewObj = obj as DiffNew<string>
                 return castedNewObj.rhs != null;
             }
@@ -72,9 +74,9 @@ export async function validateLedgerTransaction(
     })
     let parityDisplay
     if (parity.length > 0) {
-        const diffEdit = parity.filter((obj) => obj.kind === EDIT)
-        const diffNew = parity.filter((obj) => obj.kind === NEW)
-        const diffDelete = parity.filter((obj) => obj.kind === DELETED)
+        const diffEdit = parity.filter((obj) => obj.kind === DiffKind.Edit)
+        const diffNew = parity.filter((obj) => obj.kind === DiffKind.New)
+        const diffDelete = parity.filter((obj) => obj.kind === DiffKind.Deleted)
         if (diffEdit.length > 0) {
             parityDisplay = { 'Fields which have different values': diffEdit }
         }
@@ -85,7 +87,7 @@ export async function validateLedgerTransaction(
             parityDisplay = { ...parityDisplay, 'Fields missing from Ledger': diffDelete }
         }
     }
-    res.render('transactions/discrepancies/validateLedger', { ledgerEntry, connectorEntry, parityDisplay, warningMessage})
+    res.render('transactions/discrepancies/validateLedger', { ledgerEntry, connectorEntry, parityDisplay, message})
   } catch (error) {
     next(error)
   }
