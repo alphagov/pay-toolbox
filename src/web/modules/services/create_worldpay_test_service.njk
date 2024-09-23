@@ -1,0 +1,22 @@
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+<h1 class="govuk-heading-m">Create Worldpay Test Service</h1>
+
+<div>
+  <a href="/services/{{ serviceId }}" class="govuk-back-link">Back to service ({{ serviceId }})</a>
+</div>
+
+<p class="govuk-body">Are you sure you want to create a Worldpay Test Service?</p>
+
+  <form method="POST" action="/services/{{ serviceId }}/create_worldpay_test_service">
+    {{ govukButton({
+      text: "Create Worldpay test service",
+      classes: "govuk-button--secondary"
+      })
+    }}
+
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+  </form>
+
+{% endblock %}

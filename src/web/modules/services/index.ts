@@ -1,6 +1,8 @@
 import * as exceptions from './services.exceptions'
 import {
   branding,
+  createWorldpayTestService,
+  createWorldpayTestServiceConfirmationPage,
   detail,
   linkAccounts,
   listCsv,
@@ -44,5 +46,7 @@ export default {
   toggleArchiveService: toggleArchiveService,
   goLive: goLive,
   addTestAccount: addTestAccount,
-  submitTestAccountProvider: submitTestAccountProvider
+  submitTestAccountProvider: submitTestAccountProvider,
+  createWorldpayTestService: createWorldpayTestService,
+  createWorldpayTestServiceConfirmationPage: createWorldpayTestServiceConfirmationPage
 }

@@ -120,6 +120,8 @@ router.post('/services/:id/organisation', auth.secured(PermissionLevel.USER_SUPP
 router.get('/services/:id/go_live', auth.secured(PermissionLevel.USER_SUPPORT), services.goLive)
 router.get('/services/:id/test_account', auth.secured(PermissionLevel.USER_SUPPORT), services.addTestAccount)
 router.post('/services/:id/test_account', auth.secured(PermissionLevel.USER_SUPPORT), services.submitTestAccountProvider)
+router.get('/services/:id/create_worldpay_test_service', auth.secured(PermissionLevel.USER_SUPPORT), services.createWorldpayTestServiceConfirmationPage)
+router.post('/services/:id/create_worldpay_test_service', auth.secured(PermissionLevel.USER_SUPPORT), services.createWorldpayTestService)
 
 router.get('/discrepancies/search', auth.secured(PermissionLevel.USER_SUPPORT), discrepancies.search)
 router.post('/discrepancies/search', auth.secured(PermissionLevel.USER_SUPPORT), discrepancies.getDiscrepancyReport)

@@ -103,6 +103,11 @@ export interface RetrieveServiceByGatewayAccountIdRequest {
   gatewayAccountId: string;
 }
 
+export interface CreateServiceRequest {
+  gateway_account_ids?: string[];
+  service_name?: ServiceName;
+}
+
 export interface UpdateUserRequest {
   disabled?: boolean;
   telephone_number?: string;
