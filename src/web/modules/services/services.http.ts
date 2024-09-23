@@ -421,45 +421,6 @@ function getProviderForGoLive(service: Service) {
   }
 }
 
-/**
- * @deprecated
- */
-export async function addTestAccount(
-    req: Request,
-    res: Response
-) : Promise<void> {
-  const serviceId = req.params.id
-  res.render('services/test_account', { serviceId, csrf: req.csrfToken() })
-}
-
-/**
- * @deprecated
- */
-export async function submitTestAccountProvider(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) : Promise<void> {
-  const serviceId = req.params.id
-  try {
-    const request = new AddTestAccountFormRequest(req.body)
-    if (request.provider === providers.stripe) {
-        res.redirect(`/stripe/create-test-account?service=${serviceId}`)
-    } else {
-      res.redirect(`/gateway_accounts/create?service=${serviceId}&live=${liveStatus.notLive}&provider=${request.provider}`)
-    }
-  } catch (error) {
-    if (error instanceof IOValidationError) {
-      return res.render('services/test_account', {
-        serviceId,
-        errors: formatErrorsForTemplate(error.source),
-        csrf: req.csrfToken()
-      })
-    }
-    next(error)
-  }
-}
-
 export async function createWorldpayTestServiceConfirmationPage(
     req: Request,
     res: Response
