@@ -1,10 +1,23 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "common/json.njk" import json %}
 
 {% extends "layout/layout.njk" %}
 
 {% block main %}
+  {% if showWorldpayTestServiceCreatedSuccess %}
+    {% set html %}
+      <p class="govuk-notification-banner__heading">
+        Worldpay test service was created successfully.
+      </p>
+    {% endset %}
+    {{ govukNotificationBanner({
+      html: html,
+      type: 'success'
+    }) }}
+  {% endif %}
+
   <span class="govuk-caption-m">{{ service.name }}</span>
   <h1 class="govuk-heading-m">Service details</h1>
 
@@ -99,25 +112,30 @@
        class="govuk-button govuk-button--secondary">Email all admin users</a>
   </div>
 
-  <div>
-    <h2 class="govuk-heading-m">Going live</h2>
-    <p class="govuk-body">Make this service live in response to receiving a go-live request Zendesk ticket.</p>
+  {% if not isWorldpayTestService %}
+    <div>
+      <h2 class="govuk-heading-m">Going live</h2>
+      <p class="govuk-body">Make this service live in response to receiving a go-live request Zendesk ticket.</p>
 
-    {{ govukButton({
-      text: "Go live",
-      href: "/services/" + serviceId + "/go_live"
-    }) }}
-  </div>
+      {{ govukButton({
+        text: "Go live",
+        href: "/services/" + serviceId + "/go_live"
+        }) }}
+    </div>
+  {% endif %}
 
-  <div>
-    <h2 class="govuk-heading-m">Test account</h2>
-    <p class="govuk-body">Add a test account to this service.</p>
+  {% if not isWorldpayTestService %}
+    <div>
+      <h2 class="govuk-heading-m">Create Worldpay test service</h2>
+      <p class="govuk-body">Spin off a separate service that will contain a Worldpay test account.</p>
 
-    {{ govukButton({
-      text: "Add test account",
-      classes: "govuk-button--secondary",
-      href: "/services/" + serviceId + "/test_account"
-    }) }}
+      {{ govukButton({
+        text: "Create Worldpay test service",
+        classes: "govuk-button--secondary",
+        href: "/services/" + serviceId + "/create_worldpay_test_service"
+        }) }}
+    </div>
+  {% endif %}
 
     <div>
       <h2 class="govuk-heading-m">Service actions</h2>

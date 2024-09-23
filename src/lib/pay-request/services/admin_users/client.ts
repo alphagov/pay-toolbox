@@ -2,6 +2,7 @@ import Client from '../../base'
 import {redactOTP} from '../../utils/redact'
 import {mapRequestParamsToOperation} from '../../utils/request'
 import {
+  CreateServiceRequest,
   RetrieveServiceByGatewayAccountIdRequest,
   RetrieveUserByEmailRequest,
   SearchServicesRequest,
@@ -13,6 +14,7 @@ import {
 } from './types'
 import {App} from '../../shared'
 import {handleEntityNotFound} from "../../utils/error";
+import {response} from "express";
 
 /**
  * Convenience methods for accessing resource endpoints for the Admin Users
@@ -24,6 +26,12 @@ export default class AdminUsers extends Client {
   }
 
   services = ((client: AdminUsers) => ({
+    create(params: CreateServiceRequest): Promise<Service> {
+      return client._axios
+          .post('/v1/api/services', params)
+          .then(response => client._unpackResponseData<Service>(response));
+    },
+
     retrieve(idOrParams: string | RetrieveServiceByGatewayAccountIdRequest): Promise<Service | undefined> {
       const url = isRetrieveServiceParams(idOrParams)
         ? '/v1/api/services'
@@ -74,9 +82,13 @@ export default class AdminUsers extends Client {
         .then(response => client._unpackResponseData<Service>(response));
     },
 
-    listUsers(id: string): Promise<User[] | undefined> {
+    listUsers(id: string, role?: string): Promise<User[] | undefined> {
+      let url = `/v1/api/services/${id}/users`
+      if (typeof role !== 'undefined') {
+        url += `?role=${role}`
+      }
       return client._axios
-        .get(`/v1/api/services/${id}/users`)
+        .get(url)
         .then(response => client._unpackResponseData<User[]>(response));
     },
 
@@ -131,6 +143,13 @@ export default class AdminUsers extends Client {
       return client._axios
         .post('/v1/api/users/admin-emails-for-gateway-accounts', request)
         .then(response => client._unpackResponseData<Map<string, string[]>>(response))
+    },
+
+    assignServiceAndRoleToUser(userExternalId: string, serviceExternalId: string, roleName: string): Promise<User | undefined> {
+      const request = { 'service_external_id': serviceExternalId, 'role_name': roleName}
+      return client._axios
+        .post(`/v1/api/users/${userExternalId}/services`, request)
+        .then(response => client._unpackResponseData<User>(response))
     }
   }))(this)
 }

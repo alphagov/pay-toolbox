@@ -17,6 +17,8 @@ import AddTestAccountFormRequest from "./AddTestAccountForm";
 import {liveStatus} from "../../../lib/liveStatus";
 import {GoLiveStage} from "../../../lib/pay-request/services/admin_users/types";
 import {providers} from "../../../lib/providers";
+import {CreateGatewayAccountRequest} from "../../../lib/pay-request/services/connector/types";
+import {AccountType} from "../../../lib/pay-request/shared";
 
 function extractFiltersFromQuery(query: ParsedQs): ServiceFilters {
   return {
@@ -108,7 +110,10 @@ export async function detail(req: Request, res: Response, next: NextFunction): P
       users: userDetails,
       serviceId,
       messages,
-      adminEmails
+      adminEmails,
+      showWorldpayTestServiceCreatedSuccess: req.flash('worldpayTestService')[0] === 'success',
+      isWorldpayTestService: serviceGatewayAccounts.length === 1 && serviceGatewayAccounts[0].type === 'test' &&
+          serviceGatewayAccounts[0].payment_provider.toUpperCase() === 'WORLDPAY'
     })
   } catch (error) {
     next(error)
@@ -392,7 +397,7 @@ export async function goLive(
 ) : Promise<void> {
   try {
     const serviceId = req.params.id
-    const service = await AdminUsers.services.retrieve(serviceId);
+    const service = await AdminUsers.services.retrieve(serviceId)
     const provider = getProviderForGoLive(service)
     res.render('services/go_live', {
       serviceId,
@@ -416,35 +421,53 @@ function getProviderForGoLive(service: Service) {
   }
 }
 
-export async function addTestAccount(
+export async function createWorldpayTestServiceConfirmationPage(
     req: Request,
     res: Response
 ) : Promise<void> {
   const serviceId = req.params.id
-  res.render('services/test_account', { serviceId, csrf: req.csrfToken() })
+  res.render('services/create_worldpay_test_service', { serviceId, csrf: req.csrfToken() })
 }
 
-export async function submitTestAccountProvider(
+export async function createWorldpayTestService(
     req: Request,
     res: Response,
     next: NextFunction
 ) : Promise<void> {
-  const serviceId = req.params.id
   try {
-    const request = new AddTestAccountFormRequest(req.body)
-    if (request.provider === providers.stripe) {
-        res.redirect(`/stripe/create-test-account?service=${serviceId}`)
-    } else {
-      res.redirect(`/gateway_accounts/create?service=${serviceId}&live=${liveStatus.notLive}&provider=${request.provider}`)
+    const serviceId = req.params.id
+    const service = await AdminUsers.services.retrieve(serviceId)
+    const serviceForWorldpayTestGatewayAccount = await AdminUsers.services.create({
+      service_name: service.service_name
+    })
+
+    logger.info(`New Worldpay test service ${serviceForWorldpayTestGatewayAccount.external_id} created.`)
+
+    const adminUsers = await AdminUsers.services.listUsers(serviceId, 'admin')
+    for (const user of adminUsers) {
+      await AdminUsers.users.assignServiceAndRoleToUser(user.external_id, serviceForWorldpayTestGatewayAccount.external_id, 'admin');
+      logger.info(`Admin user ${user.external_id} assigned admin role to service ${serviceForWorldpayTestGatewayAccount.external_id}`)
     }
+    const payload: CreateGatewayAccountRequest = {
+      payment_provider: 'worldpay',
+      description: `Worldpay test account spun off from service ${serviceId}`,
+      type: AccountType.Test,
+      service_name: service.service_name.en,
+      service_id: serviceForWorldpayTestGatewayAccount.external_id
+    }
+    const createGatewayAccountResponse = await Connector.accounts.create(payload)
+
+    logger.info(`Worldpay test gateway account ${createGatewayAccountResponse.gateway_account_id} created.`)
+
+    const updateResponse = await AdminUsers.services.update(serviceForWorldpayTestGatewayAccount.external_id,
+        { gateway_account_ids: [createGatewayAccountResponse.gateway_account_id] })
+
+    logger.info(`Worldpay test service ${updateResponse.service_name} with id ${updateResponse.external_id} 
+      linked with gateway account ids ${updateResponse.gateway_account_ids}.`)
+
+    req.flash('worldpayTestService', 'success')
+    res.redirect(`/services/${serviceForWorldpayTestGatewayAccount.external_id}`)
   } catch (error) {
-    if (error instanceof IOValidationError) {
-      return res.render('services/test_account', {
-        serviceId,
-        errors: formatErrorsForTemplate(error.source),
-        csrf: req.csrfToken()
-      })
-    }
     next(error)
   }
 }
