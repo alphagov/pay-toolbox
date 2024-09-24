@@ -12,11 +12,13 @@
   <div>
     <a href="/transactions/{{ ledgerEntry.transaction_id }}" class="govuk-back-link">Back to transaction ({{ ledgerEntry.transaction_id }})</a>
   </div>
-  {% if message %}
-    {{ govukInsetText({
-      text: message
-      })
-    }}
+  {% if messages.length %}
+    {% for message in messages %}
+      {{ govukInsetText({
+        text: message
+        })
+      }}
+    {% endfor %}
   {% else %}
 
     {% if not parityDisplay %}
@@ -78,9 +80,6 @@
   {% endif %}
 
   {{ json("Ledger source", ledgerEntry) }}
-
-  {% if message === undefined %}
-    {{ json("Connector source", connectorEntry) }}
-  {% endif %}
+  {{ json("Connector source", connectorEntry) }}
 
 {% endblock %}
