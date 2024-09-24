@@ -54,7 +54,7 @@ export async function validateLedgerTransaction(
 
     let parity
     try {
-      parity = diff(connectorResponseWithoutConnectorSpecificFields, ledgerResponseWithoutLedgerSpecificFields).filter(obj => {
+      parity = diff(connectorResponseWithoutConnectorSpecificFields, ledgerResponseWithoutLedgerSpecificFields)?.filter(obj => {
           switch (obj.kind) {
             case DiffKind.Edit: {
               if (obj.path[0] !== 'created_date') {
