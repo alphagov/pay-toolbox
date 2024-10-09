@@ -54,6 +54,7 @@ export interface Transaction {
   live: boolean;
   parent_transaction_id?: string;
   gateway_transaction_id?: string;
+  disputed?: boolean;
 }
 
 export interface PaymentInstrument {
