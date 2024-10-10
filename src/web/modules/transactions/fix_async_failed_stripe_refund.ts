@@ -26,7 +26,7 @@ export async function fixAsyncFailedStripeRefund(req: Request, res: Response, ne
         const githubUserId = req.user && req.user.username
         const parentTransaction = await Ledger.transactions.retrieve(transaction.parent_transaction_id)
 
-        await Connector.fixAsyncFailedStripeRefund.fixStripeRefund(gatewayAccountId, refundId, chargeId, {
+        await Connector.fixAsyncFailedStripeRefund.fixStripeRefund(gatewayAccountId, chargeId, refundId, {
             zendesk_ticket_id: zendeskTicketId,
             github_user_id: githubUserId
         })
