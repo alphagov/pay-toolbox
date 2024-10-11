@@ -124,7 +124,7 @@
     </div>
   {% endif %}
 
-  {% if not isWorldpayTestService %}
+  {% if not isWorldpayTestService and not hasStripeTestAccount %}
     <div>
       <h2 class="govuk-heading-m">Create Worldpay test service</h2>
       <p class="govuk-body">Spin off a separate service that will contain a Worldpay test account.</p>

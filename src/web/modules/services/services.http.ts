@@ -13,8 +13,6 @@ import {IOValidationError, ValidationError as CustomValidationError} from '../..
 import {formatServiceExportCsv} from './serviceExportCsv'
 import {BooleanFilterOption} from '../common/BooleanFilterOption'
 import {ServiceFilters, fetchAndFilterServices, getLiveNotArchivedServices} from './getFilteredServices'
-import AddTestAccountFormRequest from "./AddTestAccountForm";
-import {liveStatus} from "../../../lib/liveStatus";
 import {GoLiveStage} from "../../../lib/pay-request/services/admin_users/types";
 import {providers} from "../../../lib/providers";
 import {CreateGatewayAccountRequest} from "../../../lib/pay-request/services/connector/types";
@@ -113,7 +111,8 @@ export async function detail(req: Request, res: Response, next: NextFunction): P
       adminEmails,
       showWorldpayTestServiceCreatedSuccess: req.flash('worldpayTestService')[0] === 'success',
       isWorldpayTestService: serviceGatewayAccounts.length === 1 && serviceGatewayAccounts[0].type === 'test' &&
-          serviceGatewayAccounts[0].payment_provider.toUpperCase() === 'WORLDPAY'
+          serviceGatewayAccounts[0].payment_provider.toUpperCase() === 'WORLDPAY',
+      hasStripeTestAccount: serviceGatewayAccounts.some(item => item.payment_provider === 'stripe')
     })
   } catch (error) {
     next(error)
