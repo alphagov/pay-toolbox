@@ -2,13 +2,13 @@ const fs = require('fs')
 
 const ENV_FILE = '.env'
 
-const LOCAL_URL_MAP =`ADMINUSERS_URL=http://localhost:9700
-CONNECTOR_URL=http://localhost:9300
-PRODUCTS_URL=http://localhost:18000
-PUBLIC_AUTH_URL=http://localhost:9600
-LEDGER_URL=http://localhost:10700
-WEBHOOKS_URL=http://localhost:10800
-SELFSERVICE_URL=http://localhost:9400`
+const LOCAL_URL_MAP =`ADMINUSERS_URL=http://127.0.0.1:9700
+CONNECTOR_URL=http://127.0.0.1:9300
+PRODUCTS_URL=http://127.0.0.1:18000
+PUBLIC_AUTH_URL=http://127.0.0.1:9600
+LEDGER_URL=http://127.0.0.1:10700
+WEBHOOKS_URL=http://127.0.0.1:10800
+SELFSERVICE_URL=http://127.0.0.1:9400`
 
 const TUNNEL_URL_MAP =`ADMINUSERS_URL=https://localhost:9001
 CONNECTOR_URL=https://localhost:9003
