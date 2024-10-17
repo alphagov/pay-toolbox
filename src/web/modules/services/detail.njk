@@ -112,6 +112,13 @@
        class="govuk-button govuk-button--secondary">Email all admin users</a>
   </div>
 
+  {% if isWorldpayTestService %}
+    <div>
+      <h2 class="govuk-heading-m">Going live</h2>
+      <p class="govuk-body">Worldpay test services cannot be made live.</p>
+    </div>
+  {% endif %}
+
   {% if not isWorldpayTestService %}
     <div>
       <h2 class="govuk-heading-m">Going live</h2>
