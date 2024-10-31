@@ -41,11 +41,6 @@
       autocomplete: "off"
     }) }}
 
-    {{ govukWarningText({
-      text: "This feature is under development and you should NOT press the button yet.",
-      iconFallbackText: "Warning"
-    }) }}
-
     <input type="hidden" name="_csrf" value="{{ csrf }}">
     {{ govukButton({
       text: "Correct asynchronously failed Stripe refund "
