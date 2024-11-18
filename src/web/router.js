@@ -65,6 +65,7 @@ router.get('/gateway_accounts/search', auth.secured(PermissionLevel.VIEW_ONLY), 
 router.post('/gateway_accounts/search', auth.secured(PermissionLevel.VIEW_ONLY), gatewayAccounts.searchRequest)
 router.get('/gateway_accounts/:id', auth.secured(PermissionLevel.VIEW_ONLY), gatewayAccounts.detail.http, gatewayAccounts.detail.exceptions)
 router.get('/gateway_accounts/:id/api_keys', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.apiKeys)
+router.get('/gateway_accounts/:id/revoked_api_keys', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.revokedApiKeys)
 router.get('/gateway_accounts/:accountId/api_keys/:tokenId/delete', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.deleteApiKey)
 router.get('/gateway_accounts/:id/block_prepaid_cards', auth.secured(PermissionLevel.VIEW_ONLY), gatewayAccounts.blockPrepaidCards)
 router.post('/gateway_accounts/:id/block_prepaid_cards', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.updateBlockPrepaidCards)

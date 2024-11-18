@@ -29,6 +29,7 @@ export default {
     exceptions: exceptions.detail
   },
   apiKeys: http.apiKeys,
+  revokedApiKeys: http.revokedApiKeys,
   deleteApiKey: http.deleteApiKey,
   surcharge: http.surcharge,
   updateSurcharge: http.updateSurcharge,

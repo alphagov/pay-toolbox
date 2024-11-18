@@ -10,6 +10,11 @@ export enum TokenSource {
   Products = 'PRODUCTS'
 }
 
+export enum TokenState {
+  Active = 'ACTIVE',
+  Revoked = 'REVOKED'
+}
+
 export interface Token {
   token_link: string;
   token_type: TokenType;
@@ -22,6 +27,7 @@ export interface Token {
 
 export interface ListTokenRequest {
   gateway_account_id: string;
+  token_state?: TokenState
 }
 
 export interface DeleteTokenRequest {

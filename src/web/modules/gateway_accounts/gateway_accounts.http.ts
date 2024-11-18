@@ -12,12 +12,8 @@ import {extractFiltersFromQuery, toAccountSearchParams} from '../../../lib/gatew
 
 import GatewayAccountFormModel from './gatewayAccount.model'
 import {GoLiveStage, Service, UpdateServiceRequest} from '../../../lib/pay-request/services/admin_users/types'
-import {Product, ProductType} from '../../../lib/pay-request/services/products/types'
-import {
-  GatewayAccount,
-  NotifySettings,
-  StripeCredentials
-} from '../../../lib/pay-request/services/connector/types'
+import {ProductType} from '../../../lib/pay-request/services/products/types'
+import {GatewayAccount, NotifySettings, StripeCredentials} from '../../../lib/pay-request/services/connector/types'
 import {PaymentProvider} from '../../../lib/pay-request/shared'
 import {ClientFormError} from '../common/validationErrorFormat'
 import * as config from '../../../config'
@@ -28,11 +24,12 @@ import {EntityNotFoundError, ValidationError} from '../../../lib/errors'
 
 import * as stripeClient from '../../../lib/stripe/stripe.client'
 import {
-  updateTicketWithWorldpayGoLiveResponse,
   getTicket,
-  updateTicketWithStripeGoLiveResponse
+  updateTicketWithStripeGoLiveResponse,
+  updateTicketWithWorldpayGoLiveResponse
 } from "../../../lib/zendesk/zendesk.client";
 import Joi from "joi";
+import {TokenState} from "../../../lib/pay-request/services/public_auth/types";
 
 const NOTIFY_ID_PATTERN = /^[a-zA-Z0-9-]*$/
 
@@ -226,12 +223,13 @@ async function detail(req: Request, res: Response): Promise<void> {
   let stripeDashboardUri = ''
 
   const {id} = req.params
-  const [account, acceptedCards, stripeSetup, motoProducts, tokens] = await Promise.all([
+  const [account, acceptedCards, stripeSetup, motoProducts, activeTokens, revokedTokens] = await Promise.all([
     Connector.accounts.retrieve(id),
     Connector.accounts.listCardTypes(id),
     Connector.accounts.retrieveStripeSetup(id),
     Products.accounts.listProductsByType(id, ProductType.Moto),
-    PublicAuth.tokens.list({gateway_account_id: id})
+    PublicAuth.tokens.list({ gateway_account_id: id, token_state: TokenState.Active }),
+    PublicAuth.tokens.list({ gateway_account_id: id, token_state: TokenState.Revoked })
   ])
 
   let service = {}
@@ -282,7 +280,8 @@ async function detail(req: Request, res: Response): Promise<void> {
     threeDSFlexEnabled,
     motoPaymentLinkExists,
     corporateSurchargeEnabled,
-    tokensCount: tokens.tokens.length,
+    activeTokensCount: activeTokens.tokens.length,
+    revokedTokensCount: revokedTokens.tokens.length,
     stripePaymentsStatementDescriptor,
     stripePayoutsStatementDescriptor,
     messages: req.flash('info'),
@@ -299,8 +298,23 @@ async function apiKeys(req: Request, res: Response): Promise<void> {
   const gatewayAccountId = req.params.id
 
   const account = await getAccount(gatewayAccountId)
-  const tokensResponse = await PublicAuth.tokens.list({gateway_account_id: gatewayAccountId})
+  const tokensResponse = await PublicAuth.tokens.list({ gateway_account_id: gatewayAccountId, token_state: TokenState.Active })
+
   res.render('gateway_accounts/api_keys', {
+    account,
+    tokens: tokensResponse.tokens,
+    gatewayAccountId,
+    messages: req.flash('info')
+  })
+}
+
+async function revokedApiKeys (req: Request, res: Response): Promise<void> {
+  const gatewayAccountId = req.params.id
+
+  const account = await getAccount(gatewayAccountId)
+  const tokensResponse = await PublicAuth.tokens.list({ gateway_account_id: gatewayAccountId, token_state: TokenState.Revoked })
+
+  res.render('gateway_accounts/revoked_api_keys', {
     account,
     tokens: tokensResponse.tokens,
     gatewayAccountId,
@@ -683,6 +697,7 @@ export default {
   writeAccount: wrapAsyncErrorHandler(writeAccount),
   detail: wrapAsyncErrorHandler(detail),
   apiKeys: wrapAsyncErrorHandler(apiKeys),
+  revokedApiKeys: wrapAsyncErrorHandler(revokedApiKeys),
   deleteApiKey: wrapAsyncErrorHandler(deleteApiKey),
   surcharge: wrapAsyncErrorHandler(surcharge),
   updateSurcharge: wrapAsyncErrorHandler(updateSurcharge),

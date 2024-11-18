@@ -4,19 +4,20 @@ import {ParsedQs, stringify} from 'qs'
 import logger from '../../../lib/logger'
 import {AdminUsers, Connector, PublicAuth} from '../../../lib/pay-request/client'
 import type {Service} from '../../../lib/pay-request/services/admin_users/types'
+import {GoLiveStage} from "../../../lib/pay-request/services/admin_users/types";
 import {sanitiseCustomBrandingURL} from './branding'
 import GatewayAccountRequest from './gatewayAccountRequest.model'
 import {formatPerformancePlatformCsv} from './performancePlatformCsv'
-import {formatErrorsForTemplate, ClientFormError} from '../common/validationErrorFormat'
+import {ClientFormError, formatErrorsForTemplate} from '../common/validationErrorFormat'
 import UpdateOrganisationFormRequest from './UpdateOrganisationForm'
 import {IOValidationError, ValidationError as CustomValidationError} from '../../../lib/errors'
 import {formatServiceExportCsv} from './serviceExportCsv'
 import {BooleanFilterOption} from '../common/BooleanFilterOption'
-import {ServiceFilters, fetchAndFilterServices, getLiveNotArchivedServices} from './getFilteredServices'
-import {GoLiveStage} from "../../../lib/pay-request/services/admin_users/types";
+import {fetchAndFilterServices, getLiveNotArchivedServices, ServiceFilters} from './getFilteredServices'
 import {providers} from "../../../lib/providers";
 import {CreateGatewayAccountRequest} from "../../../lib/pay-request/services/connector/types";
 import {AccountType} from "../../../lib/pay-request/shared";
+import {TokenState} from "../../../lib/pay-request/services/public_auth/types";
 
 function extractFiltersFromQuery(query: ParsedQs): ServiceFilters {
   return {
@@ -368,7 +369,7 @@ export async function toggleArchiveService(
       const serviceGatewayAccounts = await getServiceGatewayAccounts(service.gateway_account_ids)
 
       serviceGatewayAccounts.map(async account => {
-        const tokensResponse = await PublicAuth.tokens.list({gateway_account_id: account.gateway_account_id})
+        const tokensResponse = await PublicAuth.tokens.list({ gateway_account_id: account.gateway_account_id, token_state: TokenState.Active })
 
         tokensResponse.tokens.map(async token => {
           await PublicAuth.tokens.delete({gateway_account_id: account.gateway_account_id, token_link: token.token_link})

@@ -6,7 +6,7 @@
 {% set isTestData = not (account.type === "live") %}
 
 {% block main %}
-  <h1 class="govuk-heading-m">Manage active API keys</h1>
+  <h1 class="govuk-heading-m">Revoked API keys</h1>
 
   {% for message in messages %}
     <div class="govuk-error-summary success-summary" role="alert">
@@ -17,7 +17,7 @@
   <div>
     <a href="/gateway_accounts/{{ gatewayAccountId }}" class="govuk-back-link">Gateway account ({{ gatewayAccountId }})</a>
   </div>
-  <div><a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/revoked_api_keys">View revoked API keys</a></div>
+  <div><a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/api_keys">Manage active API keys</a></div>
   <br>
 
   {% for token in tokens %}
@@ -27,6 +27,7 @@
       [ { text: "Token" }, { text: token.token_link } ],
       [ { text: "Issued Date" }, { text: token.issued_date } ],
       [ { text: "Last Used Date" }, { text: token.last_used } ],
+      [ { text: "Revoked Date" }, { text: token.revoked } ],
       [ { text: "Description" }, { text: token.description } ],
       [ { text: "Token Type" }, { text: token.token_type } ],
       [ { text: "Created By" }, { text: token.created_by } ]
@@ -34,16 +35,8 @@
     })
     }}
 
-    <div>
-      {{ govukButton({
-        text: "Revoke API Key",
-        href: "/gateway_accounts/" + gatewayAccountId + "/api_keys/" + token.token_link + "/delete"
-        })
-      }}
-    </div>
-
   {% else %}
-    <p class="govuk-body top-spacer">No Active API keys found for gateway account.</p>
+    <p class="govuk-body top-spacer">No revoked API keys found for gateway account.</p>
   {% endfor %}
 
   {{ json("API tokens source", tokens) }}
