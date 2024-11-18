@@ -6,7 +6,7 @@
 {% set isTestData = not (account.type === "live") %}
 
 {% block main %}
-  <h1 class="govuk-heading-m">Manage active API keys</h1>
+  <h1 class="govuk-heading-m">Manage active API keys for Gateway account {{ gatewayAccountId }}</h1>
 
   {% for message in messages %}
     <div class="govuk-error-summary success-summary" role="alert">
@@ -17,7 +17,7 @@
   <div>
     <a href="/gateway_accounts/{{ gatewayAccountId }}" class="govuk-back-link">Gateway account ({{ gatewayAccountId }})</a>
   </div>
-  <div><a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/revoked_api_keys">View revoked API keys</a></div>
+  <div><a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/revoked_api_keys">View revoked API keys for Gateway account {{ gatewayAccountId }}</a></div>
   <br>
 
   {% for token in tokens %}
