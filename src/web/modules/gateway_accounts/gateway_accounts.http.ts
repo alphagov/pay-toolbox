@@ -317,8 +317,7 @@ async function revokedApiKeys (req: Request, res: Response): Promise<void> {
   res.render('gateway_accounts/revoked_api_keys', {
     account,
     tokens: tokensResponse.tokens,
-    gatewayAccountId,
-    messages: req.flash('info')
+    gatewayAccountId
   })
 }
 
