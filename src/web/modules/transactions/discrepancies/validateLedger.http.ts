@@ -38,7 +38,8 @@ export async function validateLedgerTransaction(
       'gateway_payout_id',
       'parent_transaction_id',
       'payment_details',
-      'reason'
+      'reason',
+      'settlement_summary.settled_date'
     ])
     const connectorResponseWithoutConnectorSpecificFields = _.omit(connectorEntry, [
       'links',
