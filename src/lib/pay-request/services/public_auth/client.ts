@@ -1,13 +1,14 @@
-import Client, { PayHooks } from '../../base'
+import Client from '../../base'
 import {
-  ListTokenRequest,
-  ListTokenResponse,
+  CreateTokenRequest,
+  CreateTokenResponse,
   DeleteTokenRequest,
   DeleteTokenResponse,
-  CreateTokenRequest,
-  CreateTokenResponse
+  ListTokenRequest,
+  ListTokenResponse,
+  TokenState
 } from './types'
-import { App } from '../../shared'
+import {App} from '../../shared'
 
 export default class PublicAuth extends Client {
   constructor() {
@@ -20,7 +21,7 @@ export default class PublicAuth extends Client {
      */
     list(params: ListTokenRequest): Promise<ListTokenResponse | undefined> {
       return client._axios
-        .get(`/v1/frontend/auth/${params.gateway_account_id}`)
+        .get(`/v1/frontend/auth/${params.gateway_account_id}`, { params: { state: params.token_state || TokenState.Active } })
         .then(response => client._unpackResponseData<ListTokenResponse>(response));
     },
 

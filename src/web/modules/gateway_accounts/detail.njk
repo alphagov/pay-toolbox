@@ -75,16 +75,31 @@
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key"><span class="govuk-caption-m">API</span></dt>
         <dd class="govuk-summary-list__value">
-          {% if tokensCount === 0 %}
-            <i>(No API keys configured)</i>
-          {% elif tokensCount === 1 %}
+          {% if activeTokensCount === 0 %}
+            <i>(No active API keys configured)</i>
+          {% elif activeTokensCount === 1 %}
             1 API Key
           {% else %}
-            {{ tokensCount }} API keys
+            {{ activeTokensCount }} active API keys
           {% endif %}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/api_keys">Manage<span class="govuk-visually-hidden"> API keys</span></a>
+          <a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/api_keys">Manage<span class="govuk-visually-hidden">active API keys</span></a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key"></dt>
+        <dd class="govuk-summary-list__value">
+          {% if revokedTokensCount === 0 %}
+            <i>(No revoked API keys)</i>
+            {% elif revokedTokensCount === 1 %}
+            1 API Key
+          {% else %}
+            {{ revokedTokensCount }} revoked API keys
+          {% endif %}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="/gateway_accounts/{{ gatewayAccountId }}/revoked_api_keys">View<span class="govuk-visually-hidden">revoked API keys</span></a>
         </dd>
       </div>
     </dl>
