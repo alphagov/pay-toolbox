@@ -325,9 +325,9 @@ async function deleteApiKey(req: Request, res: Response): Promise<void> {
   const {accountId, tokenId} = req.params
 
   await PublicAuth.tokens.delete({gateway_account_id: accountId, token_link: tokenId})
-  logger.info(`Deleted API Token with token_link ${tokenId} for Gateway Account ${accountId}`)
+  logger.info(`Revoked API Token with token_link ${tokenId} for Gateway Account ${accountId}`)
 
-  req.flash('info', `Token ${tokenId} successfully deleted`)
+  req.flash('info', `Token ${tokenId} successfully revoked`)
   res.redirect(`/gateway_accounts/${accountId}/api_keys`)
 }
 

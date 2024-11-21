@@ -78,7 +78,7 @@
           {% if activeTokensCount === 0 %}
             <i>(No active API keys configured)</i>
           {% elif activeTokensCount === 1 %}
-            1 API Key
+            1 active API Key
           {% else %}
             {{ activeTokensCount }} active API keys
           {% endif %}
@@ -93,7 +93,7 @@
           {% if revokedTokensCount === 0 %}
             <i>(No revoked API keys)</i>
             {% elif revokedTokensCount === 1 %}
-            1 API Key
+            1 revoked API Key
           {% else %}
             {{ revokedTokensCount }} revoked API keys
           {% endif %}
