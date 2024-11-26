@@ -122,6 +122,9 @@
   "overrides": {
     "csurf": {
       "cookie": "0.7.2"
+    },
+    "@sentry/node": {
+      "cookie": "0.7.2"
     }
   }
 }
