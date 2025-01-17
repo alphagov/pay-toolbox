@@ -260,3 +260,23 @@
       transform: rotate(360deg);
   }
 }
+
+.slide-card {
+  height: 0px;
+  // line-height: 75px;
+  transform: translateY(-100px);
+}
+
+.slide-card.slide-fade {
+  transition: all 0.7s ease;
+  opacity: 0;
+}
+
+.slide-card.slide-fade.show {
+  opacity: 1;
+  height: 75px;
+  transform: translateY(0px);
+
+  // temporary - needs to be worked out how this interacts with event-card etc.
+  margin-bottom: 10px;
+}

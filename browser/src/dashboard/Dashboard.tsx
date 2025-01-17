@@ -55,7 +55,8 @@ interface DashboardState {
   fetchedServices: boolean,
   
   // move to sync: status property similar to connection rather than top level
-  sync?: AggregateSyncStatus
+  sync?: AggregateSyncStatus,
+  showAllEvents: boolean
 }
 
 export interface AggregateSyncStatus {
@@ -120,7 +121,8 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
       },
       lastSystemTick: Date.now(),
       lastConnectionTick: Date.now(),
-      fetchedServices: false
+      fetchedServices: false,
+      showAllEvents: false
     }
     this.setWatchObserver = this.setWatchObserver.bind(this)
     this.init()
@@ -375,6 +377,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
   processQueuedEvents(cursor: number) {
     const filtered: Event[] = []
     const staging: Event[] = []
+    const ignored: Event[] = []
 
     const stagingAggregateCompletedVolumes = { ...this.state.aggregateCompletedVolumes }
     const stagingAggregateAllVolumes = { ...this.state.aggregateAllVolumes }
@@ -407,7 +410,14 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
           if (eventsErrored.includes(event.event_type)) {
             updateStagingGraphNode(stagingTransactionVolumesByHour, event, 0)
           }
-          staging.push(event)
+
+          // this line here actually lines up the event to be shown -- if the configuration option is not set to verbose it could only do this for successful events
+          // once we've processed the event we should make sure it doesn't go into the "filtered" list as it shouldn't be picked back up
+          if (this.state.showAllEvents || eventsActiveSuccess.includes(event.event_type)) {
+            staging.push(event)
+          } else {
+            ignored.push(event)
+          }
         } else {
           filtered.push(event)
         }
@@ -416,7 +426,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
       }
     })
 
-    if (staging.length) {
+    if (staging.length || ignored.length) {
       this.setState({
         queuedEvents: filtered,
         activeEvents: [
@@ -441,15 +451,21 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
     resizeObserver.observe(element)
   }
 
+  setDisplayOptionEventTicker(e: React.FormEvent<HTMLInputElement>) {
+    this.setState({
+      showAllEvents: e.currentTarget.value === "true"
+    })
+  }
+
   render() {
     const headerStatusColourMap: { [key in ConnectionStatus]?: string } = {
       [ConnectionStatus.CONNECTED]: '#1d70b8',
       [ConnectionStatus.DISCONNECTED]: '#b1b4b6',
       [ConnectionStatus.FAILED]: '#d4351c'
     }
+
     return (
       <div>
-
         <div className="govuk-grid-row govuk-body govuk-!-margin-bottom-5">
           <div className="govuk-grid-column-full">
             <header>
@@ -484,7 +500,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
           {/* @TODO(sfount) bottom shadow (without factoring in column padding) is needed for parity */}
           {/* Non-zero min-height to maintain width without content (a loading or syncing icon should be used) */}
           <div style={{ maxHeight: this.state.statsHeight, overflowY: 'hidden', minHeight: 5 }} className="govuk-grid-column-one-half">
-            <EventListPanel events={this.state.activeEvents} sync={this.state.sync} numberOfAggregateSyncs={this.state.numberOfAggregateSyncs} fetchedServices={this.state.fetchedServices} isFetching={this.state.connection.isFetching} />
+            <EventListPanel events={this.state.activeEvents} sync={this.state.sync} numberOfAggregateSyncs={this.state.numberOfAggregateSyncs} fetchedServices={this.state.fetchedServices} isFetching={this.state.connection.isFetching} showAllEvents={this.state.showAllEvents} />
           </div>
           <div className="govuk-grid-column-one-half">
             <StatsPanel
@@ -494,7 +510,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
             />
           </div>
         </div>
-        <div className="govuk-grid-row">
+        <div className="govuk-grid-row govuk-!-margin-bottom-4">
           <div className="govuk-grid-column-full">
             <ChartVolumePanel
               data={this.state.transactionVolumesByHour}
@@ -502,6 +518,49 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
               compareGraphs={this.state.compareGraphs}
               date={this.state.date}
             />
+          </div>
+        </div>
+        <div className="govuk-grid-row">
+          <div className="govuk-grid-column-full govuk-body">
+          <details className="govuk-details" data-module="govuk-details">
+            <summary className="govuk-details__summary">
+              <span className="govuk-details__summary-text">
+                Display options
+              </span>
+            </summary>
+            <div className="govuk-details__text">
+              <div className="govuk-form-group">
+                <fieldset className="govuk-fieldset">
+                  <legend className="govuk-fieldset__legend govuk-fieldset__legend--m">
+                    <h1 className="govuk-fieldset__heading">
+                      Live payment events feed
+                    </h1>
+                  </legend>
+                  <div className="govuk-radios govuk-radios--small" data-module="govuk-radios">
+                    <div className="govuk-radios__item">
+                      <input className="govuk-radios__input" id="changed-name" name="changed-name" type="radio" value="false" checked={ !this.state.showAllEvents } onChange={ this.setDisplayOptionEventTicker.bind(this) }></input>
+                      <label className="govuk-label govuk-radios__label">
+                        Only show payment succeeded events
+                      </label>
+                      <div id="sign-in-item-hint" className="govuk-hint govuk-radios__hint">
+                        Show a card in the events feed when a payment has been successfully processed.
+                      </div>
+                    </div>
+                    <div className="govuk-radios__item">
+                      <input className="govuk-radios__input" id="changed-name-2" name="changed-name" type="radio" value="true" checked={ this.state.showAllEvents } onChange={ this.setDisplayOptionEventTicker.bind(this) }></input>
+                      <label className="govuk-label govuk-radios__label">
+                        Show all events
+                      </label>
+                      <div id="sign-in-item-hint-two" className="govuk-hint govuk-radios__hint">
+                        Show cards for all payments events including when payments are created, when card details are provided and when a payment has been successfully processed.
+                      </div>
+
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+          </details>
           </div>
         </div>
       </div>
