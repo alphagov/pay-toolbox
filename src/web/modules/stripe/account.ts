@@ -13,6 +13,16 @@ interface TOSAcceptance {
   agreement_time: string | number
 }
 
+function normalizeUrl(urlString: string): string {
+  const url = new URL(urlString)
+
+  url.protocol = url.protocol.toLowerCase()
+  url.host = url.host.toLowerCase()
+
+  return url.toString()
+}
+
+
 export async function setupProductionStripeAccount(serviceExternalId: string, stripeAccountDetails: AccountDetails, tosAcceptance: TOSAcceptance): Promise<Stripe.Account> {
   if (!STRIPE_ACCOUNT_API_KEY) {
     throw new CustomValidationError('Stripe API Key was not configured for this Toolbox instance')
@@ -50,7 +60,7 @@ export async function setupProductionStripeAccount(serviceExternalId: string, st
     },
     business_profile: {
       mcc: 9399,
-      url: service.merchant_details.url,
+      url: normalizeUrl(service.merchant_details.url),
       product_description: `Payments for public sector services for organisation ${service.merchant_details.name}`
     },
     capabilities: {
