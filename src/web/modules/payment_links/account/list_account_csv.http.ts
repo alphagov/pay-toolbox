@@ -6,13 +6,13 @@ import {aggregateServicesByGatewayAccountId} from "../../../../lib/gatewayAccoun
 
 export async function get(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const accountId = Number(req.params.accountId)
+        const accountId = req.params.accountId
         const sortKey = req.query.sort as string || 'last_payment_date'
         const used = req.query.used !== 'false'
 
         const [service, productStats] = await Promise.all([
             AdminUsers.services.retrieve({ gatewayAccountId: accountId }),
-            Products.reports.listStats({ gatewayAccountId: accountId, used })
+            Products.reports.listStats({ gatewayAccountId: Number(accountId), used })
         ])
 
         const serviceGatewayAccountIndex = aggregateServicesByGatewayAccountId([service])

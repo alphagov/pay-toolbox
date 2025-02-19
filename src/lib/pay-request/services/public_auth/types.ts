@@ -26,12 +26,12 @@ export interface Token {
 }
 
 export interface ListTokenRequest {
-  gateway_account_id: number | string;
+  gateway_account_id: string;
   token_state?: TokenState
 }
 
 export interface DeleteTokenRequest {
-  gateway_account_id: number | string;
+  gateway_account_id: string;
   token_link: string;
 }
 

@@ -13,7 +13,7 @@ export async function switchPSPPage(req: Request, res: Response, next: NextFunct
 }
 
 export async function postSwitchPSP(req: Request, res: Response, next: NextFunction) {
-  const gatewayAccountId = Number(req.params.id)
+  const gatewayAccountId = req.params.id
   let stripeCredentials: { stripe_account_id: string }
 
   try {

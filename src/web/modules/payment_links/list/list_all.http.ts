@@ -37,7 +37,7 @@ export async function get(req: Request, res: Response, next: NextFunction): Prom
     }
 }
 
-export function orderGroups (groupedLinks: any, sortKey: string, liveAccountIds: number[]) {
+export function orderGroups (groupedLinks: any, sortKey: string, liveAccountIds: string[]) {
     return _.orderBy(
         Object.keys(groupedLinks)
             .map((key) => {
@@ -47,7 +47,7 @@ export function orderGroups (groupedLinks: any, sortKey: string, liveAccountIds:
                     links: _.orderBy(group, sortKey, 'desc'),
                     payment_count: _.sumBy(group, 'payment_count'),
                     last_payment_date: _.orderBy(group, 'last_payment_date', 'desc')[0].last_payment_date,
-                    is_live_account: liveAccountIds.includes(Number(key))
+                    is_live_account: liveAccountIds.includes(key)
                 }
             }),
         sortKey,
@@ -55,15 +55,15 @@ export function orderGroups (groupedLinks: any, sortKey: string, liveAccountIds:
     )
 }
 
-export function extractLinksFromResponse (productStatsResponse: ProductStat[], filterLiveAccounts: boolean, liveAccountIds: number[], serviceGatewayAccountIndex: any)  {
+export function extractLinksFromResponse (productStatsResponse: ProductStat[], filterLiveAccounts: boolean, liveAccountIds: string[], serviceGatewayAccountIndex: any)  {
     return productStatsResponse
-        .filter((productStat) => !filterLiveAccounts || liveAccountIds.includes(productStat.product.gateway_account_id))
+        .filter((productStat) => !filterLiveAccounts || liveAccountIds.includes(`${productStat.product.gateway_account_id}`))
         .map((productStat) => {
             const service = serviceGatewayAccountIndex[productStat.product.gateway_account_id]
             const indexedLinks = getLinksForProductIndexedByType(productStat.product)
             return {
                 ...productStat,
-                is_live_account: liveAccountIds.includes(productStat.product.gateway_account_id),
+                is_live_account: liveAccountIds.includes(`${productStat.product.gateway_account_id}`),
                 url: indexedLinks.friendly || indexedLinks.pay,
                 service_name: service && service.service_name && service.service_name.en,
                 organisation_name: service && service.merchant_details && service.merchant_details.name,
