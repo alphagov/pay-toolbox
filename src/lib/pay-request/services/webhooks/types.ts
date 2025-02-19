@@ -57,7 +57,7 @@ export interface ListWebhookRequest {
 
 export interface ListWebhooksForServiceRequest extends ListWebhookRequest {
   service_id: string;
-  gateway_account_id: string;
+  gateway_account_id: number | string;
 }
 
 export interface ListWebhookMessageRequest {

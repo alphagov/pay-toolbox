@@ -1,0 +1,98 @@
+{% from "transactions/status.macro.njk" import status %}
+{% from "common/json.njk" import json %}
+{% extends "layout/layout.njk" %}
+
+{% block main %}
+  <span class="govuk-caption-m">
+      <span>{{ serviceName }}</span>
+  </span>
+  <h1 class="govuk-heading-m">{{ "Unused payment links" if unused else "Payment links" }}</h1>
+
+  <div>
+    <a href="/gateway_accounts/{{ accountId }}" class="govuk-back-link">Associated gateway account {{serviceName}} ({{ accountId }})</a>
+  </div>
+  {% if used %}
+    <div>
+      <p class="govuk-body">
+        <span>Showing in use payment links for gateway account ({{ accountId }})</span>
+      </p>
+      <a class="govuk-link" href="/gateway_accounts/{{ accountId }}/payment_links?used=false">View unused payment links for gateway account ({{ accountId }})</a></div>
+    <br>
+  {% else %}
+    <div>
+      <p class="govuk-body">
+        <span>Showing unused payment links for gateway account ({{ accountId }})</span>
+      </p>
+      <a class="govuk-link" href="/gateway_accounts/{{ accountId }}/payment_links">View in use payment links for gateway account ({{ accountId }})</a></div>
+    <br>
+  {% endif %}
+
+  <div>
+    {% set csvHref = ("/gateway_accounts/" + accountId + "/payment_links/csv?sort=" + sort + "&used=" + used) %}
+    <a href="{{ csvHref }}"
+       class="govuk-button govuk-button--secondary govuk-!-margin-bottom-2">
+      Export page as CSV
+    </a>
+  </div>
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+  <div>
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Name</th>
+        <th class="govuk-table__header" scope="col">Status</th>
+        <th class="govuk-table__header" scope="col">
+          {% if used %}
+            <a class="govuk-link govuk-link--no-visited-state" href="?sort=payment_count&live=false">
+              Payments created
+            </a>
+          {% else %}
+            Payments created
+          {% endif %}
+        </th>
+        <th class="govuk-table__header" scope="col">
+          {% if used %}
+            <a class="govuk-link govuk-link--no-visited-state" href="?sort=last_payment_date&live=false">
+              Last used
+            </a>
+          {% else %}
+            Last used
+          {% endif %}
+        </th>
+      </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+
+        {% for link in paymentLinks %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">
+              <span><a class="govuk-link govuk-link--no-visited-state" href="/payment_links/{{ link.product.external_id }}">{{ (link.product.name or "(No name)") | truncate(30) }}</a></span>
+            </td>
+            <td class="govuk-table__cell">
+              <strong class="govuk-tag">{{ link.product.status }}</strong>
+            </td>
+            <td class="govuk-table__cell">
+              <span>{{ link.payment_count }}</span>
+            </td>
+            <td class="govuk-table__cell">
+              <span>{{ link.last_payment_date | formatDateSince if link.last_payment_date else "never" }}</span>
+            </td>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell" colspan="4">
+              <a class="govuk-link govuk-link--no-visited-state" href="{{ link.url }}">
+                {{ link.url | truncate(80) }}
+              </a>
+          </tr>
+        {% else %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell center" colspan="4"><span><i>No payment links found.</i></span></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {{ json("Payment links list source", paymentLinks) }}
+{% endblock %}

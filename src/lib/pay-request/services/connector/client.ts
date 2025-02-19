@@ -82,11 +82,11 @@ export default class Connector extends Client {
          * @param id - Gateway account ID
          * @returns Gateway account object
          */
-        retrieve(id: string): Promise<GatewayAccount | undefined> {
+        retrieve(id: number | string): Promise<GatewayAccount | undefined> {
             return client._axios
                 .get(`/v1/api/accounts/${id}`)
                 .then(response => client._unpackResponseData<GatewayAccount>(response))
-                .catch(handleEntityNotFound("Account by ID", id))
+                .catch(handleEntityNotFound("Account by ID", `${id}`))
         },
 
         /**
@@ -188,7 +188,7 @@ export default class Connector extends Client {
          * @returns The updated gateway account object
          */
         update(
-            id: string,
+            id: number | string,
             params: UpdateGatewayAccountRequest
         ): Promise<void | undefined> {
             // @TODO(sfount) move to utility so that it can be unit tested
@@ -204,13 +204,13 @@ export default class Connector extends Client {
             // .then(() => this.retrieve(id))
         },
 
-        updateStripeSetup(id: string, params: UpdateStripeSetupRequest): Promise<void> {
+        updateStripeSetup(id: number | string, params: UpdateStripeSetupRequest): Promise<void> {
             const payload = mapRequestParamsToOperation(params);
             return client._axios
                 .patch(`/v1/api/accounts/${id}/stripe-setup`, payload)
         },
 
-        addGatewayAccountCredentials(id: string, params: AddGatewayAccountCredentialsRequest): Promise<GatewayAccountCredentials> {
+        addGatewayAccountCredentials(id: number, params: AddGatewayAccountCredentialsRequest): Promise<GatewayAccountCredentials> {
             return client._axios
                 .post(`/v1/api/accounts/${id}/credentials`, params)
                 .then(response => client._unpackResponseData<GatewayAccountCredentials>(response));

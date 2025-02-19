@@ -100,7 +100,7 @@ export interface RetrieveUserByEmailRequest {
 }
 
 export interface RetrieveServiceByGatewayAccountIdRequest {
-  gatewayAccountId: string;
+  gatewayAccountId: number | string;
 }
 
 export interface CreateServiceRequest {

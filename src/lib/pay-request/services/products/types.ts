@@ -54,6 +54,7 @@ export interface ProductStat {
 
 export interface ListProductStatsRequest {
   gatewayAccountId?: number;
+  used?: boolean;
 }
 
 export interface CreateProductRequest {

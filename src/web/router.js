@@ -100,8 +100,8 @@ router.get('/gateway_accounts/:id/toggle_agent_initiated_moto_enabled', auth.sec
 router.post('/gateway_accounts/:id/toggle_allow_authorisation_api', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.toggleAllowAuthorisationApi)
 router.post('/gateway_accounts/:id/toggle_allow_telephone_payment_notifications', auth.secured(PermissionLevel.USER_SUPPORT), gatewayAccounts.toggleAllowTelephonePaymentNotifications)
 
-router.get('/gateway_accounts/:accountId/payment_links', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.list)
-router.get('/gateway_accounts/:accountId/payment_links/csv', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.listCSV)
+router.get('/gateway_accounts/:accountId/payment_links', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.listAccount.get)
+router.get('/gateway_accounts/:accountId/payment_links/csv', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.listAccountCSV.get)
 
 router.get('/services', auth.secured(PermissionLevel.VIEW_ONLY), services.overview)
 router.get('/services/csv', auth.secured(PermissionLevel.VIEW_ONLY), services.listCsv)
@@ -167,12 +167,12 @@ router.get('/agreements', auth.secured(PermissionLevel.VIEW_ONLY), agreements.li
 router.get('/confirm-fix-async-failed-stripe-refund/:id', auth.secured(PermissionLevel.USER_SUPPORT), fixRefunds.show)
 router.post('/confirm-fix-async-failed-stripe-refund/:id', auth.secured(PermissionLevel.USER_SUPPORT), fixRefunds.fixAsyncFailedStripeRefund)
 
-router.get('/payment_links', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.list)
-router.get('/payment_links/search', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.search)
-router.post('/payment_links/search', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.searchRequest)
-router.get('/payment_links/csv', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.listCSV)
-router.get('/payment_links/:id', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.detail)
-router.post('/payment_links/:id/toggle_require_captcha', auth.secured(PermissionLevel.USER_SUPPORT), paymentLinks.toggleRequireCaptcha)
+router.get('/payment_links', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.listAll.get)
+router.get('/payment_links/search', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.search.get)
+router.post('/payment_links/search', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.search.post)
+router.get('/payment_links/csv', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.listAllCSV.get)
+router.get('/payment_links/:id', auth.secured(PermissionLevel.VIEW_ONLY), paymentLinks.detail.get)
+router.post('/payment_links/:id/toggle_require_captcha', auth.secured(PermissionLevel.USER_SUPPORT), paymentLinks.toggleRequireRecaptcha.post)
 
 router.get('/payouts', auth.secured(PermissionLevel.VIEW_ONLY), ledgerPayouts.list)
 

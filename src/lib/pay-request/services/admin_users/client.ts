@@ -138,7 +138,7 @@ export default class AdminUsers extends Client {
         .then(response => client._unpackResponseData<User>(response));
     },
 
-    listAdminEmailsForGatewayAccounts(gatewayAccountIds: string[]): Promise<Map<string, string[]> | undefined> {
+    listAdminEmailsForGatewayAccounts(gatewayAccountIds: number[] | string[]): Promise<Map<string, string[]> | undefined> {
       const request = { 'gatewayAccountIds': gatewayAccountIds }
       return client._axios
         .post('/v1/api/users/admin-emails-for-gateway-accounts', request)
