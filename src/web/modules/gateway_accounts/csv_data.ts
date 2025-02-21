@@ -4,7 +4,7 @@ import { Service } from '../../../lib/pay-request/services/admin_users/types'
 import { aggregateServicesByGatewayAccountId, toAccountSearchParams, Filters } from '../../../lib/gatewayAccounts'
 import { GatewayAccount } from '../../../lib/pay-request/services/connector/types'
 
-async function getServiceGatewayAccountIndex(): Promise<{ [key: string]: Service }> {
+async function getServiceGatewayAccountIndex(): Promise<Map<string, Service>> {
   const services = await AdminUsers.services.list()
   return aggregateServicesByGatewayAccountId(services)
 }
@@ -16,12 +16,12 @@ function getAccounts(filters: Filters): Promise<GatewayAccount[]> {
 
 export async function createCsvData(filters: Filters): Promise<any> {
   const accountsResponse = await getAccounts(filters)
-  const serviceGatewayAccountIndex = await getServiceGatewayAccountIndex()
+  const servicesByGatewayAccountId = await getServiceGatewayAccountIndex()
 
   return accountsResponse
-    .filter((account: GatewayAccount) => serviceGatewayAccountIndex[account.gateway_account_id] != undefined)
+    .filter((account: GatewayAccount) => servicesByGatewayAccountId.get(account.gateway_account_id) != undefined)
     .map((account: GatewayAccount) => {
-      const service = serviceGatewayAccountIndex[account.gateway_account_id]
+      const service = servicesByGatewayAccountId.get(account.gateway_account_id)
       return {
         account,
         service,
@@ -38,7 +38,7 @@ export async function createCsvData(filters: Filters): Promise<any> {
 
 export async function createCsvWithAdminEmailsData(filters: Filters): Promise<any> {
   const accountsResponse = await getAccounts(filters)
-  const serviceGatewayAccountIndex = await getServiceGatewayAccountIndex()
+  const servicesByGatewayAccountId = await getServiceGatewayAccountIndex()
   const gatewayAccountToAdminEmails =
     await AdminUsers.users.listAdminEmailsForGatewayAccounts(accountsResponse.map((account: GatewayAccount) => account.gateway_account_id))
   const gatewayAccountIndex = accountsResponse.reduce((aggregate: any, account: GatewayAccount) => {
@@ -49,7 +49,7 @@ export async function createCsvWithAdminEmailsData(filters: Filters): Promise<an
   const emailAccountService: { email: string; service: Service; account: any }[] = []
 
   Object.entries(gatewayAccountToAdminEmails).forEach(([gatewayAccountId, emails]) => {
-    const service = serviceGatewayAccountIndex[gatewayAccountId]
+    const service = servicesByGatewayAccountId.get(gatewayAccountId)
     const account = gatewayAccountIndex[gatewayAccountId]
     emails.forEach((email: string) => {
       emailAccountService.push({ email, service, account })
