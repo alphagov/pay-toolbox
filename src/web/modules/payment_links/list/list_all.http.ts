@@ -18,7 +18,7 @@ export async function get(req: Request, res: Response, next: NextFunction): Prom
             // is to get a list of all the live account IDs from connector and compare against that
             Connector.accounts.list({type: AccountType.Live})
                 .then((response) => response.accounts)
-                .then(accounts => accounts.map((account: GatewayAccount) => account.gateway_account_id)),
+                .then(accounts => accounts.map((account: GatewayAccount) => `${account.gateway_account_id}`)), // This endpoint actually returns account IDs as numbers, despite the `string` type
             Products.reports.listStats()
         ])
 

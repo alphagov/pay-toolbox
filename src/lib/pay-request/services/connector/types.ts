@@ -26,6 +26,7 @@ export interface Charge {
 }
 
 export interface GatewayAccount {
+  // this may be inconsistent in being returned as either or a string or number
   gateway_account_id: string;
   payment_provider: PaymentProvider;
   type: AccountType;
