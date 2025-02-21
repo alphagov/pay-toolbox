@@ -7,7 +7,7 @@ export async function get(req: Request, res: Response, next: NextFunction) {
         const {id} = req.params
         const paymentLink = await Products.products.retrieve(id)
 
-        res.render('payment_links/detail', {
+        res.render('payment_links/detail/detail', {
             paymentLink,
             url: extractFriendlyLink(paymentLink._links),
             messages: req.flash('info'),
