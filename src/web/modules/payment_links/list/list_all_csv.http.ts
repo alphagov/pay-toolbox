@@ -1,11 +1,14 @@
 import {NextFunction, Request, Response} from "express";
 import {format} from "../csv";
-import {extractLinksFromResponse, orderGroups} from './list_all.http'
+import {
+    extractProductData,
+    groupByGatewayAccountId,
+    orderGroupsBySortKey,
+} from './list_all.http'
 import {AdminUsers, Connector, Products} from "../../../../lib/pay-request/client";
 import {AccountType} from "../../../../lib/pay-request/shared";
 import {GatewayAccount} from "../../../../lib/pay-request/services/connector/types";
 import {aggregateServicesByGatewayAccountId} from "../../../../lib/gatewayAccounts";
-import _ from "lodash";
 
 export async function get(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -20,13 +23,12 @@ export async function get(req: Request, res: Response, next: NextFunction): Prom
             Products.reports.listStats()
         ])
         const serviceGatewayAccountIndex = aggregateServicesByGatewayAccountId(services)
-        const paymentLinks = extractLinksFromResponse(productStats, live, liveAccountIds, serviceGatewayAccountIndex)
+        const paymentLinks = extractProductData(productStats, live, liveAccountIds, serviceGatewayAccountIndex)
+        const paymentLinksGroupedByGatewayAccountId = groupByGatewayAccountId(paymentLinks)
+        const orderedPaymentLinkGroups = orderGroupsBySortKey(paymentLinksGroupedByGatewayAccountId, sortKey, liveAccountIds)
 
-        const groupedLinks = _.groupBy(paymentLinks, 'product.gateway_account_id')
-        const orderedGroups = orderGroups(groupedLinks, sortKey, liveAccountIds)
-
-        const flatLinksList = orderedGroups
-            .reduce((aggregate: any, groupedList: any) => {
+        const flatLinksList = orderedPaymentLinkGroups
+            .reduce((aggregate, groupedList) => {
                 aggregate = [...aggregate, ...groupedList.links]
                 return aggregate
             }, [])

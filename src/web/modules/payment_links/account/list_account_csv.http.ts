@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {extractLinksFromResponse, orderGroups} from "../list/list_all.http";
+import {extractProductData} from "../list/list_all.http";
 import {format} from "../csv";
 import {AdminUsers, Products} from "../../../../lib/pay-request/client";
 import {aggregateServicesByGatewayAccountId} from "../../../../lib/gatewayAccounts";
@@ -16,7 +16,7 @@ export async function get(req: Request, res: Response, next: NextFunction): Prom
         ])
 
         const serviceGatewayAccountIndex = aggregateServicesByGatewayAccountId([service])
-        const paymentLinks = extractLinksFromResponse(productStats, false, [], serviceGatewayAccountIndex)
+        const paymentLinks = extractProductData(productStats, false, [], serviceGatewayAccountIndex)
 
         const name = accountId
         res.set('Content-Type', 'text/csv')

@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {AdminUsers, Products} from "../../../../lib/pay-request/client";
 import {aggregateServicesByGatewayAccountId} from "../../../../lib/gatewayAccounts";
-import {extractLinksFromResponse} from "../list/list_all.http";
+import {extractProductData} from "../list/list_all.http";
 
 export async function get(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -15,7 +15,7 @@ export async function get(req: Request, res: Response, next: NextFunction): Prom
         ])
 
         const serviceGatewayAccountIndex = aggregateServicesByGatewayAccountId([service])
-        const paymentLinks = extractLinksFromResponse(productStats, false, [], serviceGatewayAccountIndex)
+        const paymentLinks = extractProductData(productStats, false, [], serviceGatewayAccountIndex)
 
         const context = {
             sort: sortKey,

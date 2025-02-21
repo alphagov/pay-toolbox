@@ -65,7 +65,7 @@
       {% for group in groupedPaymentLinks %}
           <tr class="govuk-table__row">
             <td class="govuk-table__cell" colspan="4">
-              <strong class="govuk-!-margin-right-2">{{ serviceGatewayAccountIndex[group.key].service_name and serviceGatewayAccountIndex[group.key].service_name.en }}</strong>  <a class="govuk-link govuk-link--no-visited-state" href="/transactions?account={{ group.key }}">Transactions</a>
+              <strong class="govuk-!-margin-right-2">{{ group.service_name }}</strong>  <a class="govuk-link govuk-link--no-visited-state" href="/transactions?account={{ group.key }}">Transactions</a>
             </td>
           </tr>
 

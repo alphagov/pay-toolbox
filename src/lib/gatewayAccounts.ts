@@ -5,14 +5,14 @@ import { BooleanFilterOption, toNullableBooleanString } from '../web/modules/com
 import { ListGatewayAccountsRequest } from './pay-request/services/connector/types'
 import { AccountType } from './pay-request/shared'
 
-export function aggregateServicesByGatewayAccountId(services: Service[]): { [key: string]: Service } {
+export function aggregateServicesByGatewayAccountId(services: Service[]): Map<string, Service> {
   return services
-    .reduce((aggregate: { [key: string]: Service }, service: Service) => {
+    .reduce((accumulator: Map<string, Service>, service: Service) => {
       service.gateway_account_ids.forEach((accountId: string) => {
-        aggregate[accountId] = service
+        accumulator.set(accountId, service)
       })
-      return aggregate
-    }, {})
+      return accumulator
+    }, new Map())
 }
 
 
