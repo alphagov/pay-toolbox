@@ -2,6 +2,7 @@ import {NextFunction, Request, Response} from "express";
 import {AdminUsers, Products} from "../../../../lib/pay-request/client";
 import {aggregateServicesByGatewayAccountId} from "../../../../lib/gatewayAccounts";
 import {extractProductData} from "../list/list_all.http";
+import _ from "lodash";
 
 export async function get(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -16,11 +17,12 @@ export async function get(req: Request, res: Response, next: NextFunction): Prom
 
         const serviceGatewayAccountIndex = aggregateServicesByGatewayAccountId([service])
         const paymentLinks = extractProductData(productStats, false, [], serviceGatewayAccountIndex)
+        const orderedPaymentLinks = _.orderBy(paymentLinks, sortKey, 'desc')
 
         const context = {
             sort: sortKey,
             accountId,
-            paymentLinks,
+            paymentLinks: orderedPaymentLinks,
             serviceName: service.name,
             used
         }
