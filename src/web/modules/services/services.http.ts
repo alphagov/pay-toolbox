@@ -369,10 +369,10 @@ export async function toggleArchiveService(
       const serviceGatewayAccounts = await getServiceGatewayAccounts(service.gateway_account_ids)
 
       serviceGatewayAccounts.map(async account => {
-        const tokensResponse = await PublicAuth.tokens.list({ gateway_account_id: account.gateway_account_id, token_state: TokenState.Active })
+        const tokensResponse = await PublicAuth.tokens.list({ gateway_account_id: `${account.gateway_account_id}`, token_state: TokenState.Active })
 
         tokensResponse.tokens.map(async token => {
-          await PublicAuth.tokens.delete({gateway_account_id: account.gateway_account_id, token_link: token.token_link})
+          await PublicAuth.tokens.delete({gateway_account_id: `${account.gateway_account_id}`, token_link: token.token_link})
           logger.info(`Deleted API Token with token_link ${token.token_link} for Gateway Account ${account.gateway_account_id}`)
         })
       })

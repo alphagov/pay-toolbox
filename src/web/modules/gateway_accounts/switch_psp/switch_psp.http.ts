@@ -8,7 +8,7 @@ import stripeTestAccount from '../../stripe/test-account.http'
 
 export async function switchPSPPage(req: Request, res: Response, next: NextFunction) {
   const account = await Connector.accounts.retrieve(req.params.id)
-  const service = await AdminUsers.services.retrieve({gatewayAccountId: account.gateway_account_id})
+  const service = await AdminUsers.services.retrieve({gatewayAccountId: `${account.gateway_account_id}`})
   res.render('gateway_accounts/switch_psp/switch_psp', {account, service, flash: req.flash(), csrf: req.csrfToken()})
 }
 
@@ -55,7 +55,7 @@ export async function postSwitchPSP(req: Request, res: Response, next: NextFunct
         // use new stripe account setup and fully configure it for
         const stripeAccount = await stripeTestAccount.createStripeTestAccount(service.service_name.en)
 
-        await Connector.accounts.updateStripeSetup(account.gateway_account_id, {
+        await Connector.accounts.updateStripeSetup(`${account.gateway_account_id}`, {
           bank_account: true,
           company_number: true,
           responsible_person: true,

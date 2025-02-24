@@ -19,9 +19,9 @@ export async function createCsvData(filters: Filters): Promise<any> {
   const servicesByGatewayAccountId = await getServiceGatewayAccountIndex()
 
   return accountsResponse
-    .filter((account: GatewayAccount) => servicesByGatewayAccountId.get(account.gateway_account_id) != undefined)
+    .filter((account: GatewayAccount) => servicesByGatewayAccountId.get(`${account.gateway_account_id}`) != undefined)
     .map((account: GatewayAccount) => {
-      const service = servicesByGatewayAccountId.get(account.gateway_account_id)
+      const service = servicesByGatewayAccountId.get(`${account.gateway_account_id}`)
       return {
         account,
         service,
@@ -40,7 +40,7 @@ export async function createCsvWithAdminEmailsData(filters: Filters): Promise<an
   const accountsResponse = await getAccounts(filters)
   const servicesByGatewayAccountId = await getServiceGatewayAccountIndex()
   const gatewayAccountToAdminEmails =
-    await AdminUsers.users.listAdminEmailsForGatewayAccounts(accountsResponse.map((account: GatewayAccount) => account.gateway_account_id))
+    await AdminUsers.users.listAdminEmailsForGatewayAccounts(accountsResponse.map((account: GatewayAccount) => `${account.gateway_account_id}`))
   const gatewayAccountIndex = accountsResponse.reduce((aggregate: any, account: GatewayAccount) => {
     aggregate[account.gateway_account_id] = account
     return aggregate
