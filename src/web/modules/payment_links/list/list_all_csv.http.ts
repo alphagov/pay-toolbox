@@ -19,7 +19,7 @@ export async function get(req: Request, res: Response, next: NextFunction): Prom
             AdminUsers.services.list(),
             Connector.accounts.list({type: AccountType.Live})
                 .then((response) => response.accounts)
-                .then(accounts => accounts.map((account: GatewayAccount) => account.gateway_account_id)),
+                .then(accounts => accounts.map((account: GatewayAccount) => `${account.gateway_account_id}`)),
             Products.reports.listStats()
         ])
         const serviceGatewayAccountIndex = aggregateServicesByGatewayAccountId(services)
