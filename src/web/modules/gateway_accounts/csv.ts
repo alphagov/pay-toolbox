@@ -4,6 +4,9 @@ const fields = [{
   label: 'Gateway account ID',
   value: 'account.gateway_account_id'
 }, {
+  label: 'Gateway account external ID',
+  value: 'account.external_id'
+}, {
   label: 'Service ID',
   value: 'service.id'
 }, {
