@@ -8,12 +8,25 @@ import UpdatePhoneNumberFormRequest from './UpdatePhoneNumberForm'
 
 import {formatErrorsForTemplate, ClientFormError} from '../common/validationErrorFormat'
 import {EntityNotFoundError, IOValidationError} from '../../../lib/errors'
+import {User} from "../../../lib/pay-request/services/admin_users/types";
+
+const DEGATEWAY_FLAG = 'degatewayaccountification'
 
 const show = async function show(req: Request, res: Response): Promise<void> {
   const payUser = await AdminUsers.users.retrieve(req.params.id)
-  const context = {payUser, messages: req.flash('info'), csrf: req.csrfToken()}
+  const context = {
+    payUser,
+    accountSimplificationEnabled: isAccountSimplificationEnabled(payUser),
+    messages: req.flash('info'),
+    csrf: req.csrfToken()
+  }
 
   res.render('users/users.show.njk', context)
+}
+
+function isAccountSimplificationEnabled(user: User): boolean {
+  const features = (user.features ?? '').split(',')
+  return features.includes(DEGATEWAY_FLAG);
 }
 
 // @TODO(sfount) user should be defined through pay-request library, recovery values through `/lib`
@@ -130,6 +143,24 @@ const updatePhoneNumber = async function updatePhoneNumber(
   }
 }
 
+const enableOrDisableAccountSimplification = async function enableOrDisableAccountSimplification(
+    req: Request, res: Response): Promise<void> {
+  const {id} = req.params
+  const user = await AdminUsers.users.retrieve(id)
+  const features = (user.features ?? '').split(',')
+  if (isAccountSimplificationEnabled(user)) {
+    await AdminUsers.users.update(id, { features: features.filter(x => x !== DEGATEWAY_FLAG).join() })
+    logger.info('Account simplification feature disabled.', { user_external_id: user.external_id })
+    req.flash('info', 'Account simplification disabled')
+  } else {
+    await AdminUsers.users.update(id, { features: [...features, DEGATEWAY_FLAG].join() })
+    logger.info('Account simplification feature enabled.', { user_external_id: user.external_id })
+    req.flash('info', 'Account simplification enabled')
+  }
+
+  res.redirect(`/users/${id}`)
+}
+
 const toggleUserEnabled = async function toggleUserEnabled(
   req: Request,
   res: Response
@@ -206,15 +237,16 @@ const search = async function search(
 }
 
 export default {
-  show: wrapAsyncErrorHandler(show),
-  updateEmailForm: wrapAsyncErrorHandler(updateEmailForm),
-  updatePhoneNumberForm: wrapAsyncErrorHandler(updatePhoneNumberForm),
-  toggleUserEnabled: wrapAsyncErrorHandler(toggleUserEnabled),
-  removeUserFromService: wrapAsyncErrorHandler(removeUserFromService),
   confirmRemoveUserFromService: wrapAsyncErrorHandler(confirmRemoveUserFromService),
+  enableOrDisableAccountSimplification: wrapAsyncErrorHandler(enableOrDisableAccountSimplification),
+  removeUserFromService: wrapAsyncErrorHandler(removeUserFromService),
   resetUserSecondFactor: wrapAsyncErrorHandler(resetUserSecondFactor),
   search: wrapAsyncErrorHandler(search),
   searchPage: wrapAsyncErrorHandler(searchPage),
+  show: wrapAsyncErrorHandler(show),
+  toggleUserEnabled: wrapAsyncErrorHandler(toggleUserEnabled),
+  updateEmailForm: wrapAsyncErrorHandler(updateEmailForm),
+  updatePhoneNumberForm: wrapAsyncErrorHandler(updatePhoneNumberForm),
   updateEmail,
   updatePhoneNumber
 }

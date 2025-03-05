@@ -74,7 +74,7 @@ export interface User {
   provisional_otp_key?: string;
   provisional_otp_key_created_at?: string;
   last_logged_in_at?: number;
-  // features?: Features;
+  features?: string;
   // _links
 }
 
@@ -112,6 +112,7 @@ export interface UpdateUserRequest {
   disabled?: boolean;
   telephone_number?: string;
   email?: string;
+  features?: string;
 }
 
 export interface UpdateServiceRequest {
