@@ -112,7 +112,7 @@ export default class AdminUsers extends Client {
     findByEmail(email: string) : Promise<User | undefined> {
       return client._axios
         .post('/v1/api/users/find', { email: email })
-        .then(response => client._unpackResponseData<User>(response))
+        .then(response => new User(response.data))
         .then(user => redactOTP(user))
         .catch(handleEntityNotFound('User', email));
     },
@@ -131,7 +131,7 @@ export default class AdminUsers extends Client {
 
       return client._axios
         .patch(`/v1/api/users/${id}`, payload)
-        .then(response => client._unpackResponseData<User>(response));
+        .then(response => new User(response.data));
     },
 
     updateFeatures(
@@ -146,13 +146,13 @@ export default class AdminUsers extends Client {
       }
       return client._axios
           .patch(`/v1/api/users/${id}`, payload)
-          .then(response => client._unpackResponseData<User>(response));
+          .then(response => new User(response.data));
     },
 
     resetSecondFactor(id: string): Promise<User | undefined> {
       return client._axios
         .post(`/v1/api/users/${id}/reset-second-factor`)
-        .then(response => client._unpackResponseData<User>(response));
+        .then(response => new User(response.data));
     },
 
     listAdminEmailsForGatewayAccounts(gatewayAccountIds: string[]): Promise<Map<string, string[]> | undefined> {
@@ -166,7 +166,7 @@ export default class AdminUsers extends Client {
       const request = { 'service_external_id': serviceExternalId, 'role_name': roleName}
       return client._axios
         .post(`/v1/api/users/${userExternalId}/services`, request)
-        .then(response => client._unpackResponseData<User>(response))
+        .then(response => new User(response.data))
     }
   }))(this)
 }

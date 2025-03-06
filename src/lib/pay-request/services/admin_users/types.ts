@@ -73,7 +73,7 @@ export class User {
     this.telephone_number = userData.telephone_number || ''
     this.disabled = userData.disabled ? userData.disabled : false
     this.session_version = userData.session_version || 0
-    this.features = (userData.features || '').split(',').map((feature: string) => feature.trim())
+    this.features = userData.features ? userData.features.split(',').map((feature: string) => feature.trim()) : []
     this.second_factor = userData.second_factor
     this.provisional_otp_key = userData.provisional_otp_key || ''
   }
