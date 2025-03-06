@@ -61,7 +61,23 @@ export interface ServiceRole {
   role: Role;
 }
 
-export interface User {
+export class User {
+  constructor (userData: any) {
+    if (!userData) {
+      throw Error('Must provide data')
+    }
+    this.external_id = userData.external_id
+    this.email = userData.email || ''
+    this.service_roles = userData.service_roles
+    this.otp_key = userData.otp_key || ''
+    this.telephone_number = userData.telephone_number || ''
+    this.disabled = userData.disabled ? userData.disabled : false
+    this.session_version = userData.session_version || 0
+    this.features = userData.features ? userData.features.split(',').map((feature: string) => feature.trim()) : []
+    this.second_factor = userData.second_factor
+    this.provisional_otp_key = userData.provisional_otp_key || ''
+  }
+
   external_id: string;
   email: string;
   telephone_number: string;
@@ -74,7 +90,7 @@ export interface User {
   provisional_otp_key?: string;
   provisional_otp_key_created_at?: string;
   last_logged_in_at?: number;
-  // features?: Features;
+  features?: Array<string>;
   // _links
 }
 
