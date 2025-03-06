@@ -128,7 +128,6 @@ export interface UpdateUserRequest {
   disabled?: boolean;
   telephone_number?: string;
   email?: string;
-  features?: string;
 }
 
 export interface UpdateServiceRequest {
