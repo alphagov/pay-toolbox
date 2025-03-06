@@ -25,8 +25,7 @@ const show = async function show(req: Request, res: Response): Promise<void> {
 }
 
 function isAccountSimplificationEnabled(user: User): boolean {
-  const features = (user.features ?? '').split(',')
-  return features.includes(DEGATEWAY_FLAG);
+  return user.features.includes(DEGATEWAY_FLAG);
 }
 
 // @TODO(sfount) user should be defined through pay-request library, recovery values through `/lib`
@@ -147,13 +146,12 @@ const enableOrDisableAccountSimplification = async function enableOrDisableAccou
     req: Request, res: Response): Promise<void> {
   const {id} = req.params
   const user = await AdminUsers.users.retrieve(id)
-  const features = (user.features ?? '').split(',')
   if (isAccountSimplificationEnabled(user)) {
-    await AdminUsers.users.update(id, { features: features.filter(x => x !== DEGATEWAY_FLAG).join() })
+    await AdminUsers.users.updateFeatures(id, 'remove', DEGATEWAY_FLAG)
     logger.info('Account simplification feature disabled.', { user_external_id: user.external_id })
     req.flash('info', 'Account simplification disabled')
   } else {
-    await AdminUsers.users.update(id, { features: [...features, DEGATEWAY_FLAG].join() })
+    await AdminUsers.users.updateFeatures(id, 'add', DEGATEWAY_FLAG)
     logger.info('Account simplification feature enabled.', { user_external_id: user.external_id })
     req.flash('info', 'Account simplification enabled')
   }

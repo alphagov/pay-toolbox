@@ -16,6 +16,8 @@ import {App} from '../../shared'
 import {handleEntityNotFound} from "../../utils/error";
 import {response} from "express";
 
+type FeatureOperation = 'add' | 'remove'
+
 /**
  * Convenience methods for accessing resource endpoints for the Admin Users
  * service.
@@ -102,7 +104,7 @@ export default class AdminUsers extends Client {
     retrieve(id: string): Promise<User | undefined> {
       return client._axios
         .get(`/v1/api/users/${id}`)
-        .then(response => client._unpackResponseData<User>(response))
+        .then(response => new User(response.data))
         .then(user => redactOTP(user))
         .catch(handleEntityNotFound('User', id));
     },
@@ -130,6 +132,21 @@ export default class AdminUsers extends Client {
       return client._axios
         .patch(`/v1/api/users/${id}`, payload)
         .then(response => client._unpackResponseData<User>(response));
+    },
+
+    updateFeatures(
+        id: string,
+        operation: FeatureOperation,
+        value: string
+    ): Promise<User | undefined> {
+      const payload = {
+        path: 'features',
+        op: operation,
+        value
+      }
+      return client._axios
+          .patch(`/v1/api/users/${id}`, payload)
+          .then(response => client._unpackResponseData<User>(response));
     },
 
     resetSecondFactor(id: string): Promise<User | undefined> {
