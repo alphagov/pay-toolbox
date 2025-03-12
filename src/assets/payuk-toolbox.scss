@@ -1,5 +1,8 @@
 /*  @TODO(sfount) only import scss from frontend that is required */
-@import "govuk-frontend/govuk/all";
+$govuk-suppressed-warnings: legacy-organisation-colours;
+
+@import "govuk-frontend/dist/govuk/index";
+
 
 .success-summary {
   border-color: govuk-colour("green");
