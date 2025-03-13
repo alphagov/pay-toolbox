@@ -12,5 +12,5 @@
 } %}
 
 {% macro agreementStatusTag(status) %}
-<strong class="govuk-tag {{ statusStyleMap[status] }}">{{ statusTextMap[status] }}</strong>
+<span class="govuk-tag {{ statusStyleMap[status] }}">{{ statusTextMap[status] | capitalize }}</span>
 {% endmacro %}
