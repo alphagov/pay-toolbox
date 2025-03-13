@@ -482,7 +482,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                   </span>
                 </div>
                 <div className="govuk-header__content" style={{ paddingTop: "2px" }}>
-                  <a href="#" className="govuk-header__link govuk-header__link--service-name govuk-header__service-name">{ this.state.date.format("D MMMM YYYY") }</a>
+                  <a href="#" className="govuk-header__link govuk-header__service-name">{ this.state.date.format("D MMMM YYYY") }</a>
                 </div>
               </div>
             </header>
@@ -522,7 +522,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
         </div>
         <div className="govuk-grid-row">
           <div className="govuk-grid-column-full govuk-body">
-          <details className="govuk-details" data-module="govuk-details">
+          <details className="govuk-details" >
             <summary className="govuk-details__summary">
               <span className="govuk-details__summary-text">
                 Display options
