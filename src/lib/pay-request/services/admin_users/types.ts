@@ -76,6 +76,11 @@ export class User {
     this.features = userData.features ? userData.features.split(',').map((feature: string) => feature.trim()) : []
     this.second_factor = userData.second_factor
     this.provisional_otp_key = userData.provisional_otp_key || ''
+    this.login_counter = userData.login_counter
+    this.provisional_otp_key_created_at = userData.provisional_otp_key_created_at
+    this.last_logged_in_at = userData.last_logged_in_at
+
+    this.raw_data = userData
   }
 
   external_id: string;
@@ -92,6 +97,7 @@ export class User {
   last_logged_in_at?: number;
   features?: Array<string>;
   // _links
+  raw_data?: any; // for instances of the User class where defaults are set
 }
 
 export interface ServiceName {
