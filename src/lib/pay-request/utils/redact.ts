@@ -3,6 +3,7 @@ import { Product, ProductStat } from '../services/products/types'
 
 export function redactOTP(user: User): User {
   delete user.otp_key
+  delete user.raw_data?.otp_key
   return user
 }
 
