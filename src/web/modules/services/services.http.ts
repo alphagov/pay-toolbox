@@ -96,7 +96,15 @@ export async function detail(req: Request, res: Response, next: NextFunction): P
       }
     })
 
-    const serviceGatewayAccounts = await getServiceGatewayAccounts(service.gateway_account_ids)
+    const [serviceGatewayAccounts, testGatewayAccount] = await Promise.all([
+        getServiceGatewayAccounts(service.gateway_account_ids),
+        Connector.accounts.retrieveByServiceExternalIdAndAccountType(serviceId, 'test')
+    ])
+
+    const misconfiguredServiceErrors = []
+    if (!serviceGatewayAccounts.some(account => account.gateway_account_id === testGatewayAccount.gateway_account_id)) {
+      misconfiguredServiceErrors.push("The test Gateway Account returned by Connector is not associated with this service in Adminusers. If this is not an internal Pay service, this needs to be fixed")
+    }
 
     const adminEmails = userDetails
         .filter((userDetail) => userDetail.role.toLowerCase() == 'admin')
@@ -106,9 +114,11 @@ export async function detail(req: Request, res: Response, next: NextFunction): P
     res.render('services/detail', {
       service,
       serviceGatewayAccounts,
+      testGatewayAccount,
       users: userDetails,
       serviceId,
       messages,
+      misconfiguredServiceErrors,
       adminEmails,
       showWorldpayTestServiceCreatedSuccess: req.flash('worldpayTestService')[0] === 'success',
       isWorldpayTestService: serviceGatewayAccounts.length === 1 && serviceGatewayAccounts[0].type === 'test' &&

@@ -1,6 +1,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "common/json.njk" import json %}
 
 {% extends "layout/layout.njk" %}
@@ -24,6 +25,15 @@
   {% for message in messages %}
     <div class="govuk-error-summary success-summary" role="alert">
       <h2 class="govuk-error-summary__title">{{ message }}</h2>
+    </div>
+  {% endfor %}
+
+  {% for error in misconfiguredServiceErrors %}
+    <div class="govuk-error-summary" role="alert">
+      <h2 class="govuk-error-summary__title">Service is misconfigured</h2>
+      <div class="govuk-error-summary__body">
+        {{ error }}
+      </div>
     </div>
   {% endfor %}
 
@@ -67,7 +77,8 @@
     <table class="govuk-table">
       <thead class="govuk-table__head">
       <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col" colspan="2">Gateway accounts</th>
+        <th class="govuk-table__header" scope="col">Gateway accounts</th>
+        <th class="govuk-table__header" scope="col">Visible to service</th>
       </tr>
       </thead>
       <tbody class="govuk-table__body">
@@ -77,6 +88,11 @@
             <a class="govuk-link govuk-link--no-visited-state"
                href="/gateway_accounts/{{ account.gateway_account_id }}">{{ account.payment_provider }}
               ({{ account.type }})</a>
+          </td>
+          <td class="govuk-table__cell">
+            {{ govukTag({
+              text: "Visible"
+            }) if account.gateway_account_id === testGatewayAccount.gateway_account_id or account.type | lower === 'live'  }}
           </td>
         </tr>
       {% endfor %}
