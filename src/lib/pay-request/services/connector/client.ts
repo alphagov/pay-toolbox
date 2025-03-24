@@ -102,6 +102,19 @@ export default class Connector extends Client {
         },
 
         /**
+         * Get gateway account by service external ID and account type
+         * @param serviceExternalId - Service external ID
+         * @param accountType - Gateway account type
+         * @returns Gateway account object
+         */
+        retrieveByServiceExternalIdAndAccountType(serviceExternalId: string, accountType: string): Promise<GatewayAccount | undefined> {
+            return client._axios
+                .get(`/v1/api/service/${serviceExternalId}/account/${accountType}`)
+                .then(response => client._unpackResponseData<GatewayAccount>(response))
+                .catch(handleEntityNotFound("Account by service external ID and account Type", `${serviceExternalId}:${accountType}`));
+        },
+
+        /**
          * Fetch Stripe credentials map for a given gateway account. If the gateway
          * account doesn't have Stripe credentials this route will return not found.
          * @param id - Gateway account ID
