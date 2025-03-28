@@ -103,7 +103,7 @@ export async function detail(req: Request, res: Response, next: NextFunction): P
 
     const misconfiguredServiceErrors = []
     if (!serviceGatewayAccounts.some(account => account.gateway_account_id === testGatewayAccount.gateway_account_id)) {
-      misconfiguredServiceErrors.push("The test Gateway Account returned by Connector is not associated with this service in Adminusers. If this is not an internal Pay service, this needs to be fixed")
+      misconfiguredServiceErrors.push(`The test Gateway Account (${testGatewayAccount.gateway_account_id}) returned by Connector is not associated with this service in Adminusers. If this is not an internal Pay service, this needs to be fixed`)
     }
 
     const adminEmails = userDetails
