@@ -143,7 +143,6 @@ router.post('/users/:id/email', auth.secured(PermissionLevel.USER_SUPPORT), user
 
 // @TODO(sfount) PATCH and DELETE respectively
 router.get('/users/:id/toggle', auth.secured(PermissionLevel.USER_SUPPORT), users.toggleUserEnabled)
-router.get('/users/:id/account-simplification', auth.secured(PermissionLevel.USER_SUPPORT), users.enableOrDisableAccountSimplification)
 router.post('/users/:userId/service/:serviceId/delete', auth.secured(PermissionLevel.ADMIN), users.removeUserFromService)
 router.get('/users/:userId/service/:serviceId/delete-confirm', auth.secured(PermissionLevel.USER_SUPPORT), users.confirmRemoveUserFromService)
 router.get('/users/:id/2FA/reset', auth.secured(PermissionLevel.USER_SUPPORT), users.resetUserSecondFactor)

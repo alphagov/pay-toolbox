@@ -51,11 +51,6 @@
       key: { text: "Disabled" },
       value: { text: "True" if payUser.disabled else "False" },
       actions: { items: [{ href: "/users/" + payUser.external_id + "/toggle", text: "Enable" if payUser.disabled else "Disable" }] }
-    },
-    {
-      key: { text: "Account simplification" },
-      value: { text: "Enabled" if accountSimplificationEnabled else "Disabled" },
-      actions: { items: [{ href: "/users/" + payUser.external_id + "/account-simplification", text: "Disable" if accountSimplificationEnabled else "Enable" }] }
     }
   ]
   })
