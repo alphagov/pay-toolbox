@@ -10,7 +10,7 @@ import GatewayAccountRequest from './gatewayAccountRequest.model'
 import {formatPerformancePlatformCsv} from './performancePlatformCsv'
 import {ClientFormError, formatErrorsForTemplate} from '../common/validationErrorFormat'
 import UpdateOrganisationFormRequest from './UpdateOrganisationForm'
-import {IOValidationError, ValidationError as CustomValidationError} from '../../../lib/errors'
+import {EntityNotFoundError, IOValidationError, ValidationError as CustomValidationError} from '../../../lib/errors'
 import {formatServiceExportCsv} from './serviceExportCsv'
 import {BooleanFilterOption} from '../common/BooleanFilterOption'
 import {fetchAndFilterServices, getLiveNotArchivedServices, ServiceFilters} from './getFilteredServices'
@@ -99,10 +99,20 @@ export async function detail(req: Request, res: Response, next: NextFunction): P
     const [serviceGatewayAccounts, testGatewayAccount] = await Promise.all([
         getServiceGatewayAccounts(service.gateway_account_ids),
         Connector.accounts.retrieveByServiceExternalIdAndAccountType(serviceId, 'test')
+            .catch(e => {
+              if (e instanceof EntityNotFoundError) {
+                // don't 404 if no test account is found, show a misconfigured service error instead
+                return null
+              } else {
+                throw e
+              }
+            })
     ])
 
     const misconfiguredServiceErrors = []
-    if (!serviceGatewayAccounts.some(account => account.gateway_account_id === testGatewayAccount.gateway_account_id)) {
+    if (!testGatewayAccount) {
+      misconfiguredServiceErrors.push('No test Gateway Account was returned by Connector')
+    } else if (!serviceGatewayAccounts.some(account => account.gateway_account_id === testGatewayAccount.gateway_account_id)) {
       misconfiguredServiceErrors.push(`The test Gateway Account (${testGatewayAccount.gateway_account_id}) returned by Connector is not associated with this service in Adminusers. If this is not an internal Pay service, this needs to be fixed`)
     }
 
