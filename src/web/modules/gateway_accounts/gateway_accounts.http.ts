@@ -134,11 +134,7 @@ async function confirm(req: Request, res: Response, next: NextFunction): Promise
   }
 }
 
-function getGoLiveUrlForServiceUsingWorldpay(serviceId: string) {
-  return `${config.services.SELFSERVICE_URL}/service/${serviceId}/dashboard/live`
-}
-
-function getGoLiveUrlForServiceUsingStripe(gatewayAccountExternalId: string) {
+function getGoLiveUrlForService(gatewayAccountExternalId: string) {
   return `${config.services.SELFSERVICE_URL}/account/${gatewayAccountExternalId}/dashboard`
 }
 
@@ -198,9 +194,9 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
 
   let zendeskTicketUpdated = false
   if (account.provider === PaymentProvider.Worldpay && ticket) {
-    zendeskTicketUpdated = await updateTicketWithWorldpayGoLiveResponse(ticket, getGoLiveUrlForServiceUsingWorldpay(serviceId));
+    zendeskTicketUpdated = await updateTicketWithWorldpayGoLiveResponse(ticket, getGoLiveUrlForService(createdAccount.external_id));
   } else if (account.provider === PaymentProvider.Stripe && ticket) {
-    zendeskTicketUpdated = await updateTicketWithStripeGoLiveResponse(ticket, getGoLiveUrlForServiceUsingStripe(createdAccount.external_id),
+    zendeskTicketUpdated = await updateTicketWithStripeGoLiveResponse(ticket, getGoLiveUrlForService(createdAccount.external_id),
       stripeAccountStatementDescriptors.statementDescriptor, stripeAccountStatementDescriptors.payoutStatementDescriptor);
   }
 
