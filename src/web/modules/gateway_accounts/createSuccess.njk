@@ -44,7 +44,7 @@ A {{ account.type | upper }} Gateway account has been created through Admin User
             ]
             if isStripe else
             [
-                [ { text: "***GO_LIVE_URL***" }, { text: selfServiceBaseUrl + "/service/" + linkedService + "/dashboard/live", classes: "stripe-go-live-url-table-cell"  } ]
+                [ { text: "***GO_LIVE_URL***" }, { text: selfServiceBaseUrl + "/account/" + account.external_id + "/dashboard", classes: "stripe-go-live-url-table-cell"  } ]
             ]
             })
     }}
