@@ -32,6 +32,26 @@ export default class Connector extends Client {
         super(App.Connector)
     }
 
+    refunds = ((client: Connector) => ({
+
+        /**
+         * @param refundExternalId
+         * @param parentExternalId
+         * @param gatewayAccountId
+         */
+        async doesRefundExist(refundExternalId: string, parentExternalId: string, gatewayAccountId: string): Promise<boolean> {
+            const response = await client._axios.get(
+                `/v1/api/accounts/${gatewayAccountId}/charges/${parentExternalId}/refunds/${refundExternalId}`,
+                { validateStatus: status => [404,200].includes(status) },)
+            switch (response.status) {
+                case 404: return false
+                case 200: return true
+                default:
+                    throw new Error('Should not have reached here')
+            }
+        }
+    }))(this)
+
     charges = ((client: Connector) => ({
         /**
          * Fetch an in-flight payment

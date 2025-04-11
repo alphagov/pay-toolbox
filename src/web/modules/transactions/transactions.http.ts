@@ -5,6 +5,7 @@ import {EntityNotFoundError} from '../../../lib/errors'
 import logger from '../../../lib/logger'
 import {AccountType, TransactionType} from '../../../lib/pay-request/shared'
 import {PaymentListFilterStatus, resolvePaymentStates, resolveRefundStates} from "./states";
+import {Transaction} from "../../../lib/pay-request/services/ledger/types";
 
 const process = require('process')
 const url = require('url')
@@ -215,21 +216,39 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
       stripeDashboardUri = `https://dashboard.stripe.com/${transaction.live ? '' : 'test/'}payments/${transaction.gateway_transaction_id}`
     }
 
-    res.render(`transactions/${renderKey}`, {
-      transaction,
-      parentTransaction,
-      relatedTransactions,
-      account,
-      service,
-      events,
-      stripeDashboardUri,
-      webhookMessages,
-      humanReadableSubscriptions: constants.webhooks.humanReadableSubscriptions,
-      userJourneyDurationFriendly
-    })
+    if (renderKey === 'payment') {
+      res.render(`transactions/payment`, {
+        transaction,
+        relatedTransactions,
+        service,
+        events,
+        stripeDashboardUri,
+        webhookMessages,
+        humanReadableSubscriptions: constants.webhooks.humanReadableSubscriptions,
+        userJourneyDurationFriendly
+      })
+    } else {
+      const refundExpunged = await isRefundExpunged(transaction)
+      res.render(`transactions/refund`, {
+        transaction,
+        parentTransaction,
+        refundExpunged,
+        service,
+        events,
+        webhookMessages,
+      })
+    }
   } catch (error) {
     next(error)
   }
+}
+
+async function isRefundExpunged(transaction: Transaction): Promise<boolean> {
+  if (transaction.transaction_type === TransactionType.Refund) {
+    const doesRefundExist = await Connector.refunds.doesRefundExist(transaction.transaction_id, transaction.parent_transaction_id, transaction.gateway_account_id)
+    return !doesRefundExist
+  }
+  return true
 }
 
 const sum = (a: number, b: number): number => a + b

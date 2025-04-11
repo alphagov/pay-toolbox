@@ -114,11 +114,21 @@
 {{ json("Transaction source", transaction) }}
 
 <div>
-  {% if (transaction.state and transaction.state.status === "success") and (parentTransaction.payment_provider === "stripe") %}
+  {% if (transaction.state and transaction.state.status === "success") and (parentTransaction.payment_provider === "stripe") and refundExpunged %}
     {{ govukButton({
       text: "Correct asynchronously failed Stripe refund",
       classes: "govuk-button--warning",
       href: "/confirm-fix-async-failed-stripe-refund/" + transaction.transaction_id
+    }) }}
+  {% endif %}
+  {% if (transaction.state and transaction.state.status === "success") and (parentTransaction.payment_provider === "stripe") and not refundExpunged %}
+    <div class="govuk-body govuk-!-margin-bottom-4">
+      Cannot asynchronously correct Stripe refund as it is not expunged from Connector microservice. Come back later.
+    </div>
+    {{ govukButton({
+      text: "Correct asynchronously failed Stripe refund",
+      disabled: true,
+      classes: "govuk-button--warning"
     }) }}
   {% endif %}
 
