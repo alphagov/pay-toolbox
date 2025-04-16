@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "description": "Internal administrative tools service for the GOV.UK Pay products.",
   "engines": {
-    "node": "^18.20.4",
+    "node": "^22.14.0",
     "npm": "^10.7.0"
   },
   "private": true,
