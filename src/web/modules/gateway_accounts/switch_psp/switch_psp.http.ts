@@ -6,6 +6,19 @@ import logger from "../../../../lib/logger";
 
 import stripeTestAccount from '../../stripe/test-account.http'
 
+async function updateConnectorStripeOnboardingSteps(gatewayAccountId: string, operation: 'complete' | 'reset') {
+  const addOrRemove = operation === 'complete' ? true : false
+  await Connector.accounts.updateStripeSetup(gatewayAccountId, {
+          bank_account: addOrRemove,
+          company_number: addOrRemove,
+          responsible_person: addOrRemove,
+          vat_number: addOrRemove,
+          director: addOrRemove,
+          organisation_details: addOrRemove,
+          government_entity_document: addOrRemove
+        })
+}
+
 export async function switchPSPPage(req: Request, res: Response, next: NextFunction) {
   const account = await Connector.accounts.retrieve(req.params.id)
   const service = await AdminUsers.services.retrieve({gatewayAccountId: `${account.gateway_account_id}`})
@@ -50,20 +63,13 @@ export async function postSwitchPSP(req: Request, res: Response, next: NextFunct
         const accountDetails = new AccountDetails(req.body)
         const tosAcceptance = {ip_address: req.ip, agreement_time: Date.now()}
         const stripeAccount = await setupProductionStripeAccount(service.external_id, accountDetails, tosAcceptance)
+        // in the niche case where a gateway account was Stripe in the past, reset the onboarding steps
+        await updateConnectorStripeOnboardingSteps(account.gateway_account_id.toString(), 'reset')
         stripeCredentials = {stripe_account_id: stripeAccount.id}
       } else {
         // use new stripe account setup and fully configure it for
         const stripeAccount = await stripeTestAccount.createStripeTestAccount(service.service_name.en)
-
-        await Connector.accounts.updateStripeSetup(`${account.gateway_account_id}`, {
-          bank_account: true,
-          company_number: true,
-          responsible_person: true,
-          vat_number: true,
-          director: true,
-          organisation_details: true,
-          government_entity_document: true
-        })
+        await updateConnectorStripeOnboardingSteps(account.gateway_account_id.toString(), 'complete')
         stripeCredentials = {stripe_account_id: stripeAccount.id}
       }
     }
