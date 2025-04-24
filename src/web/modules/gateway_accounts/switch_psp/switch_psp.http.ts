@@ -6,16 +6,16 @@ import logger from "../../../../lib/logger";
 
 import stripeTestAccount from '../../stripe/test-account.http'
 
-async function setConnectorStripeSetup(gatewayAccountId: string, isTest: boolean) {
-  const defaultValue = isTest
+async function updateConnectorStripeOnboardingSteps(gatewayAccountId: string, operation: 'complete' | 'reset') {
+  const addOrRemove = operation === 'complete' ? true : false
   await Connector.accounts.updateStripeSetup(gatewayAccountId, {
-          bank_account: defaultValue,
-          company_number: defaultValue,
-          responsible_person: defaultValue,
-          vat_number: defaultValue,
-          director: defaultValue,
-          organisation_details: defaultValue,
-          government_entity_document: defaultValue
+          bank_account: addOrRemove,
+          company_number: addOrRemove,
+          responsible_person: addOrRemove,
+          vat_number: addOrRemove,
+          director: addOrRemove,
+          organisation_details: addOrRemove,
+          government_entity_document: addOrRemove
         })
 }
 
@@ -64,12 +64,12 @@ export async function postSwitchPSP(req: Request, res: Response, next: NextFunct
         const tosAcceptance = {ip_address: req.ip, agreement_time: Date.now()}
         const stripeAccount = await setupProductionStripeAccount(service.external_id, accountDetails, tosAcceptance)
         // in the niche case where a gateway account was Stripe in the past, reset the onboarding steps
-        await setConnectorStripeSetup(account.gateway_account_id.toString(), false)
+        await updateConnectorStripeOnboardingSteps(account.gateway_account_id.toString(), 'reset')
         stripeCredentials = {stripe_account_id: stripeAccount.id}
       } else {
         // use new stripe account setup and fully configure it for
         const stripeAccount = await stripeTestAccount.createStripeTestAccount(service.service_name.en)
-        await setConnectorStripeSetup(account.gateway_account_id.toString(), true)
+        await updateConnectorStripeOnboardingSteps(account.gateway_account_id.toString(), 'complete')
         stripeCredentials = {stripe_account_id: stripeAccount.id}
       }
     }
