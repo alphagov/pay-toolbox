@@ -20,7 +20,6 @@ const show = async function show(req: Request, res: Response): Promise<void> {
   res.render('users/users.show.njk', context)
 }
 
-// @TODO(sfount) user should be defined through pay-request library, recovery values through `/lib`
 interface RecoverContext {
   user: object;
   csrf: string;
@@ -37,8 +36,6 @@ const updatePhoneNumberForm = async function updatePhoneNumberForm(
   const context: RecoverContext = {user, csrf: req.csrfToken()}
   const {recovered} = req.session
 
-  // @TODO(sfount) move all recovery code into one place -- all mapping to formats the template
-  //               understand should be done in one place
   if (recovered) {
     context.formValues = recovered.formValues
 
@@ -62,8 +59,6 @@ const updateEmailForm = async function updateEmailForm(req: Request, res: Respon
   const context: RecoverContext = {user, csrf: req.csrfToken()}
   const {recovered} = req.session
 
-  // @TODO(sfount) move all recovery code into one place -- all mapping to formats the template
-  //               understand should be done in one place
   if (recovered) {
     context.formValues = recovered.formValues
 

@@ -261,7 +261,6 @@ export async function statistics(req: Request, res: Response, next: NextFunction
     if (req.query.account) {
       service = await AdminUsers.services.retrieve({gatewayAccountId: accountId})
     } else {
-      // @TODO(sfount) temporarily disable platform level queries - not supported by Ledger
       throw new Error('Platform statistics not supported by Ledger')
     }
 

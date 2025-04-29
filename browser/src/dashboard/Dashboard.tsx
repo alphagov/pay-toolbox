@@ -383,9 +383,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
     const stagingAggregateAllVolumes = { ...this.state.aggregateAllVolumes }
     const stagingTransactionVolumesByHour = [ ...this.state.transactionVolumesByHour ]
 
-    // @TODO(sfount) don't go through ALL queued events - they are ordered by date, just do until the critera no longer matches
     this.state.queuedEvents.forEach((event) => {
-      // @TODO(sfount) somehow duplicated events can be added here when the browser tab isn't focussed
       if (
         !this.state.activeEvents.map((event: Event) => event.key)
           .concat(staging.map((event: Event) => event.key))
@@ -497,7 +495,6 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
           </div>
         </div>
         <div className="govuk-grid-row govuk-body govuk-!-margin-bottom-4">
-          {/* @TODO(sfount) bottom shadow (without factoring in column padding) is needed for parity */}
           {/* Non-zero min-height to maintain width without content (a loading or syncing icon should be used) */}
           <div style={{ maxHeight: this.state.statsHeight, overflowY: 'hidden', minHeight: 5 }} className="govuk-grid-column-one-half">
             <EventListPanel events={this.state.activeEvents} sync={this.state.sync} numberOfAggregateSyncs={this.state.numberOfAggregateSyncs} fetchedServices={this.state.fetchedServices} isFetching={this.state.connection.isFetching} showAllEvents={this.state.showAllEvents} />

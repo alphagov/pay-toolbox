@@ -74,8 +74,6 @@ export default class AdminUsers extends Client {
       id: string,
       params: UpdateServiceRequest
     ): Promise<Service | undefined> {
-      // @TODO(sfount) temporary method of having a uniform `update` method on services, this should be a much clearer
-      //               pattern for devs to understand what's going on under the hood
       const addOperations = ['gateway_account_ids']
       const payload = mapRequestParamsToOperation(params, addOperations)
 

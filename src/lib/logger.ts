@@ -1,8 +1,5 @@
 // Sensible defaults for different logging transports based on environment
 // set through config
-// @TODO(sfount) also extract and log the correlation ID sent from the nginx
-//               reverse proxy servers in production
-// import * as crypto from 'crypto'
 import crypto from 'crypto'
 import { Request, Response, NextFunction } from 'express'
 import { createLogger, format, transports } from 'winston'
@@ -48,7 +45,6 @@ const loggerMiddleware = function loggerMiddleware(
     // expose toolbox ID to template for debugging
     res.locals.toolboxId = toolboxId
 
-    // @TODO(sfount) potentially move to small sentry.ts lib
     Sentry.configureScope((scope) => {
       if (req.headers[correlationHeader]) {
         scope.setTag('correlation_id', req.headers[correlationHeader] as string)
@@ -120,7 +116,6 @@ if (config.common.development) {
   logger.add(developmentTransport)
 }
 
-// @TODO(sfount) attaching object to logger could muddy API in future
 Object.assign(logger, { middleware: loggerMiddleware })
 
 export = logger
