@@ -1,5 +1,4 @@
 {% macro status(state, final, refundedStatus, refundedAmount) %}
-{# @TODO(sfount) this map could be done a lot better with more time + standard definitions being used #}
 {% set success = ['success'] %}
 {% set failed = ['failed', 'declined', 'cancelled', 'timedout', 'error'] %}
 

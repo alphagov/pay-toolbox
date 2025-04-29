@@ -224,7 +224,6 @@ export default class Connector extends Client {
             id: string,
             params: UpdateGatewayAccountRequest
         ): Promise<void | undefined> {
-            // @TODO(sfount) move to utility so that it can be unit tested
             // Note that connector only supports single update per request, rather than an array of updates
             const payload = mapRequestParamsToOperation(params).pop()
 
@@ -233,7 +232,6 @@ export default class Connector extends Client {
                 .then(() => {
                     return
                 });
-            // @TODO(sfount) decide if this should return the updated account -- could determine through uses of it
             // .then(() => this.retrieve(id))
         },
 

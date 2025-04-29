@@ -1,5 +1,4 @@
 // top level service router, responsible for matching paths with module controllers
-// @TODO(sfount) this should be split up as the service grows
 const express = require('express')
 const passport = require('passport')
 const multer = require('multer')
@@ -28,7 +27,6 @@ const events = require('./modules/events')
 const fixRefunds = require('./modules/transactions/fix_async_failed_stripe_refund')
 
 
-// @TODO(sfount) remove `default`s on update to import export syntax
 const users = require('./modules/users/users.http').default
 
 const {PermissionLevel} = require('../lib/auth/types')
@@ -131,7 +129,6 @@ router.post('/stripe/create', auth.secured(PermissionLevel.USER_SUPPORT), stripe
 router.get('/stripe/create-test-account', auth.secured(PermissionLevel.VIEW_ONLY), stripe.createTestAccount)
 router.post('/stripe/create-test-account', auth.secured(PermissionLevel.USER_SUPPORT), stripe.createTestAccountConfirm)
 
-// @TODO(sfount) simple to integrate into table action - should be reconsidered for POST or PATCH
 router.get('/users/search', auth.secured(PermissionLevel.VIEW_ONLY), users.searchPage)
 router.post('/users/search', auth.secured(PermissionLevel.VIEW_ONLY), users.search)
 
@@ -141,7 +138,6 @@ router.post('/users/:id/phone', auth.secured(PermissionLevel.USER_SUPPORT), user
 router.get('/users/:id/email', auth.secured(PermissionLevel.USER_SUPPORT), users.updateEmailForm)
 router.post('/users/:id/email', auth.secured(PermissionLevel.USER_SUPPORT), users.updateEmail)
 
-// @TODO(sfount) PATCH and DELETE respectively
 router.get('/users/:id/toggle', auth.secured(PermissionLevel.USER_SUPPORT), users.toggleUserEnabled)
 router.post('/users/:userId/service/:serviceId/delete', auth.secured(PermissionLevel.ADMIN), users.removeUserFromService)
 router.get('/users/:userId/service/:serviceId/delete-confirm', auth.secured(PermissionLevel.USER_SUPPORT), users.confirmRemoveUserFromService)

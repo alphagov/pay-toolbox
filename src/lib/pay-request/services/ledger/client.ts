@@ -73,8 +73,6 @@ export default class Ledger extends Client {
       const paymentFilters: any = {
         ...filters,
 
-        // @TODO(sfount): this is to work around querystring.stringy() not using a comma separated value
-        //                method. The library `qs` is probably a safer way to do this
         ...accountIdParam && accountIdParam.length && {account_id: accountIdParam.join(',')},
         transaction_type: TransactionType.Payment
       }
@@ -145,8 +143,6 @@ export default class Ledger extends Client {
       const paymentFilters: any = {
         ...filters,
 
-        // @TODO(sfount): this is to work around querystring.stringy() not using a comma separated value
-        //                method. The library `qs` is probably a safer way to do this
         ...accountIdParam && accountIdParam.length && {account_id: accountIdParam.join(',')},
         ...Array.isArray(filters.payment_states) && { payment_states: filters.payment_states.join(',') },
         ...Array.isArray(filters.refund_states) && { refund_states: filters.refund_states.join(',') }
