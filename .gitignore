@@ -1,18 +1,18 @@
-# Compiled assets 
+# Compiled assets
 dist/
-app/public 
+app/public
 
 src/tests/cypress/videos
 src/tests/cypress/screenshots
 
-# Logs 
+# Logs
 npm-debug.log*
 
-# Dependencies 
+# Dependencies
 node_modules
 
-# npm cache 
-.npm 
+# npm cache
+.npm
 
 # development environment files
 .env
@@ -20,10 +20,12 @@ node_modules
 # vim
 *.swp
 
-# logs 
+# logs
 *.log
 
 .idea
 
 # ST4
 *.sublime-*
+
+.DS_Store

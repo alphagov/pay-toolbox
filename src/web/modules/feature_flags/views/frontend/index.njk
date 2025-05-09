@@ -1,0 +1,30 @@
+{% extends "layout/layout.njk" %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block main %}
+    <span class="govuk-caption-m">GOV.UK Pay platform</span>
+    <h1 class="govuk-heading-m">Feature flags - Frontend - Wallets</h1>
+
+    {{ govukWarningText({
+      text: "STOP AND THINK. Changing these settings will alter the behaviour of the platform.",
+      iconFallbackText: "Warning"
+    })
+    }}
+
+
+    <form method="post">
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+
+        {% include "./wallet-select.njk" %}
+
+        <div class="govuk-button-group">
+            {{ govukButton({
+                text: "Save changes",
+                classes: "govuk-button--warning"
+            }) }}
+            <a class="govuk-link" href="/feature-flags">Cancel</a>
+        </div>
+    </form>
+{% endblock %}

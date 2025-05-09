@@ -10,6 +10,7 @@ const healthcheck = require('./../lib/healthcheck')
 const landing = require('./modules/landing/landing.http')
 const statistics = require('./modules/statistics/statistics.http')
 const gatewayAccounts = require('./modules/gateway_accounts').default
+const featureFlags = require('./modules/feature_flags/controllers/index')
 const switchPSP = require('./modules/gateway_accounts/switch_psp/switch_psp.http')
 const services = require('./modules/services').default
 const discrepancies = require('./modules/discrepancies')
@@ -52,6 +53,10 @@ router.get('/statistics/services', auth.secured(PermissionLevel.VIEW_ONLY), stat
 router.post('/statistics/services', auth.secured(PermissionLevel.VIEW_ONLY), statistics.byServices)
 router.get('/statistics/performance-page', auth.secured(PermissionLevel.VIEW_ONLY), performance.overview)
 router.get('/statistics/performance-data', auth.secured(PermissionLevel.VIEW_ONLY), performance.downloadData)
+
+router.get('/feature-flags', auth.secured(PermissionLevel.VIEW_ONLY), featureFlags.overview.get)
+router.get('/feature-flags/frontend/wallets', auth.secured(PermissionLevel.ADMIN), featureFlags.frontend.wallets.get)
+router.post('/feature-flags/frontend/wallets', auth.secured(PermissionLevel.ADMIN), featureFlags.frontend.wallets.post)
 
 router.get('/gateway_accounts', auth.secured(PermissionLevel.VIEW_ONLY), gatewayAccounts.overview)
 router.get('/gateway_accounts/csv', auth.secured(PermissionLevel.VIEW_ONLY), gatewayAccounts.listCSV)

@@ -1,0 +1,115 @@
+{% extends "layout/layout.njk" %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% block main %}
+  <span class="govuk-caption-m">GOV.UK Pay platform</span>
+  <h1 class="govuk-heading-m">Feature flags</h1>
+
+  {{ govukWarningText({
+    text: "STOP AND THINK. Changing these settings will alter the behaviour of the platform.",
+    iconFallbackText: "Warning"
+  }) }}
+
+  {{ govukSummaryList({
+    card: {
+      title: {
+        text: "Wallet payments"
+      }
+    },
+    rows: [
+      {
+        key: {
+          text: "Apple Pay"
+        },
+        value: {
+          html: config.applePay
+        },
+        actions: {
+          items: [
+            {
+              href: "/feature-flags/frontend/wallets",
+              text: "Toggle",
+              visuallyHiddenText: "Apple Pay"
+            }
+          ]
+        }
+      },
+      {
+        key: {
+          text: "Google Pay"
+        },
+        value: {
+          html: config.googlePay
+        },
+        actions: {
+          items: [
+            {
+              href: "/feature-flags/frontend/wallets",
+              text: "Toggle",
+              visuallyHiddenText: "Google Pay"
+            }
+          ]
+        }
+      }
+    ]
+  }) }}
+
+
+
+    {{ govukTable({
+    caption: "Last Deployment",
+    captionClasses: "govuk-table__caption--m",
+    rows: [
+        [
+        {
+            text: "ConfigurationName"
+        },
+        {
+            text: lastDeployment.ConfigurationName
+        }
+        ],
+        [
+        {
+            text: "ConfigurationVersion"
+        },
+        {
+            text: lastDeployment.ConfigurationVersion
+        }
+        ],
+        [
+        {
+            text: "DeploymentDurationInMinutes"
+        },
+        {
+            text: lastDeployment.DeploymentDurationInMinutes
+        }
+        ],
+        [
+        {
+            text: "DeploymentNumber"
+        },
+        {
+            text: lastDeployment.DeploymentNumber
+        }
+        ],
+        [
+        {
+            text: "State"
+        },
+        {
+            text: lastDeployment.State
+        }
+        ],
+        [
+        {
+            text: "StartedAt"
+        },
+        {
+            text: lastDeployment.StartedAt
+        }
+        ]
+    ]
+    }) }}
+{% endblock %}
