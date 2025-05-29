@@ -110,6 +110,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
       ...accountId && {account_id: Number(accountId)},
       ...transactionType === TransactionType.Payment && {payment_states: resolvePaymentStates(selectedStatus)},
       ...transactionType === TransactionType.Refund && {refund_states: resolveRefundStates(selectedStatus)},
+      ...transactionType === TransactionType.Dispute && {dispute_states: resolveRefundStates(selectedStatus)},
       ...filters
     })
 
@@ -227,12 +228,20 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
         humanReadableSubscriptions: constants.webhooks.humanReadableSubscriptions,
         userJourneyDurationFriendly
       })
-    } else {
+    } else if (renderKey === 'refund') {
       const refundExpunged = await isRefundExpunged(transaction)
       res.render(`transactions/refund`, {
         transaction,
         parentTransaction,
         refundExpunged,
+        service,
+        events,
+        webhookMessages,
+      })
+    } else {
+      res.render(`transactions/dispute`, {
+        transaction,
+        parentTransaction,
         service,
         events,
         webhookMessages,
