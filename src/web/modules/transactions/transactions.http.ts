@@ -217,7 +217,7 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     const renderKey = transaction.transaction_type
 
     switch (renderKey) {
-      case TransactionType.Payment:
+      case TransactionType.Payment: {
         return res.render(`transactions/payment`, {
           transaction,
           relatedTransactions,
@@ -228,7 +228,8 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
           humanReadableSubscriptions: constants.webhooks.humanReadableSubscriptions,
           userJourneyDurationFriendly
         })
-      case TransactionType.Refund:
+      }
+      case TransactionType.Refund: {
         const refundExpunged = await isRefundExpunged(transaction)
         return res.render(`transactions/refund`, {
           transaction,
@@ -238,7 +239,8 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
           events,
           webhookMessages,
         })
-      case TransactionType.Dispute:
+      }
+      case TransactionType.Dispute: {
         return res.render(`transactions/dispute`, {
           transaction,
           parentTransaction,
@@ -247,6 +249,7 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
           webhookMessages,
         })
       }
+    }
   } catch (error) {
     next(error)
   }
