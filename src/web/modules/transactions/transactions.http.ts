@@ -216,36 +216,37 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
 
     const renderKey = transaction.transaction_type
 
-    if (renderKey === TransactionType.Payment) {
-      res.render(`transactions/payment`, {
-        transaction,
-        relatedTransactions,
-        service,
-        events,
-        stripeDashboardUri,
-        webhookMessages,
-        humanReadableSubscriptions: constants.webhooks.humanReadableSubscriptions,
-        userJourneyDurationFriendly
-      })
-    } else if (renderKey === TransactionType.Refund) {
-      const refundExpunged = await isRefundExpunged(transaction)
-      res.render(`transactions/refund`, {
-        transaction,
-        parentTransaction,
-        refundExpunged,
-        service,
-        events,
-        webhookMessages,
-      })
-    } else {
-      res.render(`transactions/dispute`, {
-        transaction,
-        parentTransaction,
-        service,
-        events,
-        webhookMessages,
-      })
-    }
+    switch (renderKey) {
+      case TransactionType.Payment:
+        return res.render(`transactions/payment`, {
+          transaction,
+          relatedTransactions,
+          service,
+          events,
+          stripeDashboardUri,
+          webhookMessages,
+          humanReadableSubscriptions: constants.webhooks.humanReadableSubscriptions,
+          userJourneyDurationFriendly
+        })
+      case TransactionType.Refund:
+        const refundExpunged = await isRefundExpunged(transaction)
+        return res.render(`transactions/refund`, {
+          transaction,
+          parentTransaction,
+          refundExpunged,
+          service,
+          events,
+          webhookMessages,
+        })
+      case TransactionType.Dispute:
+        return res.render(`transactions/dispute`, {
+          transaction,
+          parentTransaction,
+          service,
+          events,
+          webhookMessages,
+        })
+      }
   } catch (error) {
     next(error)
   }
