@@ -110,7 +110,6 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
       ...accountId && {account_id: Number(accountId)},
       ...transactionType === TransactionType.Payment && {payment_states: resolvePaymentStates(selectedStatus)},
       ...transactionType === TransactionType.Refund && {refund_states: resolveRefundStates(selectedStatus)},
-      ...transactionType === TransactionType.Dispute && {dispute_states: resolveRefundStates(selectedStatus)},
       ...filters
     })
 
@@ -211,13 +210,13 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
       logger.warn('Failed to fetch webhooks data for the payments page', webhooksError)
     }
 
-    const renderKey = transaction.transaction_type.toLowerCase()
-
     if (transaction.gateway_transaction_id && account.payment_provider === 'stripe') {
       stripeDashboardUri = `https://dashboard.stripe.com/${transaction.live ? '' : 'test/'}payments/${transaction.gateway_transaction_id}`
     }
 
-    if (renderKey === 'payment') {
+    const renderKey = transaction.transaction_type
+
+    if (renderKey === TransactionType.Payment) {
       res.render(`transactions/payment`, {
         transaction,
         relatedTransactions,
@@ -228,7 +227,7 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
         humanReadableSubscriptions: constants.webhooks.humanReadableSubscriptions,
         userJourneyDurationFriendly
       })
-    } else if (renderKey === 'refund') {
+    } else if (renderKey === TransactionType.Refund) {
       const refundExpunged = await isRefundExpunged(transaction)
       res.render(`transactions/refund`, {
         transaction,
