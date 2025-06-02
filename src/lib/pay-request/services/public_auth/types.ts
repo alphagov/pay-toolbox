@@ -42,6 +42,8 @@ export interface CreateTokenRequest {
   token_type: TokenType;
   type: TokenSource;
   token_account_type: AccountType;
+  service_mode: AccountType;
+  service_external_id: string;
 }
 
 export interface ListTokenResponse {
