@@ -86,7 +86,8 @@ export interface State<T> {
 
 export enum TransactionType {
   Payment = 'PAYMENT',
-  Refund = 'REFUND'
+  Refund = 'REFUND',
+  Dispute = 'DISPUTE'
 }
 
 export enum ResourceType {

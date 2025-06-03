@@ -210,33 +210,45 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
       logger.warn('Failed to fetch webhooks data for the payments page', webhooksError)
     }
 
-    const renderKey = transaction.transaction_type.toLowerCase()
-
     if (transaction.gateway_transaction_id && account.payment_provider === 'stripe') {
       stripeDashboardUri = `https://dashboard.stripe.com/${transaction.live ? '' : 'test/'}payments/${transaction.gateway_transaction_id}`
     }
 
-    if (renderKey === 'payment') {
-      res.render(`transactions/payment`, {
-        transaction,
-        relatedTransactions,
-        service,
-        events,
-        stripeDashboardUri,
-        webhookMessages,
-        humanReadableSubscriptions: constants.webhooks.humanReadableSubscriptions,
-        userJourneyDurationFriendly
-      })
-    } else {
-      const refundExpunged = await isRefundExpunged(transaction)
-      res.render(`transactions/refund`, {
-        transaction,
-        parentTransaction,
-        refundExpunged,
-        service,
-        events,
-        webhookMessages,
-      })
+    const renderKey = transaction.transaction_type
+
+    switch (renderKey) {
+      case TransactionType.Payment: {
+        return res.render(`transactions/payment`, {
+          transaction,
+          relatedTransactions,
+          service,
+          events,
+          stripeDashboardUri,
+          webhookMessages,
+          humanReadableSubscriptions: constants.webhooks.humanReadableSubscriptions,
+          userJourneyDurationFriendly
+        })
+      }
+      case TransactionType.Refund: {
+        const refundExpunged = await isRefundExpunged(transaction)
+        return res.render(`transactions/refund`, {
+          transaction,
+          parentTransaction,
+          refundExpunged,
+          service,
+          events,
+          webhookMessages,
+        })
+      }
+      case TransactionType.Dispute: {
+        return res.render(`transactions/dispute`, {
+          transaction,
+          parentTransaction,
+          service,
+          events,
+          webhookMessages,
+        })
+      }
     }
   } catch (error) {
     next(error)
