@@ -205,7 +205,9 @@ export async function createAgentInitiatedMotoProduct(
       created_by: 'govuk-pay-support@digital.cabinet-office.gov.uk',
       token_type: TokenType.Card,
       type: TokenSource.Products,
-      token_account_type: account.type
+      token_account_type: account.type,
+      service_mode: account.type,
+      service_external_id: account.service_id
     }
 
     const {token} = await PublicAuth.tokens.create(createApiTokenRequest)
