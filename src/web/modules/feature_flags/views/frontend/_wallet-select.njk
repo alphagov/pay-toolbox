@@ -1,0 +1,24 @@
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
+{{ govukCheckboxes({
+    name: "wallets",
+    fieldset: {
+        legend: {
+            text: "Payment Wallets",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+        }
+    },
+    items: [
+        {
+            value: "applepay",
+            text: "Apple Pay",
+            checked: config.applePay === 'ON'
+        },
+        {
+            value: "googlepay",
+            text: "Google Pay",
+            checked: config.googlePay === 'ON'
+        }
+    ]
+}) }}
