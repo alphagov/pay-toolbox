@@ -16,7 +16,7 @@ export async function motoSettings(req: Request,
     const {id} = req.params
     const [account, service, products] = await Promise.all([
       Connector.accounts.retrieve(id),
-      AdminUsers.services.retrieve({gatewayAccountId: id}),
+      AdminUsers.services.retrieveByGatewayAccountId(id),
       Products.accounts.listProductsByType(id, ProductType.Moto)
     ])
     const motoPaymentLinkExists = products.length > 0
@@ -107,7 +107,7 @@ export async function agentInitiatedMoto(
 
     const [account, service, products] = await Promise.all([
       Connector.accounts.retrieve(id),
-      AdminUsers.services.retrieve({gatewayAccountId: id}),
+      AdminUsers.services.retrieveByGatewayAccountId(id),
       Products.accounts.listProductsByType(id, ProductType.Moto)
     ])
 
@@ -135,7 +135,7 @@ export async function agentInitiatedMotoProduct(
 
     const [account, service, products] = await Promise.all([
       Connector.accounts.retrieve(id),
-      AdminUsers.services.retrieve({gatewayAccountId: id}),
+      AdminUsers.services.retrieveByGatewayAccountId(id),
       Products.accounts.listProductsByType(id, ProductType.Moto)
     ])
 
@@ -247,7 +247,7 @@ export async function toggleAgentInitiatedMotoEnabledFlag(
 
     const [account, service] = await Promise.all([
       Connector.accounts.retrieve(id),
-      AdminUsers.services.retrieve({gatewayAccountId: id})
+      AdminUsers.services.retrieveByGatewayAccountId(id)
     ])
     const enable = !service.agent_initiated_moto_enabled
     await AdminUsers.services.update(service.external_id, {

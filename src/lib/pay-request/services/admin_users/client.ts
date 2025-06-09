@@ -34,16 +34,18 @@ export default class AdminUsers extends Client {
           .then(response => client._unpackResponseData<Service>(response));
     },
 
-    retrieve(idOrParams: string | RetrieveServiceByGatewayAccountIdRequest): Promise<Service | undefined> {
-      const url = isRetrieveServiceParams(idOrParams)
-        ? '/v1/api/services'
-        : `/v1/api/services/${idOrParams}`
-      const config = isRetrieveServiceParams(idOrParams)
-        ? { params: idOrParams } || {}
-        : {}
+    retrieve(serviceExternalId: string): Promise<Service | undefined> {
       return client._axios
-        .get(url, config)
-        .then(response => client._unpackResponseData<Service>(response));
+        .get(`/v1/api/services/${serviceExternalId}`)
+        .then(response => client._unpackResponseData<Service>(response))
+        .catch(handleEntityNotFound("Service by external ID", serviceExternalId));
+    },
+
+    retrieveByGatewayAccountId (gatewayAccountId: string): Promise<Service | undefined> {
+      return client._axios
+          .get('/v1/api/services', { params: { gatewayAccountId } })
+          .then(response => client._unpackResponseData<Service>(response))
+          .catch(handleEntityNotFound("Service by gateway account ID", gatewayAccountId));
     },
 
     list(): Promise<Service[] | undefined> {

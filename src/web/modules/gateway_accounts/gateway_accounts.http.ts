@@ -230,7 +230,7 @@ async function detail(req: Request, res: Response): Promise<void> {
 
   let service = {}
   try {
-    service = await AdminUsers.services.retrieve({gatewayAccountId: id})
+    service = await AdminUsers.services.retrieveByGatewayAccountId(id)
   } catch (error: any) {
     logger.warn(`Services request for gateway account ${id} returned "${error.message}"`)
   }
@@ -341,7 +341,7 @@ async function surcharge(req: Request, res: Response): Promise<void> {
   const account = await getAccount(id)
 
   try {
-    service = await AdminUsers.services.retrieve({gatewayAccountId: id})
+    service = await AdminUsers.services.retrieveByGatewayAccountId(id)
   } catch (error: any) {
     logger.warn(`Services request for gateway account ${id} returned "${error.message}"`)
   }
