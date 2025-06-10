@@ -6,6 +6,7 @@ import logger from '../../../lib/logger'
 import {AccountType, TransactionType} from '../../../lib/pay-request/shared'
 import {PaymentListFilterStatus, resolvePaymentStates, resolveRefundStates} from "./states";
 import {Transaction} from "../../../lib/pay-request/services/ledger/types";
+import {ifEntityNotFound} from "../common/ifEntityNotFound";
 
 const process = require('process')
 const url = require('url')
@@ -89,6 +90,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     const accountId = req.query.account
     const selectedStatus = req.query.status as PaymentListFilterStatus || PaymentListFilterStatus.All
     const transactionType = req.query.type && req.query.type.toString().toUpperCase() as TransactionType || TransactionType.Payment
+    const warnings: string[] = []
 
     const filters = {
       ...req.query.reference && {reference: req.query.reference as string},
@@ -114,8 +116,10 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     })
 
     if (req.query.account) {
-      service = await AdminUsers.services.retrieve({gatewayAccountId: accountId as string})
       account = await Connector.accounts.retrieve(accountId as string)
+          .catch(ifEntityNotFound(() => warnings.push('Transactions were found for this gateway account but no gateway account was returned by Connector'), Boolean(response.results.length)))
+      service = await AdminUsers.services.retrieveByGatewayAccountId(accountId as string)
+          .catch(ifEntityNotFound(() => warnings.push('Transactions were found for this gateway account but no service was found for this account'), Boolean(response.results.length)))
     }
 
     res.render('transactions/list', {
@@ -126,7 +130,8 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
       account,
       service,
       accountId,
-      transactionType
+      transactionType,
+      warnings
     })
   } catch (error) {
     next(error)
@@ -135,9 +140,12 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
 
 export async function show(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
+    const warnings: string[] = []
     const transaction = await Ledger.transactions.retrieve(req.params.id)
     const account = await Connector.accounts.retrieve(transaction.gateway_account_id)
-    const service = await AdminUsers.services.retrieve({gatewayAccountId: transaction.gateway_account_id})
+        .catch(ifEntityNotFound(() => warnings.push(`Transaction was found but no gateway account exists in Connector with corresponding ID (${transaction.gateway_account_id})`)));
+    const service = await AdminUsers.services.retrieveByGatewayAccountId(transaction.gateway_account_id)
+        .catch(ifEntityNotFound(() => warnings.push(`Transaction was found but no service was found with corresponding gateway account ID (${transaction.gateway_account_id})`)))
     const relatedTransactions = []
     let stripeDashboardUri = ''
 
@@ -195,9 +203,9 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     const webhookMessages = []
     try {
       const webhooks = await Webhooks.webhooks.list({
-        service_id: service.external_id,
-        gateway_account_id: `${account.gateway_account_id}`,
-        live: account.type === AccountType.Live
+        service_id: service?.external_id,
+        gateway_account_id: `${account?.gateway_account_id}`,
+        live: account?.type === AccountType.Live
       })
 
       for (const webhook of webhooks) {
@@ -210,43 +218,42 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
       logger.warn('Failed to fetch webhooks data for the payments page', webhooksError)
     }
 
-    if (transaction.gateway_transaction_id && account.payment_provider === 'stripe') {
+    if (transaction.gateway_transaction_id && account?.payment_provider === 'stripe') {
       stripeDashboardUri = `https://dashboard.stripe.com/${transaction.live ? '' : 'test/'}payments/${transaction.gateway_transaction_id}`
     }
 
     const renderKey = transaction.transaction_type
 
+    const context = {
+      transaction,
+      service,
+      events,
+      webhookMessages,
+      warnings,
+    }
+
     switch (renderKey) {
       case TransactionType.Payment: {
         return res.render(`transactions/payment`, {
-          transaction,
+          ...context,
           relatedTransactions,
-          service,
-          events,
           stripeDashboardUri,
-          webhookMessages,
           humanReadableSubscriptions: constants.webhooks.humanReadableSubscriptions,
-          userJourneyDurationFriendly
+          userJourneyDurationFriendly,
         })
       }
       case TransactionType.Refund: {
         const refundExpunged = await isRefundExpunged(transaction)
-        return res.render(`transactions/refund`, {
-          transaction,
+        return res.render(`transactions/refund`,{
+          ...context,
           parentTransaction,
           refundExpunged,
-          service,
-          events,
-          webhookMessages,
         })
       }
       case TransactionType.Dispute: {
         return res.render(`transactions/dispute`, {
-          transaction,
+          ...context,
           parentTransaction,
-          service,
-          events,
-          webhookMessages,
         })
       }
     }
@@ -271,7 +278,7 @@ export async function statistics(req: Request, res: Response, next: NextFunction
     const accountId = req.query.account as string
 
     if (req.query.account) {
-      service = await AdminUsers.services.retrieve({gatewayAccountId: accountId})
+      service = await AdminUsers.services.retrieveByGatewayAccountId(accountId)
     } else {
       throw new Error('Platform statistics not supported by Ledger')
     }
@@ -341,7 +348,7 @@ export async function csvPage(req: Request, res: Response, next: NextFunction): 
 
   try {
     if (req.query.account) {
-      service = await AdminUsers.services.retrieve({gatewayAccountId: accountId})
+      service = await AdminUsers.services.retrieveByGatewayAccountId(accountId)
     }
 
     // eslint-disable-next-line no-plusplus
@@ -387,7 +394,7 @@ export async function streamCsv(req: Request, res: Response, next: NextFunction)
   let gatewayAccountDetails
   try {
     if (accountId) {
-      serviceDetails = await AdminUsers.services.retrieve({gatewayAccountId: accountId})
+      serviceDetails = await AdminUsers.services.retrieveByGatewayAccountId(accountId)
       gatewayAccountDetails = await Connector.accounts.retrieve(accountId)
     }
 

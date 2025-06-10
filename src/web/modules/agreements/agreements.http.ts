@@ -65,7 +65,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     })
 
     if (req.query.account) {
-      service = await AdminUsers.services.retrieve({gatewayAccountId: accountId as string})
+      service = await AdminUsers.services.retrieveByGatewayAccountId(`${accountId}`)
       account = await Connector.accounts.retrieve(accountId as string)
     }
 

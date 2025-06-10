@@ -11,7 +11,7 @@ export async function get(req: Request, res: Response, next: NextFunction): Prom
         const used = req.query.used !== 'false'
 
         const [service, productStats] = await Promise.all([
-            AdminUsers.services.retrieve({ gatewayAccountId: accountId }),
+            AdminUsers.services.retrieveByGatewayAccountId(accountId),
             Products.reports.listStats({ gatewayAccountId: Number(accountId), used })
         ])
 

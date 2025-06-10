@@ -21,7 +21,7 @@ async function updateConnectorStripeOnboardingSteps(gatewayAccountId: string, op
 
 export async function switchPSPPage(req: Request, res: Response, next: NextFunction) {
   const account = await Connector.accounts.retrieve(req.params.id)
-  const service = await AdminUsers.services.retrieve({gatewayAccountId: `${account.gateway_account_id}`})
+  const service = await AdminUsers.services.retrieveByGatewayAccountId(`${account.gateway_account_id}`)
   res.render('gateway_accounts/switch_psp/switch_psp', {account, service, flash: req.flash(), csrf: req.csrfToken()})
 }
 
@@ -31,7 +31,7 @@ export async function postSwitchPSP(req: Request, res: Response, next: NextFunct
 
   try {
     const account = await Connector.accounts.retrieve(req.params.id)
-    const service = await AdminUsers.services.retrieve({gatewayAccountId: gatewayAccountId})
+    const service = await AdminUsers.services.retrieveByGatewayAccountId(gatewayAccountId)
 
     if (!req.body.paymentProvider) {
       req.flash('error', 'Payment provider is required')
