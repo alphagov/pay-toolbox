@@ -127,6 +127,8 @@ export interface CreateGatewayAccountRequest {
   requires_3ds?: boolean;
   allow_apple_pay?: boolean;
   allow_google_pay?: boolean;
+  send_payer_email_to_gateway: boolean;
+  send_payer_ip_address_to_gateway: boolean;
 }
 
 export interface ListCardTypesResponse {

@@ -128,6 +128,18 @@ describe('Gateway Accounts', () => {
       expect(payload.allow_apple_pay).to.eql(true)
       expect(payload.allow_google_pay).to.eql(true)
     });
+
+    it('successfully creates model with send_payer_email_to_gateway and send_payer_ip_address_to_gateway set to true', function () {
+      const details = _.cloneDeep(validGatewayAccountDetails)
+      details.live = 'not-live'
+
+      const account = new GatewayAccount(details)
+      expect(account).to.be.an('object')
+      account.serviceId = 'service-id'
+      const payload = account.formatPayload()
+      expect(payload.send_payer_email_to_gateway).to.eql(true)
+      expect(payload.send_payer_ip_address_to_gateway).to.eql(true)
+    });
   })
 })
 

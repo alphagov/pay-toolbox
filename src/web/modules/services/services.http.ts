@@ -473,7 +473,9 @@ export async function createWorldpayTestService(
       description: `Worldpay test account spun off from service ${serviceId}`,
       type: AccountType.Test,
       service_name: service.service_name.en,
-      service_id: serviceForWorldpayTestGatewayAccount.external_id
+      service_id: serviceForWorldpayTestGatewayAccount.external_id,
+      send_payer_email_to_gateway: true,
+      send_payer_ip_address_to_gateway: true
     }
     const createGatewayAccountResponse = await Connector.accounts.create(payload)
 
