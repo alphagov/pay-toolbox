@@ -1,7 +1,8 @@
 import {
   IsNotEmpty,
   IsIn,
-  IsString
+  IsString,
+  IsBoolean
 } from 'class-validator'
 
 import Validated from '../common/validated'
@@ -39,6 +40,14 @@ class GatewayAccount extends Validated {
 
   public serviceId: string;
 
+  @IsBoolean()
+  @IsNotEmpty()
+  public sendPayerEmailToGateway: boolean;
+
+  @IsBoolean()
+  @IsNotEmpty()
+  public sendPayerIpAddressToGateway: boolean;
+
   public validate(): void {
     super.validate()
 
@@ -60,6 +69,8 @@ class GatewayAccount extends Validated {
     this.credentials = formValues.credentials
     this.sector = formValues.sector
     this.internalFlag = formValues.internalFlag === "true"
+    this.sendPayerEmailToGateway = true
+    this.sendPayerIpAddressToGateway = true
     this.validate()
   }
 
@@ -70,7 +81,9 @@ class GatewayAccount extends Validated {
       description: this.description,
       type: this.isLive() ? AccountType.Live : AccountType.Test,
       service_name: this.serviceName,
-      service_id: this.serviceId
+      service_id: this.serviceId,
+      send_payer_email_to_gateway: this.sendPayerEmailToGateway,
+      send_payer_ip_address_to_gateway: this.sendPayerEmailToGateway,
     }
 
     if (this.isLive() || this.provider === 'stripe' || this.provider === 'worldpay') {
