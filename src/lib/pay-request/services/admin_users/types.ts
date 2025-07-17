@@ -1,3 +1,5 @@
+import { toFormattedDate } from '../../../format'
+
 export enum GoLiveStage {
   NotStarted = 'NOT_STARTED',
   EnteredOrganisationName = 'ENTERED_ORGANISATION_NAME',
@@ -98,6 +100,10 @@ export class User {
   features?: Array<string>;
   // _links
   raw_data?: any; // for instances of the User class where defaults are set
+
+  lastLoginFormatted (): string {
+    return this.last_logged_in_at ? toFormattedDate(new Date(this.last_logged_in_at)) : 'Never'
+  }
 }
 
 export interface ServiceName {
