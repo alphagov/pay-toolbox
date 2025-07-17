@@ -102,7 +102,7 @@ export class User {
   raw_data?: any; // for instances of the User class where defaults are set
 
   lastLoginFormatted (): string {
-    return toFormattedDate(new Date(this.last_logged_in_at))
+    return this.last_logged_in_at ? toFormattedDate(new Date(this.last_logged_in_at)) : 'Never'
   }
 }
 
