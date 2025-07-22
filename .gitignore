@@ -27,3 +27,5 @@ node_modules
 
 # ST4
 *.sublime-*
+
+.DS_Store
