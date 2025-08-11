@@ -33,6 +33,12 @@ export default class Connector extends Client {
     }
 
     refunds = ((client: Connector) => ({
+        retrieve (chargeExternalId: string, refundExternalId: string, accountId: string) {
+            return client._axios
+                .get(`/v1/api/accounts/${accountId}/charges/${chargeExternalId}/refunds/${refundExternalId}`)
+                .then(response => client._unpackResponseData<Charge>(response))
+                .catch(handleEntityNotFound(`Refund for charge [${chargeExternalId}]`, refundExternalId))
+        },
 
         /**
          * @param refundExternalId

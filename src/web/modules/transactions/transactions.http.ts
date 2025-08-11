@@ -149,6 +149,17 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     const relatedTransactions = []
     let stripeDashboardUri = ''
 
+    let connectorTransaction
+    if (transaction.transaction_type === TransactionType.Payment) {
+      connectorTransaction = await Connector.charges.retrieve(req.params.id)
+          .catch(ifEntityNotFound((): null => null));
+    } else if (transaction.transaction_type === TransactionType.Refund) {
+      connectorTransaction = await Connector.refunds.retrieve(transaction.parent_transaction_id, req.params.id, transaction.gateway_account_id)
+          .catch(ifEntityNotFound((): null => null));
+    } else if (transaction.transaction_type === TransactionType.Dispute) {
+      connectorTransaction = null // Disputes are never stored in Connector
+    }
+
     const transactionEvents = await Ledger.transactions.listEvents(transaction.transaction_id, {
       gateway_account_id: transaction.gateway_account_id,
       include_all_events: true
@@ -240,14 +251,14 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
           stripeDashboardUri,
           humanReadableSubscriptions: constants.webhooks.humanReadableSubscriptions,
           userJourneyDurationFriendly,
+          isExpunged: !connectorTransaction
         })
       }
       case TransactionType.Refund: {
-        const refundExpunged = await isRefundExpunged(transaction)
         return res.render(`transactions/refund`,{
           ...context,
           parentTransaction,
-          refundExpunged,
+          isExpunged: !connectorTransaction
         })
       }
       case TransactionType.Dispute: {
@@ -256,6 +267,8 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
           parentTransaction,
         })
       }
+      default:
+        return next(new Error(`Unknown transaction type [${transaction.transaction_type}]`))
     }
   } catch (error) {
     next(error)

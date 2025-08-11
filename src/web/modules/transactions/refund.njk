@@ -1,3 +1,4 @@
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "common/json.njk" import json %}
 
 {% extends "layout/layout.njk" %}
@@ -5,7 +6,11 @@
 {% set isTestData = not (parentTransaction and parentTransaction.live) %}
 
 {% block main %}
+
+<span class="govuk-caption-m">{{ transaction.created_date | formatDate }}</span>
 <h1 class="govuk-heading-m">Refund</h1>
+
+<div class="govuk-grid-row"></div>
 
 {% if transaction.parent_transaction_id %}
   <div class="govuk-body govuk-!-margin-bottom-4">
@@ -14,14 +19,14 @@
   </div>
 {% endif %}
 
-<div class="status-inline-spacer">
-  <span class="govuk-body-l status-amount">{{ (transaction.total_amount or transaction.amount) | currency }}</span>
-</div>
-
-<div class="govuk-grid-row status-spacer payment-detail-row">
+<div class="govuk-grid-row status-spacer">
   <div class="govuk-grid-column-one-quarter">
-    <span class="govuk-caption-m">Date</span>
-    <span class="govuk-body">{{ transaction.created_date | formatDate }}</span>
+    <span class="govuk-body-l status-amount">{{ (transaction.total_amount or transaction.amount) | currency }}</span>
+  </div>
+  <div class="govuk-grid-column-three-quarters text-right">
+    {{ govukTag({
+      text: "Expunged" if isExpunged else "Not expunged"
+    }) }}
   </div>
 </div>
 
@@ -113,14 +118,14 @@
 {{ json("Transaction source", transaction) }}
 
 <div>
-  {% if (transaction.state and transaction.state.status === "success") and (parentTransaction.payment_provider === "stripe") and refundExpunged %}
+  {% if (transaction.state and transaction.state.status === "success") and (parentTransaction.payment_provider === "stripe") and isExpunged %}
     {{ govukButton({
       text: "Correct asynchronously failed Stripe refund",
       classes: "govuk-button--warning",
       href: "/confirm-fix-async-failed-stripe-refund/" + transaction.transaction_id
     }) }}
   {% endif %}
-  {% if (transaction.state and transaction.state.status === "success") and (parentTransaction.payment_provider === "stripe") and not refundExpunged %}
+  {% if (transaction.state and transaction.state.status === "success") and (parentTransaction.payment_provider === "stripe") and not isExpunged %}
     <div class="govuk-body govuk-!-margin-bottom-4">
       Cannot asynchronously correct Stripe refund as it is not expunged from Connector microservice. Come back later.
     </div>
