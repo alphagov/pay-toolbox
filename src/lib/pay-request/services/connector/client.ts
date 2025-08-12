@@ -33,23 +33,13 @@ export default class Connector extends Client {
     }
 
     refunds = ((client: Connector) => ({
+        retrieve (chargeExternalId: string, refundExternalId: string, accountId: string): Promise<Charge> {
+            return client._axios
+                .get(`/v1/api/accounts/${accountId}/charges/${chargeExternalId}/refunds/${refundExternalId}`)
+                .then(response => client._unpackResponseData<Charge>(response))
+                .catch(handleEntityNotFound(`Refund for charge [${chargeExternalId}]`, refundExternalId))
+        },
 
-        /**
-         * @param refundExternalId
-         * @param parentExternalId
-         * @param gatewayAccountId
-         */
-        async doesRefundExist(refundExternalId: string, parentExternalId: string, gatewayAccountId: string): Promise<boolean> {
-            const response = await client._axios.get(
-                `/v1/api/accounts/${gatewayAccountId}/charges/${parentExternalId}/refunds/${refundExternalId}`,
-                { validateStatus: status => [404,200].includes(status) },)
-            switch (response.status) {
-                case 404: return false
-                case 200: return true
-                default:
-                    throw new Error('Should not have reached here')
-            }
-        }
     }))(this)
 
     charges = ((client: Connector) => ({

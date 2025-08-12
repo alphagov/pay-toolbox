@@ -1,3 +1,4 @@
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "transactions/status.macro.njk" import status %}
 {% from "transactions/features.macro.njk" import features %}
 {% from "transactions/card_payment_method.macro.njk" import card_payment_method %}
@@ -28,6 +29,14 @@
         transaction.refund_summary and transaction.refund_summary.status,
         transaction.refund_summary and transaction.refund_summary.amount_submitted
         ) }}
+
+      {{ govukTag({
+        text: "Expunged",
+        classes: "govuk-tag--pink"
+      }) if isExpunged else govukTag({
+        text: "Not expunged",
+        classes: "govuk-tag--purple"
+      }) }}
     </div>
   </div>
 
