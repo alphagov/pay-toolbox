@@ -275,14 +275,6 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
   }
 }
 
-async function isRefundExpunged(transaction: Transaction): Promise<boolean> {
-  if (transaction.transaction_type === TransactionType.Refund) {
-    const doesRefundExist = await Connector.refunds.doesRefundExist(transaction.transaction_id, transaction.parent_transaction_id, transaction.gateway_account_id)
-    return !doesRefundExist
-  }
-  return true
-}
-
 const sum = (a: number, b: number): number => a + b
 
 export async function statistics(req: Request, res: Response, next: NextFunction): Promise<void> {

@@ -29,8 +29,13 @@
         transaction.refund_summary and transaction.refund_summary.status,
         transaction.refund_summary and transaction.refund_summary.amount_submitted
         ) }}
+
       {{ govukTag({
-        text: "Expunged" if isExpunged else "Not expunged"
+        text: "Expunged",
+        classes: "govuk-tag--pink"
+      }) if isExpunged else govukTag({
+        text: "Not expunged",
+        classes: "govuk-tag--purple"
       }) }}
     </div>
   </div>
