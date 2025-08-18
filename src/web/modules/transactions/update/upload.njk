@@ -44,7 +44,7 @@
      <tbody class="govuk-table__body">
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">transaction_id</span></th>
-          <td class="govuk-table__cell">The external ID of the transaction</td>
+          <td class="govuk-table__cell">The external ID of the transaction.</td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">transaction_type</span></th>
@@ -57,6 +57,19 @@
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">updated_reason</span></th>
           <td class="govuk-table__cell">A free text explanation of why the transaction is being updated. This field will only be used internally as a record so should be as detailed as necessary. Reference Zendesk or JIRA ticket IDs where appropriate.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+    <h3 class="govuk-heading-s">Sometimes required headers</h3>
+
+    <div>
+    <table class="govuk-table">
+     <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">parent_transaction_id</span></th>
+          <td class="govuk-table__cell">The payment external ID. Required if ‘transaction_type’ is ‘refund’ or ‘dispute’.</td>
         </tr>
       </tbody>
     </table>
@@ -77,12 +90,8 @@
           <td class="govuk-table__cell">The timestamp for the event. Must be a valid ISO-8601 format e.g. 2020-01-01T12:30:45Z. If no value is provided, the time when the file is uploaded will be used. When picking a time, remember that later events override earlier ones when calculating the status etc.</td>
         </tr>
         <tr class="govuk-table__row">
-          <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">parent_transaction_id</span></th>
-          <td class="govuk-table__cell">Required for refunds and disputes, this is the payment external ID.</td>
-        </tr>
-        <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">reproject_domain_object</span></th>
-          <td class="govuk-table__cell">Whether the event should cause the domain object to be re-projected from previous events, one of ‘true’ or ‘false’. If true, no event will be persisted to the ledger database and any transaction data provided for the row in the CSV will be ignored.</td>
+          <td class="govuk-table__cell">If the ‘transaction_type’ is ‘payment’, whether the event should cause the domain object to be re-projected from previous events: ‘true’ or ‘false’. If true, no event will be persisted to the ledger database and any transaction data provided for the row in the CSV will be ignored.</td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">service_id</span></th>
@@ -90,11 +99,11 @@
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">live</span></th>
-          <td class="govuk-table__cell">Whether the transaction is for a live service. One of ‘true’ or ‘false’.</td>
+          <td class="govuk-table__cell">Whether the transaction is for a live service: ‘true’ or ‘false’.</td>
         </tr>
         <tr class="govuk-table__row">
           <th class="govuk-table__cell" scope="row"><span class="govuk-caption-m">reason</span></th>
-          <td class="govuk-table__cell">Only applies for disputes. Represents Stripe's reason of why the dispute has been opened. If appears on payments or refunds, the upload shall be rejected</td>
+          <td class="govuk-table__cell">Only applies for disputes. Represents Stripe’s reason of why the dispute has been opened. If appears on payments or refunds, the upload shall be rejected.</td>
         </tr>
       </tbody>
     </table>
