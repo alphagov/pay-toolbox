@@ -2,8 +2,6 @@ const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 
 const {PermissionLevel} = require('../types')
-const {checkUserAccess} = require("./permissions");
-
 describe('GitHub OAuth strategy', () => {
   // eslint-disable-next-line key-spacing
   const profile = {username: 'some-test-user', displayName: 'Some User', _json: {avatar_url: 'some-url'}}

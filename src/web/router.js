@@ -30,7 +30,7 @@ const fixRefunds = require('./modules/transactions/fix_async_failed_stripe_refun
 const users = require('./modules/users/users.http').default
 
 const {PermissionLevel} = require('../lib/auth/types')
-const { fixAsyncFailedStripeRefund } = require("./modules/transactions/fix_async_failed_stripe_refund");
+require("./modules/transactions/fix_async_failed_stripe_refund");
 
 const router = express.Router()
 

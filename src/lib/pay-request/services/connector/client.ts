@@ -9,7 +9,6 @@ import {
     CreateGatewayAccountResponse,
     GatewayAccount,
     GatewayAccountCredentials,
-    GatewayStatusComparison,
     ListCardTypesResponse,
     ListGatewayAccountsRequest,
     ListGatewayAccountsResponse,
@@ -22,6 +21,7 @@ import {App} from '../../shared'
 import {handleEntityNotFound, handleChargeNotFoundForParityCheck} from "../../utils/error";
 import {EntityNotFoundError} from '../../../errors'
 import {Refund} from "../ledger/types";
+import {GatewayStatusComparison} from "./gatewayStatusComparison";
 
 /**
  * Convenience methods for accessing resource endpoints for the Connector

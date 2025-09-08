@@ -1,10 +1,4 @@
-import {
-    PaymentProvider,
-    AccountType,
-    EmailCollectionMode,
-    EmailNotifications,
-    SupportedCard
-} from '../../shared'
+import {AccountType, EmailCollectionMode, EmailNotifications, PaymentProvider, SupportedCard} from '../../shared'
 
 /** In-flight payment */
 export interface Charge {
@@ -178,16 +172,6 @@ export interface GatewayStatusComparison {
 
 export interface StripeSetup {
   [task: string]: boolean;
-}
-
-export interface GatewayStatusComparison {
-  payStatus: string;
-  payExternalStatus: string;
-  gatewayStatus: string;
-  chargeId: string;
-  rawGatewayResponse: string;
-  charge: Charge;
-  processed: boolean;
 }
 
 export interface UpdateStripeSetupRequest {
