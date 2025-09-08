@@ -33,6 +33,7 @@
   "dependencies": {
     "@aws-sdk/client-ecs": "~3.623.0",
     "@aws-sdk/client-s3": "~3.623.0",
+    "@eslint/js": "^9.35.0",
     "@govuk-pay/pay-js-commons": "^7.0.14",
     "@govuk-pay/pay-js-metrics": "^1.0.14",
     "@sentry/node": "^6.12.0",
@@ -44,8 +45,10 @@
     "csurf": "^1.11.0",
     "deep-diff": "1.0.2",
     "dotenv": "16.0.3",
+    "eslint-config-prettier": "^10.1.8",
     "express": "4.21.2",
     "fast-csv": "^4.3.6",
+    "globals": "^16.3.0",
     "google-libphonenumber": "~3.2.21",
     "govuk-frontend": "^5.10.2",
     "helmet": "^7.0.0",
@@ -64,6 +67,7 @@
     "rfc822-validate": "^1.0.0",
     "sass": "^1.62.1",
     "stripe": "^8.174.0",
+    "typescript-eslint": "^8.42.0",
     "winston": "^3.10.0"
   },
   "devDependencies": {
@@ -90,8 +94,8 @@
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "@types/stripe": "6.25.8",
-    "@typescript-eslint/eslint-plugin": "^6.6.0",
-    "@typescript-eslint/parser": "^6.6.0",
+    "@typescript-eslint/eslint-plugin": "^8.42.0",
+    "@typescript-eslint/parser": "^8.42.0",
     "chai": "^4.3.4",
     "copyfiles": "^2.4.1",
     "eslint": "^8.48.0",
