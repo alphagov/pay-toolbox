@@ -330,7 +330,7 @@ export async function updateOrganisationForm(
         context.errorMap = recovered.errors.reduce((aggregate: {
           [key: string]: string;
         }, error: ClientFormError) => {
-          // eslint-disable-next-line no-param-reassign
+           
           aggregate[error.id] = error.message
           return aggregate
         }, {})

@@ -19,7 +19,7 @@ const handleGitHubOAuthSuccessResponse = async function handleGitHubOAuthSuccess
   callback
 ) {
   const { username, displayName } = profile
-  // eslint-disable-next-line no-underscore-dangle
+   
   const avatarUrl = profile._json && profile._json.avatar_url
   const sessionProfile = { username, displayName, avatarUrl }
 

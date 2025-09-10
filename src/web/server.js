@@ -189,7 +189,7 @@ function readManifest(name) {
       try {
         const parsed = JSON.parse(data)
         resolve(parsed)
-      } catch (error) {
+      } catch {
         logger.warn('Failed to parse manifest', { path })
         resolve({})
       }
