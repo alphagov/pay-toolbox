@@ -5,9 +5,11 @@ import {EntityNotFoundError, RESTClientError} from "../../../lib/errors";
 export async function show(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         const transaction = await Ledger.transactions.retrieve(req.params.id)
+        const parentTransaction = await Ledger.transactions.retrieve(transaction.parent_transaction_id)
 
         res.render(`transactions/confirmFixAsyncFailedStripeRefund`, {
             transaction,
+            parentTransaction,
             csrf: req.csrfToken()
         })
     } catch (error) {
