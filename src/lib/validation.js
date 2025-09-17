@@ -4,7 +4,7 @@ const logger = require('../lib/logger')
 
 const addModelIfValid = function addModelIfValid(target, source, modelName, modelKey) {
   try {
-    // eslint-disable-next-line no-param-reassign
+     
     target[modelKey] = Reflect.construct(modelName, [ source ]).basicObject()
   } catch (e) {
     logger.debug(`${modelName.name} not added: ${e.message}`)

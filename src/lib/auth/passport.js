@@ -21,7 +21,7 @@ if (!disableAuth) {
 
   // temporarily force oauth2 strategy to use proxy agent until the library supports https proxy
   const httpsProxy = process.env.https_proxy
-  // eslint-disable-next-line no-underscore-dangle
+   
   if (httpsProxy) strategy._oauth2.setAgent(new HTTPSProxyAgent(httpsProxy))
 
   passport.use(strategy)
