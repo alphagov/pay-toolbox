@@ -27,15 +27,15 @@ export interface DailyVolumeReport {
   average_amount: number
 }
 
-export const cachedSuccess: {[ key: string]: boolean} = {}
-export let services: {[key: string]: { name: string, went_live_date?: string, is_recent?: boolean } } = {}
+export const cachedSuccess: Record<string, boolean> = {}
+export let services: Record<string, { name: string, went_live_date?: string, is_recent?: boolean }> = {}
 
 export async function fetchTransactionVolumesByHour(
   date: moment.Moment,
   compareDate: moment.Moment,
   fromHour?: number,
   toHour?: number,
-  compare: boolean = false
+  compare = false
 ): Promise<TransactionVolumesByHourResponse> {
   const query = `/api/platform/timeseries?date=${date.utc().format()}`
   const limit = fromHour && toHour ?

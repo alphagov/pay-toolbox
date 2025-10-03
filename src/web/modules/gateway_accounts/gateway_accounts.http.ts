@@ -1,35 +1,35 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {NextFunction, Request, Response} from 'express'
-import {stringify} from 'qs'
+import { NextFunction, Request, Response } from 'express'
+import { stringify } from 'qs'
 import moment from 'moment'
-import {capitalize} from "lodash"
+import { capitalize } from 'lodash'
 
 import logger from '../../../lib/logger'
 
-import {AdminUsers, Connector, Products, PublicAuth} from '../../../lib/pay-request/client'
-import {wrapAsyncErrorHandler} from '../../../lib/routes'
-import {extractFiltersFromQuery, toAccountSearchParams} from '../../../lib/gatewayAccounts'
+import { AdminUsers, Connector, Products, PublicAuth } from '../../../lib/pay-request/client'
+import { wrapAsyncErrorHandler } from '../../../lib/routes'
+import { extractFiltersFromQuery, toAccountSearchParams } from '../../../lib/gatewayAccounts'
 
 import GatewayAccountFormModel from './gatewayAccount.model'
-import {GoLiveStage, Service, UpdateServiceRequest} from '../../../lib/pay-request/services/admin_users/types'
-import {ProductType} from '../../../lib/pay-request/services/products/types'
-import {GatewayAccount, NotifySettings, StripeCredentials} from '../../../lib/pay-request/services/connector/types'
-import {PaymentProvider} from '../../../lib/pay-request/shared'
-import {ClientFormError} from '../common/validationErrorFormat'
+import { GoLiveStage, Service, UpdateServiceRequest } from '../../../lib/pay-request/services/admin_users/types'
+import { ProductType } from '../../../lib/pay-request/services/products/types'
+import { GatewayAccount, NotifySettings, StripeCredentials } from '../../../lib/pay-request/services/connector/types'
+import { PaymentProvider } from '../../../lib/pay-request/shared'
+import { ClientFormError } from '../common/validationErrorFormat'
 import * as config from '../../../config'
-import {format} from './csv'
-import {formatWithAdminEmails} from './csv_with_admin_emails'
-import {createCsvData, createCsvWithAdminEmailsData} from './csv_data'
-import {EntityNotFoundError, ValidationError} from '../../../lib/errors'
+import { format } from './csv'
+import { formatWithAdminEmails } from './csv_with_admin_emails'
+import { createCsvData, createCsvWithAdminEmailsData } from './csv_data'
+import { EntityNotFoundError, ValidationError } from '../../../lib/errors'
 
 import * as stripeClient from '../../../lib/stripe/stripe.client'
 import {
   getTicket,
   updateTicketWithStripeGoLiveResponse,
-  updateTicketWithWorldpayGoLiveResponse
-} from "../../../lib/zendesk/zendesk.client";
-import Joi from "joi";
-import {TokenState} from "../../../lib/pay-request/services/public_auth/types";
+  updateTicketWithWorldpayGoLiveResponse,
+} from '../../../lib/zendesk/zendesk.client'
+import Joi from 'joi'
+import { TokenState } from '../../../lib/pay-request/services/public_auth/types'
 
 const NOTIFY_ID_PATTERN = /^[a-zA-Z0-9-]*$/
 
@@ -37,7 +37,7 @@ async function overview(req: Request, res: Response): Promise<void> {
   const filters = extractFiltersFromQuery(req.query)
   const searchParams = toAccountSearchParams(filters)
 
-  const {accounts} = await Connector.accounts.list(searchParams)
+  const { accounts } = await Connector.accounts.list(searchParams)
 
   res.render('gateway_accounts/overview', {
     card: true,
@@ -46,7 +46,7 @@ async function overview(req: Request, res: Response): Promise<void> {
     filters,
     total: accounts.length.toLocaleString(),
     csvUrl: `gateway_accounts/csv?${stringify(filters)}`,
-    csvWithAdminEmailsUrl: `gateway_accounts/csvWithAdminEmails?${stringify(filters)}`
+    csvWithAdminEmailsUrl: `gateway_accounts/csvWithAdminEmails?${stringify(filters)}`,
   })
 }
 
@@ -54,7 +54,10 @@ async function listCSVWithAdminEmails(req: Request, res: Response): Promise<void
   const filters = extractFiltersFromQuery(req.query)
   const data = await createCsvWithAdminEmailsData(filters)
   res.set('Content-Type', 'text/csv')
-  res.set('Content-Disposition', `attachment; filename="GOVUK_Pay_gateway_accounts_with_admin_emails_${stringify(filters)}.csv"`)
+  res.set(
+    'Content-Disposition',
+    `attachment; filename="GOVUK_Pay_gateway_accounts_with_admin_emails_${stringify(filters)}.csv"`
+  )
   res.status(200).send(formatWithAdminEmails(data))
 }
 
@@ -67,16 +70,16 @@ async function listCSV(req: Request, res: Response): Promise<void> {
 }
 
 interface CreateGatewayAccountPageData {
-  linkedCredentials: string;
-  live: string;
-  provider: string;
-  recovered?: object;
-  service?: Service;
-  description?: string;
-  flash: object;
-  errors?: ClientFormError[];
-  errorMap?: object;
-  csrf: string;
+  linkedCredentials: string
+  live: string
+  provider: string
+  recovered?: object
+  service?: Service
+  description?: string
+  flash: object
+  errors?: ClientFormError[]
+  errorMap?: object
+  csrf: string
 }
 
 async function create(req: Request, res: Response): Promise<void> {
@@ -93,19 +96,16 @@ async function create(req: Request, res: Response): Promise<void> {
     live,
     provider,
     flash: req.flash(),
-    csrf: req.csrfToken()
+    csrf: req.csrfToken(),
   }
 
-  const {recovered} = req.session
+  const { recovered } = req.session
   if (recovered) {
     context.recovered = recovered.formValues
 
     if (recovered.errors) {
       context.errors = recovered.errors
-      context.errorMap = recovered.errors.reduce((aggregate: {
-        [key: string]: string;
-      }, error: ClientFormError) => {
-        // eslint-disable-next-line no-param-reassign
+      context.errorMap = recovered.errors.reduce((aggregate: Record<string, string>, error: ClientFormError) => {
         aggregate[error.id] = error.message
         return aggregate
       }, {})
@@ -117,10 +117,10 @@ async function create(req: Request, res: Response): Promise<void> {
     const service = await AdminUsers.services.retrieve(serviceId)
     context.service = service
     if (!service.merchant_details?.name) {
-      req.flash('info','Organisation name is required to create a new gateway account')
+      req.flash('info', 'Organisation name is required to create a new gateway account')
       res.redirect(`/services/${serviceId}/organisation`)
     }
-    context.description = `${service.merchant_details.name} ${service.name} ${capitalize(provider)} ${live === 'live' && 'LIVE' || 'TEST'}`
+    context.description = `${service.merchant_details?.name} ${service.name} ${capitalize(provider)} ${(live === 'live' && 'LIVE') || 'TEST'}`
   }
   res.render('gateway_accounts/create', context)
 }
@@ -128,7 +128,7 @@ async function create(req: Request, res: Response): Promise<void> {
 async function confirm(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const account = new GatewayAccountFormModel(req.body)
-    res.render('gateway_accounts/confirm', {account, request: req.body, csrf: req.csrfToken()})
+    res.render('gateway_accounts/confirm', { account, request: req.body, csrf: req.csrfToken() })
   } catch (error) {
     next(error)
   }
@@ -141,7 +141,7 @@ function getGoLiveUrlForService(gatewayAccountExternalId: string) {
 async function writeAccount(req: Request, res: Response): Promise<void> {
   const account = new GatewayAccountFormModel(req.body)
 
-  let ticket;
+  let ticket
   if (req.body.zendeskTicketNumber) {
     ticket = await getTicket(req.body.zendeskTicketNumber)
   }
@@ -161,7 +161,7 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
     const serviceUpdateRequest: UpdateServiceRequest = {
       gateway_account_ids: [gatewayAccountIdDerived],
       internal: account.internalFlag,
-      sector: account.sector
+      sector: account.sector,
     }
     if (isUpdateServiceToLive) {
       serviceUpdateRequest.current_go_live_stage = GoLiveStage.Live
@@ -172,32 +172,42 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
 
     logger.info('Service made live', {
       service_name: service.service_name.en,
-      organisation_name: service.merchant_details && service.merchant_details.name,
+      organisation_name: service.merchant_details?.name,
       sector: account.sector,
       service_went_live_date: moment.utc().format(),
       service_created_date: moment.utc(service.created_date).format(),
       service_using_provider: account.provider,
-      service_is_internal_service: account.internalFlag
+      service_is_internal_service: account.internalFlag,
     })
   }
 
   const stripeAccountStatementDescriptors: {
-    payoutStatementDescriptor?: string,
+    payoutStatementDescriptor?: string
     statementDescriptor?: string
   } = {}
 
   if (account.provider === PaymentProvider.Stripe) {
-    const stripeAccountDetails = await stripeClient.getStripeApi(account.isLive()).accounts.retrieve(account.credentials)
-    stripeAccountStatementDescriptors.payoutStatementDescriptor = stripeAccountDetails.settings.payouts.statement_descriptor
+    const stripeAccountDetails = await stripeClient
+      .getStripeApi(account.isLive())
+      .accounts.retrieve(account.credentials)
+    stripeAccountStatementDescriptors.payoutStatementDescriptor =
+      stripeAccountDetails.settings.payouts.statement_descriptor
     stripeAccountStatementDescriptors.statementDescriptor = stripeAccountDetails.settings.payments.statement_descriptor
   }
 
   let zendeskTicketUpdated = false
   if (account.provider === PaymentProvider.Worldpay && ticket) {
-    zendeskTicketUpdated = await updateTicketWithWorldpayGoLiveResponse(ticket, getGoLiveUrlForService(createdAccount.external_id));
+    zendeskTicketUpdated = await updateTicketWithWorldpayGoLiveResponse(
+      ticket,
+      getGoLiveUrlForService(createdAccount.external_id)
+    )
   } else if (account.provider === PaymentProvider.Stripe && ticket) {
-    zendeskTicketUpdated = await updateTicketWithStripeGoLiveResponse(ticket, getGoLiveUrlForService(createdAccount.external_id),
-      stripeAccountStatementDescriptors.statementDescriptor, stripeAccountStatementDescriptors.payoutStatementDescriptor);
+    zendeskTicketUpdated = await updateTicketWithStripeGoLiveResponse(
+      ticket,
+      getGoLiveUrlForService(createdAccount.external_id),
+      stripeAccountStatementDescriptors.statementDescriptor,
+      stripeAccountStatementDescriptors.payoutStatementDescriptor
+    )
   }
 
   // note payment_provider is not returned in the object returned from createAccount
@@ -210,22 +220,21 @@ async function writeAccount(req: Request, res: Response): Promise<void> {
     isStripe: account.provider === 'stripe',
     zendeskTicketUpdated: zendeskTicketUpdated,
     stripeAccountStatementDescriptors,
-    selfServiceBaseUrl: config.services.SELFSERVICE_URL
+    selfServiceBaseUrl: config.services.SELFSERVICE_URL,
   })
 }
 
 async function detail(req: Request, res: Response): Promise<void> {
-
   let stripeDashboardUri = ''
 
-  const {id} = req.params
+  const { id } = req.params
   const [account, acceptedCards, stripeSetup, motoProducts, activeTokens, revokedTokens] = await Promise.all([
     Connector.accounts.retrieve(id),
     Connector.accounts.listCardTypes(id),
     Connector.accounts.retrieveStripeSetup(id),
     Products.accounts.listProductsByType(id, ProductType.Moto),
     PublicAuth.tokens.list({ gateway_account_id: id, token_state: TokenState.Active }),
-    PublicAuth.tokens.list({ gateway_account_id: id, token_state: TokenState.Revoked })
+    PublicAuth.tokens.list({ gateway_account_id: id, token_state: TokenState.Revoked }),
   ])
 
   let service = {}
@@ -238,31 +247,35 @@ async function detail(req: Request, res: Response): Promise<void> {
   let stripePaymentsStatementDescriptor, stripePayoutsStatementDescriptor
   try {
     if (account.payment_provider === 'stripe') {
-      const {stripe_account_id} = await Connector.accounts.retrieveStripeCredentials(id)
+      const { stripe_account_id } = await Connector.accounts.retrieveStripeCredentials(id)
       const stripeAccount = await stripeClient.getStripeApi(account.live).accounts.retrieve(stripe_account_id)
-      stripePaymentsStatementDescriptor = stripeAccount.settings.payments.statement_descriptor
-      stripePayoutsStatementDescriptor = stripeAccount.settings.payouts.statement_descriptor
+      stripePaymentsStatementDescriptor = stripeAccount.settings?.payments.statement_descriptor
+      stripePayoutsStatementDescriptor = stripeAccount.settings?.payouts?.statement_descriptor
     }
   } catch (error) {
-    logger.warn('Unable to retrieve account details from Stripe. Make sure the Stripe API key is configured in the environment variables')
+    logger.warn(
+      'Unable to retrieve account details from Stripe. Make sure the Stripe API key is configured in the environment variables'
+    )
   }
 
   const currentCredential = getCurrentCredential(account)
 
   const outstandingStripeSetupTasks = Object.keys(stripeSetup)
-    .filter(task => task != 'organisation_details' && stripeSetup[task] === false)
-    .map(task => task.replace(/_/g, " "))
+    .filter((task) => task != 'organisation_details' && stripeSetup[task] === false)
+    .map((task) => task.replace(/_/g, ' '))
 
   if (currentCredential && currentCredential.payment_provider === PaymentProvider.Stripe) {
     const stripeCredentials = currentCredential.credentials as StripeCredentials
     stripeDashboardUri = `https://dashboard.stripe.com/${account.live ? '' : 'test/'}connect/accounts/${stripeCredentials.stripe_account_id}`
   }
 
-  const is3DSFlexApplicable = (currentCredential.payment_provider === PaymentProvider.Worldpay && !account.allow_moto)
-  const threeDSFlexEnabled = (account.integration_version_3ds === 2)
-  const motoPaymentLinkExists = motoProducts.length > 0
-  const corporateSurchargeEnabled = account.corporate_credit_card_surcharge_amount ||
-    account.corporate_debit_card_surcharge_amount || account.corporate_prepaid_debit_card_surcharge_amount
+  const is3DSFlexApplicable = currentCredential.payment_provider === PaymentProvider.Worldpay && !account.allow_moto
+  const threeDSFlexEnabled = account.integration_version_3ds === 2
+  const motoPaymentLinkExists = motoProducts && motoProducts.length > 0
+  const corporateSurchargeEnabled =
+    account.corporate_credit_card_surcharge_amount ||
+    account.corporate_debit_card_surcharge_amount ||
+    account.corporate_prepaid_debit_card_surcharge_amount
 
   res.render('gateway_accounts/detail', {
     account,
@@ -276,51 +289,57 @@ async function detail(req: Request, res: Response): Promise<void> {
     threeDSFlexEnabled,
     motoPaymentLinkExists,
     corporateSurchargeEnabled,
-    activeTokensCount: activeTokens.tokens.length,
-    revokedTokensCount: revokedTokens.tokens.length,
+    activeTokensCount: activeTokens?.tokens.length ?? 0,
+    revokedTokensCount: revokedTokens?.tokens.length ?? 0,
     stripePaymentsStatementDescriptor,
     stripePayoutsStatementDescriptor,
     messages: req.flash('info'),
-    csrf: req.csrfToken()
+    csrf: req.csrfToken(),
   })
 }
 
 function getCurrentCredential(account: GatewayAccount) {
   const credentials = account.gateway_account_credentials || []
-  return credentials.find(credential => credential.state === 'ACTIVE') || credentials[0]
+  return credentials.find((credential) => credential.state === 'ACTIVE') || credentials[0]
 }
 
 async function apiKeys(req: Request, res: Response): Promise<void> {
   const gatewayAccountId = req.params.id
 
   const account = await getAccount(gatewayAccountId)
-  const tokensResponse = await PublicAuth.tokens.list({ gateway_account_id: gatewayAccountId, token_state: TokenState.Active })
+  const tokensResponse = await PublicAuth.tokens.list({
+    gateway_account_id: gatewayAccountId,
+    token_state: TokenState.Active,
+  })
 
   res.render('gateway_accounts/api_keys', {
     account,
-    tokens: tokensResponse.tokens,
+    tokens: tokensResponse?.tokens,
     gatewayAccountId,
-    messages: req.flash('info')
+    messages: req.flash('info'),
   })
 }
 
-async function revokedApiKeys (req: Request, res: Response): Promise<void> {
+async function revokedApiKeys(req: Request, res: Response): Promise<void> {
   const gatewayAccountId = req.params.id
 
   const account = await getAccount(gatewayAccountId)
-  const tokensResponse = await PublicAuth.tokens.list({ gateway_account_id: gatewayAccountId, token_state: TokenState.Revoked })
+  const tokensResponse = await PublicAuth.tokens.list({
+    gateway_account_id: gatewayAccountId,
+    token_state: TokenState.Revoked,
+  })
 
   res.render('gateway_accounts/revoked_api_keys', {
     account,
-    tokens: tokensResponse.tokens,
-    gatewayAccountId
+    tokens: tokensResponse?.tokens,
+    gatewayAccountId,
   })
 }
 
 async function deleteApiKey(req: Request, res: Response): Promise<void> {
-  const {accountId, tokenId} = req.params
+  const { accountId, tokenId } = req.params
 
-  await PublicAuth.tokens.delete({gateway_account_id: accountId, token_link: tokenId})
+  await PublicAuth.tokens.delete({ gateway_account_id: accountId, token_link: tokenId })
   logger.info(`Revoked API Token with token_link ${tokenId} for Gateway Account ${accountId}`)
 
   req.flash('info', `Token ${tokenId} successfully revoked`)
@@ -328,7 +347,7 @@ async function deleteApiKey(req: Request, res: Response): Promise<void> {
 }
 
 async function getAccount(id: string): Promise<any> {
-  const isDirectDebitID = id.match(/^DIRECT_DEBIT:/)
+  const isDirectDebitID = /^DIRECT_DEBIT:/.exec(id)
   if (isDirectDebitID) {
     throw new Error(`Direct debit accounts are no longer supported`)
   }
@@ -337,7 +356,7 @@ async function getAccount(id: string): Promise<any> {
 
 async function surcharge(req: Request, res: Response): Promise<void> {
   let service
-  const {id} = req.params
+  const { id } = req.params
   const account = await getAccount(id)
 
   try {
@@ -346,44 +365,52 @@ async function surcharge(req: Request, res: Response): Promise<void> {
     logger.warn(`Services request for gateway account ${id} returned "${error.message}"`)
   }
 
-  res.render('gateway_accounts/surcharge', {account, service, csrf: req.csrfToken()})
+  res.render('gateway_accounts/surcharge', { account, service, csrf: req.csrfToken() })
 }
 
 async function updateSurcharge(req: Request, res: Response): Promise<void> {
-  const {id} = req.params
+  const { id } = req.params
   const {
     corporate_credit_card_surcharge_amount,
     corporate_debit_card_surcharge_amount,
-    corporate_prepaid_debit_card_surcharge_amount
+    corporate_prepaid_debit_card_surcharge_amount,
   } = req.body
 
-  await Connector.accounts.update(id, {corporate_credit_card_surcharge_amount: Number(corporate_credit_card_surcharge_amount)})
-  await Connector.accounts.update(id, {corporate_debit_card_surcharge_amount: Number(corporate_debit_card_surcharge_amount)})
-  await Connector.accounts.update(id, {corporate_prepaid_debit_card_surcharge_amount: Number(corporate_prepaid_debit_card_surcharge_amount)})
+  await Connector.accounts.update(id, {
+    corporate_credit_card_surcharge_amount: Number(corporate_credit_card_surcharge_amount),
+  })
+  await Connector.accounts.update(id, {
+    corporate_debit_card_surcharge_amount: Number(corporate_debit_card_surcharge_amount),
+  })
+  await Connector.accounts.update(id, {
+    corporate_prepaid_debit_card_surcharge_amount: Number(corporate_prepaid_debit_card_surcharge_amount),
+  })
   req.flash('info', 'Corporate surcharge values updated')
   res.redirect(`/gateway_accounts/${id}`)
 }
 
 async function emailBranding(req: Request, res: Response): Promise<void> {
-  const {id} = req.params
+  const { id } = req.params
   const account = await getAccount(id)
 
-  res.render('gateway_accounts/email_branding', {account, csrf: req.csrfToken()})
+  res.render('gateway_accounts/email_branding', { account, csrf: req.csrfToken() })
 }
 
-async function updateEmailBranding(req: Request, res: Response):
-  Promise<void> {
-  const {id} = req.params
+async function updateEmailBranding(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
   const schema: Joi.ObjectSchema<NotifySettings> = Joi.object({
-    service_id: Joi.string().required().pattern(NOTIFY_ID_PATTERN).label("Notify Service ID").trim(),
-    api_token: Joi.string().required().label("Notify API key").trim(),
-    template_id: Joi.string().required().pattern(NOTIFY_ID_PATTERN).label("Payment confirmation template ID").trim(),
-    refund_issued_template_id: Joi.string().required().pattern(NOTIFY_ID_PATTERN).label("Refund template ID").trim(),
-    email_reply_to_id: Joi.string().optional().pattern(NOTIFY_ID_PATTERN).allow('')
+    service_id: Joi.string().required().pattern(NOTIFY_ID_PATTERN).label('Notify Service ID').trim(),
+    api_token: Joi.string().required().label('Notify API key').trim(),
+    template_id: Joi.string().required().pattern(NOTIFY_ID_PATTERN).label('Payment confirmation template ID').trim(),
+    refund_issued_template_id: Joi.string().required().pattern(NOTIFY_ID_PATTERN).label('Refund template ID').trim(),
+    email_reply_to_id: Joi.string()
+      .optional()
+      .pattern(NOTIFY_ID_PATTERN)
+      .allow('')
       .error(new ValidationError('Reply-to email address ID must be an ID or left blank (not an email address)'))
-      .trim()
-  }).options({stripUnknown: true})
-  const {error, value: notifySettings} = schema.validate(req.body)
+      .trim(),
+  }).options({ stripUnknown: true })
+  const { error, value: notifySettings } = schema.validate(req.body)
   if (error) {
     throw error
   }
@@ -391,43 +418,34 @@ async function updateEmailBranding(req: Request, res: Response):
     delete notifySettings.email_reply_to_id
   }
 
-  await Connector.accounts.update(id, {notify_settings: notifySettings})
+  await Connector.accounts.update(id, { notify_settings: notifySettings })
   req.flash('info', 'Email custom branding successfully updated')
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-async function blockPrepaidCards(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
+async function blockPrepaidCards(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
   const account = await Connector.accounts.retrieve(id)
 
   const allowed = !account.block_prepaid_cards
   res.render('gateway_accounts/block_prepaid_cards', {
     account,
     allowed,
-    csrf: req.csrfToken()
+    csrf: req.csrfToken(),
   })
 }
 
-async function updateBlockPrepaidCards(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
+async function updateBlockPrepaidCards(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
   const block = req.body.blocked === 'blocked'
-  await Connector.accounts.update(id, {block_prepaid_cards: block})
+  await Connector.accounts.update(id, { block_prepaid_cards: block })
 
   req.flash('info', `Prepaid cards are ${block ? 'blocked' : 'allowed'}`)
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-async function worldpayExemptionEngine(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
+async function worldpayExemptionEngine(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
   const account = await Connector.accounts.retrieve(id)
 
   if (!account.worldpay_3ds_flex) {
@@ -438,23 +456,20 @@ async function worldpayExemptionEngine(
   res.render('gateway_accounts/worldpay_exemption_engine', {
     account,
     enabled,
-    csrf: req.csrfToken()
+    csrf: req.csrfToken(),
   })
 }
 
 async function updateWorldpayExemptionEngine(req: Request, res: Response): Promise<void> {
-  const {id} = req.params
+  const { id } = req.params
   const enable = req.body.enabled === 'enabled'
-  await Connector.accounts.update(id, {worldpay_exemption_engine_enabled: enable})
+  await Connector.accounts.update(id, { worldpay_exemption_engine_enabled: enable })
   req.flash('info', `Worldpay Exception Engine ${enable ? 'enabled' : 'disabled'}`)
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-async function worldpayCorporateExemptions(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
+async function worldpayCorporateExemptions(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
   const account = await Connector.accounts.retrieve(id)
 
   if (!account.worldpay_3ds_flex) {
@@ -465,109 +480,85 @@ async function worldpayCorporateExemptions(
   res.render('gateway_accounts/worldpay_corporate_exemptions', {
     account,
     enabled,
-    csrf: req.csrfToken()
+    csrf: req.csrfToken(),
   })
 }
 
 async function updateWorldpayCorporateExemptions(req: Request, res: Response): Promise<void> {
-  const {id} = req.params
+  const { id } = req.params
   const enable = req.body.enabled === 'enabled'
-  await Connector.accounts.update(id, {worldpay_corporate_exemptions_enabled: enable})
+  await Connector.accounts.update(id, { worldpay_corporate_exemptions_enabled: enable })
   req.flash('info', `Worldpay Corporate Exemptions ${enable ? 'enabled' : 'disabled'}`)
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-async function disableReasonPage(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
+async function disableReasonPage(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
   const account = await getAccount(id)
 
-  res.render('gateway_accounts/disabled_reason', {account, csrf: req.csrfToken()})
+  res.render('gateway_accounts/disabled_reason', { account, csrf: req.csrfToken() })
 }
 
-async function disable(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
-  const {reason} = req.body
+async function disable(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
+  const { reason } = req.body
   await Connector.accounts.update(id, {
-    disabled: true
+    disabled: true,
   })
   await Connector.accounts.update(id, {
-    disabled_reason: reason
+    disabled_reason: reason,
   })
 
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-async function enable(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
-  await Connector.accounts.update(id, {disabled: false})
+async function enable(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
+  await Connector.accounts.update(id, { disabled: false })
 
   req.flash('info', `Gateway account enabled`)
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-async function recurringPayments(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
+async function recurringPayments(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
   const account = await Connector.accounts.retrieve(id)
   res.render('gateway_accounts/recurring_payments', {
     account,
-    csrf: req.csrfToken()
+    csrf: req.csrfToken(),
   })
 }
 
-async function updateRecurringPayments(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
+async function updateRecurringPayments(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
   const enabled = req.body.enabled === 'enabled'
-  await Connector.accounts.update(id, {recurring_enabled: enabled})
+  await Connector.accounts.update(id, { recurring_enabled: enabled })
 
   req.flash('info', `Recurring card payments ${enabled ? 'enabled' : 'disabled'}`)
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-async function updateStripeStatementDescriptorPage(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
+async function updateStripeStatementDescriptorPage(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
   const account = await getAccount(id)
 
-  res.render('gateway_accounts/stripe_statement_descriptor', {account, csrf: req.csrfToken()})
+  res.render('gateway_accounts/stripe_statement_descriptor', { account, csrf: req.csrfToken() })
 }
 
-async function updateStripePayoutDescriptorPage(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {id} = req.params
+async function updateStripePayoutDescriptorPage(req: Request, res: Response): Promise<void> {
+  const { id } = req.params
   const account = await getAccount(id)
-  res.render('gateway_accounts/stripe_payout_descriptor', {account, csrf: req.csrfToken()})
+  res.render('gateway_accounts/stripe_payout_descriptor', { account, csrf: req.csrfToken() })
 }
 
-async function updateStripeStatementDescriptor(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {statement_descriptor} = req.body
-  const {id} = req.params
+async function updateStripeStatementDescriptor(req: Request, res: Response): Promise<void> {
+  const { statement_descriptor } = req.body
+  const { id } = req.params
   const [account, stripeCredentials] = await Promise.all([
     getAccount(id),
-    Connector.accounts.retrieveStripeCredentials(id)
+    Connector.accounts.retrieveStripeCredentials(id),
   ])
-  const {stripe_account_id} = stripeCredentials
+  const { stripe_account_id } = stripeCredentials
 
   if (!statement_descriptor) {
     throw new Error('Cannot update empty state descriptor')
@@ -577,34 +568,26 @@ async function updateStripeStatementDescriptor(
     throw new Error('Invalid Stripe account configuration')
   }
 
-  // @ts-ignore
   const updateParams = {
     settings: {
       payments: {
-        statement_descriptor
-      }
-    }
+        statement_descriptor,
+      },
+    },
   }
-  await stripeClient.getStripeApi(account.live).accounts.update(
-    stripe_account_id,
-    // @ts-ignore
-    updateParams
-  )
+  await stripeClient.getStripeApi(account.live).accounts.update(stripe_account_id, updateParams)
   req.flash('info', `Statement descriptor updated to [${statement_descriptor}]`)
   res.redirect(`/gateway_accounts/${id}`)
 }
 
-async function updateStripePayoutDescriptor(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const {statement_descriptor} = req.body
-  const {id} = req.params
+async function updateStripePayoutDescriptor(req: Request, res: Response): Promise<void> {
+  const { statement_descriptor } = req.body
+  const { id } = req.params
   const [account, stripeCredentials] = await Promise.all([
     getAccount(id),
-    Connector.accounts.retrieveStripeCredentials(id)
+    Connector.accounts.retrieveStripeCredentials(id),
   ])
-  const {stripe_account_id} = stripeCredentials
+  const { stripe_account_id } = stripeCredentials
 
   if (!statement_descriptor) {
     throw new Error('Cannot update empty state descriptor')
@@ -614,25 +597,20 @@ async function updateStripePayoutDescriptor(
     throw new Error('Invalid Stripe account configuration')
   }
 
-  // @ts-ignore
   const updateParams = {
     settings: {
       payouts: {
-        statement_descriptor
-      }
-    }
+        statement_descriptor,
+      },
+    },
   }
-  await stripeClient.getStripeApi(account.live).accounts.update(
-    stripe_account_id,
-    // @ts-ignore
-    updateParams
-  )
+  await stripeClient.getStripeApi(account.live).accounts.update(stripe_account_id, updateParams)
   req.flash('info', `Payout descriptor updated to [${statement_descriptor}]`)
   res.redirect(`/gateway_accounts/${id}`)
 }
 
 const search = async function search(req: Request, res: Response): Promise<void> {
-  res.render('gateway_accounts/search', {csrf: req.csrfToken()})
+  res.render('gateway_accounts/search', { csrf: req.csrfToken() })
 }
 
 async function searchRequest(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -647,11 +625,11 @@ async function searchRequest(req: Request, res: Response, next: NextFunction): P
         return res.redirect(`/gateway_accounts/${accountByExternalId.gateway_account_id}`)
       } catch (err) {
         if (err instanceof EntityNotFoundError) {
-          const accountByPaymentProviderAccountId = await Connector.accounts.list({payment_provider_account_id: id})
-          if (accountByPaymentProviderAccountId['accounts'].length === 1) {
-            return res.redirect(`/gateway_accounts/${accountByPaymentProviderAccountId['accounts'][0]['gateway_account_id']}`)
+          const accountByPaymentProviderAccountId = await Connector.accounts.list({ payment_provider_account_id: id })
+          if (accountByPaymentProviderAccountId.accounts.length === 1) {
+            return res.redirect(`/gateway_accounts/${accountByPaymentProviderAccountId.accounts[0].gateway_account_id}`)
           }
-          if (accountByPaymentProviderAccountId['accounts'].length > 1) {
+          if (accountByPaymentProviderAccountId.accounts.length > 1) {
             return res.redirect(`/gateway_accounts?payment_provider_account_id=${id}&live=all`)
           }
         }
@@ -662,22 +640,22 @@ async function searchRequest(req: Request, res: Response, next: NextFunction): P
 }
 
 async function worldpayPaymentData(req: Request, res: Response): Promise<void> {
-  const {id} = req.params
+  const { id } = req.params
   const account = await Connector.accounts.retrieve(id)
   res.render('gateway_accounts/worldpay_payment_data', {
     account,
-    csrf: req.csrfToken()
+    csrf: req.csrfToken(),
   })
 }
 
 async function updateWorldpayPaymentData(req: Request, res: Response): Promise<void> {
-  const {id} = req.params
+  const { id } = req.params
   const sendReferenceInDescription = req.body.description === 'reference'
   const sendEmail = req.body.email === 'yes'
   const sendIp = req.body.ip === 'yes'
-  await Connector.accounts.update(id, {send_reference_to_gateway: sendReferenceInDescription})
-  await Connector.accounts.update(id, {send_payer_email_to_gateway: sendEmail})
-  await Connector.accounts.update(id, {send_payer_ip_address_to_gateway: sendIp})
+  await Connector.accounts.update(id, { send_reference_to_gateway: sendReferenceInDescription })
+  await Connector.accounts.update(id, { send_payer_email_to_gateway: sendEmail })
+  await Connector.accounts.update(id, { send_payer_ip_address_to_gateway: sendIp })
 
   req.flash('info', 'Payment details sent to Worldpay updated')
   res.redirect(`/gateway_accounts/${id}`)
@@ -716,5 +694,5 @@ export default {
   recurringPayments: wrapAsyncErrorHandler(recurringPayments),
   updateRecurringPayments: wrapAsyncErrorHandler(updateRecurringPayments),
   worldpayPaymentData: wrapAsyncErrorHandler(worldpayPaymentData),
-  updateWorldpayPaymentData: wrapAsyncErrorHandler(updateWorldpayPaymentData)
+  updateWorldpayPaymentData: wrapAsyncErrorHandler(updateWorldpayPaymentData),
 }

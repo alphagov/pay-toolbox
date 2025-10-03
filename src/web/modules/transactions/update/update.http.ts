@@ -8,7 +8,7 @@ import moment from 'moment'
 import logger from '../../../../lib/logger'
 import { aws, common } from '../../../../config'
 
-type TransactionRow = {
+interface TransactionRow {
   transaction_id: string;
   transaction_type: string;
   event_name: string;
@@ -49,7 +49,7 @@ const uploadToS3 = async function uploadToS3(content: string, user: any): Promis
   // For local testing, set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables.
   try {
     const s3 = new S3({})
-    const key = (user && user.username || '') + moment().format('x')
+    const key = (user?.username || '') + moment().format('x')
     logger.info(`Uploading transactions file to S3 with key ${key}`)
     const response = await s3.putObject({
       Bucket: aws.AWS_S3_UPDATE_TRANSACTIONS_FARGATE_BUCKET_NAME,
@@ -227,7 +227,7 @@ const validateAndAddDefaults = async function validateAndAddDefaults(csv: string
 }
 
 export async function update(req: Request, res: Response): Promise<void> {
-  if (!req.file || !req.file.buffer) {
+  if (!req.file?.buffer) {
     req.flash('error', 'Select a CSV containing transaction updates')
     return res.redirect('/transactions/update')
   }

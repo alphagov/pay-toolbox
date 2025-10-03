@@ -37,7 +37,7 @@ export function unauthorised(req: Request, res: Response) {
 }
 
 export function revokeSession(req: Request, res: Response) {
-  logger.info(`Revoking session for user ${req.user && req.user.username}`)
+  logger.info(`Revoking session for user ${req.user?.username}`)
   req.logout()
   res.redirect('/') 
 }

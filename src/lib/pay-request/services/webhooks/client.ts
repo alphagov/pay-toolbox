@@ -5,11 +5,11 @@ import type {
   RetrieveWebhookRequest,
   RetrieveWebhookRequestWithOverride,
   Webhook,
-  WebhookMessage
+  WebhookMessage,
 } from './types'
 import { App, SearchResponse } from '../../shared'
-import { handleEntityNotFound } from '../../utils/error';
-import { DeliveryAttempt } from './types';
+import { handleEntityNotFound } from '../../utils/error'
+import { DeliveryAttempt } from './types'
 
 export default class Webhooks extends Client {
   constructor() {
@@ -17,52 +17,37 @@ export default class Webhooks extends Client {
   }
 
   webhooks = ((client: Webhooks) => ({
-    retrieve(
-      id: string,
-      params: RetrieveWebhookRequest | RetrieveWebhookRequestWithOverride
-    ): Promise<Webhook | undefined> {
+    retrieve(id: string, params: RetrieveWebhookRequest | RetrieveWebhookRequestWithOverride): Promise<Webhook> {
       return client._axios
-        .get(`/v1/webhook/${id}`, {params})
-        .then(response => client._unpackResponseData<Webhook>(response))
+        .get(`/v1/webhook/${id}`, { params })
+        .then((response) => client._unpackResponseData<Webhook>(response))
         .catch(handleEntityNotFound('Webhook', id))
     },
 
-    list(
-      params: ListWebhooksForServiceRequest
-    ): Promise<Webhook[] | undefined> {
-
-    return client._axios
-      .get('/v1/webhook', {params})
-      .then(response => client._unpackResponseData<Webhook[] | undefined >(response));
-    },
-
-    listMessages(
-      webhookId: string,
-      params: ListWebhookMessageRequest
-    ): Promise<SearchResponse<WebhookMessage> | undefined> {
+    list(params: ListWebhooksForServiceRequest): Promise<Webhook[]> {
       return client._axios
-        .get(`/v1/webhook/${webhookId}/message`, {params})
-        .then(response => client._unpackResponseData<SearchResponse<WebhookMessage> | undefined >(response));
+        .get('/v1/webhook', { params })
+        .then((response) => client._unpackResponseData<Webhook[]>(response))
     },
 
-    retrieveMessage(
-      webhookId: string,
-      messageId: string
-    ): Promise<WebhookMessage | undefined> {
+    listMessages(webhookId: string, params: ListWebhookMessageRequest): Promise<SearchResponse<WebhookMessage>> {
+      return client._axios
+        .get(`/v1/webhook/${webhookId}/message`, { params })
+        .then((response) => client._unpackResponseData<SearchResponse<WebhookMessage>>(response))
+    },
+
+    retrieveMessage(webhookId: string, messageId: string): Promise<WebhookMessage> {
       return client._axios
         .get(`/v1/webhook/${webhookId}/message/${messageId}`)
-        .then(response => client._unpackResponseData<WebhookMessage>(response))
+        .then((response) => client._unpackResponseData<WebhookMessage>(response))
         .catch(handleEntityNotFound('Webhook message', messageId))
     },
 
-    listMessageAttempts(
-      webhookId: string,
-      messageId: string
-    ): Promise<DeliveryAttempt[] | undefined> {
+    listMessageAttempts(webhookId: string, messageId: string): Promise<DeliveryAttempt[]> {
       return client._axios
         .get(`/v1/webhook/${webhookId}/message/${messageId}/attempt`)
-        .then(response => client._unpackResponseData<DeliveryAttempt[]>(response))
+        .then((response) => client._unpackResponseData<DeliveryAttempt[]>(response))
         .catch(handleEntityNotFound('Webhook message', messageId))
-    }
+    },
   }))(this)
 }

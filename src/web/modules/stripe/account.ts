@@ -28,7 +28,7 @@ export async function setupProductionStripeAccount(serviceExternalId: string, st
     throw new CustomValidationError('Stripe API Key was not configured for this Toolbox instance')
   }
   const service: Service = await AdminUsers.services.retrieve(serviceExternalId)
-  if (!service.merchant_details || !service.merchant_details.name || !service.merchant_details.address_line1
+  if (!service.merchant_details?.name || !service.merchant_details.address_line1
     || !service.merchant_details.telephone_number) {
     throw new CustomValidationError('Service has no organisation details set or address/telephone number is missing')
   }

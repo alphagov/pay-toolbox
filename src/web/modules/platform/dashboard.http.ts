@@ -48,7 +48,7 @@ export async function aggregate(req: Request, res: Response, next: NextFunction)
   try {
     const baseDate = moment(date as string)
 
-    const toDate = limit && limit.length ?
+    const toDate = limit?.length ?
       limit as string :
       baseDate.utc().endOf('day').format()
 
@@ -87,14 +87,14 @@ export async function services(req: Request, res: Response, next: NextFunction):
   try {
     const services = await AdminUsers.services.list()
 
-    const index = services.reduce((aggregate: { [key: string]: GatewayAccountSummary }, service) => {
+    const index = services.reduce((aggregate: Record<string, GatewayAccountSummary>, service) => {
       const now = moment()
       let isRecent = false;
       if (service.went_live_date) {
         const numberOfDaysOld = now.diff(moment(service.went_live_date), 'days')
         isRecent = numberOfDaysOld < 30
       }
-      const mapped: { [key: string]: GatewayAccountSummary } = {
+      const mapped: Record<string, GatewayAccountSummary> = {
         ...aggregate,
         ...service.gateway_account_ids.reduce((aggregate: any, accountId: string) => {
           aggregate[accountId] = {

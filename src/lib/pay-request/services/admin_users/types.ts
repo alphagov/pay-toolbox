@@ -97,7 +97,7 @@ export class User {
   provisional_otp_key?: string;
   provisional_otp_key_created_at?: string;
   last_logged_in_at?: number;
-  features?: Array<string>;
+  features?: string[];
   // _links
   raw_data?: any; // for instances of the User class where defaults are set
 

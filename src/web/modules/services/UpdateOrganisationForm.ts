@@ -8,7 +8,7 @@ class UpdateOrganisationFormRequest extends Validated {
   @IsString()
   public name: string;
 
-  public constructor(formValues: { [key: string]: string }) {
+  public constructor(formValues: Record<string, string>) {
     super()
     this.name = formValues.name
     this.validate()

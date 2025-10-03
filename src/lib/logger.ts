@@ -40,7 +40,7 @@ const loggerMiddleware = function loggerMiddleware(
     const toolboxId = crypto.randomBytes(4).toString('hex')
     session.set(TOOLBOX_ID_KEY, toolboxId)
     session.set(CORRELATION_ID_KEY, req.headers[correlationHeader])
-    session.set(AUTHENTICATED_USER_ID_KEY, req.user && req.user.username)
+    session.set(AUTHENTICATED_USER_ID_KEY, req.user?.username)
 
     // expose toolbox ID to template for debugging
     res.locals.toolboxId = toolboxId
@@ -55,7 +55,7 @@ const loggerMiddleware = function loggerMiddleware(
 }
 
 const addSentryBreadcrumb = format((info) => {
-  const levelMap: { [key: string]: Sentry.Severity } = {
+  const levelMap: Record<string, Sentry.Severity> = {
     'info': Sentry.Severity.Info,
     'warn': Sentry.Severity.Warning,
     'debug': Sentry.Severity.Debug,

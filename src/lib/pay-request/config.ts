@@ -2,14 +2,14 @@ import { getNamespace } from 'cls-hooked'
 
 import { config } from './client'
 import { PayRequestContext } from './base'
-const logger = require('../logger')
+import logger from '../logger'
 
 function transformRequestAddHeaders() {
   const session = getNamespace('govuk-pay-logging')
 
-  const correlationId = session.get('correlation_id')
+  const correlationId = (session?.get('correlation_id') as string) ?? undefined
   return {
-    ...(correlationId && { 'x-request-id': correlationId })
+    ...(correlationId && { 'x-request-id': correlationId }),
   }
 }
 
@@ -20,7 +20,7 @@ function successResponse(context: PayRequestContext) {
     status_code: context.status,
     url: context.url,
     response_time: context.responseTime,
-    excludeFromBreadcrumb: true
+    excludeFromBreadcrumb: true,
   }
   logger.info(`Pay request ${context.service} success from ${context.method} ${context.url}`, logContext)
 }
@@ -33,7 +33,7 @@ function failureResponse(context: PayRequestContext) {
     error_code: context.code,
     url: context.url,
     response_time: context.responseTime,
-    excludeFromBreadcrumb: true
+    excludeFromBreadcrumb: true,
   }
   logger.info(`Pay request ${context.service} failed from ${context.method} ${context.url}`, logContext)
 }
@@ -42,6 +42,6 @@ export function configureClients() {
   config(process.env, {
     transformRequestAddHeaders,
     successResponse,
-    failureResponse
+    failureResponse,
   })
 }

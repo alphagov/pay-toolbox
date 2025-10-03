@@ -24,7 +24,7 @@ export async function overview(req: Request, res: Response) {
 
 export async function downloadData(req: Request, res: Response) {
   const services = await getLiveNotArchivedServices()
-  const countBySector = services.reduce((aggregate: { [key: string]: number; }, service: Service) => {
+  const countBySector = services.reduce((aggregate: Record<string, number>, service: Service) => {
     if (service.sector) {
       const sector = service.sector.replace(' ', '')
       aggregate[sector] = aggregate[sector] + 1 || 1
@@ -32,8 +32,8 @@ export async function downloadData(req: Request, res: Response) {
     return aggregate
   }, {})
   const countByOrganisation = services
-    .reduce((aggregate: { [key: string]: number; }, service: Service) => {
-      const org = service.merchant_details && service.merchant_details.name
+    .reduce((aggregate: Record<string, number>, service: Service) => {
+      const org = service.merchant_details?.name
       if (org) {
         aggregate[org] = aggregate[org] + 1 || 1
       }
@@ -41,7 +41,7 @@ export async function downloadData(req: Request, res: Response) {
     }, {})
   const orderedCountByOrganisation = Object.keys(countByOrganisation)
     .sort()
-    .reduce((aggregate: { [key: string]: number; }, organisation: string) => {
+    .reduce((aggregate: Record<string, number>, organisation: string) => {
       aggregate[organisation] = countByOrganisation[organisation]
       return aggregate
     }, {})

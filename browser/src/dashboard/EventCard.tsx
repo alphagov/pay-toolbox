@@ -24,42 +24,42 @@ import { eventsActiveSuccess, eventsErrored } from './events'
 import { currencyFormatter } from './format'
 
 interface CardProfile {
-  backgroundColour: string,
+  backgroundColour: string
   colour: string
 }
 
 const SuccessProfile: CardProfile = {
   backgroundColour: '#00703c',
-  colour: '#ffffff'
+  colour: '#ffffff',
 }
 
 const FailureProfile: CardProfile = {
   backgroundColour: '#d4351c',
-  colour: '#ffffff'
+  colour: '#ffffff',
 }
 
 const DefaultProfile: CardProfile = {
   backgroundColour: '#ffffff',
-  colour: '#000000'
+  colour: '#000000',
 }
 
-const paymentTypeMap: { [key: string]: string } = {
-  'visa': VisaIcon,
+const paymentTypeMap: Record<string, string> = {
+  visa: VisaIcon,
   'master-card': MastercardIcon,
-  'american-express': AmexIcon
+  'american-express': AmexIcon,
 }
 
-const providerLogoMap: { [key: string]: string } = {
-  'worldpay': WorldpayLogo,
-  'stripe': StripeLogo,
-  'epdq': BarclaysLogo,
-  'smartpay': BarclaysLogo,
-  'sandbox': SandboxLogo
+const providerLogoMap: Record<string, string> = {
+  worldpay: WorldpayLogo,
+  stripe: StripeLogo,
+  epdq: BarclaysLogo,
+  smartpay: BarclaysLogo,
+  sandbox: SandboxLogo,
 }
 
-const profileMap: { [key: string]: CardProfile } = {
-  'PAYMENT_CREATED': DefaultProfile,
-  'PAYMENT_DETAILS_ENTERED': DefaultProfile,
+const profileMap: Record<string, CardProfile> = {
+  PAYMENT_CREATED: DefaultProfile,
+  PAYMENT_DETAILS_ENTERED: DefaultProfile,
   ...eventsActiveSuccess.reduce((aggregate: any, event) => {
     aggregate[event] = SuccessProfile
     return aggregate
@@ -67,15 +67,15 @@ const profileMap: { [key: string]: CardProfile } = {
   ...eventsErrored.reduce((aggregate: any, event) => {
     aggregate[event] = FailureProfile
     return aggregate
-  }, {})
+  }, {}),
 }
 
 interface EventCardProps {
-  event: Event,
+  event: Event
   showAllEvents: boolean
 }
 
-export class EventCard extends React.Component<EventCardProps, { shouldShow: boolean, showTimer?: NodeJS.Timer }> {
+export class EventCard extends React.Component<EventCardProps, { shouldShow: boolean; showTimer?: NodeJS.Timer }> {
   state = {
     shouldShow: false,
   }
@@ -85,13 +85,17 @@ export class EventCard extends React.Component<EventCardProps, { shouldShow: boo
   }
   componentWillUnmount() {
     // if(this.state.showTimer) {
-        // clearTimeout(this.state.showTimer)
+    // clearTimeout(this.state.showTimer)
     // }
   }
 
   render() {
-    const profile = this.props.showAllEvents ? (profileMap[this.props.event.event_type] || DefaultProfile) : DefaultProfile
-    const paymentTypeIcon = paymentTypeMap[this.props.event.card_brand] || UnknownIcon
+    const profile = this.props.showAllEvents
+      ? profileMap[this.props.event.event_type] || DefaultProfile
+      : DefaultProfile
+    const paymentTypeIcon = this.props.event.card_brand
+      ? (paymentTypeMap[this.props.event.card_brand] || UnknownIcon)
+      : UnknownIcon
     const paymentProviderIcon = providerLogoMap[this.props.event.payment_provider]
 
     let statusIcon: string
@@ -107,33 +111,46 @@ export class EventCard extends React.Component<EventCardProps, { shouldShow: boo
     }
 
     let icon: JSX.Element
-    let recentTag: JSX.Element
 
     if (this.props.event.event_type === 'PAYMENT_CREATED') {
       icon = <CardImage image={paymentProviderIcon} />
     } else {
       icon = <CardIcon icon={statusIcon} />
     }
-    if (this.props.event.is_recent) {
-      recentTag = <div style={{ textAlign: 'left', marginBottom: '8px', marginLeft: '8px', marginTop: '16px' }}><span className="govuk-tag govuk-tag--blue">new service</span></div>
-    }
     const showClass = this.state.shouldShow ? 'show' : ''
     return (
-      <div className={ "slide-card slide-fade " + showClass }>
+      <div className={'slide-card slide-fade ' + showClass}>
         <OpacitySpring>
-          { recentTag }
+          {this.props.event.is_recent && (
+            <div
+              style={{
+                textAlign: 'left',
+                marginBottom: '8px',
+                marginLeft: '8px',
+                marginTop: '16px',
+              }}
+            >
+              <span className="govuk-tag govuk-tag--blue">new service</span>
+            </div>
+          )}
           <div className="event-card govuk-!-margin-bottom-2" style={{ backgroundColor: profile.backgroundColour }}>
             <div style={{ textAlign: 'right', width: '100%' }}>
               <span className="govuk-body-s" style={{ color: profile.colour, opacity: 0.7 }}>
                 {this.props.event.service_name}
               </span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+            >
               {icon}
               <div>
-              <span className="govuk-body-l" style={{ color: profile.colour }}><strong>
-                {currencyFormatter.format(this.props.event.amount / 100)}
-              </strong></span>
+                <span className="govuk-body-l" style={{ color: profile.colour }}>
+                  <strong>{currencyFormatter.format(this.props.event.amount / 100)}</strong>
+                </span>
               </div>
             </div>
           </div>

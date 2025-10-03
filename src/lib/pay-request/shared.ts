@@ -168,7 +168,7 @@ export interface BroadcastResult {
   result: object | unknown;
 }
 
-export type kv = { [key: string ]: string | boolean | undefined }
+export type kv = Record<string, string | boolean | undefined>;
 
 export enum App {
   Connector = 'CONNECTOR',

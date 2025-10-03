@@ -52,10 +52,8 @@ const createAccountForm = async function createAccountForm(
 
     if (recovered.errors) {
       context.errors = recovered.errors
-      context.errorMap = recovered.errors.reduce((aggregate: {
-        [key: string]: string;
-      }, error: ClientFormError) => {
-        // eslint-disable-next-line no-param-reassign
+      context.errorMap = recovered.errors.reduce((aggregate: Record<string, string>, error: ClientFormError) => {
+         
         aggregate[error.id] = error.message
         return aggregate
       }, {})

@@ -41,10 +41,8 @@ const updatePhoneNumberForm = async function updatePhoneNumberForm(
 
     if (recovered.errors) {
       context.errors = recovered.errors
-      context.errorMap = recovered.errors.reduce((aggregate: {
-        [key: string]: string;
-      }, error: ClientFormError) => {
-        // eslint-disable-next-line no-param-reassign
+      context.errorMap = recovered.errors.reduce((aggregate: Record<string, string>, error: ClientFormError) => {
+         
         aggregate[error.id] = error.message
         return aggregate
       }, {})
@@ -64,10 +62,8 @@ const updateEmailForm = async function updateEmailForm(req: Request, res: Respon
 
     if (recovered.errors) {
       context.errors = recovered.errors
-      context.errorMap = recovered.errors.reduce((aggregate: {
-        [key: string]: string;
-      }, error: ClientFormError) => {
-        // eslint-disable-next-line no-param-reassign
+      context.errorMap = recovered.errors.reduce((aggregate: Record<string, string>, error: ClientFormError) => {
+         
         aggregate[error.id] = error.message
         return aggregate
       }, {})
@@ -190,7 +186,7 @@ const search = async function search(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const search = req.body.search && req.body.search.trim()
+  const search = req.body.search?.trim()
   try {
     const user = await AdminUsers.users.findByEmail(search)
     res.redirect(`/users/${user.external_id}`)

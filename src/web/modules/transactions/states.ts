@@ -4,13 +4,13 @@ export enum PaymentListFilterStatus {
   Succeeded = 'succeeded', Failed = 'failed', InProgress = 'in-progress', All = 'all'
 }
 
-const paymentFilterStatusMap: { [key in PaymentListFilterStatus]: ExternalTransactionState[] } = {
+const paymentFilterStatusMap: Record<PaymentListFilterStatus, ExternalTransactionState[]> = {
   all: [],
   succeeded: [ExternalTransactionState.Success],
   failed: [ExternalTransactionState.Declined, ExternalTransactionState.TimedOut, ExternalTransactionState.Cancelled, ExternalTransactionState.Error],
   'in-progress': [ExternalTransactionState.Created, ExternalTransactionState.Started, ExternalTransactionState.Submitted, ExternalTransactionState.Capturable]
 }
-const refundFilterStatusMap: { [key in PaymentListFilterStatus]: ExternalTransactionState[] } = {
+const refundFilterStatusMap: Record<PaymentListFilterStatus, ExternalTransactionState[]> = {
   all: [],
   succeeded: [ExternalTransactionState.Success],
   failed: [ExternalTransactionState.Error],

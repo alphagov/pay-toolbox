@@ -10,8 +10,8 @@ import {
 import { formatErrorsForTemplate } from '../common/validationErrorFormat'
 
 // @FIXME(sfount) util to build preserving queries - should be evalutated to scale
-const buildPreservedQuery = function buildPreservedQuery(body: { [key: string]: string }): string {
-  const supported: { [key: string]: string } = {
+const buildPreservedQuery = function buildPreservedQuery(body: Record<string, string>): string {
+  const supported: Record<string, string> = {
     systemLinkedService: 'service',
     systemLinkedCredentials: 'credentials',
     provider: 'provider',

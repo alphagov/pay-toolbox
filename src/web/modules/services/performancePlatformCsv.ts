@@ -33,7 +33,7 @@ const fields = [
 export function formatPerformancePlatformCsv(liveServices: Service[]): string {
   const parser = new Parser({ fields })
   const sortedServices = _.orderBy(liveServices, [
-    service => service.merchant_details && service.merchant_details.name && service.merchant_details.name.toLowerCase(),
+    service => service.merchant_details?.name?.toLowerCase(),
     service => service.service_name.en.toLowerCase(),
     service => service.id
   ])
@@ -41,7 +41,7 @@ export function formatPerformancePlatformCsv(liveServices: Service[]): string {
       return {
         went_live_date: service.went_live_date && moment(service.went_live_date).format('YYYY-MM-DD') || '',
         id: service.id,
-        agency: service.merchant_details && service.merchant_details.name && service.merchant_details.name.trim() || '',
+        agency: service.merchant_details?.name?.trim() || '',
         service_name: service.service_name.en.trim(),
         sorting: index + 1
       }

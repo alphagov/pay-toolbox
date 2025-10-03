@@ -1,27 +1,24 @@
 import { NextFunction, Request, Response } from 'express'
-
 import { AdminUsers, Connector, Webhooks } from '../../../lib/pay-request/client'
 import { AccountType } from '../../../lib/pay-request/shared'
 import { URL } from 'url'
 
-const {constants} = require('@govuk-pay/pay-js-commons')
-const process = require('process')
-const {common} = require('./../../../config')
+// @ts-expect-error pay js commons is not ts friendly
+import { constants } from '@govuk-pay/pay-js-commons'
+import process from 'process'
+import { common } from './../../../config'
 
 const webhookMessagePageSize = 10
 
 if (common.development) {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 }
 
 export async function detail(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const webhook = await Webhooks.webhooks.retrieve(
-      req.params.id,
-      {
-        override_account_or_service_id_restriction: true,
-      }
-    )
+    const webhook = await Webhooks.webhooks.retrieve(req.params.id, {
+      override_account_or_service_id_restriction: true,
+    })
 
     res.render('webhooks/detail', {
       id: req.params.id,
@@ -47,10 +44,10 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     const webhooks = await Webhooks.webhooks.list({
       service_id: service.external_id,
       gateway_account_id: `${account.gateway_account_id}`,
-      live: account.type === AccountType.Live
+      live: account.type === AccountType.Live,
     })
 
-    const formattedResults = webhooks.map(webhook => {
+    const formattedResults = webhooks.map((webhook) => {
       const callbackDomain = new URL(webhook.callback_url).hostname
 
       return {
@@ -65,7 +62,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
       account,
       service,
       webhooks: formattedResults,
-      isTestData: account.type === AccountType.Test
+      isTestData: account.type === AccountType.Test,
     })
   } catch (error) {
     next(error)
@@ -73,7 +70,7 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
 }
 
 export function search(req: Request, res: Response) {
-  res.render('webhooks/search', {csrf: req.csrfToken()})
+  res.render('webhooks/search', { csrf: req.csrfToken() })
 }
 
 export function searchRequest(req: Request, res: Response) {
@@ -86,20 +83,14 @@ export async function listMessages(req: Request, res: Response, next: NextFuncti
   const status = req.query.status as string
 
   try {
-    const webhook = await Webhooks.webhooks.retrieve(
-      req.params.id,
-      {
-        override_account_or_service_id_restriction: true
-      }
-    )
+    const webhook = await Webhooks.webhooks.retrieve(req.params.id, {
+      override_account_or_service_id_restriction: true,
+    })
 
-    const webhookMessages = await Webhooks.webhooks.listMessages(
-      req.params.id,
-      {
-        page: page,
-        ...status && { status }
-      }
-    )
+    const webhookMessages = await Webhooks.webhooks.listMessages(req.params.id, {
+      page: page,
+      ...(status && { status }),
+    })
 
     res.render('webhooks/messages/overview', {
       webhook,
@@ -116,14 +107,16 @@ export async function listMessages(req: Request, res: Response, next: NextFuncti
 
 export async function messageDetail(req: Request, res: Response, next: NextFunction) {
   try {
-    const webhook = await Webhooks.webhooks.retrieve(req.params.webhookId, { override_account_or_service_id_restriction: true })
+    const webhook = await Webhooks.webhooks.retrieve(req.params.webhookId, {
+      override_account_or_service_id_restriction: true,
+    })
     const message = await Webhooks.webhooks.retrieveMessage(req.params.webhookId, req.params.messageId)
     const attempts = await Webhooks.webhooks.listMessageAttempts(req.params.webhookId, req.params.messageId)
     res.render('webhooks/messages/detail', {
       webhook,
       message,
       attempts,
-      human_readable_subscriptions: constants.webhooks.humanReadableSubscriptions
+      human_readable_subscriptions: constants.webhooks.humanReadableSubscriptions,
     })
   } catch (error) {
     next(error)

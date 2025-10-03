@@ -76,7 +76,7 @@ export function formatServiceExportCsv(liveServices: Service[]): string {
         ...service,
         went_live_date_string: service.went_live_date && moment(service.went_live_date).format('YYYY-MM-DD') || '',
         created_date_string: service.created_date && moment(service.created_date).format('YYYY-MM-DD') || '',
-        organisation_name: service.merchant_details && service.merchant_details.name && service.merchant_details.name.trim() || '',
+        organisation_name: service.merchant_details?.name?.trim() || '',
         gateway_account_ids_string: service.gateway_account_ids.join(', ')
       }
     })

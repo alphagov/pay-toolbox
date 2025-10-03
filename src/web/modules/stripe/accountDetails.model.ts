@@ -14,7 +14,7 @@ class AccountDetails extends Validated {
   @IsNotEmpty({ message: 'Please enter a statement descriptor' })
   public statementDescriptor: string;
 
-  public constructor(formValues: { [key: string]: string }) {
+  public constructor(formValues: Record<string, string>) {
     super()
     this.statementDescriptor = formValues.statementDescriptor
     this.validate()

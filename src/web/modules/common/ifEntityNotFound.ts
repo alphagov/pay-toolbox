@@ -1,6 +1,6 @@
 import {EntityNotFoundError} from "../../../lib/errors";
 
-export function ifEntityNotFound (callback: Function, necessaryConditions: boolean = true) {
+export function ifEntityNotFound (callback: Function, necessaryConditions = true) {
     return (e: Error): null => {
         if (e instanceof EntityNotFoundError && necessaryConditions) {
             callback()

@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { ValidationError as ClassValidatorError } from 'class-validator'
 import { AxiosError } from 'axios'
 
@@ -15,7 +14,7 @@ export class RequestError extends Error {
 export class EntityNotFoundError extends RequestError {
   public data: { name: string; identifier: string }
 
-  public constructor(name: string, identifier: string, description: string = 'ID') {
+  public constructor(name: string, identifier: string, description = 'ID') {
     super(`${name} with ${description} ${identifier} was not found.`)
     this.data = { name, identifier }
   }
@@ -27,14 +26,14 @@ export interface ErrorData {
 
 // wrap errors from other frameworks in a format that this service can report on
 // @FIXME(sfount) stack trace isn't respected
-export class RESTClientError extends Error {
+export class RESTClientError<T = unknown> extends Error {
   public name: string
 
-  public data: AxiosError<ErrorData>
+  public data: AxiosError<T>
 
   public service: string
 
-  public constructor(error: AxiosError, serviceName: string) {
+  public constructor(error: AxiosError<T>, serviceName: string) {
     super(error.message)
     this.name = this.constructor.name
     this.data = error

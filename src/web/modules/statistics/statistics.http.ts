@@ -50,11 +50,11 @@ const byServices = async function byServices(req: Request, res: Response, next: 
         to_date: toDate.format("YYYY-MM-DD")
       })
     ])
-    const accountsIndexedById = gatewayAccountsResponse.accounts.reduce((aggregate: { [key: string]: GatewayAccount }, account) => {
+    const accountsIndexedById = gatewayAccountsResponse.accounts.reduce((aggregate: Record<string, GatewayAccount>, account) => {
       aggregate[account.gateway_account_id] = account
       return aggregate
     }, {})
-    const accountStatsByIdAndMonth = gatewayPerformanceReport.reduce((aggregate: { [key: string]: { [key: string]: GatewayPerformanceReportEntry } }, entry) => {
+    const accountStatsByIdAndMonth = gatewayPerformanceReport.reduce((aggregate: Record<string, Record<string, GatewayPerformanceReportEntry>>, entry) => {
       const zeroIndexedMonth = Number(entry.month) - 1
       const monthKey = moment().utc().year(entry.year).month(zeroIndexedMonth).format('YYYY-MM')
       _.set(aggregate, `${entry.gateway_account_id}.${monthKey}`, entry)
@@ -75,7 +75,7 @@ const byServices = async function byServices(req: Request, res: Response, next: 
               gateway_account_id: account.gateway_account_id,
               service_name: (service.service_name && service.service_name.en) || account.service_name,
               description: account.description,
-              organisation_name: (service.merchant_details && service.merchant_details.name) || '',
+              organisation_name: (service.merchant_details?.name) || '',
               payment_provider: account.payment_provider,
               sector: service.sector,
               went_live_date: service.went_live_date && moment(service.went_live_date).format('YYYY-MM-DD') || ''

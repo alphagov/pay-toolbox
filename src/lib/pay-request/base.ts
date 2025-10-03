@@ -1,20 +1,13 @@
 import http from 'http'
 import https from 'https'
-import axios, {
-  AxiosInstance,
-  AxiosResponse,
-  AxiosError,
-  AxiosRequestConfig,
-  Method,
-  InternalAxiosRequestConfig
-} from 'axios'
-import {App} from './shared'
+import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig, Method } from 'axios'
+import { App } from './shared'
 
-const {RESTClientError} = require('../errors')
+import { RESTClientError } from '../errors'
 
 /** Base HTTP client with common helpers for all microservices */
 export default class Client {
-  _axios: AxiosInstance
+  _axios!: AxiosInstance
   _app: App
 
   constructor(app: App) {
@@ -38,54 +31,56 @@ export default class Client {
       timeout: 60 * 1000,
       maxContentLength: 50 * 1000 * 1000,
       httpAgent: new http.Agent({
-        keepAlive: true
+        keepAlive: true,
       }),
       httpsAgent: new https.Agent({
         keepAlive: true,
-        rejectUnauthorized: process.env.NODE_ENV === 'production'
+        rejectUnauthorized: process.env.NODE_ENV === 'production',
       }),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
     })
     this._axios.interceptors.request.use((request) => {
       const headers = options.transformRequestAddHeaders ? options.transformRequestAddHeaders() : {}
-      Object.entries(headers)
-        .forEach(([headerKey, headerValue]) => {
-          request.headers[headerKey] = headerValue
-        })
+      Object.entries(headers).forEach(([headerKey, headerValue]) => {
+        request.headers[headerKey] = headerValue
+      })
 
       return {
         ...request,
-        metadata: {start: Date.now()}
+        metadata: { start: Date.now() },
       }
     })
 
-    this._axios.interceptors.response.use((response): AxiosResponse => {
-      const context: PayRequestContext = {
-        service: this._app,
-        responseTime: Date.now() - (response.config as AxiosRequestConfigWithMetadata).metadata.start,
-        method: response.config.method,
-        params: response.config.params,
-        status: response.status,
-        url: response.config.url
+    this._axios.interceptors.response.use(
+      (response): AxiosResponse => {
+        const context: PayRequestContext = {
+          service: this._app,
+          responseTime: Date.now() - ((response.config as AxiosRequestConfigWithMetadata)?.metadata?.start ?? 0),
+          method: response.config.method,
+          params: response.config.params,
+          status: response.status,
+          url: response.config.url,
+        }
+        if (options.successResponse) options.successResponse(context)
+        return response
+      },
+      (error: AxiosError) => {
+        const config = (error.config as AxiosRequestConfigWithMetadata) || {}
+        const context: PayRequestContext = {
+          service: this._app,
+          responseTime: Date.now() - (config.metadata?.start ?? 0),
+          method: config.method,
+          params: config.params,
+          status: error.response?.status,
+          url: config.url,
+          code: error.response?.status || error.code,
+        }
+        if (options.failureResponse) options.failureResponse(context)
+        throw new RESTClientError(error, context.service)
       }
-      if (options.successResponse) options.successResponse(context)
-      return response
-    }, (error: AxiosError) => {
-      const config = error.config as AxiosRequestConfigWithMetadata || {}
-      const context: PayRequestContext = {
-        service: this._app,
-        responseTime: Date.now() - (config.metadata && config.metadata.start),
-        method: config.method,
-        params: config.params,
-        status: error.response && error.response.status,
-        url: config.url,
-        code: (error.response && error.response.status) || error.code
-      }
-      if (options.failureResponse) options.failureResponse(context)
-      throw new RESTClientError(error, context.service)
-    })
+    )
   }
 
   /**
@@ -93,6 +88,9 @@ export default class Client {
    * @returns "is healthy" response
    */
   async healthy(): Promise<boolean> {
+    if (!this._axios) {
+      throw new Error('Client not configured, call _configure()')
+    }
     try {
       await this._axios.get('/healthcheck')
       return true
@@ -104,27 +102,27 @@ export default class Client {
 
 export interface PayRequestContext {
   /** Response time in ms */
-  responseTime: number;
-  service: App;
-  params: { [key: string]: string | number | boolean | undefined };
-  status?: number;
-  url?: string;
-  code?: number | string;
-  method?: Method | string;
+  responseTime: number
+  service: App
+  params: Record<string, string | number | boolean | undefined>
+  status?: number
+  url?: string
+  code?: number | string
+  method?: Method | string
 }
 
 interface AxiosRequestConfigWithMetadata extends AxiosRequestConfig {
   metadata?: {
-    start: number;
+    start: number
   }
 }
 
-export type PayRequestHeaders = { [key: string]: string }
+export type PayRequestHeaders = Record<string, string>
 
 export interface PayHooks {
-  transformRequestAddHeaders?(): PayRequestHeaders;
+  transformRequestAddHeaders?(): PayRequestHeaders
 
-  successResponse?(context: PayRequestContext): void;
+  successResponse?(context: PayRequestContext): void
 
-  failureResponse?(context: PayRequestContext): void;
+  failureResponse?(context: PayRequestContext): void
 }

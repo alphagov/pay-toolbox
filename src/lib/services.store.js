@@ -39,7 +39,7 @@ const data = [
 ]
 
 const keyIndex = data.reduce((index, service) => {
-  // eslint-disable-next-line no-param-reassign
+   
   index[service.key] = service
   return index
 }, {})

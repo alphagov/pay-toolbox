@@ -60,7 +60,7 @@ class GatewayAccount extends Validated {
     }
   }
 
-  public constructor(formValues: { [key: string]: string }) {
+  public constructor(formValues: Record<string, string>) {
     super()
     this.live = formValues.live
     this.description = formValues.description

@@ -42,7 +42,7 @@ export interface Product {
   price?: number;
   pay_api_token?: string;
   description?: string;
-  metadata?: { [key: string]: string | number | boolean };
+  metadata?: Record<string, string | number | boolean>;
   require_captcha?: boolean;
 }
 

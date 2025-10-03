@@ -8,7 +8,7 @@ class UpdatePhoneNumberFormRequest extends Validated {
   @IsString()
   public telephone_number: string;
 
-  public constructor(formValues: {[key: string]: string}) {
+  public constructor(formValues: Record<string, string>) {
     super()
     this.telephone_number = formValues.telephone_number
     this.validate()

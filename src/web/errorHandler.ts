@@ -34,7 +34,7 @@ const handleRequestErrors = function handleRequestErrors(
       return
     }
 
-    if (error.data.response && error.data.response.data && error.data.response.data.errors) {
+    if (error.data.response?.data?.errors) {
       // take the first data response and present as error
       const message = `${error.service}: ${error.data.response.data.errors[0]}`
 
@@ -71,7 +71,7 @@ const handleRequestErrors = function handleRequestErrors(
 // both custom route handling and application level handling have not categorised
 // this error - log the error and return unknown system error to client
 // allow this method to not return consistently as it is the last method in the stack
-// eslint-disable-next-line consistent-return
+ 
 const handleDefault = function handleDefault(
   error: Error,
   req: Request,

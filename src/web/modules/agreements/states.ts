@@ -4,7 +4,7 @@ export enum AgreementListFilterStatus {
   Created = 'created', Active = 'active', Cancelled = 'cancelled', Inactive = 'inactive', All = 'all'
 }
 
-const agreementFilterStatusMap: { [key in AgreementListFilterStatus]: ExternalAgreementState } = {
+const agreementFilterStatusMap: Record<AgreementListFilterStatus, ExternalAgreementState> = {
   all: null,
   created: ExternalAgreementState.Created,
   active: ExternalAgreementState.Active,

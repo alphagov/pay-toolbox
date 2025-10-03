@@ -162,7 +162,7 @@ export interface Event {
   resource_type: ResourceType;
   event_type: string;
   timestamp: string;
-  data: { [key: string]: string };
+  data: Record<string, string>;
 }
 
 export interface EventTicker {

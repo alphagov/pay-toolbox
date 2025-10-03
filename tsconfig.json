@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "skipLibCheck": true,
     "outDir": "./dist",
     "allowJs": true,
     "target": "es2022",
@@ -8,16 +9,17 @@
     "moduleResolution": "node",
     "jsx": "react",
     "experimentalDecorators": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "esModuleInterop": true
   },
   "include": [
-    "./src/**/*"
+    "./src/**/*",
+    "./browser/src/**/*"
   ],
   "exclude": [
-    "node_modules"
+    "./node_modules/**/*"
   ],
   "ts-node": {
     "files": true

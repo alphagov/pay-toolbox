@@ -10,7 +10,7 @@ class GatewayAccountRequest extends Validated {
   @IsNotEmpty()
   public id: string;
 
-  public constructor(formValues: { [key: string]: string }) {
+  public constructor(formValues: Record<string, string>) {
     super()
     this.id = formValues.id
     this.validate()

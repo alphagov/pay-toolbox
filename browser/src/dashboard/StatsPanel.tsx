@@ -17,7 +17,7 @@ export class StatsPanel extends React.Component<StatsPanelProps, {}> {
     super(props)
     this.setPanelRef = this.setPanelRef.bind(this)
   }
-  setPanelRef(element: Element) {
+  setPanelRef(element: HTMLDivElement) {
     this.props.watch(element)
   }
   render() {

@@ -8,7 +8,7 @@ class UpdateEmailFormRequest extends Validated {
   @IsString()
   public email: string;
 
-  public constructor(formValues: {[key: string]: string}) {
+  public constructor(formValues: Record<string, string>) {
     super()
     this.email = formValues.email
     this.validate()

@@ -20,7 +20,7 @@ class CreateAgentInitiatedMotoProductFormRequest extends Validated {
   @MaxLength(255, {message: "Reference hint text must be 255 characters or fewer" })
   public reference_hint: string;
 
-  public constructor(formValues: { [key: string]: string }) {
+  public constructor(formValues: Record<string, string>) {
     super()
     this.name = formValues.name
     this.description = formValues.description

@@ -67,7 +67,7 @@ export async function performancePlatformCsv(req: Request, res: Response, next: 
   }
 }
 
-const getServiceGatewayAccounts = async (gateway_account_ids: Array<string>) => {
+const getServiceGatewayAccounts = async (gateway_account_ids: string[]) => {
   const serviceGatewayAccounts = []
   for (const id of gateway_account_ids) {
     serviceGatewayAccounts.push(await Connector.accounts.retrieve(id))
@@ -327,10 +327,8 @@ export async function updateOrganisationForm(
 
       if (recovered.errors) {
         context.errors = recovered.errors
-        context.errorMap = recovered.errors.reduce((aggregate: {
-          [key: string]: string;
-        }, error: ClientFormError) => {
-          // eslint-disable-next-line no-param-reassign
+        context.errorMap = recovered.errors.reduce((aggregate: Record<string, string>, error: ClientFormError) => {
+           
           aggregate[error.id] = error.message
           return aggregate
         }, {})

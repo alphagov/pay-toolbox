@@ -7,7 +7,7 @@ export default class AddTestAccountFormRequest extends Validated {
   @IsString()
   public provider: string;
 
-  public constructor(formValues: {[key: string]: string}) {
+  public constructor(formValues: Record<string, string>) {
     super()
     this.provider = formValues.provider
     this.validate()
