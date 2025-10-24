@@ -93,6 +93,7 @@ export interface Payment extends Transaction {
   total_amount?: number;
   fee?: number;
   net_amount?: number;
+  agreement_payment_type?: string;
 }
 
 export interface Refund extends Transaction {

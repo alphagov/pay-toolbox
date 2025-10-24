@@ -226,6 +226,14 @@
             <td class="govuk-table__cell payment__cell">False</td>
           {% endif %}
         </tr>
+        {% if transaction.agreement_payment_type %}
+          <tr class="govuk-table__row">
+            <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Agreement payment type</span></th>
+            <td class="govuk-table__cell payment__cell">
+              {{ transaction.agreement_payment_type | capitalize }}
+            </td>
+          </tr>
+        {% endif %}
         {% if transaction.agreement_id %}
           <tr class="govuk-table__row">
             <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Agreement</span></th>

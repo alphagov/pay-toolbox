@@ -62,7 +62,8 @@ export interface Transaction {
   parent?: Transaction;
   live: boolean;
   authorisation_mode: string,
-  agreement_id?: string
+  agreement_id?: string,
+  agreement_payment_type?: string,
 }
 
 export interface Event {
