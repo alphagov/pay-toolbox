@@ -44,7 +44,7 @@ const updatePhoneNumberForm = async function updatePhoneNumberForm(
       context.errorMap = recovered.errors.reduce((aggregate: {
         [key: string]: string;
       }, error: ClientFormError) => {
-        // eslint-disable-next-line no-param-reassign
+         
         aggregate[error.id] = error.message
         return aggregate
       }, {})
@@ -67,7 +67,7 @@ const updateEmailForm = async function updateEmailForm(req: Request, res: Respon
       context.errorMap = recovered.errors.reduce((aggregate: {
         [key: string]: string;
       }, error: ClientFormError) => {
-        // eslint-disable-next-line no-param-reassign
+         
         aggregate[error.id] = error.message
         return aggregate
       }, {})

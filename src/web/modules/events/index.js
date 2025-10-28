@@ -1,10 +1,8 @@
-const http = require('./events.http')
+import http from './events.http'
 
-module.exports = {
-  emitByIdPage: http.emitByIdPage,
-  emitByDatePage: http.emitByDatePage,
-  parityCheckerPage: http.parityCheckerPage,
-  emitById: http.emitById,
-  emitByDate: http.emitByDate,
-  parityCheck: http.parityCheck
-}
+export const emitByIdPage = http.emitByIdPage
+export const emitByDatePage = http.emitByDatePage
+export const parityCheckerPage = http.parityCheckerPage
+export const emitById = http.emitById
+export const emitByDate = http.emitByDate
+export const parityCheck = http.parityCheck
