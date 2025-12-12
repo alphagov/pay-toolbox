@@ -2,7 +2,6 @@
 
 Internal administrative tools service for GOV.UK Pay products.
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/16fc800bd9904ee38b3540d470d27c23)](https://www.codacy.com/app/govuk-pay/pay-toolbox?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=alphagov/pay-toolbox&amp;utm_campaign=Badge_Grade)
 [![Known Vulnerabilities](https://snyk.io//test/github/alphagov/pay-toolbox/badge.svg?targetFile=package.json)](https://snyk.io//test/github/alphagov/pay-toolbox?targetFile=package.json)
 
 ## Running in a support role
