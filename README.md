@@ -36,24 +36,25 @@ npm run dev
 * Add breakpoints to any file you want to debug - click in the left hand column and a red dot will appear.
 
 If the above doesn't work, try the following:
+
 * Open the search command box and enter `Debug npm script`
 * Select `dev tsc-watch --noClear --onSuccess "./scripts/run-dev"`
 
 ## Key runtime environment variables
 
 | Variable                 | Description                                                          |
-| ------------------------ |:-------------------------------------------------------------------- |
-| `BIND_HOST`              | The IP address for the application to bind to. Defaults to 127.0.0.1
+|--------------------------|:---------------------------------------------------------------------|
+| `BIND_HOST`              | The IP address for the application to bind to. Defaults to 127.0.0.1 |
 | `NODE_ENV`               |
 | `STRIPE_ACCOUNT_API_KEY` |
 | `https_proxy`            |
 
 ## Development Goals/ Focus
 
-  * Small files, each piece responsible for one thing
-  * Contextual tests, tests close to what they are testing, organised by feature
-  * Simple to understand architecture
-  * Latest language development standards
+* Small files, each piece responsible for one thing
+* Contextual tests, tests close to what they are testing, organised by feature
+* Simple to understand architecture
+* Latest language development standards
 
 ## Notes on coding style restriction
 
@@ -65,17 +66,24 @@ See `.eslintrc.json` for specifics.
 this should no longer be something we have to account for with hacks
 
 `array-bracket-spacing` - opinion: :+1: spacing
-`@typescript-eslint/no-var-requires` - not yet using Typescript module syntax, rule should be set to error when we switch
+`@typescript-eslint/no-var-requires` - not yet using Typescript module syntax, rule should be set to error when we
+switch
 
 ## Build process (inbox)
 
-Currently relies on `tsc-watch` to extend the Typescript compiler in dev mode, ideally this should combine `nodemon` waiting on standard `tsc --watch`
+Currently relies on `tsc-watch` to extend the Typescript compiler in dev mode, ideally this should combine `nodemon`
+waiting on standard `tsc --watch`
 
-`ts-node` is used for directly interpreting unit test files, we can either use this or include test files in the watch/ build process
+`ts-node` is used for directly interpreting unit test files, we can either use this or include test files in the watch/
+build process
 
 ## Licence
+
 [MIT License](LICENCE)
 
 ## Vulnerability Disclosure
 
-GOV.UK Pay aims to stay secure for everyone. If you are a security researcher and have discovered a security vulnerability in this code, we appreciate your help in disclosing it to us in a responsible manner. Please refer to our [vulnerability disclosure policy](https://www.gov.uk/help/report-vulnerability) and our [security.txt](https://vdp.cabinetoffice.gov.uk/.well-known/security.txt) file for details.
+GOV.UK Pay aims to stay secure for everyone. If you are a security researcher and have discovered a security
+vulnerability in this code, we appreciate your help in disclosing it to us in a responsible manner. Please refer to
+our [vulnerability disclosure policy](https://www.gov.uk/help/report-vulnerability) and
+our [security.txt](https://vdp.cabinetoffice.gov.uk/.well-known/security.txt) file for details.
