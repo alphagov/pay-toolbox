@@ -61,7 +61,7 @@ See `.eslintrc.json` for specifics.
 
 `semi` - see [Eslint referenced blogpost](https://blog.izs.me/2010/12/an-open-letter-to-javascript-leaders-regarding)
 
-`comma-dangle` - many popular diff/ review tools now allow ignoring whitespace
+`comma-dangle` - many popular diff/review tools now allow ignoring whitespace
 this should no longer be something we have to account for with hacks
 
 `array-bracket-spacing` - opinion: :+1: spacing
