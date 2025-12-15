@@ -45,7 +45,7 @@ If the above doesn't work, try the following:
 |--------------------------|:---------------------------------------------------------------------|
 | `BIND_HOST`              | The IP address for the application to bind to. Defaults to 127.0.0.1 |
 | `NODE_ENV`               |
-| `STRIPE_ACCOUNT_API_KEY` |
+| `STRIPE_ACCOUNT_API_KEY` | Defaults to `''`                                                     |
 | `https_proxy`            |
 
 ## Development Goals/ Focus
