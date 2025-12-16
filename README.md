@@ -2,7 +2,6 @@
 
 Internal administrative tools service for GOV.UK Pay products.
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/16fc800bd9904ee38b3540d470d27c23)](https://www.codacy.com/app/govuk-pay/pay-toolbox?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=alphagov/pay-toolbox&amp;utm_campaign=Badge_Grade)
 [![Known Vulnerabilities](https://snyk.io//test/github/alphagov/pay-toolbox/badge.svg?targetFile=package.json)](https://snyk.io//test/github/alphagov/pay-toolbox?targetFile=package.json)
 
 ## Running in a support role
@@ -46,7 +45,7 @@ If the above doesn't work, try the following:
 |--------------------------|:---------------------------------------------------------------------|
 | `BIND_HOST`              | The IP address for the application to bind to. Defaults to 127.0.0.1 |
 | `NODE_ENV`               |
-| `STRIPE_ACCOUNT_API_KEY` |
+| `STRIPE_ACCOUNT_API_KEY` | Defaults to `''`                                                     |
 | `https_proxy`            |
 
 ## Development Goals/ Focus
@@ -62,7 +61,7 @@ See `.eslintrc.json` for specifics.
 
 `semi` - see [Eslint referenced blogpost](https://blog.izs.me/2010/12/an-open-letter-to-javascript-leaders-regarding)
 
-`comma-dangle` - many popular diff/ review tools now allow ignoring whitespace
+`comma-dangle` - many popular diff/review tools now allow ignoring whitespace
 this should no longer be something we have to account for with hacks
 
 `array-bracket-spacing` - opinion: :+1: spacing
