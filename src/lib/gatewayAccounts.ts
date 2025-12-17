@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { Service } from './pay-request/services/admin_users/types'
 import { ParsedQs } from 'qs'
 import { BooleanFilterOption, toNullableBooleanString } from '../web/modules/common/BooleanFilterOption'

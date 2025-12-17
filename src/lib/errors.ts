@@ -1,4 +1,4 @@
-/* eslint-disable max-classes-per-file */
+ 
 import { ValidationError as ClassValidatorError } from 'class-validator'
 import { AxiosError } from 'axios'
 

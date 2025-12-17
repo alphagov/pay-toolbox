@@ -356,7 +356,7 @@ export async function csvPage(req: Request, res: Response, next: NextFunction): 
       service = await AdminUsers.services.retrieveByGatewayAccountId(accountId)
     }
 
-    // eslint-disable-next-line no-plusplus
+     
     for (let i = 0; i < totalNumberOfYears; i++) years.push(now.year() - i)
 
     res.render('transactions/csv', {

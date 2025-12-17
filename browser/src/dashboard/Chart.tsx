@@ -15,6 +15,7 @@ interface VolumesByHourChart {
   data: Serie[]
 }
 
+// eslint-disable-next-line no-redeclare
 export const VolumesByHourChart = (props: VolumesByHourChart) => <ResponsiveLine
   animate={true}
   isInteractive={false}
