@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { Serie } from '@nivo/line'
+import { LineSeries } from '@nivo/line'
 
 export interface TimeseriesPoint {
   timestamp: string
@@ -70,7 +70,7 @@ export function jsonToChartData(
   compareReportResult: TimeseriesPoint[] = [],
   includeComparison: boolean = false,
   comparisonDate: moment.Moment
-): Serie[] {
+): LineSeries[] {
   const padded = padTimes(reportResult, baseDate)
   const comparePadded = padTimes(compareReportResult, baseDate, true)
 

@@ -3,7 +3,7 @@ import React from 'react'
 import moment from 'moment'
 
 import { ResizeObserver } from '@juggle/resize-observer'
-import { Serie } from '@nivo/line'
+import { LineSeries } from '@nivo/line'
 
 import { Event } from './../../../src/web/modules/transactions/types/ledger'
 import { StatsPanel } from './StatsPanel'
@@ -41,7 +41,7 @@ interface DashboardState {
   compareGraphs: boolean,
 
   // move to data
-  transactionVolumesByHour: Serie[],
+  transactionVolumesByHour: LineSeries[],
   aggregateCompletedVolumes: DailyVolumeReport,
   aggregateAllVolumes: DailyVolumeReport,
   queuedEvents: Event[],
@@ -68,7 +68,7 @@ export interface AggregateSyncStatus {
 interface PendingAggregateSync {
   aggregateAllVolumes: DailyVolumeReport,
   aggregateCompletedVolumes: DailyVolumeReport,
-  transactionVolumesByHour: Serie[]
+  transactionVolumesByHour: LineSeries[]
 }
 
 // the one place we're OK with having non-react state, this will be updated all the time
@@ -364,7 +364,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
     const [ volumes, volumesByHour ] = await Promise.all([
       fetchAggregateVolumes(timestampFrom, timestampFrom),
       // @FIXME(sfount) without providing a to-date (or limit) there's a reasonable small chance the aggregate and volumes by hour don't line up, this should be a very small discrepancy so could be addressed later
-      fetchTransactionVolumesByHour(timestampFrom, this.state.compareDate, null, null, this.state.compareGraphs)
+      fetchTransactionVolumesByHour(timestampFrom, this.state.compareDate, undefined, undefined, this.state.compareGraphs)
     ])
 
     return {
@@ -389,7 +389,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
           .concat(staging.map((event: Event) => event.key))
           .includes(event.key)
       ) {
-        if (event.timestamp - cursor < 0) {
+      if (event.timestamp && event.timestamp - cursor < 0) {
           if (eventsActiveSuccess.includes(event.event_type)) {
             if (!cachedSuccess[event.resource_external_id]) {
               cachedSuccess[event.resource_external_id] = true
@@ -565,7 +565,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
   }
 }
 
-function updateStagingGraphNode(transactionVolumesByHour: Serie[], event: Event, pointIndex: number) {
+function updateStagingGraphNode(transactionVolumesByHour: LineSeries[], event: Event, pointIndex: number) {
   const index = moment(event.timestamp).hour()
   const point = transactionVolumesByHour[pointIndex].data[index] || { x: `${moment(event.timestamp).format('YYYY-MM-DDTHH')}:00:00.000000Z`, y: 0 }
   const currentValue = point.y as number

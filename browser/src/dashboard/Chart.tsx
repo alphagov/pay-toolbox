@@ -1,5 +1,5 @@
 import React from 'react'
-import { ResponsiveLine, Serie } from '@nivo/line'
+import { ResponsiveLine, LineSeries } from '@nivo/line'
 
 const theme = {
   background: "#FFFFFF",
@@ -12,7 +12,7 @@ const theme = {
 }
 
 interface VolumesByHourChart {
-  data: Serie[]
+  data: LineSeries[]
 }
 
 export const VolumesByHourChart = (props: VolumesByHourChart) => <ResponsiveLine
