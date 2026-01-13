@@ -24,8 +24,8 @@ import {
   DailyVolumeReport
 } from './ledgerResource'
 
-export type Serie = NonNullable<ComponentProps<typeof ResponsiveLine>['data']>[number];
-
+type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
+export type Serie = DeepWriteable<NonNullable<ComponentProps<typeof ResponsiveLine>['data']>[number]>;
 interface DashboardProps {
   tickInterval: number
 }
