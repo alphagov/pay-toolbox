@@ -1,9 +1,9 @@
 import {
-    PaymentProvider,
-    AccountType,
-    EmailCollectionMode,
-    EmailNotifications,
-    SupportedCard
+  PaymentProvider,
+  AccountType,
+  EmailCollectionMode,
+  EmailNotifications,
+  SupportedCard
 } from '../../shared'
 
 /** In-flight payment */
@@ -73,6 +73,12 @@ export interface GatewayAccountCredential {
 
 export interface StripeCredentials {
   stripe_account_id: string;
+}
+
+export interface WorldpayCredentials {
+  one_off_customer_initiated?: { merchant_code: string };
+  recurring_customer_initiated?: { merchant_code: string };
+  recurring_merchant_initiated?: { merchant_code: string };
 }
 
 export interface Credentials {

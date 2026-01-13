@@ -55,6 +55,9 @@ export interface Transaction {
   parent_transaction_id?: string;
   gateway_transaction_id?: string;
   disputed?: boolean;
+  credential_external_id?: string;
+  agreement_id?: string
+  authorisation_mode?: string;
 }
 
 export interface PaymentInstrument {

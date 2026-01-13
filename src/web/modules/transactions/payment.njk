@@ -180,7 +180,12 @@
               {{ transaction.gateway_transaction_id }}
             {% endif %}
           </td>
+        {% if transaction.payment_provider === "worldpay" %}
+        <tr class="govuk-table__row">
+          <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Merchant code</span></th>
+          <td class="govuk-table__cell payment__cell"> {{ merchantCode or "-" }}</td>
         </tr>
+        {% endif %}
         {% endif %}
         <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Language</span></th>
