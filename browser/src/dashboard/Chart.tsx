@@ -12,9 +12,17 @@ const theme = {
   grid: {}
 }
 
-type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
-export type Serie = DeepWriteable<NonNullable<ComponentProps<typeof ResponsiveLine>['data']>[number]>;
+type DeepWriteable<T> = T extends (...args: any[]) => any 
+  ? T 
+  : T extends Date 
+  ? T 
+  : { -readonly [P in keyof T]: DeepWriteable<T[P]> };
+  
+type BaseSerie = NonNullable<ComponentProps<typeof ResponsiveLine>['data']>[number];
 
+export type Serie = DeepWriteable<BaseSerie> & {
+    color?: string;
+};
 interface VolumesByHourChart {
   data: Serie[]
 }
@@ -32,7 +40,7 @@ export const VolumesByHourChart = (props: VolumesByHourChart) => <ResponsiveLine
     min: 0
   }}
   theme={theme}
-  colors={d => d.color}
+  colors={d => d.color || '#000'}
   axisBottom={{ format: '%H:%M', tickValues: 'every 2 hours' }}
   enablePointLabel={false}
   enablePoints={false}
