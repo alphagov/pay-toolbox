@@ -26,6 +26,7 @@ import {
 
 type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
 export type Serie = DeepWriteable<NonNullable<ComponentProps<typeof ResponsiveLine>['data']>[number]>;
+
 interface DashboardProps {
   tickInterval: number
 }
