@@ -4,8 +4,11 @@ import moment from 'moment'
 
 import { VolumesByHourChart } from './Chart'
 
-import { Serie } from '@nivo/line'
+import { ComponentProps } from 'react';
+import { ResponsiveLine } from '@nivo/line';
 
+type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
+export type Serie = DeepWriteable<NonNullable<ComponentProps<typeof ResponsiveLine>['data']>[number]>;
 
 interface ChartVolumePanelProps {
   compareGraphs: boolean
