@@ -3,7 +3,8 @@ import React from 'react'
 import moment from 'moment'
 
 import { ResizeObserver } from '@juggle/resize-observer'
-import { Serie } from '@nivo/line'
+import { ComponentProps } from 'react';
+import { ResponsiveLine } from '@nivo/line';
 
 import { Event } from './../../../src/web/modules/transactions/types/ledger'
 import { StatsPanel } from './StatsPanel'
@@ -22,6 +23,8 @@ import {
   cachedSuccess,
   DailyVolumeReport
 } from './ledgerResource'
+
+export type Serie = NonNullable<ComponentProps<typeof ResponsiveLine>['data']>[number];
 
 interface DashboardProps {
   tickInterval: number
