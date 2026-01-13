@@ -1,5 +1,6 @@
 import React from 'react'
-import { ResponsiveLine, Serie } from '@nivo/line'
+import { ComponentProps } from 'react';
+import { ResponsiveLine } from '@nivo/line'
 
 const theme = {
   background: "#FFFFFF",
@@ -10,6 +11,9 @@ const theme = {
   },
   grid: {}
 }
+
+type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
+export type Serie = DeepWriteable<NonNullable<ComponentProps<typeof ResponsiveLine>['data']>[number]>;
 
 interface VolumesByHourChart {
   data: Serie[]
