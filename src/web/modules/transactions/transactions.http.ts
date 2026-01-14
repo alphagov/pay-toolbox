@@ -1,12 +1,13 @@
-import {NextFunction, Request, Response} from 'express'
+import { NextFunction, Request, Response } from 'express'
 
-import {AdminUsers, Connector, Ledger, Webhooks} from '../../../lib/pay-request/client'
-import {EntityNotFoundError} from '../../../lib/errors'
+import { AdminUsers, Connector, Ledger, Webhooks } from '../../../lib/pay-request/client'
+import { EntityNotFoundError } from '../../../lib/errors'
 import logger from '../../../lib/logger'
-import {AccountType, TransactionType} from '../../../lib/pay-request/shared'
-import {PaymentListFilterStatus, resolvePaymentStates, resolveRefundStates} from "./states";
-import {Transaction} from "../../../lib/pay-request/services/ledger/types";
-import {ifEntityNotFound} from "../common/ifEntityNotFound";
+import { AccountType, TransactionType } from '../../../lib/pay-request/shared'
+import { PaymentListFilterStatus, resolvePaymentStates, resolveRefundStates } from "./states";
+import { ifEntityNotFound } from "../common/ifEntityNotFound";
+import { GatewayAccount, WorldpayCredentials } from '../../../lib/pay-request/services/connector/types'
+import { Transaction } from '../../../lib/pay-request/services/ledger/types'
 
 const process = require('process')
 const url = require('url')
@@ -14,8 +15,8 @@ const https = require('https')
 const moment = require('moment')
 const rfc822Validator = require('rfc822-validate')
 
-const {common, services} = require('./../../../config')
-const {constants} = require('@govuk-pay/pay-js-commons')
+const { common, services } = require('./../../../config')
+const { constants } = require('@govuk-pay/pay-js-commons')
 
 if (common.development) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
@@ -26,7 +27,7 @@ function isAnEmail(value: string): boolean {
 }
 
 export async function searchPage(req: Request, res: Response): Promise<void> {
-  res.render('transactions/search', {csrf: req.csrfToken()})
+  res.render('transactions/search', { csrf: req.csrfToken() })
 }
 
 export async function search(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -93,11 +94,11 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
     const warnings: string[] = []
 
     const filters = {
-      ...req.query.reference && {reference: req.query.reference as string},
-      ...req.query.email && {email: req.query.email as string},
-      ...req.query.gateway_transaction_id && {gateway_transaction_id: req.query.gateway_transaction_id as string},
-      ...req.query.gateway_payout_id && {gateway_payout_id: req.query.gateway_payout_id as string},
-      ...req.query.agreement_id && {agreement_id: req.query.agreement_id as string}
+      ...req.query.reference && { reference: req.query.reference as string },
+      ...req.query.email && { email: req.query.email as string },
+      ...req.query.gateway_transaction_id && { gateway_transaction_id: req.query.gateway_transaction_id as string },
+      ...req.query.gateway_payout_id && { gateway_payout_id: req.query.gateway_payout_id as string },
+      ...req.query.agreement_id && { agreement_id: req.query.agreement_id as string }
     }
     const page = req.query.page && Number(req.query.page) || 1
     const pageSize = 20
@@ -108,18 +109,18 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
       display_size: pageSize,
       limit_total: true,
       limit_total_size: limitTotalSize,
-      ...transactionType && {transaction_type: transactionType as TransactionType},
-      ...accountId && {account_id: Number(accountId)},
-      ...transactionType === TransactionType.Payment && {payment_states: resolvePaymentStates(selectedStatus)},
-      ...transactionType === TransactionType.Refund && {refund_states: resolveRefundStates(selectedStatus)},
+      ...transactionType && { transaction_type: transactionType as TransactionType },
+      ...accountId && { account_id: Number(accountId) },
+      ...transactionType === TransactionType.Payment && { payment_states: resolvePaymentStates(selectedStatus) },
+      ...transactionType === TransactionType.Refund && { refund_states: resolveRefundStates(selectedStatus) },
       ...filters
     })
 
     if (req.query.account) {
       account = await Connector.accounts.retrieve(accountId as string)
-          .catch(ifEntityNotFound(() => warnings.push('Transactions were found for this gateway account but no gateway account was returned by Connector'), Boolean(response.results.length)))
+        .catch(ifEntityNotFound(() => warnings.push('Transactions were found for this gateway account but no gateway account was returned by Connector'), Boolean(response.results.length)))
       service = await AdminUsers.services.retrieveByGatewayAccountId(accountId as string)
-          .catch(ifEntityNotFound(() => warnings.push('Transactions were found for this gateway account but no service was found for this account'), Boolean(response.results.length)))
+        .catch(ifEntityNotFound(() => warnings.push('Transactions were found for this gateway account but no service was found for this account'), Boolean(response.results.length)))
     }
 
     res.render('transactions/list', {
@@ -138,24 +139,41 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
   }
 }
 
+function getMerchantCodeForTransaction(account: GatewayAccount, transaction: Transaction): string {
+  let merchantCode
+  const credentials = account.gateway_account_credentials
+  const transactionCredentials = credentials.find(credential => credential.external_id === transaction.credential_external_id).credentials as WorldpayCredentials
+  const agreementId = transaction.agreement_id
+  const authorisationMode = transaction.authorisation_mode
+
+  if (agreementId && authorisationMode === 'agreement') {
+    merchantCode = transactionCredentials?.recurring_merchant_initiated?.merchant_code
+  } else if (agreementId) {
+    merchantCode = transactionCredentials?.recurring_customer_initiated?.merchant_code
+  } else {
+    merchantCode = transactionCredentials?.one_off_customer_initiated?.merchant_code
+  }
+  return merchantCode
+}
+
 export async function show(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const warnings: string[] = []
     const transaction = await Ledger.transactions.retrieve(req.params.id)
     const account = await Connector.accounts.retrieve(transaction.gateway_account_id)
-        .catch(ifEntityNotFound(() => warnings.push(`Transaction was found but no gateway account exists in Connector with corresponding ID (${transaction.gateway_account_id})`)));
+      .catch(ifEntityNotFound(() => warnings.push(`Transaction was found but no gateway account exists in Connector with corresponding ID (${transaction.gateway_account_id})`)));
     const service = await AdminUsers.services.retrieveByGatewayAccountId(transaction.gateway_account_id)
-        .catch(ifEntityNotFound(() => warnings.push(`Transaction was found but no service was found with corresponding gateway account ID (${transaction.gateway_account_id})`)))
+      .catch(ifEntityNotFound(() => warnings.push(`Transaction was found but no service was found with corresponding gateway account ID (${transaction.gateway_account_id})`)))
     const relatedTransactions = []
     let stripeDashboardUri = ''
 
     let connectorTransaction
     if (transaction.transaction_type === TransactionType.Payment) {
       connectorTransaction = await Connector.charges.retrieve(req.params.id)
-          .catch(ifEntityNotFound((): null => null));
+        .catch(ifEntityNotFound((): null => null));
     } else if (transaction.transaction_type === TransactionType.Refund) {
       connectorTransaction = await Connector.refunds.retrieve(transaction.parent_transaction_id, req.params.id, transaction.gateway_account_id)
-          .catch(ifEntityNotFound((): null => null));
+        .catch(ifEntityNotFound((): null => null));
     } else if (transaction.transaction_type === TransactionType.Dispute) {
       connectorTransaction = null // Disputes are never stored in Connector
     }
@@ -175,27 +193,27 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     const paymentStartedEvent = events.find((event: any) => event.event_type === 'PAYMENT_STARTED')
     if (paymentStartedEvent) {
       const endOfUserJourneyEvent = events.find((event: any) => event.event_type === 'USER_APPROVED_FOR_CAPTURE' ||
-                                                                event.event_type === 'USER_APPROVED_FOR_CAPTURE_AWAITING_SERVICE_APPROVAL' ||
-                                                                event.event_type === 'CANCELLED_BY_USER' ||
-                                                                event.event_type === 'AUTHORISATION_REJECTED' ||
-                                                                event.event_type === 'GATEWAY_ERROR_DURING_AUTHORISATION');
+        event.event_type === 'USER_APPROVED_FOR_CAPTURE_AWAITING_SERVICE_APPROVAL' ||
+        event.event_type === 'CANCELLED_BY_USER' ||
+        event.event_type === 'AUTHORISATION_REJECTED' ||
+        event.event_type === 'GATEWAY_ERROR_DURING_AUTHORISATION');
       if (endOfUserJourneyEvent) {
-        const userJourneyDurationMillis : number = Date.parse(endOfUserJourneyEvent.timestamp) - Date.parse(paymentStartedEvent.timestamp)
-        const userJourneyDurationSeconds : number = Math.floor(userJourneyDurationMillis / 1000)
+        const userJourneyDurationMillis: number = Date.parse(endOfUserJourneyEvent.timestamp) - Date.parse(paymentStartedEvent.timestamp)
+        const userJourneyDurationSeconds: number = Math.floor(userJourneyDurationMillis / 1000)
 
         userJourneyDurationFriendly = ''
 
-        const hours : number = Math.floor(userJourneyDurationSeconds / 3600)
+        const hours: number = Math.floor(userJourneyDurationSeconds / 3600)
         if (hours) {
           userJourneyDurationFriendly += hours + ' hour' + (hours !== 1 ? 's, ' : ', ')
         }
 
-        const minutes : number = Math.floor(userJourneyDurationSeconds / 60) % 60
+        const minutes: number = Math.floor(userJourneyDurationSeconds / 60) % 60
         if (hours || minutes) {
           userJourneyDurationFriendly += minutes + ' minute' + (minutes !== 1 ? 's and ' : ' and ')
         }
 
-        const seconds : number = userJourneyDurationSeconds % 60
+        const seconds: number = userJourneyDurationSeconds % 60
         if (hours || minutes || seconds) {
           userJourneyDurationFriendly += seconds + ' second' + (seconds !== 1 ? 's' : '')
         }
@@ -203,7 +221,7 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     }
 
     const relatedResult = await Ledger.transactions.retrieveRelatedTransactions(transaction.transaction_id,
-      {gateway_account_id: transaction.gateway_account_id})
+      { gateway_account_id: transaction.gateway_account_id })
     relatedTransactions.push(...relatedResult.transactions)
 
     let parentTransaction
@@ -235,6 +253,12 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
 
     const renderKey = transaction.transaction_type
 
+    let merchantCode
+
+    if (account.payment_provider === 'worldpay') {
+      merchantCode = getMerchantCodeForTransaction(account, transaction)
+    }
+
     const context = {
       transaction,
       service,
@@ -251,11 +275,12 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
           stripeDashboardUri,
           humanReadableSubscriptions: constants.webhooks.humanReadableSubscriptions,
           userJourneyDurationFriendly,
-          isExpunged: !connectorTransaction
+          isExpunged: !connectorTransaction,
+          merchantCode
         })
       }
       case TransactionType.Refund: {
-        return res.render(`transactions/refund`,{
+        return res.render(`transactions/refund`, {
           ...context,
           parentTransaction,
           isExpunged: !connectorTransaction
@@ -311,8 +336,8 @@ export async function statistics(req: Request, res: Response, next: NextFunction
       account_id: accountId,
       override_from_date_validation: true,
       include_moto_statistics: includeMotoStatistics,
-      ...fromDate && {from_date: fromDate},
-      ...toDate && {to_date: toDate},
+      ...fromDate && { from_date: fromDate },
+      ...toDate && { to_date: toDate },
     })
 
     const results = {
@@ -410,8 +435,8 @@ export async function streamCsv(req: Request, res: Response, next: NextFunction)
       payment_states: '',
       exact_reference_match: true,
       ...filters,
-      ...accountId && {account_id: accountId},
-      ...feeHeaders && {fee_headers: feeHeaders}
+      ...accountId && { account_id: accountId },
+      ...feeHeaders && { fee_headers: feeHeaders }
     }
 
     const accountName = serviceDetails ? serviceDetails.name : 'GOV.UK Platform'
