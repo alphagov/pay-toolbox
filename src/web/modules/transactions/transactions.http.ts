@@ -6,7 +6,8 @@ import logger from '../../../lib/logger'
 import { AccountType, TransactionType } from '../../../lib/pay-request/shared'
 import { PaymentListFilterStatus, resolvePaymentStates, resolveRefundStates } from "./states";
 import { ifEntityNotFound } from "../common/ifEntityNotFound";
-import { WorldpayCredentials } from '../../../lib/pay-request/services/connector/types'
+import { GatewayAccount, WorldpayCredentials } from '../../../lib/pay-request/services/connector/types'
+import { Transaction } from '../../../lib/pay-request/services/ledger/types'
 
 const process = require('process')
 const url = require('url')
@@ -138,6 +139,23 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
   }
 }
 
+function getMerchantCodeForTransaction(account: GatewayAccount, transaction: Transaction): string {
+  let merchantCode
+  const credentials = account.gateway_account_credentials
+  const transactionCredentials = credentials.find(credential => credential.external_id === transaction.credential_external_id).credentials as WorldpayCredentials
+  const agreementId = transaction.agreement_id
+  const authorisationMode = transaction.authorisation_mode
+
+  if (agreementId && authorisationMode === 'agreement') {
+    merchantCode = transactionCredentials?.recurring_merchant_initiated?.merchant_code
+  } else if (agreementId) {
+    merchantCode = transactionCredentials?.recurring_customer_initiated?.merchant_code
+  } else {
+    merchantCode = transactionCredentials?.one_off_customer_initiated?.merchant_code
+  }
+  return merchantCode
+}
+
 export async function show(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const warnings: string[] = []
@@ -238,18 +256,7 @@ export async function show(req: Request, res: Response, next: NextFunction): Pro
     let merchantCode
 
     if (account.payment_provider === 'worldpay') {
-      const credentials = account.gateway_account_credentials
-      const transactionCredentials = credentials.find(credential => credential.external_id === transaction.credential_external_id).credentials as WorldpayCredentials
-      const agreementId = transaction.agreement_id
-      const authorisationMode = transaction.authorisation_mode
-
-      if (agreementId && authorisationMode === 'agreement') {
-        merchantCode = transactionCredentials?.recurring_merchant_initiated?.merchant_code
-      } else if (agreementId) {
-        merchantCode = transactionCredentials?.recurring_customer_initiated?.merchant_code
-      } else {
-        merchantCode = transactionCredentials?.one_off_customer_initiated?.merchant_code
-      }
+      merchantCode = getMerchantCodeForTransaction(account, transaction)
     }
 
     const context = {
