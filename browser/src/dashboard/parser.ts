@@ -2,8 +2,17 @@ import moment from 'moment'
 import { ComponentProps } from 'react';
 import { ResponsiveLine } from '@nivo/line';
 
-type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
-export type Serie = DeepWriteable<NonNullable<ComponentProps<typeof ResponsiveLine>['data']>[number]>;
+type DeepWriteable<T> = T extends (...args: any[]) => any 
+  ? T 
+  : T extends Date 
+  ? T 
+  : { -readonly [P in keyof T]: DeepWriteable<T[P]> };
+  
+type BaseSerie = NonNullable<ComponentProps<typeof ResponsiveLine>['data']>[number];
+
+export type Serie = DeepWriteable<BaseSerie> & {
+    color?: string;
+}
 
 export interface TimeseriesPoint {
   timestamp: string
