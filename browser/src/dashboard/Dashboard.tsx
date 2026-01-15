@@ -3,7 +3,8 @@ import React from 'react'
 import moment from 'moment'
 
 import { ResizeObserver } from '@juggle/resize-observer'
-import { Serie } from '@nivo/line'
+import { ComponentProps } from 'react';
+import { ResponsiveLine } from '@nivo/line';
 
 import { Event } from './../../../src/web/modules/transactions/types/ledger'
 import { StatsPanel } from './StatsPanel'
@@ -22,6 +23,18 @@ import {
   cachedSuccess,
   DailyVolumeReport
 } from './ledgerResource'
+
+type DeepWriteable<T> = T extends (...args: any[]) => any 
+  ? T 
+  : T extends Date 
+  ? T 
+  : { -readonly [P in keyof T]: DeepWriteable<T[P]> };
+  
+type BaseSerie = NonNullable<ComponentProps<typeof ResponsiveLine>['data']>[number];
+
+export type Serie = DeepWriteable<BaseSerie> & {
+    color?: string;
+};
 
 interface DashboardProps {
   tickInterval: number
