@@ -103,7 +103,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-inlinesvg": "4.0.3",
-    "react-native": "^0.72.4",
+    "react-native": "^0.82.1",
     "react-spring": "9.7.2",
     "sinon": "^10.0.1",
     "stylelint": "^14.8.2",
