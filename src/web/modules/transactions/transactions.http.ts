@@ -139,10 +139,10 @@ export async function list(req: Request, res: Response, next: NextFunction): Pro
   }
 }
 
-function getMerchantCodeForTransaction(account: GatewayAccount, transaction: Transaction): string {
+function getMerchantCodeForTransaction(account: GatewayAccount, transaction: Transaction): string | undefined {
   let merchantCode
   const credentials = account.gateway_account_credentials
-  const transactionCredentials = credentials.find(credential => credential.external_id === transaction.credential_external_id).credentials as WorldpayCredentials
+  const transactionCredentials = credentials.find(credential => credential.external_id === transaction.credential_external_id)?.credentials as WorldpayCredentials
   const agreementId = transaction.agreement_id
   const authorisationMode = transaction.authorisation_mode
 
