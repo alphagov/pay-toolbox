@@ -68,9 +68,9 @@
   },
   "devDependencies": {
     "@juggle/resize-observer": "^3.3.1",
-    "@nivo/core": "0.83.0",
-    "@nivo/line": "0.83.0",
-    "@nivo/stream": "0.83.0",
+    "@nivo/core": "0.99.0",
+    "@nivo/line": "0.99.0",
+    "@nivo/stream": "0.99.0",
     "@types/chai": "^4.2.18",
     "@types/client-sessions": "^0.8.0",
     "@types/cls-hooked": "4.3.3",

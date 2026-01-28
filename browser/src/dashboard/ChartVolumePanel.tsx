@@ -1,17 +1,15 @@
 import React from 'react'
+import { Series } from './Serie'
 
 import moment from 'moment'
 
 import { VolumesByHourChart } from './Chart'
 
-import { Serie } from '@nivo/line'
-
-
 interface ChartVolumePanelProps {
   compareGraphs: boolean
   date: moment.Moment
   compareDate: moment.Moment
-  data: Serie[]
+  data: Series[]
 }
 
 export class ChartVolumePanel extends React.Component<ChartVolumePanelProps, {}> {
