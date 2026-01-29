@@ -1,5 +1,6 @@
 import React from 'react'
-import { ResponsiveLine, Serie } from '@nivo/line'
+import { Series } from './Serie'
+import { ResponsiveLine } from '@nivo/line'
 
 const theme = {
   background: "#FFFFFF",
@@ -12,7 +13,7 @@ const theme = {
 }
 
 interface VolumesByHourChart {
-  data: Serie[]
+  data: Series[]
 }
 
 export const VolumesByHourChart = (props: VolumesByHourChart) => <ResponsiveLine
@@ -28,7 +29,7 @@ export const VolumesByHourChart = (props: VolumesByHourChart) => <ResponsiveLine
     min: 0
   }}
   theme={theme}
-  colors={d => d.color}
+  colors={d => d.color || '#000'}
   axisBottom={{ format: '%H:%M', tickValues: 'every 2 hours' }}
   enablePointLabel={false}
   enablePoints={false}

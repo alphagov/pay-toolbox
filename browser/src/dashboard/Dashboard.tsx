@@ -3,7 +3,7 @@ import React from 'react'
 import moment from 'moment'
 
 import { ResizeObserver } from '@juggle/resize-observer'
-import { Serie } from '@nivo/line'
+import { MutableSeries, Series } from './Serie'
 
 import { Event } from './../../../src/web/modules/transactions/types/ledger'
 import { StatsPanel } from './StatsPanel'
@@ -41,7 +41,7 @@ interface DashboardState {
   compareGraphs: boolean,
 
   // move to data
-  transactionVolumesByHour: Serie[],
+  transactionVolumesByHour: Series[],
   aggregateCompletedVolumes: DailyVolumeReport,
   aggregateAllVolumes: DailyVolumeReport,
   queuedEvents: Event[],
@@ -68,7 +68,7 @@ export interface AggregateSyncStatus {
 interface PendingAggregateSync {
   aggregateAllVolumes: DailyVolumeReport,
   aggregateCompletedVolumes: DailyVolumeReport,
-  transactionVolumesByHour: Serie[]
+  transactionVolumesByHour: Series[]
 }
 
 // the one place we're OK with having non-react state, this will be updated all the time
@@ -395,18 +395,18 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
               cachedSuccess[event.resource_external_id] = true
               stagingAggregateCompletedVolumes.total_amount += event.amount
               stagingAggregateCompletedVolumes.total_volume += 1
-              updateStagingGraphNode(stagingTransactionVolumesByHour, event, 1)
+              updateStagingGraphNode(stagingTransactionVolumesByHour as MutableSeries[], event, 1)
             }
           }
 
           if (event.event_type === 'PAYMENT_CREATED') {
             stagingAggregateAllVolumes.total_amount += event.amount
             stagingAggregateAllVolumes.total_volume += 1
-            updateStagingGraphNode(stagingTransactionVolumesByHour, event, 2)
+            updateStagingGraphNode(stagingTransactionVolumesByHour as MutableSeries[], event, 2)
           }
 
           if (eventsErrored.includes(event.event_type)) {
-            updateStagingGraphNode(stagingTransactionVolumesByHour, event, 0)
+            updateStagingGraphNode(stagingTransactionVolumesByHour as MutableSeries[], event, 0)
           }
 
           // this line here actually lines up the event to be shown -- if the configuration option is not set to verbose it could only do this for successful events
@@ -565,7 +565,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
   }
 }
 
-function updateStagingGraphNode(transactionVolumesByHour: Serie[], event: Event, pointIndex: number) {
+function updateStagingGraphNode(transactionVolumesByHour: MutableSeries[], event: Event, pointIndex: number) {
   const index = moment(event.timestamp).hour()
   const point = transactionVolumesByHour[pointIndex].data[index] || { x: `${moment(event.timestamp).format('YYYY-MM-DDTHH')}:00:00.000000Z`, y: 0 }
   const currentValue = point.y as number
