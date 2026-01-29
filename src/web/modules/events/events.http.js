@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 const { Connector } = require('../../../lib/pay-request/client')
 const logger = require('../../../lib/logger')
 

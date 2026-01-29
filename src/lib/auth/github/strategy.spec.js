@@ -5,7 +5,6 @@ const {PermissionLevel} = require('../types')
 const {checkUserAccess} = require("./permissions");
 
 describe('GitHub OAuth strategy', () => {
-  // eslint-disable-next-line key-spacing
   const profile = {username: 'some-test-user', displayName: 'Some User', _json: {avatar_url: 'some-url'}}
 
   it('invokes callback with `true` and profile details when user has sufficient permissions', async () => {
@@ -24,7 +23,6 @@ describe('GitHub OAuth strategy', () => {
         displayName: profile.displayName,
         permissionLevel: PermissionLevel.VIEW_ONLY,
 
-        // eslint-disable-next-line no-underscore-dangle
         avatarUrl: profile._json.avatar_url
       }
     )
