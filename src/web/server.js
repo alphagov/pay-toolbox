@@ -189,6 +189,7 @@ function readManifest(name) {
       try {
         const parsed = JSON.parse(data)
         resolve(parsed)
+       /* eslint-disable @typescript-eslint/no-unused-vars */
       } catch (error) {
         logger.warn('Failed to parse manifest', { path })
         resolve({})

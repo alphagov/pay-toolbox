@@ -1,4 +1,4 @@
-import Client, {PayHooks} from '../../base'
+import Client from '../../base'
 import type {
   Payment,
   Refund,
@@ -179,8 +179,6 @@ export default class Ledger extends Client {
     list(
       filters: ListAgreementForAccountRequest | ListAgreementRequestWithAccountOverrideRequest
     ): Promise<SearchResponse<Agreement> | undefined> {
-      const accountIdParam = filters.account_id as number[]
-
       return client._axios
         .get('/v1/agreement', {params: filters})
         .then(response => client._unpackResponseData<SearchResponse<Agreement>>(response));

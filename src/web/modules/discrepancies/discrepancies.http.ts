@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express'
+import { Request, Response } from 'express'
 
 import logger from './../../../lib/logger'
 import { Connector } from '../../../lib/pay-request/client'

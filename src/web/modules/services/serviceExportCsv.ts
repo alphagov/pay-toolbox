@@ -71,7 +71,7 @@ export function formatServiceExportCsv(liveServices: Service[]): string {
   const sortedServices = _.orderBy(liveServices, [
     service => service.id
   ])
-  const csvData = sortedServices.map((service, index) => {
+  const csvData = sortedServices.map((service) => {
       return {
         ...service,
         went_live_date_string: service.went_live_date && moment(service.went_live_date).format('YYYY-MM-DD') || '',

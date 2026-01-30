@@ -19,6 +19,7 @@ async function isUserMemberOfGitHubTeam(username: string, token: string, team: s
     await axios.get(url, githubRestOptions)
     logger.info(`User ${username} is a member of team ${team}`)
     return true
+    /* eslint-disable @typescript-eslint/no-unused-vars */
   } catch (err) {
     logger.info(`User ${username} is not a member of team ${team}`)
     return false
