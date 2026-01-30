@@ -46,13 +46,9 @@ export default defineConfig([
         },
 
         rules: {
-            '@typescript-eslint/no-require-imports': 'off',
+            '@typescript-eslint/no-require-imports': 'off', // required for .js files as they use require() for imports
             '@typescript-eslint/ban-ts-comment': 'off',
-            '@typescript-eslint/no-unused-vars': 'off',
-            '@typescript-eslint/no-empty-function': 'off',
-            '@typescript-eslint/prefer-for-of': 'off',
             '@typescript-eslint/no-unused-expressions': 'off',
-            'no-constant-binary-expression': 'off',
             '@typescript-eslint/no-explicit-any': 'off'
         },
     },

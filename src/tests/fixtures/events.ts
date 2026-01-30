@@ -1,5 +1,6 @@
 import { Event } from './../../../src/web/modules/transactions/types/ledger'
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const events: Event[] = [
   {"amount": 100, "event_type":"PAYMENT_CREATED","resource_external_id":"7b1470c9c15ffpf54q6u7csev7","event_date":"2019-11-20T19:39:14.586314+00:00","card_brand":null,"payment_provider":"sandbox","gateway_account_id":"136","type":"PAYMENT"},
   {"amount": 100, "event_type":"REFUND_AVAILABILITY_UPDATED","resource_external_id":"7b1470c9c15ffpf54q6u7csev7","event_date":"2019-11-20T19:39:14.586314+00:00","card_brand":null,"payment_provider":"sandbox","gateway_account_id":"136","type":"PAYMENT"},

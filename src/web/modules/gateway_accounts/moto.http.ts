@@ -244,6 +244,7 @@ export async function toggleAgentInitiatedMotoEnabledFlag(
   try {
     const {id} = req.params
 
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     const [account, service] = await Promise.all([
       Connector.accounts.retrieve(id),
       AdminUsers.services.retrieveByGatewayAccountId(id)

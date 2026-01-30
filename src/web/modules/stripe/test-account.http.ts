@@ -1,4 +1,3 @@
-import HTTPSProxyAgent from 'https-proxy-agent'
 import Stripe from "stripe";
 
 import {NextFunction, Request, Response} from 'express'

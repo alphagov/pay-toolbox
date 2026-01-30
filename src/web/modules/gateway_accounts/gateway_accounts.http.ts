@@ -241,6 +241,7 @@ async function detail(req: Request, res: Response): Promise<void> {
       stripePaymentsStatementDescriptor = stripeAccount.settings.payments.statement_descriptor
       stripePayoutsStatementDescriptor = stripeAccount.settings.payouts.statement_descriptor
     }
+    /* eslint-disable @typescript-eslint/no-unused-vars */
   } catch (error) {
     logger.warn('Unable to retrieve account details from Stripe. Make sure the Stripe API key is configured in the environment variables')
   }
