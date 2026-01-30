@@ -179,8 +179,8 @@ router.get('/webhooks', auth.secured(PermissionLevel.VIEW_ONLY), webhooks.list)
 router.get('/webhooks/:id/messages', auth.secured(PermissionLevel.VIEW_ONLY), webhooks.listMessages)
 router.get('/webhooks/:webhookId/messages/:messageId', auth.secured(PermissionLevel.VIEW_ONLY), webhooks.messageDetail)
 
-router.get('/platform/dashboard', auth.secured(PermissionLevel.VIEW_ONLY), platform.dashboard)
-router.get('/platform/dashboard/live', platform.live)
+// router.get('/platform/dashboard', auth.secured(PermissionLevel.VIEW_ONLY), platform.dashboard)
+// router.get('/platform/dashboard/live', platform.live)
 
 router.get('/api/platform/timeseries', platform.timeseries)
 router.get('/api/platform/aggregate', platform.aggregate)
