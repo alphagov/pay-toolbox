@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {NextFunction, Request, Response} from 'express'
 import {stringify} from 'qs'
 import moment from 'moment'
@@ -105,7 +104,6 @@ async function create(req: Request, res: Response): Promise<void> {
       context.errorMap = recovered.errors.reduce((aggregate: {
         [key: string]: string;
       }, error: ClientFormError) => {
-        // eslint-disable-next-line no-param-reassign
         aggregate[error.id] = error.message
         return aggregate
       }, {})

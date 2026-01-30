@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AdminUsers, Connector } from '../../../lib/pay-request/client'
 import { Service } from '../../../lib/pay-request/services/admin_users/types'
 import { aggregateServicesByGatewayAccountId, toAccountSearchParams, Filters } from '../../../lib/gatewayAccounts'

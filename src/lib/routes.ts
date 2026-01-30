@@ -20,7 +20,6 @@ const route = function route(method: Handler): Handler {
 
 const wrapAsyncErrorHandlers = function wrapAsyncErrorHandlers(handlers: HandlerMap): HandlerMap {
   return Object.keys(handlers).reduce((aggregate: HandlerMap, handlerKey) => {
-    // eslint-disable-next-line no-param-reassign
     aggregate[handlerKey] = route(handlers[handlerKey])
     return aggregate
   }, {})

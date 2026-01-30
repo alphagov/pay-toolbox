@@ -55,6 +55,7 @@ export default class Connector extends Client {
                 .catch(handleEntityNotFound("Charge", id))
         },
 
+        /* eslint-disable @typescript-eslint/no-wrapper-object-types */
         parityCheck(externalChargeId: string, accountId: string): Promise<Charge | String> {
             return client._axios
                 .get(`/v1/api/accounts/${accountId}/charges/${externalChargeId}`)

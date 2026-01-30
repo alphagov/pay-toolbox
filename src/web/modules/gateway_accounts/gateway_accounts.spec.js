@@ -26,7 +26,6 @@ describe('Gateway Accounts', () => {
         const details = _.cloneDeep(validGatewayAccountDetails)
         details.live = ''
 
-        // eslint-disable-next-line no-new
         new GatewayAccount(details)
       }).to.throw(IOValidationError)
     })
@@ -36,7 +35,6 @@ describe('Gateway Accounts', () => {
         const details = _.cloneDeep(validGatewayAccountDetails)
         details.live = 'not-valid'
 
-        // eslint-disable-next-line no-new
         new GatewayAccount(details)
       }).to.throw(IOValidationError)
     })
@@ -46,7 +44,6 @@ describe('Gateway Accounts', () => {
         const details = _.cloneDeep(validGatewayAccountDetails)
         details.description = ''
 
-        // eslint-disable-next-line no-new
         new GatewayAccount(details)
       }).to.throw(IOValidationError)
     })
@@ -56,7 +53,6 @@ describe('Gateway Accounts', () => {
         const details = _.cloneDeep(validGatewayAccountDetails)
         details.serviceName = ''
 
-        // eslint-disable-next-line no-new
         new GatewayAccount(details)
       }).to.throw(IOValidationError)
     })
@@ -66,7 +62,6 @@ describe('Gateway Accounts', () => {
         const details = _.cloneDeep(validGatewayAccountDetails)
         details.provider = 'gocardless'
 
-        // eslint-disable-next-line no-new
         new GatewayAccount(details)
       }).to.throw(Error)
     })
@@ -77,7 +72,6 @@ describe('Gateway Accounts', () => {
         details.live = 'live'
         details.provider = 'sandbox'
 
-        // eslint-disable-next-line no-new
         new GatewayAccount(details)
       }).to.throw(ValidationError)
     })
@@ -97,7 +91,6 @@ describe('Gateway Accounts', () => {
         details.provider = 'stripe'
         details.credentials = ''
 
-        // eslint-disable-next-line no-new
         new GatewayAccount(details)
       }).to.throw(ValidationError)
     })
