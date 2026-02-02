@@ -1,4 +1,4 @@
-import Client, {PayHooks} from '../../base'
+import Client from '../../base'
 import {redactProductApiToken, redactProductStatTokens, redactProductTokens} from '../../utils/redact'
 import {
   Product,

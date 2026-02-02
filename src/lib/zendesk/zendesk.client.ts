@@ -163,6 +163,7 @@ export async function getTicket(zendeskTicketNumber: number): Promise<ZendeskTic
     })
 
     return response.data.ticket
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   } catch (err) {
     throw new Error(`Zendesk ticket number ${zendeskTicketNumber} is not valid`)
   }

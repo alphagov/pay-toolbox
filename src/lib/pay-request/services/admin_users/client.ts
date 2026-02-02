@@ -3,8 +3,6 @@ import {redactOTP} from '../../utils/redact'
 import {mapRequestParamsToOperation} from '../../utils/request'
 import {
   CreateServiceRequest,
-  RetrieveServiceByGatewayAccountIdRequest,
-  RetrieveUserByEmailRequest,
   SearchServicesRequest,
   SearchServicesResponse,
   Service,
@@ -14,7 +12,6 @@ import {
 } from './types'
 import {App} from '../../shared'
 import {handleEntityNotFound} from "../../utils/error";
-import {response} from "express";
 
 type FeatureOperation = 'add' | 'remove'
 
@@ -169,12 +166,4 @@ export default class AdminUsers extends Client {
         .then(response => new User(response.data))
     }
   }))(this)
-}
-
-function isRetrieveServiceParams(idOrParams: string | RetrieveServiceByGatewayAccountIdRequest): idOrParams is RetrieveServiceByGatewayAccountIdRequest {
-  return (idOrParams as RetrieveServiceByGatewayAccountIdRequest).gatewayAccountId !== undefined
-}
-
-function isRetrieveUserParams(idOrParams: string | RetrieveUserByEmailRequest): idOrParams is RetrieveUserByEmailRequest {
-  return (idOrParams as RetrieveUserByEmailRequest).email !== undefined
 }

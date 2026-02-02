@@ -1,4 +1,4 @@
-import {ExternalAgreementState, ExternalTransactionState} from "../../../lib/pay-request/shared";
+import {ExternalAgreementState} from "../../../lib/pay-request/shared";
 
 export enum AgreementListFilterStatus {
   Created = 'created', Active = 'active', Cancelled = 'cancelled', Inactive = 'inactive', All = 'all'

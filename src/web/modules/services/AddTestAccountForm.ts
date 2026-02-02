@@ -1,4 +1,4 @@
-import {IsBoolean, IsEmail, IsNotEmpty, IsString} from 'class-validator'
+import {IsNotEmpty, IsString} from 'class-validator'
 
 import Validated from '../common/validated'
 

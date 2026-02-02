@@ -123,14 +123,6 @@ export interface MerchantDetails {
   url?: string;
 }
 
-export interface RetrieveUserByEmailRequest {
-  email: string;
-}
-
-export interface RetrieveServiceByGatewayAccountIdRequest {
-  gatewayAccountId: string;
-}
-
 export interface CreateServiceRequest {
   gateway_account_ids?: string[];
   service_name?: ServiceName;

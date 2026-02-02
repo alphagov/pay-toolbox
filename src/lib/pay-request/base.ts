@@ -5,10 +5,10 @@ import axios, {
   AxiosResponse,
   AxiosError,
   AxiosRequestConfig,
-  Method,
-  InternalAxiosRequestConfig
+  Method
 } from 'axios'
 import {App} from './shared'
+import logger from "../logger"
 
 const {RESTClientError} = require('../errors')
 
@@ -96,7 +96,8 @@ export default class Client {
     try {
       await this._axios.get('/healthcheck')
       return true
-    } catch (e) {
+    } catch (e: any) {
+      logger.info(`Healthcheck failed with error {}`, e.message)
       return false
     }
   }
