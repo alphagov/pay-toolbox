@@ -73,6 +73,7 @@ interface PendingAggregateSync {
 
 // the one place we're OK with having non-react state, this will be updated all the time
 // and would cause the dashboard to be re-drawn _a lot_
+/* eslint-disable @typescript-eslint/no-unused-vars */
 let lastSystemTick: number | null = null 
 
 const MAX_FAILED_CONNECTION_ATTEMPTS = 60
@@ -281,6 +282,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                     numberOfAggregateSyncs: this.state.numberOfAggregateSyncs + 1
                   })
                 })
+                /* eslint-disable @typescript-eslint/no-unused-vars */
                 .catch((error) => {
                   log(now, windowNow, 'Error during scheduled aggregate sync')
                   this.setState({
@@ -335,6 +337,7 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
                     }
                   })
                 })
+                /* eslint-disable @typescript-eslint/no-unused-vars */
                 .catch((error) => {
                   log(now, windowNow, 'Error during fetching event window')
                   this.setState({

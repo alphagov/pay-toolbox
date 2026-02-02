@@ -9,19 +9,24 @@ export default defineConfig([
         ignores: ['**/node_modules/**', '**/dist/**'],
     },
     eslint.configs.recommended,
-    tseslint.configs.recommendedTypeChecked,
+    tseslint.configs.recommended,
     {
         files: ['**/*.tsx'],
+        ...react.configs.flat.recommended,
         languageOptions: {
             parserOptions: {
                 ecmaFeatures: {jsx: true},
                 ecmaVersion: "latest",
                 sourceType: 'module',
+                projectService: true
             },
         },
         plugins: {react},
         settings: {
             react: {version: 'detect'},
+        },
+        rules: {
+            '@typescript-eslint/no-explicit-any': 'off' // lot of places use type `any`. Need to define proper types before removing this rule
         },
     },
     {
@@ -29,7 +34,6 @@ export default defineConfig([
             '@typescript-eslint': tseslint.plugin,
         },
         files: ['**/*.{js,mjs,ts}'],
-        extends: [tseslint.configs.disableTypeChecked],
         languageOptions: {
             globals: {
                 ...globals.node,
@@ -44,7 +48,6 @@ export default defineConfig([
                 projectService: true
             }
         },
-
         rules: {
             '@typescript-eslint/no-require-imports': 'off', // required for .js files as they use require() for imports
             '@typescript-eslint/no-explicit-any': 'off' // lot of places use type `any`. Need to define proper types before removing this rule

@@ -12,6 +12,7 @@ interface StatsPanelProps {
   all: DailyVolumeReport
 }
 
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 export class StatsPanel extends React.Component<StatsPanelProps, {}> {
   constructor(props: StatsPanelProps) {
     super(props)
