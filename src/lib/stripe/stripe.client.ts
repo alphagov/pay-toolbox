@@ -10,7 +10,7 @@ const stripeConfig: Stripe.StripeConfig = {
 }
 
 if (config.server.HTTPS_PROXY) {
-  // @ts-ignore
+  // @ts-expect-error Expected usage to create HTTPSProxyAgent
   stripeConfig.httpAgent = new HTTPSProxyAgent(config.server.HTTPS_PROXY)
 }
 
