@@ -106,6 +106,7 @@ describe('Gateway Accounts', () => {
       const payload = account.formatPayload()
       expect(payload.requires_3ds).to.eql(true)
       expect(payload.allow_apple_pay).to.eql(true)
+      /* eslint-disable @typescript-eslint/no-unused-expressions */
       expect(payload.allow_google_pay).to.not.exist
     });
 

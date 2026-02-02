@@ -47,9 +47,7 @@ export default defineConfig([
 
         rules: {
             '@typescript-eslint/no-require-imports': 'off', // required for .js files as they use require() for imports
-            '@typescript-eslint/ban-ts-comment': 'off',
-            '@typescript-eslint/no-unused-expressions': 'off',
-            '@typescript-eslint/no-explicit-any': 'off'
+            '@typescript-eslint/no-explicit-any': 'off' // lot of places use type `any`. Need to define proper types before removing this rule
         },
     },
 ])

@@ -576,7 +576,6 @@ async function updateStripeStatementDescriptor(
     throw new Error('Invalid Stripe account configuration')
   }
 
-  // @ts-ignore
   const updateParams = {
     settings: {
       payments: {
@@ -586,7 +585,6 @@ async function updateStripeStatementDescriptor(
   }
   await stripeClient.getStripeApi(account.live).accounts.update(
     stripe_account_id,
-    // @ts-ignore
     updateParams
   )
   req.flash('info', `Statement descriptor updated to [${statement_descriptor}]`)
@@ -613,7 +611,6 @@ async function updateStripePayoutDescriptor(
     throw new Error('Invalid Stripe account configuration')
   }
 
-  // @ts-ignore
   const updateParams = {
     settings: {
       payouts: {
@@ -623,7 +620,6 @@ async function updateStripePayoutDescriptor(
   }
   await stripeClient.getStripeApi(account.live).accounts.update(
     stripe_account_id,
-    // @ts-ignore
     updateParams
   )
   req.flash('info', `Payout descriptor updated to [${statement_descriptor}]`)

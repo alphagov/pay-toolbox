@@ -72,7 +72,7 @@ export async function setupProductionStripeAccount(serviceExternalId: string, st
       date: Math.floor(new Date(tosAcceptance.agreement_time).getTime() / 1000)
     }
   };
-  // @ts-ignore
+  // @ts-expect-error create(data) call is being incorrectlt flagged as error
   const stripeAccount = await stripeClient.getStripeApi(true).accounts.create(data)
   logger.info(`Stripe API responded with success, account ${stripeAccount.id} created.`)
   return stripeAccount
