@@ -21,10 +21,11 @@ function LoadingCard(props: any): JSX.Element {
     </div>
 }
 
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 export class EventListPanel extends React.Component<EventListPanelProps, {}> {
   render() {
     let syncStatus
-    const events = this.props.events.map((event, index) => <EventCard key={event.key} event={event} showAllEvents={this.props.showAllEvents} />)
+    const events = this.props.events.map((event) => <EventCard key={event.key} event={event} showAllEvents={this.props.showAllEvents} />)
     
     if(this.props.sync && this.props.sync.pending && this.props.numberOfAggregateSyncs <= 1) {
       syncStatus = <LoadingCard>Sync</LoadingCard>

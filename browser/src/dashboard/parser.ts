@@ -58,7 +58,7 @@ function timedata(data: TimeseriesPoint[], key: string) {
   return data.map((entry) => {
     return {
       x: entry.timestamp,
-      //@ts-ignorets-ignore
+      //@ts-expect-error not an error as dot notation is valid
       y: entry[key] || 0
     }
   })

@@ -12,6 +12,7 @@ interface ChartVolumePanelProps {
   data: Series[]
 }
 
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 export class ChartVolumePanel extends React.Component<ChartVolumePanelProps, {}> {
 
   render() {

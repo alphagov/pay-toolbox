@@ -1,7 +1,7 @@
 import { TimeseriesPoint } from './parser'
 import moment from 'moment'
 
-import { eventsActiveSuccess, eventsErrored, supportedEvents } from './events'
+import { eventsActiveSuccess, supportedEvents } from './events'
 
 import { Event } from './../../../src/web/modules/transactions/types/ledger'
 

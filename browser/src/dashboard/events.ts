@@ -1,10 +1,3 @@
-const eventsSuccess = [
-  'CAPTURE_CONFIRMED',
-  'CAPTURE_SUBMITTED',
-  'USER_APPROVED_FOR_CAPTURE',
-  'SERVICE_APPROVED_FOR_CAPTRUE'
-]
-
 // only include the first salient successful event - this will mitigate background processes capturing old payments from
 // impacting optimistic numbers
 
