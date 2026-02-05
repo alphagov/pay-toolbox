@@ -11,7 +11,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "tsc-watch --noClear --onSuccess \"./scripts/run-dev\"",
-    "lint": "eslint \"src/**/*.{js,ts,tsx}\" \"browser/src/**/*.{js,ts,tsx}\"",
+    "lint": "eslint \"src/**/*.{js,ts,tsx}\"",
     "lint-sass": "stylelint '**/*.scss'",
     "test": "npm run test:unit",
     "test:unit": "AUTH_GITHUB_ENABLED=true mocha -r ts-node/register -r dotenv/config --recursive \"./src/**/*.spec.{js,ts}\" dotenv_config_path=src/tests/.env --exit",
