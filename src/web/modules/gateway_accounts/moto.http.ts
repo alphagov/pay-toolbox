@@ -244,11 +244,8 @@ export async function toggleAgentInitiatedMotoEnabledFlag(
   try {
     const {id} = req.params
 
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    const [account, service] = await Promise.all([
-      Connector.accounts.retrieve(id),
-      AdminUsers.services.retrieveByGatewayAccountId(id)
-    ])
+    const service = await AdminUsers.services.retrieveByGatewayAccountId(id)
+
     const enable = !service.agent_initiated_moto_enabled
     await AdminUsers.services.update(service.external_id, {
       agent_initiated_moto_enabled: enable

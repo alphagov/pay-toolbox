@@ -60,7 +60,7 @@ export default class Connector extends Client {
             return client._axios
                 .get(`/v1/api/accounts/${accountId}/charges/${externalChargeId}`)
                 .then(response => client._unpackResponseData<Charge>(response))
-                .catch(handleChargeNotFoundForParityCheck("Charge", externalChargeId))
+                .catch(handleChargeNotFoundForParityCheck())
         },
 
         /**

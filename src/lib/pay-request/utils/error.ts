@@ -9,8 +9,7 @@ export function handleEntityNotFound(entityName: string, entityId: string) {
   }
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-export function handleChargeNotFoundForParityCheck(entityName: string, entityId: string) {
+export function handleChargeNotFoundForParityCheck() {
   return (error: RESTClientError) => {
     if (error.data.response && error.data.response.status === 404) {
         return 'Charge not found in connector'

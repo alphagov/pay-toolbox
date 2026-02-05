@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from 'express'
+import {Request, Response} from 'express'
 import {AdminUsers, Connector} from '../../../../lib/pay-request/client'
 import AccountDetails from '../../stripe/accountDetails.model'
 import {setupProductionStripeAccount} from '../../stripe/account'
@@ -19,15 +19,13 @@ async function updateConnectorStripeOnboardingSteps(gatewayAccountId: string, op
         })
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-export async function switchPSPPage(req: Request, res: Response, next: NextFunction) {
+export async function switchPSPPage(req: Request, res: Response) {
   const account = await Connector.accounts.retrieve(req.params.id)
   const service = await AdminUsers.services.retrieveByGatewayAccountId(`${account.gateway_account_id}`)
   res.render('gateway_accounts/switch_psp/switch_psp', {account, service, flash: req.flash(), csrf: req.csrfToken()})
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-export async function postSwitchPSP(req: Request, res: Response, next: NextFunction) {
+export async function postSwitchPSP(req: Request, res: Response) {
   const gatewayAccountId = req.params.id
   let stripeCredentials: { stripe_account_id: string }
 
