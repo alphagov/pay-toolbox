@@ -128,6 +128,7 @@
     "@sentry/node": {
       "cookie": "0.7.2"
     },
-    "cross-spawn": "^7.0.5"
+    "cross-spawn": "^7.0.5",
+    "tar": "^7.5.9"
   }
 }
