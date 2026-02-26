@@ -3,12 +3,12 @@ FROM node:22.22.0-alpine3.22@sha256:7aa86fa052f6e4b101557ccb56717cb4311be1334381
 RUN apk -U upgrade --available
 WORKDIR /app
 
-# takes both package and package-lock for CI
-COPY package*.json ./
-
 # Upgrade npm — if updating the Node.js version, check if this
 # is still necessary and make sure it never downgrades npm
 RUN npm install -g npm@11.10.1
+
+# takes both package and package-lock for CI
+COPY package*.json ./
 
 # prepare build process modules
 RUN npm ci --no-progress
