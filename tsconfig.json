@@ -6,7 +6,6 @@
     "strict": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "jsx": "react",
     "experimentalDecorators": true,
     "strictNullChecks": false,
     "allowSyntheticDefaultImports": true,
