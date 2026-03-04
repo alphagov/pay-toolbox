@@ -4,14 +4,6 @@ import moment from 'moment'
 import {Ledger, AdminUsers} from '../../../lib/pay-request/client'
 import {TransactionState} from "../../../lib/pay-request/shared";
 
-export function dashboard(req: Request, res: Response): void {
-  res.render('platform/dashboard')
-}
-
-export function live(req: Request, res: Response): void {
-  res.render('platform/live')
-}
-
 function formatISODate(moment: moment.Moment): string {
   return `${moment.format('YYYY-MM-DDTHH:mm:ss.SSSSSS')}Z`
 }
