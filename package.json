@@ -68,10 +68,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
-    "@juggle/resize-observer": "^3.3.1",
-    "@nivo/core": "0.99.0",
-    "@nivo/line": "0.99.0",
-    "@nivo/stream": "0.99.0",
     "@react-spring/rafz": "^10.0.3",
     "@types/chai": "^4.2.18",
     "@types/client-sessions": "^0.8.0",
