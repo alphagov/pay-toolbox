@@ -20,7 +20,6 @@ COPY src/ src
 COPY browser/ browser
 COPY scripts/ scripts
 COPY tsconfig.json tsconfig.json
-COPY webpack.config.js webpack.config.js
 
 # questionable method of setting build defaults - this should be removed when
 # tunneling is no longer required
