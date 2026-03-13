@@ -226,7 +226,9 @@
         <tr class="govuk-table__row">
           <th class="govuk-table__cell payment__cell" scope="row"><span class="govuk-caption-m">Recurring</span></th>
           {% if transaction.authorisation_mode === "agreement" %}
-            <td class="govuk-table__cell payment__cell">True</td>
+            <td class="govuk-table__cell payment__cell">True (MIT)</td>
+           {% elif transaction.agreement_id %}
+            <td class="govuk-table__cell payment__cell">True (CIT)</td>
           {% else %}
             <td class="govuk-table__cell payment__cell">False</td>
           {% endif %}
