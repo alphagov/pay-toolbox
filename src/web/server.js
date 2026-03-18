@@ -4,7 +4,7 @@ const express = require('express')
 const metrics = require('@govuk-pay/pay-js-metrics')
 const helmet = require('helmet')
 const flash = require('connect-flash')
-const sessions = require('express-session')
+const sessions = require('client-sessions')
 const nunjucks = require('nunjucks')
 const csurf = require('csurf')
 const Sentry = require('@sentry/node')
@@ -90,34 +90,27 @@ function configureServingPublicStaticFiles(instance) {
 function configureClientSessions(instance) {
   const serverBehindProxy = server.HTTP_PROXY
   const thirtyMinutesInMillis = 30 * 60 * 1000
-
-  if (serverBehindProxy) {
-    instance.set('trust proxy', 1)
-  }
-
   instance.use(sessions({
-    name: 'session',
+    cookieName: 'session',
     secret: server.COOKIE_SESSION_ENCRYPTION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    rolling: true,
-    proxy: !!serverBehindProxy,
+    duration: server.SESSION_COOKIE_DURATION_IN_MILLIS || thirtyMinutesInMillis,
+    activeDuration: 5 * 60 * 1000,
     cookie: {
-      maxAge: Number(server.SESSION_COOKIE_DURATION_IN_MILLIS) || thirtyMinutesInMillis,
-      secure: !!serverBehindProxy,
-      httpOnly: true
+      secureProxy: serverBehindProxy
     }
   }))
 }
 
 function configureAuth(instance) {
-  instance.use(passport.initialize())
-  instance.use(passport.session())
-  instance.use((req, res, next) => {
+  const exposeAuthenticatedUserToTemplate = (req, res, next) => {
     res.locals.user = req.user
     res.locals.disableAuth = disableAuth
     next()
-  })
+  }
+
+  instance.use(passport.initialize())
+  instance.use(passport.session())
+  instance.use(exposeAuthenticatedUserToTemplate)
 }
 
 async function configureTemplateRendering(instance) {

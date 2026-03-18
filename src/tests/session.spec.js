@@ -9,7 +9,7 @@ describe('session cookies', () => {
       .get('/healthcheck')
       .expect(200)
       .end((err, res) => {
-        expect(res.headers['set-cookie'][0]).to.contain('Expires=')
+        expect(res.headers['set-cookie'][0]).to.contain('expires=')
         expect(res.headers['set-cookie'][0]).to.not.contain('Invalid Date')
         done()
       })
