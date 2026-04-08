@@ -298,11 +298,21 @@
     <table class="govuk-table">
           <tbody class="govuk-table__body">
     {% for event in events %}
-
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">{{ event.event_type }}</td>
+        <td class="govuk-table__cell">{{ event.timestamp | formatDate}}</td>
+      </tr>
+      {% if (event.event_type === 'AUTHORISATION_REJECTED') and (event.data) and (event.data.gateway_rejection_reason) %}
         <tr class="govuk-table__row">
-          <td class="govuk-table__cell">{{ event.event_type }}</td>
-          <td class="govuk-table__cell">{{ event.timestamp | formatDate}}</td>
+          <td class="govuk-table__cell" colspan="2">
+            <div class="govuk-details__text">
+                <code>Do not share reasons for declined payments with paying users because of the risk of fraud.
+                    Read about <a class="govuk-link govuk-link--no-visited-state" href="https://manual.payments.service.gov.uk/manual/how-to/declined-payments.html">declined payment reasons and what can be shared with teams</a></code>
+            </div>
+          </td>
+          <td class="govuk-table__cell"> </td>
         </tr>
+      {% endif %}
 
         {% if event.data %}
         <tr class="govuk-table__row">
