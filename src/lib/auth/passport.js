@@ -21,7 +21,7 @@ if (!disableAuth) {
 
   // temporarily force oauth2 strategy to use proxy agent until the library supports https proxy
   const httpsProxy = process.env.https_proxy
-  if (httpsProxy) strategy._oauth2._requestAgent = new HTTPSProxyAgent(httpsProxy)
+  if (httpsProxy) strategy._oauth2.setAgent(new HTTPSProxyAgent(httpsProxy))
 
   passport.use(strategy)
 }
