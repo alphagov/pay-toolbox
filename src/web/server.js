@@ -4,7 +4,7 @@ const express = require('express')
 const metrics = require('@govuk-pay/pay-js-metrics')
 const helmet = require('helmet')
 const flash = require('connect-flash')
-const sessions = require('express-session')
+const sessions = require('client-sessions')
 const nunjucks = require('nunjucks')
 const csurf = require('csurf')
 const Sentry = require('@sentry/node')
@@ -36,9 +36,9 @@ const {
 
 const app = express()
 
-const serverBehindProxy = server.HTTP_PROXY
-
 function configureSecureHeaders(instance) {
+  const serverBehindProxy = server.HTTP_PROXY
+
   // only set certain proxy configured headers if not behind a proxy, the proxy
   // will be responsible for setting these headers
   const helmetOptions = serverBehindProxy ? {
@@ -88,22 +88,17 @@ function configureServingPublicStaticFiles(instance) {
 }
 
 function configureClientSessions(instance) {
+  const serverBehindProxy = server.HTTP_PROXY
   const thirtyMinutesInMillis = 30 * 60 * 1000
   instance.use(sessions({
-    name: 'session',
+    cookieName: 'session',
     secret: server.COOKIE_SESSION_ENCRYPTION_SECRET,
-    resave: false,
-    rolling: true,
-    saveUninitialized: false,
+    duration: server.SESSION_COOKIE_DURATION_IN_MILLIS || thirtyMinutesInMillis,
+    activeDuration: 5 * 60 * 1000,
     cookie: {
-      maxAge: server.SESSION_COOKIE_DURATION_IN_MILLIS || thirtyMinutesInMillis,
-      secure: serverBehindProxy,
-      httpOnly: true,
+      secureProxy: serverBehindProxy
     }
   }))
-  if (serverBehindProxy) {
-    instance.set('trust proxy', 1)
-  }
 }
 
 function configureAuth(instance) {
