@@ -1,5 +1,5 @@
 // github OAuth strategy
-const { Strategy } = require('passport-github2')
+const { Strategy } = require('passport-github')
 const config = require('../../../config')
 const logger = require('../../logger')
 
