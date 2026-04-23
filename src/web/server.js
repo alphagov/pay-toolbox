@@ -101,6 +101,40 @@ function configureClientSessions(instance) {
   }))
 }
 
+// Shim for passport version 0.6+ necessary to navigate the use of req.session.regenerate issue
+function configureServerSessions(instance) {
+  instance.use((req, res, next) => {
+    if (!req.session) {
+      return next();
+    }
+
+    if (req.session.regenerate == null) {
+      req.session.regenerate = function (callback) {
+        Object.keys(req.session).forEach(function (key) {
+          if (
+            key !== 'reset' &&
+            key !== 'setDuration' &&
+            key !== 'last_url' &&
+            typeof req.session[key] !== 'function'
+          ) {
+            delete req.session[key];
+          }
+        });
+
+        if (callback) callback();
+      };
+    }
+
+    if (req.session.save == null) {
+      req.session.save = function (callback) {
+        if (callback) callback();
+      };
+    }
+
+    next();
+  })
+}
+
 function configureAuth(instance) {
   const exposeAuthenticatedUserToTemplate = (req, res, next) => {
     res.locals.user = req.user
@@ -205,6 +239,7 @@ const configure = [
   configureSentryRequestHandler,
   configureRequestParsing,
   configureClientSessions,
+  configureServerSessions,
   configureAuth,
   configureSecureHeaders,
   configureServingPublicStaticFiles,
