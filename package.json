@@ -34,7 +34,7 @@
     "@govuk-pay/pay-js-commons": "^7.0.49",
     "@govuk-pay/pay-js-metrics": "^1.0.14",
     "@sentry/node": "^6.12.0",
-    "axios": "1.14.0",
+    "axios": "1.15.0",
     "class-validator": "0.14.0",
     "client-sessions": "^0.8.0",
     "cls-hooked": "4.2.2",
@@ -111,9 +111,9 @@
       "cookie": "0.7.2"
     },
     "cross-spawn": "^7.0.5",
-    "axios": "1.14.0"
+    "axios": "1.15.0"
   },
   "resolutions": {
-    "axios": "1.14.0"
+    "axios": "1.15.0"
   }
 }
