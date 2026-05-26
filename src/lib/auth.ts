@@ -2,6 +2,7 @@ import logger from './logger'
 import {disableAuth} from './../config'
 import {NextFunction, Request, Response} from 'express'
 import {PermissionLevel} from './auth/types'
+import { revokeGithubGrant } from './auth/github/strategy'
 
 export function secured(permissionLevel: PermissionLevel) {
   return function checkUserIsAuthenticatedAndPermitted(req: Request, res: Response, next: NextFunction) {
@@ -36,10 +37,33 @@ export function unauthorised(req: Request, res: Response) {
   res.status(403).send('User does not have permissions to access the resource')
 }
 
-export function revokeSession(req: Request, res: Response, next: NextFunction) {
-  logger.info(`Revoking session for user ${req.user && req.user.username}`)
-    req.logout((err?: unknown) => {
-        if (err) return next(err);
-        res.redirect('/');
-    });
+export async function revokeSession(req: Request, res: Response, next: NextFunction) {
+    logger.info(`Revoking session for user ${req.user && req.user.username}`)
+
+    const accessToken = req.user && (req.user as any).accessToken
+
+    if (!disableAuth && accessToken) {
+        try {
+            await revokeGithubGrant(accessToken)
+        } catch (err) {
+            logger.warn(`Failed to revoke GitHub grant: ${err}`)
+        }
+    }
+
+    req.logout((err) => {
+        if (err) {
+            return next(err)
+        }
+
+        if (req.session && typeof req.session.reset === 'function') {
+            req.session.reset()
+        }
+        res.clearCookie('session', { path: '/' })
+
+        if (disableAuth) {
+            return res.redirect('/')
+        }
+
+        return res.redirect('/')
+    })
 }
