@@ -40,6 +40,6 @@ export function revokeSession(req: Request, res: Response, next: NextFunction) {
   logger.info(`Revoking session for user ${req.user && req.user.username}`)
     req.logout((err?: unknown) => {
         if (err) return next(err);
-        res.redirect('/');
+        res.redirect('/auth');
     });
 }
