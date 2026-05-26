@@ -13,7 +13,14 @@
     </div>
 
     <div class="user-profile__item right">
-      <span><a class="govuk-link govuk-link--no-visited-state" href="/logout">Clear session</a></span>
+      <span>
+        <form method="POST" action="/logout">
+          {{ govukButton({
+            text: "Sign out"
+            })
+            }}
+        </form>
+      </span>
     </div>
   {% else %}
     <div class="user-profile__item">(OAUTH disabled)</div>
