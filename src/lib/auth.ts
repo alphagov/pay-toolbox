@@ -38,21 +38,8 @@ export function unauthorised(req: Request, res: Response) {
 
 export function revokeSession(req: Request, res: Response, next: NextFunction) {
   logger.info(`Revoking session for user ${req.user && req.user.username}`)
-    req.logout((err) => {
-        if (err) {
-            return next(err);
-        }
-
-        req.session.destroy((destroyErr: any) => {
-            if (destroyErr) {
-                return next(destroyErr);
-            }
-
-            res.clearCookie('session', { path: '/' });
-
-            res.status(200).json({ message: 'Logged out successfully' });
-
-            res.redirect('/auth');
-        });
+    req.logout((err?: unknown) => {
+        if (err) return next(err);
+        res.redirect('/');
     });
 }
