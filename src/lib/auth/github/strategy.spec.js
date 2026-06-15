@@ -21,7 +21,7 @@ describe('GitHub OAuth strategy', () => {
         username: profile.username,
         displayName: profile.displayName,
         permissionLevel: PermissionLevel.VIEW_ONLY,
-
+        accessToken: 'some-access-token',
         avatarUrl: profile._json.avatar_url
       }
     )
