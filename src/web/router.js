@@ -36,26 +36,13 @@ const router = express.Router()
 const storage = multer.memoryStorage()
 const upload = multer({storage})
 
-const {
-  rateLimitMiddleware
-} = require('@govuk-pay/pay-js-commons/lib/utils/middleware/csp')
-
-router.get(
-  '/auth',
-  passport.authenticate('github', {
-    scope: ['user:email'],
-    prompt: 'login',
-  })
-);
-
+router.get('/auth', passport.authenticate('github'))
 router.get('/auth/github/callback', (req, res, next) => {
   passport.authenticate('github', {
     failureRedirect: '/auth/unauthorised',
-    successRedirect:
-      (req.session && req.session.authBlockedRedirectUrl) || '/',
-  })(req, res, next);
-});
-
+    successRedirect: req.session && req.session.authBlockedRedirectUrl || '/'
+  })(req, res, next)
+})
 router.get('/auth/unauthorised', auth.unauthorised)
 
 router.get('/', auth.secured(PermissionLevel.VIEW_ONLY), landing.root)
@@ -203,7 +190,7 @@ router.post('/events/by_date', auth.secured(PermissionLevel.USER_SUPPORT), event
 router.get('/parity-checker', auth.secured(PermissionLevel.USER_SUPPORT), events.parityCheckerPage)
 router.post('/parity-checker', auth.secured(PermissionLevel.USER_SUPPORT), events.parityCheck)
 
-router.post('/logout', rateLimitMiddleware, auth.secured(PermissionLevel.VIEW_ONLY), auth.revokeSession)
+router.get('/logout', auth.secured(PermissionLevel.VIEW_ONLY), auth.revokeSession)
 
 router.get('/healthcheck', healthcheck.response)
 

@@ -13,17 +13,8 @@
     </div>
 
     <div class="user-profile__item right">
-      <span>
-        <form method="POST" action="/logout">
-          {{ govukButton({
-            text: "Sign out"
-            })
-            }}
-          <input type="hidden" name="_csrf" value="{{ csrf }}">
-        </form>
-      </span>
+      <span><a class="govuk-link govuk-link--no-visited-state" href="/logout">Clear session</a></span>
     </div>
-
   {% else %}
     <div class="user-profile__item">(OAUTH disabled)</div>
   {% endif %}
