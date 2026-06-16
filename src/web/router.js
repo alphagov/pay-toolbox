@@ -8,6 +8,7 @@ const healthcheck = require('./../lib/healthcheck')
 
 // module HTTP controllers
 const landing = require('./modules/landing/landing.http')
+const login = require('./modules/login/login.http')
 const statistics = require('./modules/statistics/statistics.http')
 const gatewayAccounts = require('./modules/gateway_accounts').default
 const switchPSP = require('./modules/gateway_accounts/switch_psp/switch_psp.http')
@@ -25,8 +26,6 @@ const ledgerPayouts = require('./modules/ledger_payouts/payout.http')
 const performance = require('./modules/statistics/performance.http')
 const events = require('./modules/events')
 const fixRefunds = require('./modules/transactions/fix_async_failed_stripe_refund')
-
-
 const users = require('./modules/users/users.http').default
 
 const {PermissionLevel} = require('../lib/auth/types')
@@ -36,16 +35,22 @@ const router = express.Router()
 const storage = multer.memoryStorage()
 const upload = multer({storage})
 
-router.get('/auth', passport.authenticate('github'))
+router.get(
+  '/auth',
+  passport.authenticate('github')
+)
+
 router.get('/auth/github/callback', (req, res, next) => {
   passport.authenticate('github', {
     failureRedirect: '/auth/unauthorised',
     successRedirect: req.session && req.session.authBlockedRedirectUrl || '/'
   })(req, res, next)
 })
+
 router.get('/auth/unauthorised', auth.unauthorised)
 
 router.get('/', auth.secured(PermissionLevel.VIEW_ONLY), landing.root)
+router.get('/login', auth.secured(PermissionLevel.VIEW_ONLY), login.login)
 
 router.get('/statistics/services', auth.secured(PermissionLevel.VIEW_ONLY), statistics.csvServices)
 router.post('/statistics/services', auth.secured(PermissionLevel.VIEW_ONLY), statistics.byServices)
@@ -190,7 +195,7 @@ router.post('/events/by_date', auth.secured(PermissionLevel.USER_SUPPORT), event
 router.get('/parity-checker', auth.secured(PermissionLevel.USER_SUPPORT), events.parityCheckerPage)
 router.post('/parity-checker', auth.secured(PermissionLevel.USER_SUPPORT), events.parityCheck)
 
-router.get('/logout', auth.secured(PermissionLevel.VIEW_ONLY), auth.revokeSession)
+router.post('/logout', auth.secured(PermissionLevel.VIEW_ONLY), auth.revokeSession)
 
 router.get('/healthcheck', healthcheck.response)
 
