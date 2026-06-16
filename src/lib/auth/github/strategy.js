@@ -4,7 +4,7 @@ const config = require('../../../config')
 const logger = require('../../logger')
 
 const { checkUserAccess} = require('./permissions')
-const {PermissionLevel} = require("../types");
+const {PermissionLevel} = require("../types")
 
 const githubAuthCredentials = {
   clientID: config.auth.AUTH_GITHUB_CLIENT_ID,
