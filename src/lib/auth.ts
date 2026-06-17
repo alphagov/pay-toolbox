@@ -36,10 +36,20 @@ export function unauthorised(req: Request, res: Response) {
   res.status(403).send('User does not have permissions to access the resource')
 }
 
-export function revokeSession(req: Request, res: Response, next: NextFunction) {
-  logger.info(`Revoking session for user ${req.user && req.user.username}`)
-    req.logout((err?: unknown) => {
-        if (err) return next(err);
-        res.redirect('/');
-    });
+export async function revokeSession(req: Request, res: Response, next: NextFunction) {
+    logger.info(`Revoking session for user ${req.user && req.user.username}`)
+
+    req.logout((error) => {
+        if (error) {
+            logger.error(`Logout error: ${error}`)
+            return next(error)
+        }
+
+        if (req.session && typeof req.session.reset === 'function') {
+            req.session.reset()
+        }
+
+        res.clearCookie('session', { path: '/' })
+        return res.redirect('/')
+    })
 }
