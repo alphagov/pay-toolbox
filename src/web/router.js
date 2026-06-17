@@ -36,21 +36,13 @@ const router = express.Router()
 const storage = multer.memoryStorage()
 const upload = multer({storage})
 
-router.get(
-  '/auth',
-  passport.authenticate('github', {
-    scope: ['user:email'],
-    prompt: 'select_account'
-  })
-)
-
+router.get('/auth', passport.authenticate('github'))
 router.get('/auth/github/callback', (req, res, next) => {
   passport.authenticate('github', {
     failureRedirect: '/auth/unauthorised',
     successRedirect: req.session && req.session.authBlockedRedirectUrl || '/'
   })(req, res, next)
 })
-
 router.get('/auth/unauthorised', auth.unauthorised)
 
 router.get('/', auth.secured(PermissionLevel.VIEW_ONLY), landing.root)
