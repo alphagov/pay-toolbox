@@ -190,7 +190,7 @@ router.post('/events/by_date', auth.secured(PermissionLevel.USER_SUPPORT), event
 router.get('/parity-checker', auth.secured(PermissionLevel.USER_SUPPORT), events.parityCheckerPage)
 router.post('/parity-checker', auth.secured(PermissionLevel.USER_SUPPORT), events.parityCheck)
 
-router.get('/logout', auth.secured(PermissionLevel.VIEW_ONLY), auth.revokeSession)
+router.post('/logout', auth.secured(PermissionLevel.VIEW_ONLY), auth.revokeSession)
 
 router.get('/healthcheck', healthcheck.response)
 
