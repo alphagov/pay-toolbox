@@ -39,7 +39,11 @@ export function unauthorised(req: Request, res: Response) {
 export function revokeSession(req: Request, res: Response, next: NextFunction) {
   logger.info(`Revoking session for user ${req.user && req.user.username}`)
     req.logout((err?: unknown) => {
-        if (err) return next(err);
+        if (err) {
+            logger.error(`Revoke session Error ***: ${err}`);
+            return next(err);
+        }
+        logger.info("Revoking session redirect")
         res.redirect('/');
     });
 }
