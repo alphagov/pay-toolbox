@@ -40,7 +40,7 @@ export function revokeSession(req: Request, res: Response, next: NextFunction) {
   logger.info(`Revoking session for user ${req.user && req.user.username}`)
     req.logout((err?: unknown) => {
         if (err) {
-            logger.error(`Revoke session Error ***: ${err}`);
+            logger.error(`Revoke session Error: ${err}`);
             return next(err);
         }
         logger.info("Revoking session redirect")
