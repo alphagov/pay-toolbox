@@ -1,12 +1,10 @@
 // github OAuth strategy
 const { Strategy } = require('passport-github2')
-const { createOAuthAppAuth } = require('@octokit/auth-oauth-app')
 const config = require('../../../config')
 const logger = require('../../logger')
 
 const { checkUserAccess} = require('./permissions')
 const {PermissionLevel} = require("../types");
-const {Octokit} = require("@octokit/core");
 
 const githubAuthCredentials = {
   clientID: config.auth.AUTH_GITHUB_CLIENT_ID,
@@ -22,13 +20,7 @@ const handleGitHubOAuthSuccessResponse = async function handleGitHubOAuthSuccess
 ) {
   const { username, displayName } = profile
   const avatarUrl = profile._json && profile._json.avatar_url
-
-  const sessionProfile = {
-    username,
-    displayName,
-    avatarUrl,
-    githubAccessToken: accessToken
-  }
+  const sessionProfile = { username, displayName, avatarUrl }
 
   logger.info(`Successful account auth from GitHub for user ${username}`)
 
@@ -48,31 +40,4 @@ const handleGitHubOAuthSuccessResponse = async function handleGitHubOAuthSuccess
   }
 }
 
-async function revokeGithubGrant(accessToken) {
-  if (!accessToken) return;
-
-  try {
-    const octokit = new Octokit({
-      authStrategy: createOAuthAppAuth,
-      auth:{
-        clientType: 'oauth-app',
-        clientId: githubAuthCredentials.clientID,
-        clientSecret: githubAuthCredentials.clientSecret,
-      }
-    })
-
-    await octokit.request('DELETE /applications/{client_id}/grant', {
-      client_id: githubAuthCredentials.clientId,
-      access_token: accessToken,
-      headers: {
-        'X-GitHub-Api-Version': '2026-03-10'
-      }
-    })
-
-  } catch (error) {
-    logger.error(`Failed to revoke GitHub grant: ${error.response?.data?.message || error.message}`);
-    throw error;
-  }
-}
-
-module.exports = { Strategy, githubAuthCredentials, handleGitHubOAuthSuccessResponse, revokeGithubGrant }
+module.exports = { Strategy, githubAuthCredentials, handleGitHubOAuthSuccessResponse }
