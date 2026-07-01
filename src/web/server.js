@@ -65,10 +65,6 @@ function configureSecureHeaders(instance) {
     crossOriginResourcePolicy: { policy: "cross-origin" }
   }))
   instance.use(csurf())
-  instance.use((req, res, next) => {
-    res.locals.csrf = req.csrfToken()
-    next()
-  })
 }
 
 function configureRequestParsing(instance) {

@@ -23,7 +23,7 @@ if (!disableAuth) {
   const httpsProxy = process.env.https_proxy
   if (httpsProxy) strategy._oauth2.setAgent(new HTTPSProxyAgent(httpsProxy))
 
-  passport.use("github", strategy)
+  passport.use(strategy)
 }
 
 module.exports = passport
