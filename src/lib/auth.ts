@@ -2,7 +2,6 @@ import logger from './logger'
 import {disableAuth} from './../config'
 import {NextFunction, Request, Response} from 'express'
 import {PermissionLevel} from './auth/types'
-import {revokeGithubGrant}  from './../lib/auth/github/strategy'
 
 export function secured(permissionLevel: PermissionLevel) {
   return function checkUserIsAuthenticatedAndPermitted(req: Request, res: Response, next: NextFunction) {
@@ -37,28 +36,14 @@ export function unauthorised(req: Request, res: Response) {
   res.status(403).send('User does not have permissions to access the resource')
 }
 
-export async function revokeSession(req: Request, res: Response, next: NextFunction) {
-    logger.info(`Revoking session for user ${req.user && req.user.username}`)
-
-    try {
-        const accessToken = req.user?.githubAccessToken
-
-        if (accessToken) {
-            await revokeGithubGrant(accessToken)
-            logger.info(`Revoked GitHub grant for user ${req.user?.username}`)
-        } else {
-            logger.warn(`No GitHub access token found for user ${req.user?.username}`)
-        }
-    } catch (err) {
-        logger.error(`Failed to revoke GitHub grant before logout: ${err}`)
-    }
-
+export function revokeSession(req: Request, res: Response, next: NextFunction) {
+  logger.info(`Revoking session for user ${req.user && req.user.username}`)
     req.logout((err?: unknown) => {
         if (err) {
-            logger.error(`Revoke session Error: ${err}`)
-            return next(err)
+            logger.error(`Revoke session Error: ${err}`);
+            return next(err);
         }
         logger.info("Revoking session redirect")
-        res.redirect(303, '/auth')
+        res.redirect('/');
     });
 }
