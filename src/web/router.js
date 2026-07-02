@@ -36,14 +36,7 @@ const router = express.Router()
 const storage = multer.memoryStorage()
 const upload = multer({storage})
 
-router.get(
-  '/auth',
-  passport.authenticate('github', {
-    scope: ['user:email'],
-    prompt: 'select_account'
-  })
-)
-
+router.get('/auth', passport.authenticate('github'))
 router.get('/auth/github/callback', (req, res, next) => {
   passport.authenticate('github', {
     failureRedirect: '/auth/unauthorised',
@@ -197,7 +190,7 @@ router.post('/events/by_date', auth.secured(PermissionLevel.USER_SUPPORT), event
 router.get('/parity-checker', auth.secured(PermissionLevel.USER_SUPPORT), events.parityCheckerPage)
 router.post('/parity-checker', auth.secured(PermissionLevel.USER_SUPPORT), events.parityCheck)
 
-router.post('/logout', auth.secured(PermissionLevel.VIEW_ONLY), auth.revokeSession)
+router.get('/logout', auth.secured(PermissionLevel.VIEW_ONLY), auth.revokeSession)
 
 router.get('/healthcheck', healthcheck.response)
 
