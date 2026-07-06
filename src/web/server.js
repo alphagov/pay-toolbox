@@ -59,17 +59,12 @@ function configureSecureHeaders(instance) {
           initGOVUKFrontendSnippet
         ],
         "img-src": ["'self'", 'https://*.githubusercontent.com', 'data:'],
-        "style-src": ["'self'", "'unsafe-inline'"],
-        "form-action": ["'self'", "https://github.com"]
+        "style-src": ["'self'", "'unsafe-inline'"]
       }
     },
     crossOriginResourcePolicy: { policy: "cross-origin" }
   }))
   instance.use(csurf())
-  instance.use((req, res, next) => {
-    res.locals.csrf = req.csrfToken()
-    next()
-  })
 }
 
 function configureRequestParsing(instance) {
