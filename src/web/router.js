@@ -30,13 +30,30 @@ const fixRefunds = require('./modules/transactions/fix_async_failed_stripe_refun
 const users = require('./modules/users/users.http').default
 
 const {PermissionLevel} = require('../lib/auth/types')
+const logger = require('../lib/logger')
 
 const router = express.Router()
 
 const storage = multer.memoryStorage()
 const upload = multer({storage})
 
-router.get('/auth', passport.authenticate('github'))
+router.get('/auth', (req, res, next) => {
+  logger.info('GET /auth reached')
+
+  passport.authenticate('github', {
+    scope: ['user:email'],
+    prompt: 'select_account'
+  })(req, res, (err) => {
+    if (err) {
+      logger.error(`GET /auth passport error: ${err.stack || err}`)
+      return next(err)
+    }
+
+    logger.warn('GET /auth passport returned without redirecting or erroring')
+    next()
+  })
+})
+
 router.get('/auth/github/callback', (req, res, next) => {
   passport.authenticate('github', {
     failureRedirect: '/auth/unauthorised',
@@ -190,7 +207,7 @@ router.post('/events/by_date', auth.secured(PermissionLevel.USER_SUPPORT), event
 router.get('/parity-checker', auth.secured(PermissionLevel.USER_SUPPORT), events.parityCheckerPage)
 router.post('/parity-checker', auth.secured(PermissionLevel.USER_SUPPORT), events.parityCheck)
 
-router.get('/logout', auth.secured(PermissionLevel.VIEW_ONLY), auth.revokeSession)
+router.post('/logout', auth.secured(PermissionLevel.VIEW_ONLY), auth.revokeSession)
 
 router.get('/healthcheck', healthcheck.response)
 
