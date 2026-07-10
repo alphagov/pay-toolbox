@@ -105,4 +105,78 @@ describe('Authorisation middleware', () => {
       sinon.assert.calledWith(send, 'User does not have permissions to access the resource')
     })
   })
+
+  describe('Github logout redirect flow', () => {
+    it('redirects to /auth after logout', async () => {
+      const req = {
+        user: {
+          username: 'test-user'
+        },
+        logout: sinon.stub().callsFake((callback) => callback())
+      }
+
+      const res = {
+        redirect: sinon.spy()
+      }
+
+      await auth.revokeSession(req, res, nextSpy)
+
+      sinon.assert.calledOnce(req.logout)
+      sinon.assert.calledWith(res.redirect, 303, '/auth')
+      sinon.assert.notCalled(nextSpy)
+    })
+  })
+
+  describe('Github grant revocation', () => {
+    it('revokes the GitHub grant before logging out when an access token exists', async () => {
+      const revokeGithubGrant = sinon.stub().resolves()
+
+      /** @type {typeof import('./auth')} */
+      const authWithRevokeStub = proxyquire('./auth', {
+        './auth/github/strategy': {
+          revokeGithubGrant
+        }
+      })
+
+      const req = {
+        user: {
+          username: 'test-user',
+          githubAccessToken: 'github-token'
+        },
+        logout: sinon.stub().callsFake((callback) => callback())
+      }
+
+      const res = {
+        redirect: sinon.spy()
+      }
+
+      await authWithRevokeStub.revokeSession(req, res, nextSpy)
+
+      sinon.assert.calledOnce(revokeGithubGrant)
+      sinon.assert.calledWithExactly(revokeGithubGrant, 'github-token')
+      sinon.assert.calledOnce(req.logout)
+      sinon.assert.calledWith(res.redirect, 303, '/auth')
+    })
+  })
+
+  it('calls next if req.logout fails', async () => {
+    const logoutError = new Error('logout failed')
+
+    const req = {
+      user: {
+        username: 'test-user'
+      },
+      logout: sinon.stub().callsFake((callback) => callback(logoutError))
+    }
+
+    const res = {
+      redirect: sinon.spy()
+    }
+
+    await auth.revokeSession(req, res, nextSpy)
+
+    sinon.assert.calledOnce(req.logout)
+    sinon.assert.calledWithExactly(nextSpy, logoutError)
+    sinon.assert.notCalled(res.redirect)
+  })
 })
