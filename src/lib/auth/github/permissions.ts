@@ -7,7 +7,7 @@ import logger from '../../logger'
 import {PermissionLevel} from '../types'
 
 async function isUserMemberOfGitHubTeam(username: string, token: string, team: string): Promise<boolean> {
-  const url = `${config.auth.GITHUB_API_ENDPOINT}/organizations/${config.auth.GITHUB_ALPHAGOV_ORGANISATION_ID}/team/${team}/memberships/${username}`
+  const url = `${config.auth.GITHUB_API_ENDPOINT}/organizations/${config.auth.GITHUB_OAUTH_ORGANISATION_ID}/team/${team}/memberships/${username}`
   const githubRestOptions = {
     headers: {
       Authorization: `token ${token}`
@@ -27,11 +27,11 @@ async function isUserMemberOfGitHubTeam(username: string, token: string, team: s
 }
 
 export async function checkUserAccess(username: string, token: string) {
-  if (await isUserMemberOfGitHubTeam(username, token, config.auth.AUTH_GITHUB_ADMIN_TEAM_ID)) {
+  if (await isUserMemberOfGitHubTeam(username, token, config.auth.GITHUB_OAUTH_ADMIN_TEAM_ID)) {
     return {permitted: true, permissionLevel: PermissionLevel.ADMIN}
-  } else if (await isUserMemberOfGitHubTeam(username, token, config.auth.AUTH_GITHUB_USER_SUPPORT_TEAM_ID)) {
+  } else if (await isUserMemberOfGitHubTeam(username, token, config.auth.GITHUB_OAUTH_USER_SUPPORT_TEAM_ID)) {
     return {permitted: true, permissionLevel: PermissionLevel.USER_SUPPORT}
-  } else if (await isUserMemberOfGitHubTeam(username, token, config.auth.AUTH_GITHUB_VIEW_ONLY_TEAM_ID)) {
+  } else if (await isUserMemberOfGitHubTeam(username, token, config.auth.GITHUB_OAUTH_VIEW_ONLY_TEAM_ID)) {
     return {permitted: true, permissionLevel: PermissionLevel.VIEW_ONLY}
   } else {
     return {permitted: false}
