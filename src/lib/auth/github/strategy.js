@@ -10,8 +10,8 @@ const {Octokit} = require("@octokit/core")
 const undici = require('undici')
 
 const githubAuthCredentials = {
-  clientID: config.auth.AUTH_GITHUB_CLIENT_ID,
-  clientSecret: config.auth.AUTH_GITHUB_CLIENT_SECRET,
+  clientID: config.auth.GITHUB_OAUTH_CLIENT_ID,
+  clientSecret: config.auth.GITHUB_OAUTH_CLIENT_SECRET,
   callbackURL: config.auth.AUTH_GITHUB_RETURN_URL
 }
 
