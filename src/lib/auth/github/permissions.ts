@@ -14,7 +14,7 @@ async function isUserMemberOfGitHubTeam(username: string, token: string, team: s
     }
   }
 
-  logger.info(`Requesting team ${team} permissions for ${username}`)
+  logger.info(`Requesting team permissions via ${url}`)
   try {
     await axios.get(url, githubRestOptions)
     logger.info(`User ${username} is a member of team ${team}`)
