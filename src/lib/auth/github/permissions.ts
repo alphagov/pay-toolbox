@@ -20,8 +20,7 @@ async function isUserMemberOfGitHubTeam(username: string, token: string, team: s
     logger.info(`User ${username} is a member of team ${team}`)
     return true
   } catch (err) {
-    logger.error(`Error when requesting team permissions: ${err}`)
-    logger.info(`User ${username} is not a member of team ${team}`)
+    logger.info(`User ${username} is not a member of team ${team}: ${err}`)
     return false
   }
 }
