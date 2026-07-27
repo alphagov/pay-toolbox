@@ -28,54 +28,56 @@ export async function updateTicketWithStripeGoLiveResponse(ticket: ZendeskTicket
     const zendeskTicketBody = `
 Hello,
 
-Your GOV.UK Pay service with Stripe is now live. However there are still some important steps to complete before your service is ready to use.
+Your GOV.UK Pay service with Stripe is now live. However, you still need to complete some steps before you can start taking payments.
 
 **1. Submit additional information to Stripe**
 
-Click this link to go to the live version of your service: ${stripeGoLiveUrl}
+You can go to the live version of your service here: ${stripeGoLiveUrl}
 
-Submit the following information:
+On that page, you must submit:
 
-* the name, date of birth and home address of the person in your organisation legally responsible for payments (called your ‘responsible person’ https://www.payments.service.gov.uk/required-responsible-person-and-director-information/)
+* your organisation’s bank details
+* the name, date of birth, home address, work telephone number, and work email address of someone who has the authority to sign a contract on behalf of your organisation (called your [‘responsible person’](https://www.payments.service.gov.uk/required-responsible-person-and-director-information))
 * the name, date of birth and work email address of the director of your service (or someone at director level)
-* your bank details
-* your VAT number and company number (if you have one)
-* proof of Government Entity document
-
-All users with admin permissions can submit this information. If you want to enable or restrict access to this, you can manage your team’s permissions in your settings.
+* your organisation’s VAT number (if applicable)
+* your organisation‘s company registration number (if applicable)
+* a document that verifies your organisation is a government entity
 
 You must add all of these details before you can take payments.
-If you want to get back to these settings you can do this from the 'Settings' page for your service.
 
+Any user with admin permissions for your GOV.UK Pay service can submit this information. You can manage your team's permissions by selecting **Manage team members** in the GOV.UK Pay admin tool.
 
-**2. Check these additional settings in your account:**
+You can view this information in **Settings** on your service in the GOV.UK Pay admin tool.
 
-* the card types you want to enable in ‘Settings’
-* if you want to collect billing or email address, or send payment and refund confirmation emails, or customise the payment confirmation email
-* your team’s account permissions
-* Wallet payments are enabled by default. You can disable them in ‘Settings’.
+Some smaller entities including Cadets and Parish Councils may not have an acceptable document to verify their entity. Please upload a document anyway and contact us if you think this applies to you and we can discuss a custom letter workaround process.
 
+**2. Check additional settings**
 
-**3. Let us know if you want us to change the descriptions shown on bank statements**
+In the GOV.UK Pay admin tool, you should also check:
 
-The description a user will see on their bank account for these payments is ${statementDescriptor.toUpperCase()}.
+* if you want to collect your users' billing addresses and email addresses in **Settings**
+* the card types you want to accept in **Settings**, then **Card types**
+* your team’s account permissions in **Manage team members**
 
-The description you will see on your bank statement accompanying these payments is ${payoutStatementDescriptor.toUpperCase()}.
+If you’re taking payments for Blue Badges, you can also connect your GOV.UK Pay service to the Department for Transport’s [Manage Blue Badge application](https://admin.apply-blue-badge.service.gov.uk/sign-in). If you do not already have a Manage Blue Badge account, you‘ll need to get in touch with the Manage Blue Badge admin within your local authority. You can also read [DfT‘s guidance](https://confluence.bluebadge-support.org.uk/display/BBDS/GOV.UK+Pay) or let us know if you want to read more.
 
-Please contact us if you want to change either of them.
+**3. Change the descriptions shown on bank statements (optional)**
+
+The following description will appear on your users’ bank statements when they pay your service: ${statementDescriptor.toUpperCase()}.
+
+The following description will appear on your bank statement when you receive payouts: ${payoutStatementDescriptor.toUpperCase()}.
+
+Contact us if you want to change either of these descriptions.
 
 **4. Make sure you know how to keep in touch**
 
-Subscribe to our public status page for updates on GOV.UK Pay’s status https://payments.statuspage.io/ We'll use this page to let you know of any incidents.
+Subscribe to [our public status page](https://payments.statuspage.io) for updates on GOV.UK Pay‘s status. We‘ll use this page to let you know of any incidents.
 
-Keep a note of our emergency email address. In an emergency only, you can contact the team at ${process.env.PAY_EMERGENCY_EMAIL}. It’s available 24 hours a day, and will wake someone up in the middle of the night, so please only use when necessary. An emergency is when your service can not take payments or has a significant security issue. See your GOV.UK Pay contract or MoU for more details.
+In an emergency, you can contact the team at ${process.env.PAY_EMERGENCY_EMAIL}. Keep a note of this email address. It’s available 24 hours a day for emergencies only. Emails to this address could wake someone up in the middle of the night, so only use it when necessary.
 
-If you need more help contact our support team at govuk-pay-support@digital.cabinet-office.gov.uk
+An emergency is when your service cannot take payments or has a significant security issue. Check your GOV.UK Pay contract or Memorandum of Understanding for more details.
 
-You should also sign up to our service update at https://docs.google.com/forms/d/e/1FAIpQLSdJRj0asGOu3VJZ-0UPmx0T6w7FMsdduRAS51k18TS2XlNC7w/viewform We’ll use it to let you know about new features, technical updates and changes to payment regulations.
-
-Thanks
-
+Kind regards,
 GOV.UK Pay team
 `
 
@@ -95,35 +97,36 @@ export async function updateTicketWithWorldpayGoLiveResponse(ticket: ZendeskTick
     const zendeskTicketBody = `
 Hello,
 
-You’re nearly ready to start taking payment on GOV.UK Pay. You just need to link your GOV.UK Pay account with your payment service provider’s (PSP) account.
+You’re nearly ready to start taking payments using GOV.UK Pay. You just need to link your GOV.UK Pay account with your Payment Service Provider’s (PSP) account.
 
-You’ll find guidance about how to do this for your PSP in our documentation at https://docs.payments.service.gov.uk/switching_to_live/#switching-to-live
+You can [read about how to do this for your PSP in our documentation](https://docs.payments.service.gov.uk/switching_to_live/#switching-to-live).
 
-Click this link to go to the live version of your service: ${worldpayGoLiveUrl}
+**Configure your live service**
 
-Before you start taking payments, you should:
+You can go to the live version of your service here: ${worldpayGoLiveUrl}
 
-* choose which cards types you want to accept in **Settings** in the GOV.UK Pay admin tool (3D Secure is enabled by default)
-* decide if you want to collect billing or email addresses in **Settings**
-* decide if you want to send payment and refund confirmation emails in **Settings**
-* customise your payment confirmation email, including adding your service support contact details should your users need to query a payment
-* decide if you want to accept digital wallet payments and turn them on or off in **Settings** (Apple Pay is turned on by default)
-* understand how digital wallet cardholder information differs from standard payments if you want to accept digital wallet payments (https://docs.payments.service.gov.uk/digital_wallets/#stored-cardholder-information-in-digital-wallet-payments)
+In the **Settings** of your live service, you should confirm:
 
-Then you’re ready to start taking payments.
+* which card types you want to accept
+* if you want to collect billing or email addresses
+* if you want to send payment and refund confirmation emails
+* if you want to customise the payment confirmation email
+
+You should also configure your team’s account permission by selecting **Manage** team members from the **Overview** page in [the GOV.UK Pay admin tool](https://selfservice.payments.service.gov.uk/my-services).
+
+If you’re taking payments for Blue Badges, you can also connect your GOV.UK Pay service to the Department for Transport’s [Manage Blue Badge application](https://admin.apply-blue-badge.service.gov.uk/sign-in). If you do not already have a Manage Blue Badge account, you’ll need to get in touch with the Manage Blue Badge admin within your local authority. You can also read [DfT’s guidance](https://confluence.bluebadge-support.org.uk/display/BBDS/GOV.UK+Pay) or let us know if you want to read more.
 
 **Keeping in touch**
 
-If you need any help contact our support team at govuk-pay-support@digital.cabinet-office.gov.uk
+If you need any help, contact our support team at [govuk-pay-support@digital.cabinet-office.gov.uk](mailto:govuk-pay-support@digital.cabinet-office.gov.uk).
 
-Subscribe to our public status page for updates on GOV.UK Pay’s status https://payments.statuspage.io/
+Subscribe to [our public status page](https://payments.statuspage.io/) for updates on GOV.UK Pay’s status.
 
-In an emergency, you can contact the team at ${process.env.PAY_EMERGENCY_EMAIL}. Keep a note of this email address. It’s available 24 hours a day for emergencies only, and will wake someone up in the middle of the night, so please only use when necessary. An emergency is when your service can not take payments or has a significant security issue. See your GOV.UK Pay contract or MoU for more details.
+In an emergency, you can contact the team at ${process.env.PAY_EMERGENCY_EMAIL}. Keep a note of this email address. It's available 24 hours a day for emergencies only. Emails to this address could wake someone up in the middle of the night, so only use it when necessary.
 
-You should also sign up to our service update at https://docs.google.com/forms/d/e/1FAIpQLSdJRj0asGOu3VJZ-0UPmx0T6w7FMsdduRAS51k18TS2XlNC7w/viewform We’ll use it to let you know about new features, technical updates and changes to payment regulations.
+An emergency is when your service cannot take payments or has a significant security issue. Check your GOV.UK Pay contract or Memorandum of Understanding for more details.
 
-Thanks
-
+Kind regards,
 GOV.UK Pay team
   `
 
