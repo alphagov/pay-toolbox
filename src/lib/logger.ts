@@ -66,7 +66,7 @@ const addSentryBreadcrumb = format((info) => {
     Sentry.configureScope((scope) => {
       scope.addBreadcrumb({
         category: 'log',
-        message: info.message,
+        message: `${info.message}`,
         level: levelMap[info.level],
         type: 'debug'
       })

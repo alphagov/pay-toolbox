@@ -99,7 +99,7 @@ export async function detail(req: Request, res: Response, next: NextFunction): P
     const [serviceGatewayAccounts, testGatewayAccount] = await Promise.all([
         getServiceGatewayAccounts(service.gateway_account_ids),
         Connector.accounts.retrieveByServiceExternalIdAndAccountType(serviceId, 'test')
-            .catch(e => {
+            .catch<any>(e => {
               if (e instanceof EntityNotFoundError) {
                 // don't 404 if no test account is found, show a misconfigured service error instead
                 return null
