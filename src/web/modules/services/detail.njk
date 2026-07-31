@@ -73,35 +73,36 @@
     </div>
   </div>
 
+  {% if service.service_features %}
     <div class="govuk-summary-card">
-    <div class="govuk-summary-card__title-wrapper">
-      <h2 class="govuk-heading-s">Service Features</h2>
-        </div>
-          <div class="govuk-summary-card__content">
-          {% set summaryRows = [] %}
-          {% for featureKey, featureValue in service.service_features %}
-            {% set summaryRows = (summaryRows.push({
-              key: {
-                html: "<span class='govuk-caption-m'>" + featureKey | replace("_", " ") | capitalize + "</span>"
-              },
-              value: {
-                text: featureValue.enabled | string | capitalize
-              },
-              actions: {
-                items: [
-                  {
-                    {# href: "/services/" + service.external_id + "/features/" + featureKey, #}
-                    text: "Manage"
-                  }
-                ]
-              }
-            }), summaryRows) %}
-          {% endfor %}
-          {{ govukSummaryList({
-            rows: summaryRows
-          }) }}
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-heading-s">Service Features</h2>
+          </div>
+            <div class="govuk-summary-card__content">
+            {% set summaryRows = [] %}
+            {% for featureKey, featureValue in service.service_features %}
+              {% set summaryRows = (summaryRows.push({
+                key: {
+                  html: "<span class='govuk-caption-m'>" + featureKey | replace("_", " ") | capitalize + "</span>"
+                },
+                value: {
+                  text: "On" if featureValue.enabled else "Off"
+                },
+                actions: {
+                  items: [
+                    {
+                      text: "Manage"
+                    }
+                  ]
+                }
+              }), summaryRows) %}
+            {% endfor %}
+            {{ govukSummaryList({
+              rows: summaryRows
+            }) }}
+      </div>
     </div>
-  </div>
+  {% endif %}
 
   <div>
     <table class="govuk-table">
