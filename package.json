@@ -114,7 +114,33 @@
       "cookie": "0.7.2"
     },
     "cross-spawn": "^7.0.5",
-    "axios": "1.18.0"
+    "axios": "1.18.0",
+    "mocha": {
+      "brace-expansion": "^2.1.2",
+      "serialize-javascript": "7.0.7"
+    },
+    "typescript-eslint": {
+      "brace-expansion": "^2.1.2"
+    },
+    "copyfiles": {
+      "brace-expansion": "^1.1.6"
+    },
+    "eslint": {
+      "brace-expansion": "^1.1.6"
+    },
+    "eslint-plugin-import": {
+      "brace-expansion": "^1.1.6"
+    },
+    "stylelint": {
+      "brace-expansion": "^1.1.6",
+      "postcss": "8.5.25"
+    },
+    "stylelint-order": {
+      "postcss": "8.5.25"
+    },
+    "sass": {
+      "immutable": "4.3.9"
+    }
   },
   "resolutions": {
     "axios": "1.18.0"
