@@ -31,8 +31,8 @@
   "dependencies": {
     "@aws-sdk/client-ecs": "~3.975.0",
     "@aws-sdk/client-s3": "~3.1027.0",
-    "@govuk-pay/pay-js-commons": "^7.0.56",
-    "@govuk-pay/pay-js-metrics": "^2.0.2",
+    "@govuk-pay/pay-js-commons": "^7.0.71",
+    "@govuk-pay/pay-js-metrics": "^2.0.7",
     "@octokit/auth-app": "^8.2.0",
     "@octokit/core": "^7.0.6",
     "@sentry/node": "^6.12.0",
@@ -123,16 +123,16 @@
       "brace-expansion": "^2.1.2"
     },
     "copyfiles": {
-      "brace-expansion": "^1.1.6"
+      "brace-expansion": "^1.1.8"
     },
     "eslint": {
-      "brace-expansion": "^1.1.6"
+      "brace-expansion": "^1.1.8"
     },
     "eslint-plugin-import": {
-      "brace-expansion": "^1.1.6"
+      "brace-expansion": "^1.1.8"
     },
     "stylelint": {
-      "brace-expansion": "^1.1.6",
+      "brace-expansion": "^1.1.8",
       "postcss": "8.5.25"
     },
     "stylelint-order": {
