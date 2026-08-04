@@ -1,5 +1,10 @@
 {% extends "layout/layout.njk" %}
 
 {% block main %}
-<h1 class="govuk-heading-m">Placeholder</h1>
+<span class="govuk-caption-l"> {{ serviceName }}</span>
+<h1 class="govuk-heading-l">Manage feature - {{ featureName | replace("_", " ") | capitalize }}</h1>
+
+<div>
+    <a href="/services/{{ id }}" class="govuk-back-link">Back to service ({{ serviceName }})</a>
+  </div>
 {% endblock %}
