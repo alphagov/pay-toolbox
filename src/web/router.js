@@ -29,14 +29,14 @@ const fixRefunds = require('./modules/transactions/fix_async_failed_stripe_refun
 
 const users = require('./modules/users/users.http').default
 
-const {PermissionLevel} = require('../lib/auth/types')
+const { PermissionLevel } = require('../lib/auth/types')
 
 const { rateLimitMiddleware } = require('@govuk-pay/pay-js-commons/lib/utils/middleware/csp')
 
 const router = express.Router()
 
 const storage = multer.memoryStorage()
-const upload = multer({storage})
+const upload = multer({ storage })
 
 router.get(
   '/auth',
@@ -50,11 +50,11 @@ router.get(
 router.get('/auth/github/callback',
   rateLimitMiddleware,
   (req, res, next) => {
-  passport.authenticate('github', {
-    failureRedirect: '/auth/unauthorised',
-    successRedirect: req.session && req.session.authBlockedRedirectUrl || '/'
-  })(req, res, next)
-})
+    passport.authenticate('github', {
+      failureRedirect: '/auth/unauthorised',
+      successRedirect: req.session && req.session.authBlockedRedirectUrl || '/'
+    })(req, res, next)
+  })
 
 router.get('/auth/unauthorised', auth.unauthorised)
 
@@ -131,6 +131,7 @@ router.post('/services/:id/organisation', auth.secured(PermissionLevel.USER_SUPP
 router.get('/services/:id/go_live', auth.secured(PermissionLevel.USER_SUPPORT), services.goLive)
 router.get('/services/:id/create_worldpay_test_service', auth.secured(PermissionLevel.USER_SUPPORT), services.createWorldpayTestServiceConfirmationPage)
 router.post('/services/:id/create_worldpay_test_service', auth.secured(PermissionLevel.USER_SUPPORT), services.createWorldpayTestService)
+router.get('/services/:id/features/:feature', auth.secured(PermissionLevel.USER_SUPPORT), services.updateFeature.get)
 
 router.get('/discrepancies/search', auth.secured(PermissionLevel.USER_SUPPORT), discrepancies.search)
 router.post('/discrepancies/search', auth.secured(PermissionLevel.USER_SUPPORT), discrepancies.getDiscrepancyReport)
