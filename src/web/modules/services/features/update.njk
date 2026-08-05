@@ -1,10 +1,39 @@
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% extends "layout/layout.njk" %}
 
 {% block main %}
+
 <span class="govuk-caption-l"> {{ serviceName }}</span>
 <h1 class="govuk-heading-l">Manage feature - {{ featureName | replace("_", " ") | capitalize }}</h1>
 
 <div>
     <a href="/services/{{ id }}" class="govuk-back-link">Back to service ({{ serviceName }})</a>
   </div>
+
+  {{ govukRadios({
+    name: "enabled",
+    fieldset: {
+        legend: {
+          text: "Manage the " + featureName + " for " + serviceName
+        }
+  },
+    items: [
+      {
+        value: "enabled",
+        text: "Enabled",
+        checked: enabled
+      },
+      {
+        value: "disabled",
+        text: "Disabled",
+        checked: not enabled
+      }
+    ]
+  }) }}
+
+  {{ govukButton({
+    text: "Save"
+  })
+  }}
+
 {% endblock %}
