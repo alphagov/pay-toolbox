@@ -21,8 +21,11 @@ export async function updateFeatureForm(req: Request, res: Response, next: NextF
   try {
     const featureName = req.params.feature
     const service = await AdminUsers.services.retrieve(req.params.id)
-    req.flash('info', `Feature ${featureName} was updated for service ${service.name}`)
-    // TODO replace "updated" with the patch boolean to populate flash message
+
+    const targetState = req.body.enabled
+
+    await AdminUsers.services.updateFeature(service.external_id, featureName, targetState)
+    req.flash('info', `Feature ${featureName} was ${targetState} for service ${service.name}`)
     res.redirect(`/services/${service.external_id}`)
   }
   catch (error) {

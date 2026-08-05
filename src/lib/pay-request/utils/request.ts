@@ -1,5 +1,5 @@
-interface Operation {
-  op: 'replace' | 'add';
+export interface Operation {
+  op: 'replace' | 'add' | 'remove';
   path: string;
   value: string | boolean | undefined | unknown;
 }
