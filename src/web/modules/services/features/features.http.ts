@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { AdminUsers } from "../../../../lib/pay-request/client";
 
 
-export async function updateFeature(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function getUpdateFeatureForm(req: Request, res: Response, next: NextFunction): Promise<void> {
 
   try {
     const featureName = req.params.feature
@@ -17,7 +17,7 @@ export async function updateFeature(req: Request, res: Response, next: NextFunct
   }
 }
 
-export async function updateFeatureForm(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function postUpdateFeatureForm(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const featureName = req.params.feature
     const service = await AdminUsers.services.retrieve(req.params.id)

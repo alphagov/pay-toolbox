@@ -19,7 +19,7 @@ import {
   updateOrganisationForm,
   goLive
 } from './services.http'
-import { updateFeature, updateFeatureForm } from './features/features.http'
+import { getUpdateFeatureForm, postUpdateFeatureForm } from './features/features.http'
 
 export default {
   overview: overview,
@@ -46,6 +46,6 @@ export default {
   goLive: goLive,
   createWorldpayTestService: createWorldpayTestService,
   createWorldpayTestServiceConfirmationPage: createWorldpayTestServiceConfirmationPage,
-  updateFeature: updateFeature,
-  updateFeatureForm: updateFeatureForm
+  updateFeature: getUpdateFeatureForm,
+  updateFeatureForm: postUpdateFeatureForm
 }
