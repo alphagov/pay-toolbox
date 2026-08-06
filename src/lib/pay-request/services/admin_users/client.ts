@@ -1,6 +1,6 @@
 import Client from '../../base'
 import {redactOTP} from '../../utils/redact'
-import {mapRequestParamsToOperation} from '../../utils/request'
+import {mapRequestParamsToOperation, Operation} from '../../utils/request'
 import {
   CreateServiceRequest,
   SearchServicesRequest,
@@ -75,6 +75,20 @@ export default class AdminUsers extends Client {
     ): Promise<Service | undefined> {
       const addOperations = ['gateway_account_ids']
       const payload = mapRequestParamsToOperation(params, addOperations)
+
+      return client._axios
+        .patch(`/v1/api/services/${id}`, payload)
+        .then(response => client._unpackResponseData<Service>(response));
+    },
+
+    updateFeature(
+      id: string,
+      featureName: string,
+      targetState: string
+    ): Promise<Service | undefined> {
+
+      const operation = targetState === 'enabled' ? 'add' : 'remove'
+      const payload: Operation = {op : operation, path: 'feature', value: featureName}
 
       return client._axios
         .patch(`/v1/api/services/${id}`, payload)

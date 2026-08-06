@@ -12,7 +12,7 @@ export enum GoLiveStage {
 }
 
 export enum PSPTestAccountStage {
-  NotStarted= 'NOT_STARTED',
+  NotStarted = 'NOT_STARTED',
   RequestSubmitted = 'REQUEST_SUBMITTED',
   Created = 'CREATED'
 }
@@ -20,6 +20,10 @@ export enum PSPTestAccountStage {
 export interface CustomBranding {
   image_url?: string;
   css_url?: string;
+}
+
+export interface FeatureStatus {
+  enabled: boolean
 }
 
 /** GOV.UK Pay service entity, contains service level configuration. */
@@ -43,6 +47,7 @@ export interface Service {
   went_live_date?: string;
   created_date?: string;
   current_psp_test_account_stage: PSPTestAccountStage;
+  service_features: Record<string, FeatureStatus>
   // _links
 }
 
@@ -64,7 +69,7 @@ export interface ServiceRole {
 }
 
 export class User {
-  constructor (userData: any) {
+  constructor(userData: any) {
     if (!userData) {
       throw Error('Must provide data')
     }
@@ -101,7 +106,7 @@ export class User {
   // _links
   raw_data?: any; // for instances of the User class where defaults are set
 
-  lastLoginFormatted (): string {
+  lastLoginFormatted(): string {
     return this.last_logged_in_at ? toFormattedDate(new Date(this.last_logged_in_at)) : 'Never'
   }
 }
